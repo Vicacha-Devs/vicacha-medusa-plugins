@@ -31,7 +31,7 @@ export const useCompanies = (
 
   const fetchCompanies = async () =>
     sdk.client.fetch<AdminCompaniesResponse>(
-      `/admin/companies${filterQuery ? `?${filterQuery}` : ""}`,
+      `/admin/b2b/companies${filterQuery ? `?${filterQuery}` : ""}`,
       {
         method: "GET",
       }
@@ -58,7 +58,7 @@ export const useCompany = (
 
   const fetchCompany = async () =>
     sdk.client.fetch<AdminCompanyResponse>(
-      `/admin/companies/${companyId}${filterQuery ? `?${filterQuery}` : ""}`,
+      `/admin/b2b/companies/${companyId}${filterQuery ? `?${filterQuery}` : ""}`,
       {
         method: "GET",
       }
@@ -82,7 +82,7 @@ export const useCreateCompany = (
 
   return useMutation({
     mutationFn: (company: AdminCreateCompany) =>
-      sdk.client.fetch<AdminCompanyResponse>("/admin/companies", {
+      sdk.client.fetch<AdminCompanyResponse>("/admin/b2b/companies", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -114,7 +114,7 @@ export const useUpdateCompany = (
 
   return useMutation({
     mutationFn: (company: AdminUpdateCompany) =>
-      sdk.client.fetch<AdminCompanyResponse>(`/admin/companies/${companyId}`, {
+      sdk.client.fetch<AdminCompanyResponse>(`/admin/b2b/companies/${companyId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -141,7 +141,7 @@ export const useDeleteCompany = (
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () =>
-      sdk.client.fetch<void>(`/admin/companies/${companyId}`, {
+      sdk.client.fetch<void>(`/admin/b2b/companies/${companyId}`, {
         method: "DELETE",
       }),
     onSuccess: (data: any, variables: any, context: any) => {
@@ -162,7 +162,7 @@ export const useAddCompanyToCustomerGroup = (
 
   return useMutation({
     mutationFn: (groupId: string) =>
-      sdk.client.fetch(`/admin/companies/${companyId}/customer-group`, {
+      sdk.client.fetch(`/admin/b2b/companies/${companyId}/customer-group`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -191,7 +191,7 @@ export const useRemoveCompanyFromCustomerGroup = (
   return useMutation({
     mutationFn: (groupId: string) =>
       sdk.client.fetch(
-        `/admin/companies/${companyId}/customer-group/${groupId}`,
+        `/admin/b2b/companies/${companyId}/customer-group/${groupId}`,
         {
           method: "DELETE",
           headers: {

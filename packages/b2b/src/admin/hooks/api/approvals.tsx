@@ -32,7 +32,7 @@ export const useUpdateApprovalSettings = (
   return useMutation({
     mutationFn: (payload: AdminUpdateApprovalSettings) =>
       sdk.client.fetch<AdminUpdateApprovalSettings>(
-        `/admin/companies/${companyId}/approval-settings`,
+        `/admin/b2b/companies/${companyId}/approval-settings`,
         {
           body: payload,
           method: "POST",
@@ -60,7 +60,7 @@ export const useApprovals = (
   options?: UseQueryOptions<AdminApprovalsResponse, FetchError>
 ) => {
   const fetchApprovals = async () =>
-    sdk.client.fetch<AdminApprovalsResponse>(`/admin/approvals`, {
+    sdk.client.fetch<AdminApprovalsResponse>(`/admin/b2b/approvals`, {
       method: "GET",
       query,
     });
@@ -80,7 +80,7 @@ export const useUpdateApproval = (
 
   return useMutation({
     mutationFn: (payload: AdminUpdateApproval) =>
-      sdk.client.fetch<AdminApproval>(`/admin/approvals/${approvalId}`, {
+      sdk.client.fetch<AdminApproval>(`/admin/b2b/approvals/${approvalId}`, {
         body: payload,
         method: "POST",
       }),

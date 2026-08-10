@@ -1,9 +1,9 @@
 import { MiddlewareRoute } from "@medusajs/medusa";
-import { storeApprovalsMiddlewares } from "./approvals/middlewares";
-import { storeCartsMiddlewares } from "./carts/middlewares";
-import { storeCompaniesMiddlewares } from "./companies/middlewares";
-import { storeFreeShippingMiddlewares } from "./free-shipping/middlewares";
-import { storeQuotesMiddlewares } from "./quotes/middlewares";
+import { storeApprovalsMiddlewares } from "./b2b/approvals/middlewares";
+import { storeCartsMiddlewares } from "./b2b/carts/middlewares";
+import { storeCompaniesMiddlewares } from "./b2b/companies/middlewares";
+import { storeFreeShippingMiddlewares } from "./b2b/free-shipping/middlewares";
+import { storeQuotesMiddlewares } from "./b2b/quotes/middlewares";
 
 export const storeMiddlewares: MiddlewareRoute[] = [
   ...storeCartsMiddlewares,

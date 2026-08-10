@@ -31,7 +31,7 @@ export const useQuotes = (
   >
 ) => {
   const fetchQuotes = (query: QuoteFilterParams, headers?: ClientHeaders) =>
-    sdk.client.fetch<StoreQuotesResponse>(`/admin/quotes`, {
+    sdk.client.fetch<StoreQuotesResponse>(`/admin/b2b/quotes`, {
       query,
       headers,
     });
@@ -60,7 +60,7 @@ export const useQuote = (
     query?: QuoteFilterParams,
     headers?: ClientHeaders
   ) =>
-    sdk.client.fetch<StoreQuoteResponse>(`/admin/quotes/${id}`, {
+    sdk.client.fetch<StoreQuoteResponse>(`/admin/b2b/quotes/${id}`, {
       query,
       headers,
     });
@@ -207,7 +207,7 @@ export const useSendQuote = (
   const queryClient = useQueryClient();
 
   const sendQuote = async (id: string) =>
-    sdk.client.fetch<AdminQuoteResponse>(`/admin/quotes/${id}/send`, {
+    sdk.client.fetch<AdminQuoteResponse>(`/admin/b2b/quotes/${id}/send`, {
       method: "POST",
     });
 
@@ -239,7 +239,7 @@ export const useRejectQuote = (
   const queryClient = useQueryClient();
 
   const rejectQuote = async (id: string) =>
-    sdk.client.fetch<AdminQuoteResponse>(`/admin/quotes/${id}/reject`, {
+    sdk.client.fetch<AdminQuoteResponse>(`/admin/b2b/quotes/${id}/reject`, {
       method: "POST",
     });
 
@@ -275,7 +275,7 @@ export const useCreateQuoteMessage = (
   const queryClient = useQueryClient();
 
   const sendQuote = async (id: string, body: AdminCreateQuoteMessage) =>
-    sdk.client.fetch<AdminQuoteResponse>(`/admin/quotes/${id}/messages`, {
+    sdk.client.fetch<AdminQuoteResponse>(`/admin/b2b/quotes/${id}/messages`, {
       body,
       method: "POST",
     });

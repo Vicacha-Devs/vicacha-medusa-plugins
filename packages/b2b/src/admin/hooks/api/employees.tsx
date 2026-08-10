@@ -32,7 +32,7 @@ export const useEmployees = (
 
   const fetchEmployees = async () =>
     sdk.client.fetch<AdminEmployeesResponse>(
-      `/admin/companies/${companyId}/employees${
+      `/admin/b2b/companies/${companyId}/employees${
         filterQuery ? `?${filterQuery}` : ""
       }`,
       {
@@ -60,7 +60,7 @@ export const useCreateEmployee = (
   return useMutation({
     mutationFn: (employee: AdminCreateEmployee) =>
       sdk.client.fetch<AdminEmployeeResponse>(
-        `/admin/companies/${companyId}/employees`,
+        `/admin/b2b/companies/${companyId}/employees`,
         {
           method: "POST",
           headers: {
@@ -93,7 +93,7 @@ export const useUpdateEmployee = (
   return useMutation({
     mutationFn: (employee: AdminUpdateEmployee) =>
       sdk.client.fetch<AdminEmployeeResponse>(
-        `/admin/companies/${companyId}/employees/${employeeId}`,
+        `/admin/b2b/companies/${companyId}/employees/${employeeId}`,
         {
           method: "POST",
           headers: {
@@ -124,7 +124,7 @@ export const useDeleteEmployee = (
   return useMutation({
     mutationFn: (employeeId: string) =>
       sdk.client.fetch<void>(
-        `/admin/companies/${companyId}/employees/${employeeId}`,
+        `/admin/b2b/companies/${companyId}/employees/${employeeId}`,
         {
           method: "DELETE",
         }
