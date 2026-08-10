@@ -176,8 +176,6 @@ export const TableSkeleton = ({
   const rows = Array.from({ length: totalRowCount }, (_, i) => i);
   const hasToolbar = search || filters || orderBy;
 
-  console.log({ filters });
-
   return (
     <div
       aria-hidden
