@@ -1,11 +1,15 @@
 {
   "name": "@vicacha-devs/medusa-plugin-b2b",
   "version": "0.0.1",
-  "description": "A starter for Medusa plugins.",
-  "author": "Medusa (https://medusajs.com)",
+  "description": "B2B commerce capabilities for Medusa v2: companies, employees, quotes, approvals, spending limits, and B2B cart workflows.",
+  "author": "Vicacha Devs",
   "license": "MIT",
   "files": [
-    ".medusa/server"
+    ".medusa/server",
+    "src",
+    "README.md",
+    "LICENSE",
+    "tsconfig.json"
   ],
   "exports": {
     "./package.json": "./package.json",
@@ -30,9 +34,15 @@
   ],
   "scripts": {
     "build": "medusa plugin:build",
+    "publish:local": "medusa plugin:publish",
     "dev": "medusa plugin:develop",
     "lint": "medusa lint",
-    "prepublishOnly": "medusa plugin:build"
+    "prepublishOnly": "medusa plugin:build",
+    "test": "pnpm test:unit && pnpm test:integration:modules && pnpm test:integration:http",
+    "test:integration:http": "TEST_TYPE=integration:http NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",
+    "test:integration:modules": "TEST_TYPE=integration:modules NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
+    "test:unit": "TEST_TYPE=unit NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
+    "clean": "rm -rf .medusa node_modules"
   },
   "devDependencies": {
     "@medusajs/admin-sdk": "2.18.0",
