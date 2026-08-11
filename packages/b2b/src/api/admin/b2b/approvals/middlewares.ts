@@ -4,8 +4,8 @@ import {
   validateAndTransformQuery,
 } from "@medusajs/framework";
 import { MiddlewareRoute } from "@medusajs/medusa";
-import { approvalTransformQueryConfig } from "./query-config.ts";
-import { AdminGetApprovals, AdminUpdateApproval } from "./validators.ts";
+import { approvalTransformQueryConfig } from "./query-config";
+import { AdminGetApprovals, AdminUpdateApproval } from "./validators";
 
 export const adminApprovalsMiddlewares: MiddlewareRoute[] = [
   {

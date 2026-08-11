@@ -8,10 +8,10 @@ import {
   validateAndTransformQuery,
 } from "@medusajs/framework";
 import { MiddlewareRoute } from "@medusajs/medusa";
-import { ensureRole } from "../../../middlewares/ensure-role.ts";
+import { ensureRole } from "../../../middlewares/ensure-role";
 import { ApprovalType } from "../../../../types/approval";
-import { approvalTransformQueryConfig } from "./query-config.ts";
-import { StoreGetApprovals, StoreUpdateApproval } from "./validators.ts";
+import { approvalTransformQueryConfig } from "./query-config";
+import { StoreGetApprovals, StoreUpdateApproval } from "./validators";
 
 const ensureApprovalType = async (
   req: AuthenticatedMedusaRequest,

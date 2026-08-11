@@ -7,7 +7,7 @@ import {
 import {
   StoreGetCompanyParamsType,
   StoreUpdateCompanyType,
-} from "../validators.ts";
+} from "../validators";
 
 export const GET = async (
   req: MedusaRequest<StoreGetCompanyParamsType>,

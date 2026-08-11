@@ -4,7 +4,7 @@ import {
 } from "@medusajs/framework";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
 import { ApprovalType } from "../../../../types/approval";
-import { StoreGetApprovalsType } from "./validators.ts";
+import { StoreGetApprovalsType } from "./validators";
 
 export const GET = async (
   req: AuthenticatedMedusaRequest<StoreGetApprovalsType>,

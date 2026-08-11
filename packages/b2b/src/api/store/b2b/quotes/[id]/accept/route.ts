@@ -4,7 +4,7 @@ import type {
 } from "@medusajs/framework";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
 import { customerAcceptQuoteWorkflow } from "../../../../../../workflows/quote/workflows";
-import { AcceptQuoteType } from "../../validators.ts";
+import { AcceptQuoteType } from "../../validators";
 
 export const POST = async (
   req: AuthenticatedMedusaRequest<AcceptQuoteType>,

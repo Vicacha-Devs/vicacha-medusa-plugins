@@ -7,7 +7,7 @@ import {
 import {
   StoreGetEmployeeParamsType,
   StoreUpdateEmployeeType,
-} from "../../../validators.ts";
+} from "../../../validators";
 
 export const GET = async (
   req: MedusaRequest<StoreGetEmployeeParamsType>,

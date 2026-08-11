@@ -7,14 +7,14 @@ import { MiddlewareRoute } from "@medusajs/medusa";
 import {
   listQuotesTransformQueryConfig,
   retrieveQuoteTransformQueryConfig,
-} from "./query-config.ts";
+} from "./query-config";
 import {
   AcceptQuote,
   CreateQuote,
   GetQuoteParams,
   RejectQuote,
   StoreCreateQuoteMessage,
-} from "./validators.ts";
+} from "./validators";
 
 export const storeQuotesMiddlewares: MiddlewareRoute[] = [
   {

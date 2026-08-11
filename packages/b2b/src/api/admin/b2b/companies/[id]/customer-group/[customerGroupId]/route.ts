@@ -2,8 +2,8 @@ import {
   AuthenticatedMedusaRequest,
   MedusaResponse,
 } from "@medusajs/framework";
-import { removeCompanyFromCustomerGroupWorkflow } from "../../../../../../../workflows/company/workflows/remove-company-from-customer-group.ts";
-import { AdminRemoveCompanyFromCustomerGroupType } from "../../../validators.ts";
+import { removeCompanyFromCustomerGroupWorkflow } from "../../../../../../../workflows/company/workflows/remove-company-from-customer-group";
+import { AdminRemoveCompanyFromCustomerGroupType } from "../../../validators";
 
 export const DELETE = async (
   req: AuthenticatedMedusaRequest<AdminRemoveCompanyFromCustomerGroupType>,

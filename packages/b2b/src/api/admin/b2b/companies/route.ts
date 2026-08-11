@@ -3,8 +3,8 @@ import type {
   MedusaResponse,
 } from "@medusajs/framework";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
-import { createCompaniesWorkflow } from "../../../../workflows/company/workflows/create-companies.ts";
-import { AdminCreateCompanyType } from "./validators.ts";
+import { createCompaniesWorkflow } from "../../../../workflows/company/workflows/create-companies";
+import { AdminCreateCompanyType } from "./validators";
 
 export const GET = async (
   req: AuthenticatedMedusaRequest,

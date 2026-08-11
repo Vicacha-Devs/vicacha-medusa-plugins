@@ -10,7 +10,7 @@ import {
 import {
   AdminGetEmployeeParamsType,
   AdminUpdateEmployeeType,
-} from "../../../validators.ts";
+} from "../../../validators";
 
 export const GET = async (
   req: AuthenticatedMedusaRequest<AdminGetEmployeeParamsType>,

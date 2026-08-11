@@ -6,13 +6,13 @@ import { MiddlewareRoute } from "@medusajs/medusa";
 import {
   listQuotesTransformQueryConfig,
   retrieveQuoteTransformQueryConfig,
-} from "./query-config.ts";
+} from "./query-config";
 import {
   AdminCreateQuoteMessage,
   AdminGetQuoteParams,
   AdminRejectQuote,
   AdminSendQuote,
-} from "./validators.ts";
+} from "./validators";
 
 export const adminQuotesMiddlewares: MiddlewareRoute[] = [
   {

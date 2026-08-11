@@ -1,6 +1,6 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
-import { AdminGetQuoteParamsType } from "./validators.ts";
+import { AdminGetQuoteParamsType } from "./validators";
 
 export const GET = async (
   req: MedusaRequest<AdminGetQuoteParamsType>,

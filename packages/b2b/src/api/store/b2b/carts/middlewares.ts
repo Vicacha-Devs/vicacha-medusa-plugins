@@ -4,11 +4,11 @@ import {
   validateAndTransformQuery,
 } from "@medusajs/framework";
 import { MiddlewareRoute } from "@medusajs/medusa";
-import { retrieveCartTransformQueryConfig } from "./query-config.ts";
+import { retrieveCartTransformQueryConfig } from "./query-config";
 import {
   GetCartLineItemsBulkParams,
   StoreAddLineItemsBulk,
-} from "./validators.ts";
+} from "./validators";
 
 export const storeCartsMiddlewares: MiddlewareRoute[] = [
   {

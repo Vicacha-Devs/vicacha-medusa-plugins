@@ -4,11 +4,11 @@ import {
   validateAndTransformQuery,
 } from "@medusajs/framework";
 import { authenticate } from "@medusajs/medusa";
-import { ensureRole } from "../../../middlewares/ensure-role.ts";
+import { ensureRole } from "../../../middlewares/ensure-role";
 import {
   storeCompanyQueryConfig,
   storeEmployeeQueryConfig,
-} from "./query-config.ts";
+} from "./query-config";
 import {
   StoreCreateCompany,
   StoreCreateEmployee,
@@ -16,7 +16,7 @@ import {
   StoreGetEmployeeParams,
   StoreUpdateApprovalSettings,
   StoreUpdateEmployee,
-} from "./validators.ts";
+} from "./validators";
 
 export const storeCompaniesMiddlewares: MiddlewareRoute[] = [
   /* Company middlewares */

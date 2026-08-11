@@ -4,7 +4,7 @@ import {
 } from "@medusajs/framework";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
 import { addCompanyToCustomerGroupWorkflow } from "../../../../../../workflows/company/workflows";
-import { AdminAddCompanyToCustomerGroupType } from "../../validators.ts";
+import { AdminAddCompanyToCustomerGroupType } from "../../validators";
 
 export const POST = async (
   req: AuthenticatedMedusaRequest<AdminAddCompanyToCustomerGroupType>,

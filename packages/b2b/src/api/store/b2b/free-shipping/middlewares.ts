@@ -1,6 +1,6 @@
 import { validateAndTransformQuery } from "@medusajs/framework";
 import { MiddlewareRoute } from "@medusajs/medusa";
-import { StoreGetFreeShippingPricesParams } from "./validators.ts";
+import { StoreGetFreeShippingPricesParams } from "./validators";
 
 export const storeFreeShippingMiddlewares: MiddlewareRoute[] = [
   {

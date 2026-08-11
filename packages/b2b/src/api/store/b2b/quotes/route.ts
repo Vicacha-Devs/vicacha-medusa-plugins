@@ -4,8 +4,8 @@ import {
 } from "@medusajs/framework";
 import { RemoteQueryFunction } from "@medusajs/framework/types";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
-import { createRequestForQuoteWorkflow } from "../../../../workflows/quote/workflows/create-request-for-quote.ts";
-import { CreateQuoteType, GetQuoteParamsType } from "./validators.ts";
+import { createRequestForQuoteWorkflow } from "../../../../workflows/quote/workflows/create-request-for-quote";
+import { CreateQuoteType, GetQuoteParamsType } from "./validators";
 
 export const GET = async (
   req: AuthenticatedMedusaRequest<GetQuoteParamsType>,

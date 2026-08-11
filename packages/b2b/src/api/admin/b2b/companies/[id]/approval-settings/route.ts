@@ -4,8 +4,8 @@ import type {
 } from "@medusajs/framework";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
 import { updateApprovalSettingsWorkflow } from "../../../../../../workflows/approval/workflows";
-import { adminApprovalSettingsFields } from "../../query-config.ts";
-import { AdminCreateApprovalSettingsType } from "../../validators.ts";
+import { adminApprovalSettingsFields } from "../../query-config";
+import { AdminCreateApprovalSettingsType } from "../../validators";
 
 export const GET = async (
   req: AuthenticatedMedusaRequest,

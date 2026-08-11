@@ -4,7 +4,7 @@ import {
 } from "@medusajs/framework";
 import { RemoteQueryFunction } from "@medusajs/framework/types";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
-import { GetQuoteParamsType } from "../validators.ts";
+import { GetQuoteParamsType } from "../validators";
 
 export const GET = async (
   req: AuthenticatedMedusaRequest<GetQuoteParamsType>,

@@ -3,8 +3,8 @@ import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import { RemoteQueryFunction } from "@medusajs/framework/types";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
 import { StoreFreeShippingPrice } from "../../../../../types/shipping-options";
-import { computeShippingOptionTargets } from "../utils.ts";
-import { StoreGetFreeShippingPricesParamsType } from "../validators.ts";
+import { computeShippingOptionTargets } from "../utils";
+import { StoreGetFreeShippingPricesParamsType } from "../validators";
 
 export const GET = async (
   req: MedusaRequest<{}, StoreGetFreeShippingPricesParamsType>,

@@ -7,7 +7,7 @@ import {
   adminApprovalSettingsQueryConfig,
   adminCompanyQueryConfig,
   adminEmployeeQueryConfig,
-} from "./query-config.ts";
+} from "./query-config";
 import {
   AdminCreateCompany,
   AdminCreateEmployee,
@@ -17,7 +17,7 @@ import {
   AdminUpdateApprovalSettings,
   AdminUpdateCompany,
   AdminUpdateEmployee,
-} from "./validators.ts";
+} from "./validators";
 
 export const adminCompaniesMiddlewares: MiddlewareRoute[] = [
   /* Companies Middlewares */

@@ -4,7 +4,7 @@ import { createEmployeesWorkflow } from "../../../../../../workflows/employee/wo
 import {
   AdminCreateEmployeeType,
   AdminGetEmployeeParamsType,
-} from "../../validators.ts";
+} from "../../validators";
 
 export const GET = async (
   req: MedusaRequest<AdminGetEmployeeParamsType>,
