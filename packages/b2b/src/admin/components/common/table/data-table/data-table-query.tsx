@@ -1,4 +1,5 @@
 import { DataTableFilter, Filter } from "./data-table-filter";
+import { DataTableSearch } from "./data-table-search";
 
 export interface DataTableQueryProps {
   search?: boolean | "autofocus";
@@ -21,7 +22,14 @@ export const DataTableQuery = ({
             <DataTableFilter filters={filters} prefix={prefix} />
           )}
         </div>
-        <div className="flex shrink-0 items-center gap-x-2"></div>
+        <div className="flex shrink-0 items-center gap-x-2">
+          {search && (
+            <DataTableSearch
+              prefix={prefix}
+              autofocus={search === "autofocus"}
+            />
+          )}
+        </div>
       </div>
     )
   );

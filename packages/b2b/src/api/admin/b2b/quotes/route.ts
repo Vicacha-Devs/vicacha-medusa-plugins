@@ -9,9 +9,26 @@ export const GET = async (
   const query = req.scope.resolve(ContainerRegistrationKeys.QUERY);
 
   const { fields, pagination } = req.queryConfig;
+
+  const { q, ...filterableFields } = (req.filterableFields ?? {}) as Record<
+    string,
+    any
+  >;
+
+  const filters: Record<string, any> = { ...filterableFields };
+
+  if (q) {
+    filters.$or = [
+      { customer: { email: { $ilike: `%${q}%` } } },
+      { customer: { first_name: { $ilike: `%${q}%` } } },
+      { customer: { last_name: { $ilike: `%${q}%` } } },
+    ];
+  }
+
   const { data: quotes, metadata } = await query.graph({
     entity: "quote",
     fields,
+    filters,
     pagination: {
       ...pagination,
       skip: pagination.skip!,

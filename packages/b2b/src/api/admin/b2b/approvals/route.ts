@@ -11,13 +11,19 @@ export const GET = async (
 ) => {
   const query = req.scope.resolve(ContainerRegistrationKeys.QUERY);
 
-  const { status } = req.validatedQuery || {};
+  const { status, q } = req.validatedQuery || {};
 
   let filters: any = {};
 
   if (status) {
-    filters = {
-      status,
+    filters.status = status;
+  }
+
+  if (q) {
+    filters.cart = {
+      company: {
+        name: { $ilike: `%${q}%` },
+      },
     };
   }
 

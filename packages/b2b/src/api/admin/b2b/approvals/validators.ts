@@ -8,6 +8,7 @@ export type AdminGetApprovalsType = z.infer<typeof AdminGetApprovals>;
 export const AdminGetApprovals = createFindParams()
   .merge(
     z.object({
+      q: z.string().optional(),
       status: z
         .union([z.string(), z.array(z.string()), createOperatorMap()])
         .optional(),
