@@ -11,7 +11,12 @@ export const adminCompanyFields = [
   "zip",
   "country",
   "currency_code",
+  "created_at",
+  "updated_at",
   "*employees",
+  "*employees.customer",
+  "*customer_group",
+  "*approval_settings",
 ];
 
 export const adminCompanyQueryConfig = {

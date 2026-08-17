@@ -14,10 +14,26 @@ export const GET = async (
 
   const { fields, pagination } = req.queryConfig;
 
+  const { q, ...filterableFields } = req.filterableFields as Record<
+    string,
+    any
+  >;
+
+  const filters: Record<string, any> = { ...filterableFields };
+
+  if (q) {
+    filters.$or = [
+      { name: { $ilike: `%${q}%` } },
+      { email: { $ilike: `%${q}%` } },
+      { phone: { $ilike: `%${q}%` } },
+      { city: { $ilike: `%${q}%` } },
+    ];
+  }
+
   const { data: companies, metadata } = await query.graph({
     entity: "companies",
     fields,
-    filters: req.filterableFields,
+    filters,
     pagination,
   });
 

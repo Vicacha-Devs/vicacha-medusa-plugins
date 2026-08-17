@@ -14,6 +14,7 @@ import {
   AdminGetApprovalSettingsParams,
   AdminGetCompanyParams,
   AdminGetEmployeeParams,
+  AdminGetCompanyRetrieveParams,
   AdminUpdateApprovalSettings,
   AdminUpdateCompany,
   AdminUpdateEmployee,
@@ -37,7 +38,7 @@ export const adminCompaniesMiddlewares: MiddlewareRoute[] = [
     middlewares: [
       validateAndTransformBody(AdminCreateCompany),
       validateAndTransformQuery(
-        AdminGetCompanyParams,
+        AdminGetCompanyRetrieveParams,
         adminCompanyQueryConfig.retrieve
       ),
     ],
@@ -47,7 +48,7 @@ export const adminCompaniesMiddlewares: MiddlewareRoute[] = [
     matcher: "/admin/b2b/companies/:id",
     middlewares: [
       validateAndTransformQuery(
-        AdminGetCompanyParams,
+        AdminGetCompanyRetrieveParams,
         adminCompanyQueryConfig.retrieve
       ),
     ],
@@ -58,7 +59,7 @@ export const adminCompaniesMiddlewares: MiddlewareRoute[] = [
     middlewares: [
       validateAndTransformBody(AdminUpdateCompany),
       validateAndTransformQuery(
-        AdminGetCompanyParams,
+        AdminGetCompanyRetrieveParams,
         adminCompanyQueryConfig.retrieve
       ),
     ],

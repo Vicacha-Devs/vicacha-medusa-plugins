@@ -27,15 +27,11 @@ export const useCompanies = (
     QueryKey
   >
 ) => {
-  const filterQuery = new URLSearchParams(query).toString();
-
   const fetchCompanies = async () =>
-    sdk.client.fetch<AdminCompaniesResponse>(
-      `/admin/b2b/companies${filterQuery ? `?${filterQuery}` : ""}`,
-      {
-        method: "GET",
-      }
-    );
+    sdk.client.fetch<AdminCompaniesResponse>(`/admin/b2b/companies`, {
+      method: "GET",
+      query,
+    });
 
   return useQuery({
     queryKey: companyQueryKey.list(query),

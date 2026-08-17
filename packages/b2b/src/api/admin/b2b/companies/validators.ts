@@ -1,9 +1,33 @@
-import { createSelectParams } from "@medusajs/medusa/api/utils/validators";
+import {
+  createFindParams,
+  createOperatorMap,
+  createSelectParams,
+} from "@medusajs/medusa/api/utils/validators";
 import { z } from "@medusajs/framework/zod";
 
 /* Company Validators */
 export type AdminGetCompanyParamsType = z.infer<typeof AdminGetCompanyParams>;
-export const AdminGetCompanyParams = createSelectParams();
+export const AdminGetCompanyParams = createFindParams({
+  limit: 50,
+  offset: 0,
+})
+  .merge(
+    z.object({
+      q: z.string().optional(),
+      id: z
+        .union([z.string(), z.array(z.string()), createOperatorMap()])
+        .optional(),
+      created_at: createOperatorMap().optional(),
+      updated_at: createOperatorMap().optional(),
+    })
+  )
+  .strict();
+
+/* Company Retrieve Validators (single record, select-only) */
+export type AdminGetCompanyRetrieveParamsType = z.infer<
+  typeof AdminGetCompanyRetrieveParams
+>;
+export const AdminGetCompanyRetrieveParams = createSelectParams();
 
 export type AdminCreateCompanyType = z.infer<typeof AdminCreateCompany>;
 export const AdminCreateCompany = z
