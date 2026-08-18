@@ -4,29 +4,71 @@ import {
   MedusaError,
   ModuleRegistrationName,
 } from "@medusajs/framework/utils";
-import { createSalesChannelsWorkflow } from "@medusajs/medusa/core-flows";
 
 export default async function seed_b2b_data({
   container,
 }: {
   container: MedusaContainer;
 }) {
-  const logger = container.resolve(ContainerRegistrationKeys.LOGGER);
+  const logger = container.resolve(
+    ContainerRegistrationKeys.LOGGER
+  );
 
   const customerModuleService = container.resolve(
     ModuleRegistrationName.CUSTOMER
   );
 
-  logger.info("Creating B2B/B2C customer groups...");
+  const salesChannelModuleService = container.resolve(
+    ModuleRegistrationName.SALES_CHANNEL
+  );
 
-  const customerGroups = await customerModuleService.createCustomerGroups([
-    {
+  // ---------------------------------------------------------------------------
+  // Customer Groups
+  // ---------------------------------------------------------------------------
+
+  logger.info("Ensuring B2B/B2C customer groups exist...");
+
+  const existingCustomerGroups =
+    await customerModuleService.listCustomerGroups({
+      name: {
+        $in: ["B2C", "B2B"],
+      }
+    });
+
+  const existingB2C = existingCustomerGroups.find(
+    (group) => group.name === "B2C"
+  );
+
+  const existingB2B = existingCustomerGroups.find(
+    (group) => group.name === "B2B"
+  );
+
+  const customerGroupsToCreate = [];
+
+  if (!existingB2C) {
+    customerGroupsToCreate.push({
       name: "B2C",
-    },
-    {
+    });
+  }
+
+  if (!existingB2B) {
+    customerGroupsToCreate.push({
       name: "B2B",
-    },
-  ]);
+    });
+  }
+
+  if (customerGroupsToCreate.length) {
+    await customerModuleService.createCustomerGroups(
+      customerGroupsToCreate
+    );
+  }
+
+  const customerGroups =
+    await customerModuleService.listCustomerGroups({
+      name: {
+        $in: ["B2C", "B2B"],
+      }
+    });
 
   const b2cCustomerGroup = customerGroups.find(
     (group) => group.name === "B2C"
@@ -39,31 +81,65 @@ export default async function seed_b2b_data({
   if (!b2cCustomerGroup || !b2bCustomerGroup) {
     throw new MedusaError(
       MedusaError.Types.CONFLICT,
-      "Failed to create B2B/B2C customer groups."
+      "Failed to create/find B2B/B2C customer groups."
     );
   }
 
-  logger.info(`Created B2C customer group: ${b2cCustomerGroup.id}`);
-  logger.info(`Created B2B customer group: ${b2bCustomerGroup.id}`);
+  logger.info(
+    `B2C customer group: ${b2cCustomerGroup.id}`
+  );
 
-  logger.info("Creating B2B/B2C sales channels...");
+  logger.info(
+    `B2B customer group: ${b2bCustomerGroup.id}`
+  );
 
-  const { result: salesChannels } = await createSalesChannelsWorkflow(
-    container
-  ).run({
-    input: {
-      salesChannelsData: [
-        {
-          name: "B2C",
-          description: "Sales channel for B2C customers.",
-        },
-        {
-          name: "B2B",
-          description: "Sales channel for B2B customers.",
-        },
-      ],
-    },
-  });
+  // ---------------------------------------------------------------------------
+  // Sales Channels
+  // ---------------------------------------------------------------------------
+
+  logger.info("Ensuring B2B/B2C sales channels exist...");
+
+  const existingSalesChannels =
+    await salesChannelModuleService.listSalesChannels({
+      name: ["B2C", "B2B"],
+    });
+
+  const existingB2CSalesChannel =
+    existingSalesChannels.find(
+      (channel) => channel.name === "B2C"
+    );
+
+  const existingB2BSalesChannel =
+    existingSalesChannels.find(
+      (channel) => channel.name === "B2B"
+    );
+
+  const salesChannelsToCreate = [];
+
+  if (!existingB2CSalesChannel) {
+    salesChannelsToCreate.push({
+      name: "B2C",
+      description: "Sales channel for B2C customers.",
+    });
+  }
+
+  if (!existingB2BSalesChannel) {
+    salesChannelsToCreate.push({
+      name: "B2B",
+      description: "Sales channel for B2B customers.",
+    });
+  }
+
+  if (salesChannelsToCreate.length) {
+    await salesChannelModuleService.createSalesChannels(
+      salesChannelsToCreate
+    );
+  }
+
+  const salesChannels =
+    await salesChannelModuleService.listSalesChannels({
+      name: ["B2C", "B2B"],
+    });
 
   const b2cSalesChannel = salesChannels.find(
     (channel) => channel.name === "B2C"
@@ -76,12 +152,17 @@ export default async function seed_b2b_data({
   if (!b2cSalesChannel || !b2bSalesChannel) {
     throw new MedusaError(
       MedusaError.Types.CONFLICT,
-      "Failed to create B2B/B2C sales channels."
+      "Failed to create/find B2B/B2C sales channels."
     );
   }
 
-  logger.info(`Created B2C sales channel: ${b2cSalesChannel.id}`);
-  logger.info(`Created B2B sales channel: ${b2bSalesChannel.id}`);
+  logger.info(
+    `B2C sales channel: ${b2cSalesChannel.id}`
+  );
+
+  logger.info(
+    `B2B sales channel: ${b2bSalesChannel.id}`
+  );
 
   logger.info("Finished creating B2B/B2C data.");
 }
