@@ -1,8 +1,8 @@
 import { Check, XMark } from "@medusajs/icons";
 import { IconButton, usePrompt } from "@medusajs/ui";
 import { useTranslation } from "react-i18next";
-import { ApprovalStatusType, ApprovalType } from "@/../types/approval";
-import { useUpdateApproval } from "@/hooks/api/approvals.tsx";
+import { ApprovalStatusType, ApprovalType } from "../../../../../types/approval";
+import { useUpdateApproval } from "../../../../hooks/api/approvals.tsx";
 import { useState } from "react";
 
 export const ApprovalActions = ({ cart }: { cart: Record<string, any> }) => {

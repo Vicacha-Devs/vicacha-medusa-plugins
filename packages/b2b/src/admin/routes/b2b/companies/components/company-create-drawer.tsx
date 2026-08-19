@@ -1,8 +1,8 @@
 import { Button, Drawer } from "@medusajs/ui";
-import { AdminCreateCompany } from "@/../types";
+import { AdminCreateCompany } from "../../../../../types";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useCreateCompany } from "@/hooks/api";
+import { useCreateCompany } from "../../../../hooks/api";
 import { CompanyForm } from "./company-form.tsx";
 
 export function CompanyCreateDrawer() {

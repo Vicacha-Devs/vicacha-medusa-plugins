@@ -11,14 +11,14 @@ import {
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { JsonViewSection } from "@/components/common/json-view-section.tsx";
-import { useOrderPreview } from "@/hooks/api";
+import { JsonViewSection } from "../../../../components/common/json-view-section.tsx";
+import { useOrderPreview } from "../../../../hooks/api";
 import {
   useQuote,
   useRejectQuote,
   useSendQuote,
-} from "@/hooks/api/quotes.tsx";
-import { formatAmount } from "@/utils";
+} from "../../../../hooks/api/quotes.tsx";
+import { formatAmount } from "../../../../utils";
 import {
   CostBreakdown,
   QuoteDetailsHeader,

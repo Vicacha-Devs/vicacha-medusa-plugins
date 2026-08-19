@@ -1,7 +1,7 @@
 import { Drawer, toast } from "@medusajs/ui";
-import { AdminUpdateCompany, QueryCompany } from "@/../types";
+import { AdminUpdateCompany, QueryCompany } from "../../../../../types";
 import { useTranslation } from "react-i18next";
-import { useUpdateCompany } from "@/hooks/api";
+import { useUpdateCompany } from "../../../../hooks/api";
 import { CompanyForm } from "./company-form.tsx";
 
 export function CompanyUpdateDrawer({

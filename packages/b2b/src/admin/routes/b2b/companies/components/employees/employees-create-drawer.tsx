@@ -1,12 +1,12 @@
 import { HttpTypes } from "@medusajs/types";
 import { Button, Drawer, toast } from "@medusajs/ui";
-import { AdminCreateEmployee, QueryCompany } from "@/../types";
+import { AdminCreateEmployee, QueryCompany } from "../../../../../../types";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   useAdminCreateCustomer,
   useCreateEmployee,
-} from "@/hooks/api";
+} from "../../../../../hooks/api";
 import { EmployeesCreateForm } from "./employees-create-form.tsx";
 
 export function EmployeeCreateDrawer({ company }: { company: QueryCompany }) {

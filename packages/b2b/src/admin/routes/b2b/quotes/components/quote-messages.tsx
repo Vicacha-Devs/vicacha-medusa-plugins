@@ -14,9 +14,9 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { z } from "zod";
-import { QueryQuote } from "@/../types";
-import { Form } from "@/components/common/form";
-import { useCreateQuoteMessage } from "@/hooks/api/quotes.tsx";
+import { QueryQuote } from "../../../../../types";
+import { Form } from "../../../../components/common/form";
+import { useCreateQuoteMessage } from "../../../../hooks/api/quotes.tsx";
 import { QuoteItem } from "./quote-details/index.tsx";
 
 export const CreateQuoteMessageForm = z.object({

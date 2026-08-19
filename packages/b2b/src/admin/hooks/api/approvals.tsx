@@ -5,7 +5,7 @@ import {
   AdminApprovalsResponse,
   AdminUpdateApproval,
   AdminUpdateApprovalSettings,
-} from "@/../types";
+} from "../../../types";
 import {
   useMutation,
   UseMutationOptions,
@@ -13,8 +13,8 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from "@tanstack/react-query";
-import { sdk } from "@/lib/client";
-import { queryKeysFactory } from "@/lib/query-key-factory";
+import { sdk } from "../../lib/client";
+import { queryKeysFactory } from "../../lib/query-key-factory";
 import { companyQueryKey } from "./companies";
 
 export const approvalSettingsQueryKey = queryKeysFactory("approvalSettings");

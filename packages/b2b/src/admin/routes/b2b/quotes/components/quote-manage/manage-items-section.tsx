@@ -10,8 +10,8 @@ import {
   RouteFocusModal,
   StackedFocusModal,
   useStackedModal,
-} from "@/components/common/modals/route-focus-modal";
-import { useAddItemsToQuote } from "@/hooks/api";
+} from "../../../../../components/common/modals/route-focus-modal";
+import { useAddItemsToQuote } from "../../../../../hooks/api";
 import { ManageItem } from "./manage-item.tsx";
 import { ManageItemsTable } from "./manage-items-table.tsx";
 

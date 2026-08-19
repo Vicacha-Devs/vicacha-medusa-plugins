@@ -20,15 +20,15 @@ import {
   ActionMenu,
   AmountCell,
   Thumbnail,
-} from "@/components/common";
-import { Form } from "@/components/common/form";
+} from "../../../../../components/common";
+import { Form } from "../../../../../components/common/form";
 import {
   useAddItemsToQuote,
   useRemoveQuoteItem,
   useUpdateAddedQuoteItem,
   useUpdateQuoteItem,
-} from "@/hooks/api";
-import { currencySymbolMap } from "@/utils";
+} from "../../../../../hooks/api";
+import { currencySymbolMap } from "../../../../../utils";
 
 type ManageItemProps = {
   originalItem: AdminOrder["items"][0];

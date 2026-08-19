@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { ApprovalStatusType } from "@/../types/approval";
+import { ApprovalStatusType } from "../../../../../../types/approval";
 
 export const useApprovalsTableFilters = () => {
   const { t } = useTranslation();

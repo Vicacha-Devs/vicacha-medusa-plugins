@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { DataTable } from "@/components";
-import { useDataTable } from "@/hooks";
-import { useAdminCustomerGroups, useCompanies } from "@/hooks/api";
+import { DataTable } from "../../../../components";
+import { useDataTable } from "../../../../hooks";
+import { useAdminCustomerGroups, useCompanies } from "../../../../hooks/api";
 import { useCompaniesTableColumns } from "./table/columns.tsx";
 import { useCompaniesTableFilters } from "./table/filters.tsx";
 import { useCompaniesTableQuery } from "./table/query.tsx";

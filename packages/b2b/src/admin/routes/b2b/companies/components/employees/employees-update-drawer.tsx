@@ -5,8 +5,8 @@ import {
   AdminUpdateEmployee,
   QueryCompany,
   QueryEmployee,
-} from "@/../types";
-import { useUpdateEmployee } from "@/hooks/api";
+} from "../../../../../../types";
+import { useUpdateEmployee } from "../../../../../hooks/api";
 
 export function EmployeesUpdateDrawer({
   company,
