@@ -1,128 +1,59 @@
-# Custom API Routes
+# API Routes
 
-An API Route is a REST API endpoint.
+File-based REST routes under two namespaces, following Medusa's `src/api/<surface>/<path>/route.ts` convention.
 
-An API Route is created in a TypeScript or JavaScript file under the `/src/api` directory of your Medusa application. The file’s name must be `route.ts` or `route.js`.
-
-For example, to create a `GET` API Route at `/store/hello-world`, create the file `src/api/store/hello-world/route.ts` with the following content:
-
-```ts
-import type { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
-
-export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  res.json({
-    message: "Hello world!",
-  });
-}
+```
+api/
+├── middlewares.ts          global middleware registration
+├── middlewares/
+│   └── ensure-role.ts      role guard middleware
+├── admin/
+│   └── b2b/
+│       ├── companies/      CRUD + employees + approval-settings + customer-group
+│       ├── quotes/         list, detail, send, reject, messages
+│       └── approvals/      list, approve/reject
+└── store/
+    └── b2b/
+        ├── companies/      CRUD + employees + approval-settings
+        ├── quotes/         list, create (RFQ), detail, preview, accept, reject, messages
+        ├── carts/
+        │   └── [id]/
+        │       ├── approvals/      submit cart for approval
+        │       └── line-items/
+        │           └── bulk/       add multiple line items in one call
+        ├── approvals/      list and update (company admin view)
+        └── free-shipping/
+            └── prices/     threshold prices for storefront display
 ```
 
-## Supported HTTP methods
+---
 
-The file based routing supports the following HTTP methods:
+## Authentication
 
-- GET
-- POST
-- PUT
-- PATCH
-- DELETE
-- OPTIONS
-- HEAD
+All admin routes apply `authenticate("user", ["bearer", "session", "api-key"])`.
 
-You can define a handler for each of these methods by exporting a function with the name of the method in the paths `route.ts` file.
+All store routes apply `authenticate("customer", ["session", "bearer"])`.
 
-For example:
+Routes that require the `company_admin` role apply the `ensureRole("company_admin")` middleware defined in `middlewares/ensure-role.ts`.
 
-```ts
-import type { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
+### `ensureRole`
 
-export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  // Handle GET requests
-}
+Resolves the authenticated customer's `provider_identity.user_metadata.role` via `remoteQuery` and returns `403 Forbidden` if it does not match the required role. Currently only `"company_admin"` is used.
 
-export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  // Handle POST requests
-}
+---
 
-export async function PUT(req: MedusaRequest, res: MedusaResponse) {
-  // Handle PUT requests
-}
-```
+## Route file conventions
 
-## Parameters
+- Each route file exports one or more named HTTP verb functions: `GET`, `POST`, `DELETE`.
+- Route handlers resolve the relevant workflow or module service from `req.scope` and delegate immediately — no business logic lives in route files.
+- Pagination follows Medusa's standard `limit` / `offset` query params.
+- Full-text search uses the `q` param; field-specific filters use their field name directly.
 
-To create an API route that accepts a path parameter, create a directory within the route's path whose name is of the format `[param]`.
+---
 
-For example, if you want to define a route that takes a `productId` parameter, you can do so by creating a file called `/api/products/[productId]/route.ts`:
+## Adding a route
 
-```ts
-import type { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
-
-export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const { productId } = req.params;
-
-  res.json({
-    message: `You're looking for product ${productId}`,
-  });
-}
-```
-
-To create an API route that accepts multiple path parameters, create within the file's path multiple directories whose names are of the format `[param]`.
-
-For example, if you want to define a route that takes both a `productId` and a `variantId` parameter, you can do so by creating a file called `/api/products/[productId]/variants/[variantId]/route.ts`.
-
-## Using the container
-
-The Medusa container is available on `req.scope`. Use it to access modules' main services and other registered resources:
-
-```ts
-import type { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
-import { IProductModuleService } from "@medusajs/framework/types";
-import { ModuleRegistrationName } from "@medusajs/framework/utils";
-
-export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
-  const productModuleService: IProductModuleService = req.scope.resolve(
-    ModuleRegistrationName.PRODUCT
-  );
-
-  const [, count] = await productModuleService.listAndCount();
-
-  res.json({
-    count,
-  });
-};
-```
-
-## Middleware
-
-You can apply middleware to your routes by creating a file called `/api/middlewares.ts`. This file must export a configuration object with what middleware you want to apply to which routes.
-
-For example, if you want to apply a custom middleware function to the `/store/custom` route, you can do so by adding the following to your `/api/middlewares.ts` file:
-
-```ts
-import { defineMiddlewares } from "@medusajs/medusa";
-import type {
-  MedusaRequest,
-  MedusaResponse,
-  MedusaNextFunction,
-} from "@medusajs/medusa";
-
-async function logger(
-  req: MedusaRequest,
-  res: MedusaResponse,
-  next: MedusaNextFunction
-) {
-  console.log("Request received");
-  next();
-}
-
-export default defineMiddlewares({
-  routes: [
-    {
-      matcher: "/store/custom",
-      middlewares: [logger],
-    },
-  ],
-});
-```
-
-The `matcher` property can be either a string or a regular expression. The `middlewares` property accepts an array of middleware functions.
+1. Create the directory path under `src/api/<surface>/b2b/<resource>/`.
+2. Create `route.ts` and export the relevant HTTP methods.
+3. Register any middleware in `src/api/middlewares.ts` using `defineMiddlewares`.
+4. Add corresponding types to `src/types/<domain>/http.ts`.
