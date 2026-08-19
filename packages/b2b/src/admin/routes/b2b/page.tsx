@@ -11,6 +11,7 @@ import {
   Skeleton,
   Text,
 } from "@medusajs/ui";
+import { useTranslation } from "react-i18next";
 import {
   useCompanies,
   useQuotes,
@@ -18,6 +19,8 @@ import {
 } from "../../hooks/api";
 
 const B2BOverview = () => {
+  const { t } = useTranslation();
+
   const { data: companiesData, isPending: companiesPending } = useCompanies({
     fields: "*employees",
   });
@@ -54,39 +57,39 @@ const B2BOverview = () => {
     <div className="flex flex-col gap-y-4">
       <div>
         <Heading className="font-sans font-medium h1-core">
-          B2B
+          {t("overview.title")}
         </Heading>
 
         <Text className="text-ui-fg-subtle mt-1">
-          Manage your B2B commerce operations.
+          {t("overview.subtitle")}
         </Text>
       </div>
 
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
         <StatCard
-          title="Companies"
+          title={t("overview.stats.companies")}
           value={companies.length}
           icon={<BuildingStorefront />}
           loading={isLoading}
         />
 
         <StatCard
-          title="Employees"
+          title={t("overview.stats.employees")}
           value={employeesCount}
           icon={<BuildingStorefront />}
           loading={isLoading}
         />
 
         <StatCard
-          title="Pending Quotes"
+          title={t("overview.stats.pendingQuotes")}
           value={pendingQuotes}
           icon={<DocumentText />}
           loading={isLoading}
         />
 
         <StatCard
-          title="Pending Approvals"
+          title={t("overview.stats.pendingApprovals")}
           value={pendingApprovals}
           icon={<CheckCircle />}
           loading={isLoading}
@@ -96,39 +99,39 @@ const B2BOverview = () => {
       {/* Navigation */}
       <Container className="p-0 overflow-hidden">
         <div className="px-6 py-5 border-b border-ui-border-base">
-          <Heading level="h2">B2B Commerce</Heading>
+          <Heading level="h2">{t("overview.commerce.title")}</Heading>
 
           <Text className="text-ui-fg-subtle mt-1">
-            Manage companies, quotes, approvals, and B2B pricing.
+            {t("overview.commerce.subtitle")}
           </Text>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2">
           <NavigationCard
             icon={<BuildingStorefront />}
-            title="Companies"
-            description="Manage B2B companies, employees, and customer groups."
+            title={t("overview.nav.companies.title")}
+            description={t("overview.nav.companies.description")}
             href="/app/b2b/companies"
           />
 
           <NavigationCard
             icon={<DocumentText />}
-            title="Quotes"
-            description="Review and manage requests for quotation."
+            title={t("overview.nav.quotes.title")}
+            description={t("overview.nav.quotes.description")}
             href="/app/b2b/quotes"
           />
 
           <NavigationCard
             icon={<CheckCircle />}
-            title="Approvals"
-            description="Review carts requiring B2B approval."
+            title={t("overview.nav.approvals.title")}
+            description={t("overview.nav.approvals.description")}
             href="/app/b2b/approvals"
           />
 
           <NavigationCard
             icon={<Tag />}
-            title="Pricing"
-            description="Manage pricing for B2B sales channels and customer groups."
+            title={t("overview.nav.pricing.title")}
+            description={t("overview.nav.pricing.description")}
             href="/app/b2b/pricing"
           />
         </div>

@@ -1,4 +1,5 @@
 import { Drawer, toast as toastType } from "@medusajs/ui";
+import { useTranslation } from "react-i18next";
 import { EmployeesUpdateForm } from ".";
 import {
   AdminUpdateEmployee,
@@ -20,6 +21,7 @@ export function EmployeesUpdateDrawer({
   setOpen: (open: boolean) => void;
   toast: typeof toastType;
 }) {
+  const { t } = useTranslation();
   const { mutateAsync, isPending, error } = useUpdateEmployee(
     employee.company_id,
     employee.id
@@ -30,7 +32,7 @@ export function EmployeesUpdateDrawer({
       onSuccess: () => {
         setOpen(false);
         toast.success(
-          `Employee ${employee?.customer?.email} updated successfully`
+          t("employees.toasts.updated", { email: employee?.customer?.email })
         );
       },
     });
@@ -40,7 +42,7 @@ export function EmployeesUpdateDrawer({
     <Drawer open={open} onOpenChange={setOpen}>
       <Drawer.Content className="z-50 overflow-auto">
         <Drawer.Header>
-          <Drawer.Title>Edit Employee</Drawer.Title>
+          <Drawer.Title>{t("employees.drawers.editTitle")}</Drawer.Title>
         </Drawer.Header>
 
         <EmployeesUpdateForm

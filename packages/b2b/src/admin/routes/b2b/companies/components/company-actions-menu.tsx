@@ -3,6 +3,7 @@ import { Link, LockClosedSolid, PencilSquare, Trash } from "@medusajs/icons";
 import { toast } from "@medusajs/ui";
 import { QueryCompany } from "../../../../../types";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ActionMenu } from "../../../../components/common";
 import { DeletePrompt } from "../../../../components/common/delete-prompt.tsx";
@@ -20,6 +21,7 @@ export const CompanyActionsMenu = ({
   company: QueryCompany;
   customerGroups?: HttpTypes.AdminCustomerGroup[];
 }) => {
+  const { t } = useTranslation();
   const [editOpen, setEditOpen] = useState(false);
   const [customerGroupOpen, setCustomerGroupOpen] = useState(false);
   const [approvalSettingsOpen, setApprovalSettingsOpen] = useState(false);
@@ -33,7 +35,7 @@ export const CompanyActionsMenu = ({
     mutateDelete(company.id, {
       onSuccess: () => {
         navigate("/b2b/companies");
-        toast.success(`Company ${company.name} deleted successfully`);
+        toast.success(t("companies.toasts.deleted", { name: company.name }));
       },
     });
   };
@@ -46,17 +48,17 @@ export const CompanyActionsMenu = ({
             actions: [
               {
                 icon: <PencilSquare />,
-                label: "Edit details",
+                label: t("companies.actions.editDetails"),
                 onClick: () => setEditOpen(true),
               },
               {
                 icon: <Link />,
-                label: "Manage customer group",
+                label: t("companies.actions.manageCustomerGroup"),
                 onClick: () => setCustomerGroupOpen(true),
               },
               {
                 icon: <LockClosedSolid />,
-                label: "Approval settings",
+                label: t("companies.actions.approvalSettings"),
                 onClick: () => setApprovalSettingsOpen(true),
               },
             ],
@@ -65,7 +67,7 @@ export const CompanyActionsMenu = ({
             actions: [
               {
                 icon: <Trash />,
-                label: "Delete",
+                label: t("companies.actions.delete"),
                 onClick: () => setDeleteOpen(true),
               },
             ],

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { DataTable } from "../../../../components";
 import { useDataTable } from "../../../../hooks";
 import { useAdminCustomerGroups, useCompanies } from "../../../../hooks/api";
@@ -9,6 +10,8 @@ const PAGE_SIZE = 50;
 const PREFIX = "comp";
 
 export const CompaniesTable = () => {
+  const { t } = useTranslation();
+
   const { searchParams, raw } = useCompaniesTableQuery({
     pageSize: PAGE_SIZE,
     prefix: PREFIX,
@@ -54,8 +57,8 @@ export const CompaniesTable = () => {
         prefix={PREFIX}
         queryObject={raw}
         noRecords={{
-          title: "No companies found",
-          message: "There are currently no companies. Create one to get started.",
+          title: t("companies.table.noRecordsTitle"),
+          message: t("companies.table.noRecordsMessage"),
         }}
       />
     </div>

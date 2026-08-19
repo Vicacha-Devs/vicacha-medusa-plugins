@@ -11,6 +11,7 @@ import {
 } from "@medusajs/ui";
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { z } from "zod";
 import { QueryQuote } from "../../../../../types";
@@ -31,10 +32,8 @@ export function QuoteMessages({
   preview: AdminOrderPreview;
 }) {
   const { quoteId } = useParams();
+  const { t } = useTranslation();
 
-  /**
-   * FORM
-   */
   const form = useForm<z.infer<typeof CreateQuoteMessageForm>>({
     defaultValues: () =>
       Promise.resolve({
@@ -59,7 +58,7 @@ export function QuoteMessages({
     await createMessage(
       {},
       {
-        onSuccess: () => toast.success("Successfully sent message to customer"),
+        onSuccess: () => toast.success(t("quotes.messages.sentSuccess")),
         onError: (e) => toast.error(e.message),
       }
     );
@@ -74,7 +73,7 @@ export function QuoteMessages({
       {
         onSuccess: () => {
           form.reset();
-          toast.success("Successfully sent message to customer");
+          toast.success(t("quotes.messages.sentSuccess"));
         },
         onError: (e) => toast.error(e.message),
       }
@@ -84,7 +83,7 @@ export function QuoteMessages({
   return (
     <Container className="divide-y divide-dashed p-0">
       <div className="flex items-center justify-between px-6 py-4">
-        <Heading level="h2">Messages</Heading>
+        <Heading level="h2">{t("quotes.messages.title")}</Heading>
       </div>
 
       <div>
@@ -129,9 +128,9 @@ export function QuoteMessages({
                   <Form.Item>
                     <div className="flex items-center gap-3">
                       <div className="flex-1">
-                        <Form.Label>Pick Quote Item</Form.Label>
+                        <Form.Label>{t("quotes.messages.pickItem")}</Form.Label>
                         <Form.Hint>
-                          Select a quote item to write a message around
+                          {t("quotes.messages.pickItemHint")}
                         </Form.Hint>
                       </div>
                       <div className="flex-1">
@@ -142,7 +141,7 @@ export function QuoteMessages({
                             value={field.value ?? undefined}
                           >
                             <Select.Trigger className="bg-ui-bg-base" ref={ref}>
-                              <Select.Value placeholder="Select Item" />
+                              <Select.Value placeholder={t("quotes.messages.selectItem")} />
                             </Select.Trigger>
                             <Select.Content>
                               {preview.items.map((l) => (
@@ -182,7 +181,7 @@ export function QuoteMessages({
               disabled={isCreatingMessage}
               onClick={() => handleCreateMessage}
             >
-              Send
+              {t("quotes.messages.send")}
             </Button>
           </form>
         </Form>

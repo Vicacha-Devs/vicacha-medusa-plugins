@@ -1,0 +1,308 @@
+{
+  "general": {
+    "new": "New",
+    "removed": "Removed",
+    "modified": "Modified",
+    "error": "Error",
+    "noRecords": "No records"
+  },
+  "actions": {
+    "continue": "Continue",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "remove": "Remove",
+    "undo": "Undo",
+    "create": "Create",
+    "send": "Send",
+    "addItems": "Add Items",
+    "duplicate": "Duplicate"
+  },
+  "fields": {
+    "id": "ID",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "company": "Company",
+    "status": "Status",
+    "items": "Items",
+    "total": "Total",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "search": "Search",
+    "qty": "Qty",
+    "sku": "SKU",
+    "title": "Title",
+    "price": "Price",
+    "actions": "Actions",
+    "currency": "Currency",
+    "city": "City",
+    "state": "State",
+    "country": "Country",
+    "spendingLimit": "Spending Limit"
+  },
+  "orders": {
+    "edits": {
+      "currentTotal": "Current Total",
+      "newTotal": "New Total",
+      "validation": {
+        "quantityLowerThanFulfillment": "Quantity cannot be lower than the fulfilled quantity"
+      }
+    }
+  },
+  "overview": {
+    "title": "B2B",
+    "subtitle": "Manage your B2B commerce operations.",
+    "commerce": {
+      "title": "B2B Commerce",
+      "subtitle": "Manage companies, quotes, approvals, and B2B pricing."
+    },
+    "stats": {
+      "companies": "Companies",
+      "employees": "Employees",
+      "pendingQuotes": "Pending Quotes",
+      "pendingApprovals": "Pending Approvals"
+    },
+    "nav": {
+      "companies": {
+        "title": "Companies",
+        "description": "Manage B2B companies, employees, and customer groups."
+      },
+      "quotes": {
+        "title": "Quotes",
+        "description": "Review and manage requests for quotation."
+      },
+      "approvals": {
+        "title": "Approvals",
+        "description": "Review carts requiring B2B approval."
+      },
+      "pricing": {
+        "title": "Pricing",
+        "description": "Manage pricing for B2B sales channels and customer groups."
+      }
+    }
+  },
+  "companies": {
+    "title": "Companies",
+    "label": "Companies",
+    "notFound": "Company not found",
+    "form": {
+      "name": "Company Name",
+      "phone": "Company Phone",
+      "email": "Company Email",
+      "address": "Company Address",
+      "city": "Company City",
+      "state": "Company State",
+      "zip": "Company Zip",
+      "country": "Company Country",
+      "currency": "Currency",
+      "logoUrl": "Company Logo URL",
+      "selectCountry": "Select a country",
+      "selectCurrency": "Select a currency",
+      "createTitle": "Create Company",
+      "editTitle": "Edit Company"
+    },
+    "detail": {
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address",
+      "city": "City",
+      "state": "State",
+      "currency": "Currency",
+      "customerGroup": "Customer Group",
+      "approvalSettings": "Approval Settings",
+      "requiresAdmin": "Requires admin approval",
+      "requiresSalesManager": "Requires sales manager approval",
+      "noApprovalRequired": "No approval required"
+    },
+    "actions": {
+      "editDetails": "Edit details",
+      "manageCustomerGroup": "Manage customer group",
+      "approvalSettings": "Approval settings",
+      "delete": "Delete"
+    },
+    "table": {
+      "employees": "Employees",
+      "customerGroup": "Customer Group",
+      "noRecordsTitle": "No companies found",
+      "noRecordsMessage": "There are currently no companies. Create one to get started."
+    },
+    "toasts": {
+      "deleted": "Company {{name}} deleted successfully",
+      "updated": "Company {{name}} updated successfully",
+      "updateError": "Failed to update company",
+      "addedToGroup": "Company added to customer group successfully",
+      "removedFromGroup": "Company removed from customer group successfully",
+      "addToGroupError": "Failed to add company to customer group",
+      "removeFromGroupError": "Failed to remove company from customer group",
+      "approvalSettingsUpdated": "Company approval settings updated successfully",
+      "approvalSettingsError": "Failed to update company approval settings"
+    },
+    "approvalSettings": {
+      "title": "Company Approval Settings",
+      "requiresAdmin": "Requires Admin Approval",
+      "requiresAdminDescription": "Require company admin approval for all orders placed by this company.",
+      "requiresSalesManager": "Requires Sales Manager Approval",
+      "requiresSalesManagerDescription": "Require sales manager approval for all orders placed by this company."
+    },
+    "customerGroup": {
+      "drawerTitle": "Add {{name}} to a Customer Group",
+      "hint": "Adding {{name}} to a customer group will automatically add {{count}} linked employee{{plural}} to the customer group.",
+      "header": "Customer Group",
+      "actionsHeader": "Actions",
+      "noGroups": "No customer groups found",
+      "remove": "Remove",
+      "add": "Add",
+      "addedSuccess": "Company added to customer group successfully",
+      "removedSuccess": "Company removed from customer group successfully",
+      "addError": "Failed to add company to customer group",
+      "removeError": "Failed to remove company from customer group"
+    }
+  },
+  "employees": {
+    "title": "Employees",
+    "label": "Employees",
+    "admin": "Admin",
+    "noRecords": "This company doesn't have any employees.",
+    "form": {
+      "details": "Details",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone",
+      "permissions": "Permissions",
+      "spendingLimit": "Spending Limit ({{currency}})",
+      "adminAccess": "Admin Access",
+      "isAdmin": "Is Admin",
+      "isAdminDescription": "Enable to grant admin access",
+      "isAdminTooltip": "Admins can manage the company's details and employee permissions.",
+      "editCustomerDetails": "Edit Customer Details",
+      "name": "Name",
+      "company": "Company"
+    },
+    "drawers": {
+      "addTitle": "Add Company Customer",
+      "editTitle": "Edit Employee"
+    },
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "spendingLimit": "Spending Limit",
+      "actions": "Actions"
+    },
+    "toasts": {
+      "created": "Employee {{firstName}} {{lastName}} created successfully",
+      "updated": "Employee {{email}} updated successfully",
+      "deleted": "Employee deleted successfully",
+      "createCustomerError": "Failed to create customer",
+      "createEmployeeError": "Failed to create employee"
+    }
+  },
+  "quotes": {
+    "title": "Quotes",
+    "label": "Quotes",
+    "table": {
+      "noRecordsTitle": "No quotes found",
+      "noRecordsMessage": "There are currently no quotes. Create one from the storefront."
+    },
+    "status": {
+      "accepted": "Accepted",
+      "customer_rejected": "Customer Rejected",
+      "merchant_rejected": "Merchant Rejected",
+      "pending_merchant": "Pending Merchant",
+      "pending_customer": "Pending Customer"
+    },
+    "detail": {
+      "acceptedMessage": "Quote accepted by customer. Order is ready for processing.",
+      "viewOrder": "View Order",
+      "rejectQuote": "Reject Quote",
+      "sendQuote": "Send Quote",
+      "customer": "Customer",
+      "email": "Email",
+      "phone": "Phone",
+      "spendingLimit": "Spending Limit",
+      "company": "Company",
+      "name": "Name"
+    },
+    "summary": {
+      "title": "Quote Summary",
+      "manage": "Manage"
+    },
+    "cost": {
+      "discounts": "Discounts",
+      "shipping": "Shipping"
+    },
+    "total": {
+      "original": "Original Total",
+      "quote": "Quote Total"
+    },
+    "messages": {
+      "title": "Messages",
+      "pickItem": "Pick Quote Item",
+      "pickItemHint": "Select a quote item to write a message around",
+      "selectItem": "Select Item",
+      "send": "Send",
+      "sentSuccess": "Successfully sent message to customer"
+    },
+    "manage": {
+      "title": "Manage Quote",
+      "priceOverrideHint": "Override the unit price of this product",
+      "updatePrice": "Update Price"
+    },
+    "prompts": {
+      "send": {
+        "title": "Send quote?",
+        "description": "You are about to send this quote to the customer. Do you want to continue?"
+      },
+      "reject": {
+        "title": "Reject quote?",
+        "description": "You are about to reject this customer's quote. Do you want to continue?"
+      }
+    },
+    "toasts": {
+      "sent": "Successfully sent quote to customer",
+      "rejected": "Successfully rejected customer's quote",
+      "messageSent": "Successfully sent message to customer",
+      "updated": "Successfully updated quote"
+    }
+  },
+  "approvals": {
+    "title": "Approvals",
+    "label": "Approvals",
+    "table": {
+      "updatedAt": "Updated at",
+      "actions": "Actions",
+      "noRecordsTitle": "No approvals found",
+      "noRecordsMessage": "There are currently no approvals."
+    },
+    "filters": {
+      "status": "Status",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "prompts": {
+      "approve": {
+        "title": "Are you sure you want to approve this cart?",
+        "description": "This action cannot be undone."
+      },
+      "reject": {
+        "title": "Are you sure you want to reject this cart?",
+        "description": "This action cannot be undone."
+      }
+    },
+    "items": {
+      "itemTotal": "Item total:"
+    }
+  },
+  "deletePrompt": {
+    "title": "Confirm Deletion",
+    "description": "Are you sure you want to delete this item? This action cannot be undone.",
+    "delete": "Delete",
+    "cancel": "Cancel"
+  }
+}

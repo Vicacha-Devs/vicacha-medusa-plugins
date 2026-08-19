@@ -7,6 +7,7 @@ import {
   Text,
 } from "@medusajs/ui";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { AdminCreateEmployee, QueryCompany } from "../../../../../../types";
 import { CoolSwitch } from "../../../../../components/common";
 import { currencySymbolMap } from "../../../../../utils";
@@ -22,6 +23,8 @@ export function EmployeesCreateForm({
   error: Error | null;
   company: QueryCompany;
 }) {
+  const { t } = useTranslation();
+
   const [formData, setFormData] = useState<
     Omit<AdminCreateEmployee, "spending_limit"> & {
       spending_limit: string;
@@ -63,10 +66,10 @@ export function EmployeesCreateForm({
     <form onSubmit={onSubmit}>
       <Drawer.Body className="flex flex-col p-4 gap-6">
         <div className="flex flex-col gap-3">
-          <h2 className="h2-core">Details</h2>
+          <h2 className="h2-core">{t("employees.form.details")}</h2>
           <div className="flex flex-col gap-2">
             <Label size="xsmall" className="txt-compact-small font-medium">
-              First Name
+              {t("employees.form.firstName")}
             </Label>
             <Input
               type="text"
@@ -77,7 +80,7 @@ export function EmployeesCreateForm({
           </div>
           <div className="flex flex-col gap-2">
             <Label size="xsmall" className="txt-compact-small font-medium">
-              Last Name
+              {t("employees.form.lastName")}
             </Label>
             <Input
               type="text"
@@ -88,7 +91,7 @@ export function EmployeesCreateForm({
           </div>
           <div className="flex flex-col gap-2">
             <Label size="xsmall" className="txt-compact-small font-medium">
-              Email
+              {t("employees.form.email")}
             </Label>
             <Input
               type="email"
@@ -99,7 +102,7 @@ export function EmployeesCreateForm({
           </div>
           <div className="flex flex-col gap-2">
             <Label size="xsmall" className="txt-compact-small font-medium">
-              Phone
+              {t("employees.form.phone")}
             </Label>
             <Input
               type="text"
@@ -110,10 +113,12 @@ export function EmployeesCreateForm({
           </div>
         </div>
         <div className="flex flex-col gap-3">
-          <h2 className="h2-core">Permissions</h2>
+          <h2 className="h2-core">{t("employees.form.permissions")}</h2>
           <div className="flex flex-col gap-2">
             <Label size="xsmall" className="txt-compact-small font-medium">
-              Spending Limit ({company.currency_code?.toUpperCase() || "USD"})
+              {t("employees.form.spendingLimit", {
+                currency: company.currency_code?.toUpperCase() || "USD",
+              })}
             </Label>
             <CurrencyInput
               symbol={currencySymbolMap[company.currency_code || "USD"]}
@@ -132,27 +137,27 @@ export function EmployeesCreateForm({
           </div>
           <div className="flex flex-col gap-2">
             <Label size="xsmall" className="txt-compact-small font-medium">
-              Admin Access
+              {t("employees.form.adminAccess")}
             </Label>
             <CoolSwitch
               fieldName="is_admin"
-              label="Is Admin"
-              description="Enable to grant admin access"
+              label={t("employees.form.isAdmin")}
+              description={t("employees.form.isAdminDescription")}
               checked={formData.is_admin || false}
               onChange={(checked) =>
                 setFormData({ ...formData, is_admin: checked })
               }
-              tooltip="Admins can manage the company's details and employee permissions."
+              tooltip={t("employees.form.isAdminTooltip")}
             />
           </div>
         </div>
       </Drawer.Body>
       <Drawer.Footer>
         <Drawer.Close asChild>
-          <Button variant="secondary">Cancel</Button>
+          <Button variant="secondary">{t("actions.cancel")}</Button>
         </Drawer.Close>
         <Button type="submit" disabled={loading}>
-          {loading ? "Saving..." : "Save"}
+          {loading ? t("actions.saving") : t("actions.save")}
         </Button>
         {error && <Text className="text-red-500">{error.message}</Text>}
       </Drawer.Footer>

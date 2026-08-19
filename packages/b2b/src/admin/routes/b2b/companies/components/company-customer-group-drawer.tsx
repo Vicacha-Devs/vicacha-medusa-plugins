@@ -1,5 +1,6 @@
 import { HttpTypes } from "@medusajs/types";
 import { Button, Drawer, Hint, Table, toast } from "@medusajs/ui";
+import { useTranslation } from "react-i18next";
 import { QueryCompany } from "../../../../../types";
 import {
   useAddCompanyToCustomerGroup,
@@ -17,6 +18,8 @@ export function CompanyCustomerGroupDrawer({
   open: boolean;
   setOpen: (open: boolean) => void;
 }) {
+  const { t } = useTranslation();
+
   const { mutateAsync: addMutate, isPending: addLoading } =
     useAddCompanyToCustomerGroup(company.id);
 
@@ -27,10 +30,10 @@ export function CompanyCustomerGroupDrawer({
     await addMutate(groupId, {
       onSuccess: async () => {
         setOpen(false);
-        toast.success(`Company added to customer group successfully`);
+        toast.success(t("companies.customerGroup.addedSuccess"));
       },
-      onError: (error) => {
-        toast.error("Failed to add company to customer group");
+      onError: () => {
+        toast.error(t("companies.customerGroup.addError"));
       },
     });
   };
@@ -38,10 +41,10 @@ export function CompanyCustomerGroupDrawer({
   const handleRemove = async (groupId: string) => {
     await removeMutate(groupId, {
       onSuccess: async () => {
-        toast.success(`Company removed from customer group successfully`);
+        toast.success(t("companies.customerGroup.removedSuccess"));
       },
       onError: () => {
-        toast.error("Failed to remove company from customer group");
+        toast.error(t("companies.customerGroup.removeError"));
       },
     });
   };
@@ -50,21 +53,27 @@ export function CompanyCustomerGroupDrawer({
     <Drawer open={open} onOpenChange={setOpen}>
       <Drawer.Content className="z-50">
         <Drawer.Header>
-          <Drawer.Title>Add {company.name} to a Customer Group</Drawer.Title>
+          <Drawer.Title>
+            {t("companies.customerGroup.drawerTitle", { name: company.name })}
+          </Drawer.Title>
         </Drawer.Header>
         <Drawer.Body className="space-y-4 h-full overflow-y-hidden">
           <Hint variant="info">
-            Adding {company.name} to a customer group will automatically add{" "}
-            {company.employees?.length} linked employee
-            {company.employees?.length === 1 ? "" : "s"} to the customer group.
+            {t("companies.customerGroup.hint", {
+              name: company.name,
+              count: company.employees?.length,
+              plural: company.employees?.length === 1 ? "" : "s",
+            })}
           </Hint>
           <div className="h-full overflow-y-auto">
             <Table>
               <Table.Header>
                 <Table.Row>
-                  <Table.HeaderCell>Customer Group</Table.HeaderCell>
+                  <Table.HeaderCell>
+                    {t("companies.customerGroup.header")}
+                  </Table.HeaderCell>
                   <Table.HeaderCell className="text-right">
-                    Actions
+                    {t("companies.customerGroup.actionsHeader")}
                   </Table.HeaderCell>
                 </Table.Row>
               </Table.Header>
@@ -82,7 +91,7 @@ export function CompanyCustomerGroupDrawer({
                             isLoading={removeLoading}
                             variant="danger"
                           >
-                            Remove
+                            {t("companies.customerGroup.remove")}
                           </Button>
                         ) : (
                           <Button
@@ -94,7 +103,7 @@ export function CompanyCustomerGroupDrawer({
                             }
                             isLoading={addLoading}
                           >
-                            Add
+                            {t("companies.customerGroup.add")}
                           </Button>
                         )}
                       </Table.Cell>
@@ -102,7 +111,9 @@ export function CompanyCustomerGroupDrawer({
                   ))
                 ) : (
                   <Table.Row>
-                    <Table.Cell>No customer groups found</Table.Cell>
+                    <Table.Cell>
+                      {t("companies.customerGroup.noGroups")}
+                    </Table.Cell>
                   </Table.Row>
                 )}
               </Table.Body>

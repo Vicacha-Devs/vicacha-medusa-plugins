@@ -25,25 +25,19 @@ export const ManageQuoteForm = ({ order }: ReturnCreateFormProps) => {
   const { handleSuccess } = useRouteModal();
   const { order: preview } = useOrderPreview(order.id);
 
-  /**
-   * MUTATIONS
-   */
   const { mutateAsync: confirmQuote, isPending: isRequesting } =
     useConfirmQuote(order.id);
 
-  /**
-   * FORM
-   */
   const form = useForm<ManageQuoteFormSchemaType>({
     defaultValues: () => Promise.resolve({}),
     resolver: zodResolver(ManageQuoteFormSchema),
   });
 
-  const handleSubmit = form.handleSubmit(async (data) => {
+  const handleSubmit = form.handleSubmit(async () => {
     try {
       await confirmQuote({});
 
-      toast.success("Successfully updated quote");
+      toast.success(t("quotes.toasts.updated"));
       handleSuccess();
     } catch (e) {
       toast.error(t("general.error"), {
@@ -63,7 +57,7 @@ export const ManageQuoteForm = ({ order }: ReturnCreateFormProps) => {
 
         <RouteFocusModal.Body className="flex size-full justify-center overflow-y-auto">
           <div className="mt-16 w-[720px] max-w-[100%] px-4 md:p-0">
-            <Heading level="h1">Manage Quote</Heading>
+            <Heading level="h1">{t("quotes.manage.title")}</Heading>
 
             <ManageItemsSection preview={preview} order={order} />
 

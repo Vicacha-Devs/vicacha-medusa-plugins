@@ -1,5 +1,6 @@
-import { Check, XMark, ArrowRightMini } from "@medusajs/icons";
-import { Button, IconButton, usePrompt } from "@medusajs/ui";
+import { Check, XMark } from "@medusajs/icons";
+import { IconButton, usePrompt } from "@medusajs/ui";
+import { useTranslation } from "react-i18next";
 import { ApprovalStatusType, ApprovalType } from "../../../../../types/approval";
 import { useUpdateApproval } from "../../../../hooks/api/approvals.tsx";
 import { useState } from "react";
@@ -7,6 +8,7 @@ import { useState } from "react";
 export const ApprovalActions = ({ cart }: { cart: Record<string, any> }) => {
   const [isApproving, setIsApproving] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
+  const { t } = useTranslation();
 
   const dialog = usePrompt();
 
@@ -23,8 +25,8 @@ export const ApprovalActions = ({ cart }: { cart: Record<string, any> }) => {
   const approveCart = async () => {
     setIsApproving(true);
     const confirmed = await dialog({
-      title: "Are you sure you want to approve this cart?",
-      description: "This action cannot be undone.",
+      title: t("approvals.prompts.approve.title"),
+      description: t("approvals.prompts.approve.description"),
     });
 
     if (confirmed) {
@@ -38,8 +40,8 @@ export const ApprovalActions = ({ cart }: { cart: Record<string, any> }) => {
   const rejectCart = async () => {
     setIsRejecting(true);
     const confirmed = await dialog({
-      title: "Are you sure you want to reject this cart?",
-      description: "This action cannot be undone.",
+      title: t("approvals.prompts.reject.title"),
+      description: t("approvals.prompts.reject.description"),
     });
 
     if (confirmed) {

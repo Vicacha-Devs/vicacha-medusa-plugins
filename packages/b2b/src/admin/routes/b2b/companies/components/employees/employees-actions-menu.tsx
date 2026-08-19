@@ -1,6 +1,7 @@
 import { EllipsisHorizontal, PencilSquare, Trash } from "@medusajs/icons";
 import { DropdownMenu, IconButton, toast } from "@medusajs/ui";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { EmployeesUpdateDrawer } from ".";
 import { QueryCompany, QueryEmployee } from "../../../../../../types";
 import { DeletePrompt } from "../../../../../components/common";
@@ -13,6 +14,7 @@ export const EmployeesActionsMenu = ({
   company: QueryCompany;
   employee: QueryEmployee;
 }) => {
+  const { t } = useTranslation();
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const { mutateAsync: mutateDelete, isPending: loadingDelete } =
@@ -21,7 +23,7 @@ export const EmployeesActionsMenu = ({
   const handleDelete = async () => {
     await mutateDelete(employee.id, {
       onSuccess: () => {
-        toast.success(`Employee deleted successfully`);
+        toast.success(t("employees.toasts.deleted"));
       },
     });
   };
@@ -40,7 +42,7 @@ export const EmployeesActionsMenu = ({
             onClick={() => setEditOpen(true)}
           >
             <PencilSquare />
-            Edit
+            {t("actions.edit")}
           </DropdownMenu.Item>
           <DropdownMenu.Separator />
           <DropdownMenu.Item
@@ -48,7 +50,7 @@ export const EmployeesActionsMenu = ({
             onClick={() => setDeleteOpen(true)}
           >
             <Trash />
-            Delete
+            {t("actions.delete")}
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu>

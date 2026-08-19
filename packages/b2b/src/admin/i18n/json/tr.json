@@ -1,0 +1,308 @@
+{
+  "general": {
+    "new": "Yeni",
+    "removed": "Kaldırıldı",
+    "modified": "Değiştirildi",
+    "error": "Hata",
+    "noRecords": "Kayıt yok"
+  },
+  "actions": {
+    "continue": "Devam et",
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "saving": "Kaydediliyor...",
+    "add": "Ekle",
+    "edit": "Düzenle",
+    "delete": "Sil",
+    "remove": "Kaldır",
+    "undo": "Geri al",
+    "create": "Oluştur",
+    "send": "Gönder",
+    "addItems": "Öğe Ekle",
+    "duplicate": "Çoğalt"
+  },
+  "fields": {
+    "id": "ID",
+    "name": "Ad",
+    "email": "E-posta",
+    "phone": "Telefon",
+    "address": "Adres",
+    "company": "Şirket",
+    "status": "Durum",
+    "items": "Öğeler",
+    "total": "Toplam",
+    "createdAt": "Oluşturulma Tarihi",
+    "updatedAt": "Güncellenme Tarihi",
+    "search": "Ara",
+    "qty": "Adet",
+    "sku": "SKU",
+    "title": "Başlık",
+    "price": "Fiyat",
+    "actions": "İşlemler",
+    "currency": "Para Birimi",
+    "city": "Şehir",
+    "state": "Eyalet",
+    "country": "Ülke",
+    "spendingLimit": "Harcama Limiti"
+  },
+  "orders": {
+    "edits": {
+      "currentTotal": "Mevcut Toplam",
+      "newTotal": "Yeni Toplam",
+      "validation": {
+        "quantityLowerThanFulfillment": "Miktar, karşılanan miktardan düşük olamaz"
+      }
+    }
+  },
+  "overview": {
+    "title": "B2B",
+    "subtitle": "B2B ticaret operasyonlarınızı yönetin.",
+    "commerce": {
+      "title": "B2B Ticaret",
+      "subtitle": "Şirketleri, teklifleri, onayları ve B2B fiyatlandırmasını yönetin."
+    },
+    "stats": {
+      "companies": "Şirketler",
+      "employees": "Çalışanlar",
+      "pendingQuotes": "Bekleyen Teklifler",
+      "pendingApprovals": "Bekleyen Onaylar"
+    },
+    "nav": {
+      "companies": {
+        "title": "Şirketler",
+        "description": "B2B şirketlerini, çalışanları ve müşteri gruplarını yönetin."
+      },
+      "quotes": {
+        "title": "Teklifler",
+        "description": "Teklif taleplerini inceleyin ve yönetin."
+      },
+      "approvals": {
+        "title": "Onaylar",
+        "description": "B2B onayı gerektiren sepetleri inceleyin."
+      },
+      "pricing": {
+        "title": "Fiyatlandırma",
+        "description": "B2B satış kanalları ve müşteri grupları için fiyatlandırmayı yönetin."
+      }
+    }
+  },
+  "companies": {
+    "title": "Şirketler",
+    "label": "Şirketler",
+    "notFound": "Şirket bulunamadı",
+    "form": {
+      "name": "Şirket Adı",
+      "phone": "Şirket Telefonu",
+      "email": "Şirket E-postası",
+      "address": "Şirket Adresi",
+      "city": "Şirket Şehri",
+      "state": "Şirket Eyaleti",
+      "zip": "Şirket Posta Kodu",
+      "country": "Şirket Ülkesi",
+      "currency": "Para Birimi",
+      "logoUrl": "Şirket Logo URL'si",
+      "selectCountry": "Bir ülke seçin",
+      "selectCurrency": "Bir para birimi seçin",
+      "createTitle": "Şirket Oluştur",
+      "editTitle": "Şirketi Düzenle"
+    },
+    "detail": {
+      "phone": "Telefon",
+      "email": "E-posta",
+      "address": "Adres",
+      "city": "Şehir",
+      "state": "Eyalet",
+      "currency": "Para Birimi",
+      "customerGroup": "Müşteri Grubu",
+      "approvalSettings": "Onay Ayarları",
+      "requiresAdmin": "Yönetici onayı gerektirir",
+      "requiresSalesManager": "Satış müdürü onayı gerektirir",
+      "noApprovalRequired": "Onay gerekmiyor"
+    },
+    "actions": {
+      "editDetails": "Ayrıntıları düzenle",
+      "manageCustomerGroup": "Müşteri grubunu yönet",
+      "approvalSettings": "Onay ayarları",
+      "delete": "Sil"
+    },
+    "table": {
+      "employees": "Çalışanlar",
+      "customerGroup": "Müşteri Grubu",
+      "noRecordsTitle": "Şirket bulunamadı",
+      "noRecordsMessage": "Şu anda hiç şirket yok. Başlamak için bir tane oluşturun."
+    },
+    "toasts": {
+      "deleted": "Company {{name}} deleted successfully",
+      "updated": "Company {{name}} updated successfully",
+      "updateError": "Failed to update company",
+      "addedToGroup": "Company added to customer group successfully",
+      "removedFromGroup": "Company removed from customer group successfully",
+      "addToGroupError": "Failed to add company to customer group",
+      "removeFromGroupError": "Failed to remove company from customer group",
+      "approvalSettingsUpdated": "Company approval settings updated successfully",
+      "approvalSettingsError": "Failed to update company approval settings"
+    },
+    "approvalSettings": {
+      "title": "Company Approval Settings",
+      "requiresAdmin": "Requires Admin Approval",
+      "requiresAdminDescription": "Require company admin approval for all orders placed by this company.",
+      "requiresSalesManager": "Requires Sales Manager Approval",
+      "requiresSalesManagerDescription": "Require sales manager approval for all orders placed by this company."
+    },
+    "customerGroup": {
+      "drawerTitle": "Add {{name}} to a Customer Group",
+      "hint": "Adding {{name}} to a customer group will automatically add {{count}} linked employee{{plural}} to the customer group.",
+      "header": "Müşteri Grubu",
+      "actionsHeader": "İşlemler",
+      "noGroups": "No customer groups found",
+      "remove": "Kaldır",
+      "add": "Ekle",
+      "addedSuccess": "Company added to customer group successfully",
+      "removedSuccess": "Company removed from customer group successfully",
+      "addError": "Failed to add company to customer group",
+      "removeError": "Failed to remove company from customer group"
+    }
+  },
+  "employees": {
+    "title": "Çalışanlar",
+    "label": "Çalışanlar",
+    "admin": "Yönetici",
+    "noRecords": "Bu şirketin hiç çalışanı yok.",
+    "form": {
+      "details": "Ayrıntılar",
+      "firstName": "Ad",
+      "lastName": "Soyad",
+      "email": "E-posta",
+      "phone": "Telefon",
+      "permissions": "İzinler",
+      "spendingLimit": "Spending Limit ({{currency}})",
+      "adminAccess": "Yönetici Erişimi",
+      "isAdmin": "Yönetici",
+      "isAdminDescription": "Yönetici erişimi vermek için etkinleştirin",
+      "isAdminTooltip": "Admins can manage the company's details and employee permissions.",
+      "editCustomerDetails": "Müşteri Ayrıntılarını Düzenle",
+      "name": "Ad",
+      "company": "Şirket"
+    },
+    "drawers": {
+      "addTitle": "Şirket Müşterisi Ekle",
+      "editTitle": "Çalışanı Düzenle"
+    },
+    "table": {
+      "name": "Ad",
+      "email": "E-posta",
+      "spendingLimit": "Harcama Limiti",
+      "actions": "İşlemler"
+    },
+    "toasts": {
+      "created": "Employee {{firstName}} {{lastName}} created successfully",
+      "updated": "Employee {{email}} updated successfully",
+      "deleted": "Employee deleted successfully",
+      "createCustomerError": "Failed to create customer",
+      "createEmployeeError": "Failed to create employee"
+    }
+  },
+  "quotes": {
+    "title": "Teklifler",
+    "label": "Teklifler",
+    "table": {
+      "noRecordsTitle": "Teklif bulunamadı",
+      "noRecordsMessage": "Şu anda hiç teklif yok. Mağazadan bir tane oluşturun."
+    },
+    "status": {
+      "accepted": "Kabul Edildi",
+      "customer_rejected": "Müşteri Tarafından Reddedildi",
+      "merchant_rejected": "Satıcı Tarafından Reddedildi",
+      "pending_merchant": "Satıcı Bekleniyor",
+      "pending_customer": "Müşteri Bekleniyor"
+    },
+    "detail": {
+      "acceptedMessage": "Quote accepted by customer. Order is ready for processing.",
+      "viewOrder": "Siparişi Görüntüle",
+      "rejectQuote": "Teklifi Reddet",
+      "sendQuote": "Teklifi Gönder",
+      "customer": "Müşteri",
+      "email": "E-posta",
+      "phone": "Telefon",
+      "spendingLimit": "Harcama Limiti",
+      "company": "Şirket",
+      "name": "Ad"
+    },
+    "summary": {
+      "title": "Teklif Özeti",
+      "manage": "Yönet"
+    },
+    "cost": {
+      "discounts": "İndirimler",
+      "shipping": "Kargo"
+    },
+    "total": {
+      "original": "Orijinal Toplam",
+      "quote": "Teklif Toplamı"
+    },
+    "messages": {
+      "title": "Mesajlar",
+      "pickItem": "Pick Quote Item",
+      "pickItemHint": "Select a quote item to write a message around",
+      "selectItem": "Öğe Seç",
+      "send": "Gönder",
+      "sentSuccess": "Successfully sent message to customer"
+    },
+    "manage": {
+      "title": "Teklifi Yönet",
+      "priceOverrideHint": "Override the unit price of this product",
+      "updatePrice": "Fiyatı Güncelle"
+    },
+    "prompts": {
+      "send": {
+        "title": "Teklif gönderilsin mi?",
+        "description": "You are about to send this quote to the customer. Do you want to continue?"
+      },
+      "reject": {
+        "title": "Teklif reddedilsin mi?",
+        "description": "You are about to reject this customer's quote. Do you want to continue?"
+      }
+    },
+    "toasts": {
+      "sent": "Successfully sent quote to customer",
+      "rejected": "Successfully rejected customer's quote",
+      "messageSent": "Successfully sent message to customer",
+      "updated": "Successfully updated quote"
+    }
+  },
+  "approvals": {
+    "title": "Onaylar",
+    "label": "Onaylar",
+    "table": {
+      "updatedAt": "Updated at",
+      "actions": "İşlemler",
+      "noRecordsTitle": "Onay bulunamadı",
+      "noRecordsMessage": "Şu anda hiç onay yok."
+    },
+    "filters": {
+      "status": "Durum",
+      "pending": "Bekliyor",
+      "approved": "Onaylandı",
+      "rejected": "Reddedildi"
+    },
+    "prompts": {
+      "approve": {
+        "title": "Are you sure you want to approve this cart?",
+        "description": "Bu işlem geri alınamaz."
+      },
+      "reject": {
+        "title": "Are you sure you want to reject this cart?",
+        "description": "Bu işlem geri alınamaz."
+      }
+    },
+    "items": {
+      "itemTotal": "Öğe toplamı:"
+    }
+  },
+  "deletePrompt": {
+    "title": "Silmeyi Onayla",
+    "description": "Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+    "delete": "Sil",
+    "cancel": "İptal"
+  }
+}

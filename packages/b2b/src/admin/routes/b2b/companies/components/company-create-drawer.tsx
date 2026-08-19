@@ -1,11 +1,13 @@
 import { Button, Drawer } from "@medusajs/ui";
 import { AdminCreateCompany } from "../../../../../types";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useCreateCompany } from "../../../../hooks/api";
 import { CompanyForm } from "./company-form.tsx";
 
 export function CompanyCreateDrawer() {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   const { mutateAsync, isPending, error } = useCreateCompany();
 
@@ -21,12 +23,12 @@ export function CompanyCreateDrawer() {
     <Drawer open={open} onOpenChange={setOpen}>
       <Drawer.Trigger asChild>
         <Button variant="secondary" size="small">
-          Create
+          {t("actions.create")}
         </Button>
       </Drawer.Trigger>
       <Drawer.Content>
         <Drawer.Header>
-          <Drawer.Title>Create Company</Drawer.Title>
+          <Drawer.Title>{t("companies.form.createTitle")}</Drawer.Title>
         </Drawer.Header>
         <CompanyForm
           handleSubmit={handleSubmit}

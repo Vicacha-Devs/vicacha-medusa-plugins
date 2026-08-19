@@ -1,0 +1,308 @@
+{
+  "general": {
+    "new": "جديد",
+    "removed": "تمت الإزالة",
+    "modified": "تم التعديل",
+    "error": "خطأ",
+    "noRecords": "لا توجد سجلات"
+  },
+  "actions": {
+    "continue": "متابعة",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "saving": "جارٍ الحفظ...",
+    "add": "إضافة",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "remove": "إزالة",
+    "undo": "تراجع",
+    "create": "إنشاء",
+    "send": "إرسال",
+    "addItems": "إضافة عناصر",
+    "duplicate": "تكرار"
+  },
+  "fields": {
+    "id": "ID",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "address": "العنوان",
+    "company": "الشركة",
+    "status": "الحالة",
+    "items": "العناصر",
+    "total": "الإجمالي",
+    "createdAt": "تاريخ الإنشاء",
+    "updatedAt": "تاريخ التحديث",
+    "search": "بحث",
+    "qty": "الكمية",
+    "sku": "SKU",
+    "title": "العنوان",
+    "price": "السعر",
+    "actions": "الإجراءات",
+    "currency": "العملة",
+    "city": "المدينة",
+    "state": "الولاية/المنطقة",
+    "country": "البلد",
+    "spendingLimit": "حد الإنفاق"
+  },
+  "orders": {
+    "edits": {
+      "currentTotal": "الإجمالي الحالي",
+      "newTotal": "الإجمالي الجديد",
+      "validation": {
+        "quantityLowerThanFulfillment": "لا يمكن أن تكون الكمية أقل من الكمية التي تم تنفيذها"
+      }
+    }
+  },
+  "overview": {
+    "title": "B2B",
+    "subtitle": "إدارة عمليات التجارة بين الشركات.",
+    "commerce": {
+      "title": "التجارة بين الشركات",
+      "subtitle": "إدارة الشركات وعروض الأسعار والموافقات وتسعير التجارة بين الشركات."
+    },
+    "stats": {
+      "companies": "الشركات",
+      "employees": "الموظفون",
+      "pendingQuotes": "عروض الأسعار المعلقة",
+      "pendingApprovals": "الموافقات المعلقة"
+    },
+    "nav": {
+      "companies": {
+        "title": "الشركات",
+        "description": "إدارة شركات B2B والموظفين ومجموعات العملاء."
+      },
+      "quotes": {
+        "title": "عروض الأسعار",
+        "description": "مراجعة وإدارة طلبات عروض الأسعار."
+      },
+      "approvals": {
+        "title": "الموافقات",
+        "description": "مراجعة عربات التسوق التي تتطلب موافقة B2B."
+      },
+      "pricing": {
+        "title": "التسعير",
+        "description": "إدارة التسعير لقنوات مبيعات B2B ومجموعات العملاء."
+      }
+    }
+  },
+  "companies": {
+    "title": "الشركات",
+    "label": "الشركات",
+    "notFound": "لم يتم العثور على الشركة",
+    "form": {
+      "name": "اسم الشركة",
+      "phone": "هاتف الشركة",
+      "email": "البريد الإلكتروني للشركة",
+      "address": "عنوان الشركة",
+      "city": "مدينة الشركة",
+      "state": "ولاية/منطقة الشركة",
+      "zip": "الرمز البريدي للشركة",
+      "country": "بلد الشركة",
+      "currency": "العملة",
+      "logoUrl": "رابط شعار الشركة",
+      "selectCountry": "اختر بلدًا",
+      "selectCurrency": "اختر عملة",
+      "createTitle": "إنشاء شركة",
+      "editTitle": "تعديل الشركة"
+    },
+    "detail": {
+      "phone": "الهاتف",
+      "email": "البريد الإلكتروني",
+      "address": "العنوان",
+      "city": "المدينة",
+      "state": "الولاية/المنطقة",
+      "currency": "العملة",
+      "customerGroup": "مجموعة العملاء",
+      "approvalSettings": "إعدادات الموافقة",
+      "requiresAdmin": "يتطلب موافقة المسؤول",
+      "requiresSalesManager": "يتطلب موافقة مدير المبيعات",
+      "noApprovalRequired": "لا يلزم الحصول على موافقة"
+    },
+    "actions": {
+      "editDetails": "تعديل التفاصيل",
+      "manageCustomerGroup": "إدارة مجموعة العملاء",
+      "approvalSettings": "إعدادات الموافقة",
+      "delete": "حذف"
+    },
+    "table": {
+      "employees": "الموظفون",
+      "customerGroup": "مجموعة العملاء",
+      "noRecordsTitle": "لم يتم العثور على شركات",
+      "noRecordsMessage": "لا توجد شركات حاليًا. أنشئ واحدة للبدء."
+    },
+    "toasts": {
+      "deleted": "Company {{name}} deleted successfully",
+      "updated": "Company {{name}} updated successfully",
+      "updateError": "Failed to update company",
+      "addedToGroup": "Company added to customer group successfully",
+      "removedFromGroup": "Company removed from customer group successfully",
+      "addToGroupError": "Failed to add company to customer group",
+      "removeFromGroupError": "Failed to remove company from customer group",
+      "approvalSettingsUpdated": "Company approval settings updated successfully",
+      "approvalSettingsError": "Failed to update company approval settings"
+    },
+    "approvalSettings": {
+      "title": "Company Approval Settings",
+      "requiresAdmin": "Requires Admin Approval",
+      "requiresAdminDescription": "Require company admin approval for all orders placed by this company.",
+      "requiresSalesManager": "Requires Sales Manager Approval",
+      "requiresSalesManagerDescription": "Require sales manager approval for all orders placed by this company."
+    },
+    "customerGroup": {
+      "drawerTitle": "Add {{name}} to a Customer Group",
+      "hint": "Adding {{name}} to a customer group will automatically add {{count}} linked employee{{plural}} to the customer group.",
+      "header": "مجموعة العملاء",
+      "actionsHeader": "الإجراءات",
+      "noGroups": "No customer groups found",
+      "remove": "إزالة",
+      "add": "إضافة",
+      "addedSuccess": "Company added to customer group successfully",
+      "removedSuccess": "Company removed from customer group successfully",
+      "addError": "Failed to add company to customer group",
+      "removeError": "Failed to remove company from customer group"
+    }
+  },
+  "employees": {
+    "title": "الموظفون",
+    "label": "الموظفون",
+    "admin": "مسؤول",
+    "noRecords": "ليس لدى هذه الشركة أي موظفين.",
+    "form": {
+      "details": "التفاصيل",
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "permissions": "الأذونات",
+      "spendingLimit": "Spending Limit ({{currency}})",
+      "adminAccess": "وصول المسؤول",
+      "isAdmin": "مسؤول",
+      "isAdminDescription": "فعّل لمنح وصول المسؤول",
+      "isAdminTooltip": "Admins can manage the company's details and employee permissions.",
+      "editCustomerDetails": "تعديل تفاصيل العميل",
+      "name": "الاسم",
+      "company": "الشركة"
+    },
+    "drawers": {
+      "addTitle": "إضافة عميل للشركة",
+      "editTitle": "تعديل الموظف"
+    },
+    "table": {
+      "name": "الاسم",
+      "email": "البريد الإلكتروني",
+      "spendingLimit": "حد الإنفاق",
+      "actions": "الإجراءات"
+    },
+    "toasts": {
+      "created": "Employee {{firstName}} {{lastName}} created successfully",
+      "updated": "Employee {{email}} updated successfully",
+      "deleted": "Employee deleted successfully",
+      "createCustomerError": "Failed to create customer",
+      "createEmployeeError": "Failed to create employee"
+    }
+  },
+  "quotes": {
+    "title": "عروض الأسعار",
+    "label": "عروض الأسعار",
+    "table": {
+      "noRecordsTitle": "لم يتم العثور على عروض أسعار",
+      "noRecordsMessage": "لا توجد عروض أسعار حاليًا. أنشئ واحدًا من المتجر."
+    },
+    "status": {
+      "accepted": "مقبول",
+      "customer_rejected": "مرفوض من العميل",
+      "merchant_rejected": "مرفوض من التاجر",
+      "pending_merchant": "بانتظار التاجر",
+      "pending_customer": "بانتظار العميل"
+    },
+    "detail": {
+      "acceptedMessage": "Quote accepted by customer. Order is ready for processing.",
+      "viewOrder": "عرض الطلب",
+      "rejectQuote": "رفض عرض السعر",
+      "sendQuote": "إرسال عرض السعر",
+      "customer": "العميل",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "spendingLimit": "حد الإنفاق",
+      "company": "الشركة",
+      "name": "الاسم"
+    },
+    "summary": {
+      "title": "ملخص عرض السعر",
+      "manage": "إدارة"
+    },
+    "cost": {
+      "discounts": "الخصومات",
+      "shipping": "الشحن"
+    },
+    "total": {
+      "original": "الإجمالي الأصلي",
+      "quote": "إجمالي عرض السعر"
+    },
+    "messages": {
+      "title": "الرسائل",
+      "pickItem": "Pick Quote Item",
+      "pickItemHint": "Select a quote item to write a message around",
+      "selectItem": "اختر عنصرًا",
+      "send": "إرسال",
+      "sentSuccess": "Successfully sent message to customer"
+    },
+    "manage": {
+      "title": "إدارة عرض السعر",
+      "priceOverrideHint": "Override the unit price of this product",
+      "updatePrice": "تحديث السعر"
+    },
+    "prompts": {
+      "send": {
+        "title": "هل تريد إرسال عرض السعر؟",
+        "description": "You are about to send this quote to the customer. Do you want to continue?"
+      },
+      "reject": {
+        "title": "هل تريد رفض عرض السعر؟",
+        "description": "You are about to reject this customer's quote. Do you want to continue?"
+      }
+    },
+    "toasts": {
+      "sent": "Successfully sent quote to customer",
+      "rejected": "Successfully rejected customer's quote",
+      "messageSent": "Successfully sent message to customer",
+      "updated": "Successfully updated quote"
+    }
+  },
+  "approvals": {
+    "title": "الموافقات",
+    "label": "الموافقات",
+    "table": {
+      "updatedAt": "Updated at",
+      "actions": "الإجراءات",
+      "noRecordsTitle": "لم يتم العثور على موافقات",
+      "noRecordsMessage": "لا توجد موافقات حاليًا."
+    },
+    "filters": {
+      "status": "الحالة",
+      "pending": "معلق",
+      "approved": "تمت الموافقة",
+      "rejected": "مرفوض"
+    },
+    "prompts": {
+      "approve": {
+        "title": "Are you sure you want to approve this cart?",
+        "description": "لا يمكن التراجع عن هذا الإجراء."
+      },
+      "reject": {
+        "title": "Are you sure you want to reject this cart?",
+        "description": "لا يمكن التراجع عن هذا الإجراء."
+      }
+    },
+    "items": {
+      "itemTotal": "إجمالي العنصر:"
+    }
+  },
+  "deletePrompt": {
+    "title": "تأكيد الحذف",
+    "description": "هل أنت متأكد من أنك تريد حذف هذا العنصر؟ لا يمكن التراجع عن هذا الإجراء.",
+    "delete": "حذف",
+    "cancel": "إلغاء"
+  }
+}

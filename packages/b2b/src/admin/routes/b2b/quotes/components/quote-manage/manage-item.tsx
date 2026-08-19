@@ -235,7 +235,7 @@ function ManageItem({
               {
                 actions: [
                   {
-                    label: "Update Price",
+                    label: t("quotes.manage.updatePrice"),
                     onClick: () => setShowPriceForm(!showPriceForm),
                     icon: <PencilSquare />,
                   },
@@ -273,7 +273,7 @@ function ManageItem({
           <div>
             <Form.Label>{t("fields.price")}</Form.Label>
             <Form.Hint className="!mt-1">
-              Override the unit price of this product
+              {t("quotes.manage.priceOverrideHint")}
             </Form.Hint>
           </div>
 

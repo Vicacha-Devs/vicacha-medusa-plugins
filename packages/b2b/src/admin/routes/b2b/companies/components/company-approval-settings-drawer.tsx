@@ -1,5 +1,6 @@
 import { Button, Drawer, toast } from "@medusajs/ui";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { QueryCompany } from "../../../../../types";
 import { CoolSwitch } from "../../../../components/common";
 import { useUpdateApprovalSettings } from "../../../../hooks/api";
@@ -13,6 +14,8 @@ export function CompanyApprovalSettingsDrawer({
   open: boolean;
   setOpen: (open: boolean) => void;
 }) {
+  const { t } = useTranslation();
+
   const [requiresAdminApproval, setRequiresAdminApproval] = useState(
     company.approval_settings?.requires_admin_approval || false
   );
@@ -35,10 +38,10 @@ export function CompanyApprovalSettingsDrawer({
       {
         onSuccess: async () => {
           setOpen(false);
-          toast.success("Company approval settings updated successfully");
+          toast.success(t("companies.toasts.approvalSettingsUpdated"));
         },
-        onError: (error) => {
-          toast.error("Failed to update company approval settings");
+        onError: () => {
+          toast.error(t("companies.toasts.approvalSettingsError"));
         },
       }
     );
@@ -48,7 +51,7 @@ export function CompanyApprovalSettingsDrawer({
     <Drawer open={open} onOpenChange={setOpen}>
       <Drawer.Content className="z-50">
         <Drawer.Header>
-          <Drawer.Title>Company Approval Settings</Drawer.Title>
+          <Drawer.Title>{t("companies.approvalSettings.title")}</Drawer.Title>
         </Drawer.Header>
         <Drawer.Body className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
@@ -56,8 +59,8 @@ export function CompanyApprovalSettingsDrawer({
               checked={requiresAdminApproval}
               onChange={() => setRequiresAdminApproval(!requiresAdminApproval)}
               fieldName="requires_admin_approval"
-              label="Requires Admin Approval"
-              description="Require company admin approval for all orders placed by this company."
+              label={t("companies.approvalSettings.requiresAdmin")}
+              description={t("companies.approvalSettings.requiresAdminDescription")}
             />
           </div>
 
@@ -68,17 +71,17 @@ export function CompanyApprovalSettingsDrawer({
                 setRequiresSalesManagerApproval(!requiresSalesManagerApproval)
               }
               fieldName="requires_sales_manager_approval"
-              label="Requires Sales Manager Approval"
-              description="Require sales manager approval for all orders placed by this company."
+              label={t("companies.approvalSettings.requiresSalesManager")}
+              description={t("companies.approvalSettings.requiresSalesManagerDescription")}
             />
           </div>
         </Drawer.Body>
         <Drawer.Footer>
           <Button variant="secondary" onClick={() => setOpen(false)}>
-            Cancel
+            {t("actions.cancel")}
           </Button>
           <Button onClick={handleSubmit} isLoading={isPending}>
-            Save
+            {t("actions.save")}
           </Button>
         </Drawer.Footer>
       </Drawer.Content>

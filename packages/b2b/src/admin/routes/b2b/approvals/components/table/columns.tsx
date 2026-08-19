@@ -20,7 +20,7 @@ export const useApprovalsTableColumns = () => {
         cell: ({ getValue }) => <TextCell text={`#${getValue().slice(-4)}`} />,
       }),
       columnHelper.accessor("updated_at", {
-        header: t("Updated at"),
+        header: t("approvals.table.updatedAt"),
         cell: ({ getValue }) => <DateCell date={getValue()} />,
       }),
       columnHelper.accessor("company.name", {
@@ -56,7 +56,7 @@ export const useApprovalsTableColumns = () => {
         ),
       }),
       columnHelper.accessor("actions", {
-        header: t("Actions"),
+        header: t("approvals.table.actions"),
         cell: ({ row }) => <ApprovalActions cart={row.original} />,
       }),
     ],

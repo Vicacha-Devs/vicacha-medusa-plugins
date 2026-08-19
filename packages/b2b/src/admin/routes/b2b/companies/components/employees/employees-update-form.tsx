@@ -8,6 +8,7 @@ import {
   Text,
 } from "@medusajs/ui";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   AdminUpdateEmployee,
   QueryCompany,
@@ -29,6 +30,8 @@ export function EmployeesUpdateForm({
   loading: boolean;
   error: Error | null;
 }) {
+  const { t } = useTranslation();
+
   const [formData, setFormData] = useState<{
     spending_limit: string;
     is_admin: boolean;
@@ -62,12 +65,12 @@ export function EmployeesUpdateForm({
         <div className="flex flex-col gap-2">
           <div className="flex flex-col gap-2 mb-4">
             <div className="flex items-center justify-between">
-              <h2 className="h2-core">Details</h2>
+              <h2 className="h2-core">{t("employees.form.details")}</h2>
               <a
                 href={`/app/customers/${employee?.customer!.id}/edit`}
                 className="txt-compact-small text-ui-fg-interactive hover:text-ui-fg-interactive-hover self-end"
               >
-                Edit Customer Details
+                {t("employees.form.editCustomerDetails")}
               </a>
             </div>
             <Container className="p-0 overflow-hidden">
@@ -75,7 +78,7 @@ export function EmployeesUpdateForm({
                 <Table.Body>
                   <Table.Row>
                     <Table.Cell className="font-medium font-sans txt-compact-small">
-                      Name
+                      {t("employees.form.name")}
                     </Table.Cell>
                     <Table.Cell>
                       {employee?.customer!.first_name}{" "}
@@ -84,19 +87,19 @@ export function EmployeesUpdateForm({
                   </Table.Row>
                   <Table.Row>
                     <Table.Cell className="font-medium font-sans txt-compact-small">
-                      Email
+                      {t("employees.form.email")}
                     </Table.Cell>
                     <Table.Cell>{employee?.customer!.email}</Table.Cell>
                   </Table.Row>
                   <Table.Row>
                     <Table.Cell className="font-medium font-sans txt-compact-small">
-                      Phone
+                      {t("employees.form.phone")}
                     </Table.Cell>
                     <Table.Cell>{employee?.customer!.phone}</Table.Cell>
                   </Table.Row>
                   <Table.Row>
                     <Table.Cell className="font-medium font-sans txt-compact-small">
-                      Company
+                      {t("employees.form.company")}
                     </Table.Cell>
                     <Table.Cell>{company.name}</Table.Cell>
                   </Table.Row>
@@ -105,10 +108,10 @@ export function EmployeesUpdateForm({
             </Container>
           </div>
           <div className="flex flex-col gap-4">
-            <h2 className="h2-core">Permissions</h2>
+            <h2 className="h2-core">{t("employees.form.permissions")}</h2>
             <div className="flex flex-col gap-2">
               <Label size="xsmall" className="txt-compact-small font-medium">
-                Spending Limit
+                {t("fields.spendingLimit")}
               </Label>
               <CurrencyInput
                 symbol={currencySymbolMap[company.currency_code || "USD"]}
@@ -126,17 +129,17 @@ export function EmployeesUpdateForm({
             </div>
             <div className="flex flex-col gap-2">
               <Label size="xsmall" className="txt-compact-small font-medium">
-                Admin Access
+                {t("employees.form.adminAccess")}
               </Label>
               <CoolSwitch
                 fieldName="is_admin"
-                label="Is Admin"
-                description="Enable to grant admin access"
+                label={t("employees.form.isAdmin")}
+                description={t("employees.form.isAdminDescription")}
                 checked={formData.is_admin}
                 onChange={(checked) =>
                   setFormData({ ...formData, is_admin: checked })
                 }
-                tooltip="Admins can manage the company's details and employee permissions."
+                tooltip={t("employees.form.isAdminTooltip")}
               />
             </div>
           </div>
@@ -144,10 +147,10 @@ export function EmployeesUpdateForm({
       </Drawer.Body>
       <Drawer.Footer>
         <Drawer.Close asChild>
-          <Button variant="secondary">Cancel</Button>
+          <Button variant="secondary">{t("actions.cancel")}</Button>
         </Drawer.Close>
         <Button type="submit" disabled={loading}>
-          {loading ? "Saving..." : "Save"}
+          {loading ? t("actions.saving") : t("actions.save")}
         </Button>
         {error && <Text className="text-red-500">{error.message}</Text>}
       </Drawer.Footer>

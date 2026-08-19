@@ -1,12 +1,5 @@
 import { StatusBadge } from "@medusajs/ui";
-
-const StatusTitles: Record<string, string> = {
-  accepted: "Accepted",
-  customer_rejected: "Customer Rejected",
-  merchant_rejected: "Merchant Rejected",
-  pending_merchant: "Pending Merchant",
-  pending_customer: "Pending Customer",
-};
+import { useTranslation } from "react-i18next";
 
 const StatusColors: Record<string, "green" | "orange" | "red" | "blue"> = {
   accepted: "green",
@@ -17,9 +10,19 @@ const StatusColors: Record<string, "green" | "orange" | "red" | "blue"> = {
 };
 
 export default function QuoteStatusBadge({ status }: { status: string }) {
+  const { t } = useTranslation();
+
+  const titles: Record<string, string> = {
+    accepted: t("quotes.status.accepted"),
+    customer_rejected: t("quotes.status.customer_rejected"),
+    merchant_rejected: t("quotes.status.merchant_rejected"),
+    pending_merchant: t("quotes.status.pending_merchant"),
+    pending_customer: t("quotes.status.pending_customer"),
+  };
+
   return (
     <StatusBadge color={StatusColors[status]}>
-      {StatusTitles[status]}
+      {titles[status]}
     </StatusBadge>
   );
 }

@@ -21,7 +21,7 @@ export const QuoteTotal = ({
           size="small"
           leading="compact"
         >
-          Original Total
+          {t("quotes.total.original")}
         </Text>
         <Text
           weight="plus"
@@ -40,7 +40,7 @@ export const QuoteTotal = ({
           leading="compact"
           weight="plus"
         >
-          Quote Total
+          {t("quotes.total.quote")}
         </Text>
         <Text
           className="text-ui-fg-subtle text-bold"

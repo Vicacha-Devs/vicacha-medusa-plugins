@@ -10,6 +10,7 @@ import {
 } from "@medusajs/ui";
 import { QueryEmployee } from "../../../../../types";
 import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAdminCustomerGroups, useCompany } from "../../../../hooks/api";
 import { formatAmount } from "../../../../utils";
 import { CompanyActionsMenu } from "../components/index.ts";
@@ -20,6 +21,7 @@ import {
 
 const CompanyDetails = () => {
   const { companyId } = useParams();
+  const { t } = useTranslation();
   const { data, isPending } = useCompany(companyId!, {
     fields:
       "*employees,*employees.customer,*employees.company,*customer_group,*approval_settings",
@@ -30,7 +32,7 @@ const CompanyDetails = () => {
   const company = data?.company;
 
   if (!company) {
-    return <div>Company not found</div>;
+    return <div>{t("companies.notFound")}</div>;
   }
 
   return (
@@ -57,37 +59,37 @@ const CompanyDetails = () => {
               <Table.Body>
                 <Table.Row>
                   <Table.Cell className="font-medium font-sans txt-compact-small max-w-fit">
-                    Phone
+                    {t("companies.detail.phone")}
                   </Table.Cell>
                   <Table.Cell>{company?.phone}</Table.Cell>
                 </Table.Row>
                 <Table.Row>
                   <Table.Cell className="font-medium font-sans txt-compact-small">
-                    Email
+                    {t("companies.detail.email")}
                   </Table.Cell>
                   <Table.Cell>{company?.email}</Table.Cell>
                 </Table.Row>
                 <Table.Row>
                   <Table.Cell className="font-medium font-sans txt-compact-small">
-                    Address
+                    {t("companies.detail.address")}
                   </Table.Cell>
                   <Table.Cell>{company?.address}</Table.Cell>
                 </Table.Row>
                 <Table.Row>
                   <Table.Cell className="font-medium font-sans txt-compact-small">
-                    City
+                    {t("companies.detail.city")}
                   </Table.Cell>
                   <Table.Cell>{company?.city}</Table.Cell>
                 </Table.Row>
                 <Table.Row>
                   <Table.Cell className="font-medium font-sans txt-compact-small">
-                    State
+                    {t("companies.detail.state")}
                   </Table.Cell>
                   <Table.Cell>{company?.state}</Table.Cell>
                 </Table.Row>
                 <Table.Row>
                   <Table.Cell className="font-medium font-sans txt-compact-small">
-                    Currency
+                    {t("companies.detail.currency")}
                   </Table.Cell>
                   <Table.Cell>
                     {company?.currency_code?.toUpperCase()}
@@ -95,7 +97,7 @@ const CompanyDetails = () => {
                 </Table.Row>
                 <Table.Row>
                   <Table.Cell className="font-medium font-sans txt-compact-small">
-                    Customer Group
+                    {t("companies.detail.customerGroup")}
                   </Table.Cell>
                   <Table.Cell>
                     {company?.customer_group ? (
@@ -109,26 +111,26 @@ const CompanyDetails = () => {
                 </Table.Row>
                 <Table.Row>
                   <Table.Cell className="font-medium font-sans txt-compact-small">
-                    Approval Settings
+                    {t("companies.detail.approvalSettings")}
                   </Table.Cell>
                   <Table.Cell>
                     <div className="flex gap-2">
                       {company?.approval_settings?.requires_admin_approval && (
                         <Badge size="small" color="purple">
-                          Requires admin approval
+                          {t("companies.detail.requiresAdmin")}
                         </Badge>
                       )}
                       {company?.approval_settings
                         ?.requires_sales_manager_approval && (
                         <Badge size="small" color="purple">
-                          Requires sales manager approval
+                          {t("companies.detail.requiresSalesManager")}
                         </Badge>
                       )}
                       {!company?.approval_settings?.requires_admin_approval &&
                         !company?.approval_settings
                           ?.requires_sales_manager_approval && (
                           <Badge size="small" color="grey">
-                            No approval required
+                            {t("companies.detail.noApprovalRequired")}
                           </Badge>
                         )}
                     </div>
@@ -145,7 +147,7 @@ const CompanyDetails = () => {
             <div className="flex items-center gap-2 px-6 py-4 justify-between border-b border-gray-200">
               <div className="flex items-center gap-2">
                 <Heading className="font-sans font-medium h1-core">
-                  Employees
+                  {t("employees.title")}
                 </Heading>
               </div>
               <EmployeeCreateDrawer company={company} />
@@ -155,10 +157,10 @@ const CompanyDetails = () => {
                 <Table.Header>
                   <Table.Row>
                     <Table.HeaderCell></Table.HeaderCell>
-                    <Table.HeaderCell>Name</Table.HeaderCell>
-                    <Table.HeaderCell>Email</Table.HeaderCell>
-                    <Table.HeaderCell>Spending Limit</Table.HeaderCell>
-                    <Table.HeaderCell>Actions</Table.HeaderCell>
+                    <Table.HeaderCell>{t("employees.table.name")}</Table.HeaderCell>
+                    <Table.HeaderCell>{t("employees.table.email")}</Table.HeaderCell>
+                    <Table.HeaderCell>{t("employees.table.spendingLimit")}</Table.HeaderCell>
+                    <Table.HeaderCell>{t("employees.table.actions")}</Table.HeaderCell>
                   </Table.Row>
                 </Table.Header>
                 <Table.Body>
@@ -187,7 +189,7 @@ const CompanyDetails = () => {
                             size="2xsmall"
                             color={employee.is_admin ? "green" : "grey"}
                           >
-                            Admin
+                            {t("employees.admin")}
                           </Badge>
                         )}
                       </Table.Cell>
@@ -214,10 +216,10 @@ const CompanyDetails = () => {
                   <ExclamationCircle />
                   <div className="flex flex-col items-center gap-y-1">
                     <Text className="font-medium font-sans txt-compact-small">
-                      No records
+                      {t("general.noRecords")}
                     </Text>
                     <Text className="txt-small text-ui-fg-muted">
-                      This company doesn't have any employees.
+                      {t("employees.noRecords")}
                     </Text>
                   </div>
                 </div>

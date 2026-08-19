@@ -1,13 +1,16 @@
 import { AdminOrder } from "@medusajs/framework/types";
 import { Text } from "@medusajs/ui";
 import { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import { formatAmount } from "../../../../../utils";
 
 export const CostBreakdown = ({ order }: { order: AdminOrder }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="text-ui-fg-subtle flex flex-col gap-y-2 px-6 py-4">
       <Cost
-        label="Discounts"
+        label={t("quotes.cost.discounts")}
         secondaryValue=""
         value={
           order.discount_total > 0
@@ -19,12 +22,11 @@ export const CostBreakdown = ({ order }: { order: AdminOrder }) => {
         .sort((m1, m2) =>
           (m1.created_at as string).localeCompare(m2.created_at as string)
         )
-        .map((sm, i) => {
+        .map((sm) => {
           return (
-            <div>
+            <div key={sm.id}>
               <Cost
-                key={sm.id}
-                label={"Shipping"}
+                label={t("quotes.cost.shipping")}
                 secondaryValue={sm.name}
                 value={formatAmount(sm.total, order.currency_code)}
               />

@@ -49,14 +49,14 @@ export const useCompaniesTableColumns = (
       }),
       columnHelper.display({
         id: "employees",
-        header: "Employees",
+        header: t("companies.table.employees"),
         cell: ({ row }) => (
           <TextCell text={row.original.employees?.length ?? 0} />
         ),
       }),
       columnHelper.display({
         id: "customer_group",
-        header: "Customer Group",
+        header: t("companies.table.customerGroup"),
         cell: ({ row }) =>
           row.original.customer_group?.name ? (
             <Badge size="small" color="blue">

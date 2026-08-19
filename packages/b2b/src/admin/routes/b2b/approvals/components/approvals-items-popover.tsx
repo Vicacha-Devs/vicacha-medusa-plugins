@@ -1,5 +1,6 @@
 import { MagnifyingGlass } from "@medusajs/icons";
 import { Popover, Table, Text } from "@medusajs/ui";
+import { useTranslation } from "react-i18next";
 import { formatAmount } from "../../../../utils/format-amount.ts";
 
 const ItemsPopover = ({
@@ -9,6 +10,8 @@ const ItemsPopover = ({
   items: Record<string, any>[];
   currencyCode: any;
 }) => {
+  const { t } = useTranslation();
+
   return (
     <Popover>
       <Popover.Trigger className="flex text-right items-center gap-1 hover:cursor-pointer">
@@ -45,7 +48,7 @@ const ItemsPopover = ({
                       {formatAmount(item.unit_price, currencyCode)}
                       <br />
                       <Text className="font-medium">
-                        Item total:{" "}
+                        {t("approvals.items.itemTotal")}{" "}
                         {formatAmount(
                           item.quantity * item.unit_price,
                           currencyCode
