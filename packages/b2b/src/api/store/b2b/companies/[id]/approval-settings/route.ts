@@ -1,8 +1,8 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
-import { updateApprovalSettingsWorkflow } from "../../../../../../workflows/approval/workflows/update-approval-settings";
-import { storeApprovalSettingsFields } from "../../query-config";
-import { StoreUpdateApprovalSettingsType } from "../../validators";
+import { updateApprovalSettingsWorkflow } from "@b2b/workflows/approval/workflows/update-approval-settings";
+import { storeApprovalSettingsFields } from "@b2b/api/store/b2b/companies/query-config";
+import { StoreUpdateApprovalSettingsType } from "@b2b/api/store/b2b/companies/validators";
 
 export const POST = async (
   req: MedusaRequest<StoreUpdateApprovalSettingsType>,

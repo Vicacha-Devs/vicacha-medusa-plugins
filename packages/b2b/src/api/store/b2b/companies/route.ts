@@ -3,7 +3,7 @@ import type {
   MedusaResponse,
 } from "@medusajs/framework";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
-import { createCompaniesWorkflow } from "../../../../workflows/company/workflows/create-companies";
+import { createCompaniesWorkflow } from "@b2b/workflows/company/workflows/create-companies";
 import { StoreCreateCompanyType } from "./validators";
 
 export const POST = async (

@@ -1,6 +1,6 @@
 import { createWorkflow, WorkflowResponse } from "@medusajs/framework/workflows-sdk";
 import { createRemoteLinkStep } from "@medusajs/core-flows";
-import { COMPANY_MODULE } from "../../../modules/company";
+import { COMPANY_MODULE } from "@b2b/modules/company";
 import { Modules } from "@medusajs/framework/utils";
 import { addCompanyEmployeesToCustomerGroupStep } from "../steps/add-company-employees-to-customer-group";
 

@@ -1,12 +1,12 @@
 import { ContainerRegistrationKeys, MedusaError } from "@medusajs/framework/utils"
 import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk";
-import { APPROVAL_MODULE } from "../../../modules/approval";
+import { APPROVAL_MODULE } from "@b2b/modules/approval";
 import {
   ApprovalStatusType,
   ApprovalType,
   IApprovalModuleService,
   ModuleCreateApproval,
-} from "../../../types";
+} from "@b2b/types";
 
 export const createApprovalStep = createStep(
   "create-approval",

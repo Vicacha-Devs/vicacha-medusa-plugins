@@ -4,10 +4,10 @@ import {
   transform,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk";
-import { APPROVAL_MODULE } from "../../../modules/approval";
-import { COMPANY_MODULE } from "../../../modules/company";
-import { ModuleCreateCompany } from "../../../types";
-import { createApprovalSettingsStep } from "../../../workflows/approval/steps/create-approval-settings";
+import { APPROVAL_MODULE } from "@b2b/modules/approval";
+import { COMPANY_MODULE } from "@b2b/modules/company";
+import { ModuleCreateCompany } from "@b2b/types";
+import { createApprovalSettingsStep } from "@b2b/workflows/approval/steps/create-approval-settings";
 import { createCompaniesStep } from "../steps";
 
 export const createCompaniesWorkflow = createWorkflow(

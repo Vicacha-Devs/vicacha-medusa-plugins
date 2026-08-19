@@ -3,8 +3,8 @@ import {
   MedusaResponse,
 } from "@medusajs/framework";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
-import { addCompanyToCustomerGroupWorkflow } from "../../../../../../workflows/company/workflows";
-import { AdminAddCompanyToCustomerGroupType } from "../../validators";
+import { addCompanyToCustomerGroupWorkflow } from "@b2b/workflows/company/workflows";
+import { AdminAddCompanyToCustomerGroupType } from "@b2b/api/admin/b2b/companies/validators";
 
 export const POST = async (
   req: AuthenticatedMedusaRequest<AdminAddCompanyToCustomerGroupType>,

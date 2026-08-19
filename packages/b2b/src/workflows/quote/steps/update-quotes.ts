@@ -3,8 +3,8 @@ import {
   getSelectsAndRelationsFromObjectArray,
 } from "@medusajs/framework/utils";
 import { StepResponse, createStep } from "@medusajs/framework/workflows-sdk";
-import { QUOTE_MODULE } from "../../../modules/quote";
-import { IQuoteModuleService, ModuleUpdateQuote } from "../../../types";
+import { QUOTE_MODULE } from "@b2b/modules/quote";
+import { IQuoteModuleService, ModuleUpdateQuote } from "@b2b/types";
 
 /*
   A step to update a quote.

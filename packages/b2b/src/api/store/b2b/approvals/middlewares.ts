@@ -8,8 +8,8 @@ import {
   validateAndTransformQuery,
 } from "@medusajs/framework";
 import { MiddlewareRoute } from "@medusajs/medusa";
-import { ensureRole } from "../../../middlewares/ensure-role";
-import { ApprovalType } from "../../../../types/approval";
+import { ensureRole } from "@b2b/api/middlewares/ensure-role";
+import { ApprovalType } from "@b2b/types/approval";
 import { approvalTransformQueryConfig } from "./query-config";
 import { StoreGetApprovals, StoreUpdateApproval } from "./validators";
 

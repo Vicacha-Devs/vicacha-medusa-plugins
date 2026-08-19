@@ -6,7 +6,7 @@ import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
 import {
   deleteCompaniesWorkflow,
   updateCompaniesWorkflow,
-} from "../../../../../workflows/company/workflows";
+} from "@b2b/workflows/company/workflows";
 import {
   AdminGetCompanyParamsType,
   AdminUpdateCompanyType,

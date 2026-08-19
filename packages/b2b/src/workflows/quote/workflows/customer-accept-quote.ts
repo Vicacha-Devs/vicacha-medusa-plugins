@@ -4,7 +4,7 @@ import {
 } from "@medusajs/core-flows";
 import { OrderStatus } from "@medusajs/framework/utils";
 import { createWorkflow } from "@medusajs/framework/workflows-sdk";
-import { updateOrderWorkflow } from "../../order/workflows/update-order";
+import { updateOrderWorkflow } from "@b2b/workflows/order/workflows/update-order";
 import { validateQuoteAcceptanceStep } from "../steps/validate-quote-acceptance";
 import { updateQuotesWorkflow } from "./update-quote";
 

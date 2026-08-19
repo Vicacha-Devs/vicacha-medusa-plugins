@@ -2,7 +2,7 @@ import {
   AuthenticatedMedusaRequest,
   MedusaResponse,
 } from "@medusajs/framework";
-import { updateApprovalsWorkflow } from "../../../../../workflows/approval/workflows";
+import { updateApprovalsWorkflow } from "@b2b/workflows/approval/workflows";
 import { StoreUpdateApprovalType } from "../validators";
 
 export const POST = async (

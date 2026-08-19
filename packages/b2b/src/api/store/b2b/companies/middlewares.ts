@@ -4,7 +4,7 @@ import {
   validateAndTransformQuery,
 } from "@medusajs/framework";
 import { authenticate } from "@medusajs/medusa";
-import { ensureRole } from "../../../middlewares/ensure-role";
+import { ensureRole } from "@b2b/api/middlewares/ensure-role";
 import {
   storeCompanyQueryConfig,
   storeEmployeeQueryConfig,

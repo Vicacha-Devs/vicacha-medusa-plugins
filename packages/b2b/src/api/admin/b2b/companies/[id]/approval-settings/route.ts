@@ -3,9 +3,9 @@ import type {
   MedusaResponse,
 } from "@medusajs/framework";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
-import { updateApprovalSettingsWorkflow } from "../../../../../../workflows/approval/workflows";
-import { adminApprovalSettingsFields } from "../../query-config";
-import { AdminCreateApprovalSettingsType } from "../../validators";
+import { updateApprovalSettingsWorkflow } from "@b2b/workflows/approval/workflows";
+import { adminApprovalSettingsFields } from "@b2b/api/admin/b2b/companies/query-config";
+import { AdminCreateApprovalSettingsType } from "@b2b/api/admin/b2b/companies/validators";
 
 export const GET = async (
   req: AuthenticatedMedusaRequest,

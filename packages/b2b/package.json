@@ -33,7 +33,7 @@
     "medusa-v2"
   ],
   "scripts": {
-    "build": "medusa plugin:build",
+    "build": "medusa plugin:build && tsc-alias -p tsconfig.json",
     "publish:local": "medusa plugin:publish",
     "dev": "medusa plugin:develop",
     "lint": "medusa lint",
@@ -67,13 +67,13 @@
     "@types/react-dom": "18.2.25",
     "cmdk": "1.1.1",
     "date-fns": "4.4.0",
-    "eslint": "9.0.0",
     "jiti": "2.0.0",
     "lodash": "4.18.1",
     "prop-types": "15.8.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "ts-node": "10.9.2",
+    "tsc-alias": "^1.9.2",
     "typescript": "5.6.2",
     "vite": "5.2.11"
   },

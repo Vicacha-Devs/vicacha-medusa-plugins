@@ -2,8 +2,8 @@ import {
   AuthenticatedMedusaRequest,
   MedusaResponse,
 } from "@medusajs/framework";
-import { ApprovalStatusType } from "../../../../../../types/approval";
-import { createApprovalsWorkflow } from "../../../../../../workflows/approval/workflows";
+import { ApprovalStatusType } from "@b2b/types/approval";
+import { createApprovalsWorkflow } from "@b2b/workflows/approval/workflows";
 
 export const POST = async (
   req: AuthenticatedMedusaRequest,

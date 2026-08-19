@@ -1,10 +1,10 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
-import { createEmployeesWorkflow } from "../../../../../../workflows/employee/workflows";
+import { createEmployeesWorkflow } from "@b2b/workflows/employee/workflows";
 import {
   AdminCreateEmployeeType,
   AdminGetEmployeeParamsType,
-} from "../../validators";
+} from "@b2b/api/admin/b2b/companies/validators";
 
 export const GET = async (
   req: MedusaRequest<AdminGetEmployeeParamsType>,

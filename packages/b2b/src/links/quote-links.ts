@@ -1,6 +1,6 @@
 import { Modules } from "@medusajs/framework/utils";
 import { MedusaModule } from "@medusajs/framework/modules-sdk";
-import { QUOTE_MODULE } from "../modules/quote";
+import { QUOTE_MODULE } from "@b2b/modules/quote";
 
 MedusaModule.setCustomLink(() => {
   return {

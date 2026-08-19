@@ -1,9 +1,9 @@
 import { transform } from "@medusajs/framework/workflows-sdk";
 import { createRemoteLinkStep } from "@medusajs/medusa/core-flows";
 import { createWorkflow, WorkflowResponse } from "@medusajs/framework/workflows-sdk";
-import { APPROVAL_MODULE } from "../../../modules/approval";
-import { COMPANY_MODULE } from "../../../modules/company";
-import { ModuleCompany } from "../../../types";
+import { APPROVAL_MODULE } from "@b2b/modules/approval";
+import { COMPANY_MODULE } from "@b2b/modules/company";
+import { ModuleCompany } from "@b2b/types";
 import { createApprovalSettingsStep } from "../steps";
 
 export const createApprovalSettingsWorkflow = createWorkflow(

@@ -6,11 +6,11 @@ import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
 import {
   deleteEmployeesWorkflow,
   updateEmployeesWorkflow,
-} from "../../../../../../../workflows/employee/workflows";
+} from "@b2b/workflows/employee/workflows";
 import {
   AdminGetEmployeeParamsType,
   AdminUpdateEmployeeType,
-} from "../../../validators";
+} from "@b2b/api/admin/b2b/companies/validators";
 
 export const GET = async (
   req: AuthenticatedMedusaRequest<AdminGetEmployeeParamsType>,

@@ -3,8 +3,8 @@ import type {
   MedusaResponse,
 } from "@medusajs/framework";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
-import { merchantSendQuoteWorkflow } from "../../../../../../workflows/quote/workflows";
-import { AdminSendQuoteType } from "../../validators";
+import { merchantSendQuoteWorkflow } from "@b2b/workflows/quote/workflows";
+import { AdminSendQuoteType } from "@b2b/api/admin/b2b/quotes/validators";
 
 export const POST = async (
   req: AuthenticatedMedusaRequest<AdminSendQuoteType>,

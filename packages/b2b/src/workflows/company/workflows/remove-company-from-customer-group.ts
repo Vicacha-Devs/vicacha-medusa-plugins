@@ -1,7 +1,7 @@
 import { Modules } from "@medusajs/framework/utils";
 import { removeRemoteLinkStep } from "@medusajs/medusa/core-flows";
 import { createWorkflow, WorkflowResponse } from "@medusajs/framework/workflows-sdk";
-import { COMPANY_MODULE } from "../../../modules/company";
+import { COMPANY_MODULE } from "@b2b/modules/company";
 import { removeCompanyEmployeesFromCustomerGroupStep } from "../steps/remove-company-employees-from-customer-group";
 
 export const removeCompanyFromCustomerGroupWorkflow = createWorkflow(
