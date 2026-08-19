@@ -16,7 +16,7 @@ import {
   useCompanies,
   useQuotes,
   useApprovals,
-} from "../../hooks/api";
+} from "@/hooks/api";
 
 const B2BOverview = () => {
   const { t } = useTranslation();

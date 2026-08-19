@@ -6,7 +6,7 @@ import {
 import { Badge, Copy, Text } from "@medusajs/ui";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { AmountCell, Thumbnail } from "../../../../../components/common";
+import { AmountCell, Thumbnail } from "@/components/common";
 
 export const QuoteItems = ({
   order,

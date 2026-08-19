@@ -1,11 +1,11 @@
 import { HttpTypes } from "@medusajs/types";
 import { Button, Drawer, Hint, Table, toast } from "@medusajs/ui";
 import { useTranslation } from "react-i18next";
-import { QueryCompany } from "../../../../../types";
+import { QueryCompany } from "@/../types";
 import {
   useAddCompanyToCustomerGroup,
   useRemoveCompanyFromCustomerGroup,
-} from "../../../../hooks/api";
+} from "@/hooks/api";
 
 export function CompanyCustomerGroupDrawer({
   company,

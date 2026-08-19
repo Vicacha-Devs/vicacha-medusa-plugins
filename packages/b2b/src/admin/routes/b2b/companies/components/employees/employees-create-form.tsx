@@ -8,9 +8,9 @@ import {
 } from "@medusajs/ui";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AdminCreateEmployee, QueryCompany } from "../../../../../../types";
-import { CoolSwitch } from "../../../../../components/common";
-import { currencySymbolMap } from "../../../../../utils";
+import { AdminCreateEmployee, QueryCompany } from "@/../types";
+import { CoolSwitch } from "@/components/common";
+import { currencySymbolMap } from "@/utils";
 
 export function EmployeesCreateForm({
   handleSubmit,

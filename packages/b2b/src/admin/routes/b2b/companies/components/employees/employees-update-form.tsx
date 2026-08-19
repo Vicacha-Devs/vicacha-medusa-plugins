@@ -13,9 +13,9 @@ import {
   AdminUpdateEmployee,
   QueryCompany,
   QueryEmployee,
-} from "../../../../../../types";
-import { CoolSwitch } from "../../../../../components/common";
-import { currencySymbolMap } from "../../../../../utils";
+} from "@/../types";
+import { CoolSwitch } from "@/components/common";
+import { currencySymbolMap } from "@/utils";
 
 export function EmployeesUpdateForm({
   company,

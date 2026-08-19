@@ -4,7 +4,7 @@ import {
   AdminCompanyResponse,
   AdminCreateCompany,
   AdminUpdateCompany,
-} from "../../../types";
+} from "@/../types";
 import {
   QueryKey,
   useMutation,
@@ -13,8 +13,8 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from "@tanstack/react-query";
-import { queryKeysFactory } from "../../lib/query-key-factory";
-import { sdk } from "../../lib/client";
+import { queryKeysFactory } from "@/lib/query-key-factory";
+import { sdk } from "@/lib/client";
 
 export const companyQueryKey = queryKeysFactory("company");
 

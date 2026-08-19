@@ -1,11 +1,11 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { TextCell } from "../../../../../components/common/table/table-cells/text-cell.tsx";
+import { TextCell } from "@/components/common/table/table-cells/text-cell.tsx";
 import { StatusBadge } from "@medusajs/ui";
-import { ApprovalStatusType } from "../../../../../../types/approval";
+import { ApprovalStatusType } from "@/../types/approval";
 import ItemsPopover from "../approvals-items-popover.tsx";
-import { DateCell } from "../../../../../components/common/table/table-cells/date-cell.tsx";
+import { DateCell } from "@/components/common/table/table-cells/date-cell.tsx";
 import { ApprovalActions } from "../approval-actions.tsx";
 
 const columnHelper = createColumnHelper<any>();

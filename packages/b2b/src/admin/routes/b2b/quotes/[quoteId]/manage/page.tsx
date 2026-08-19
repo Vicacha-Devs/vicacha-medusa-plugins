@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
-import { RouteFocusModal } from "../../../../../components/common/modals/route-focus-modal/route-focus-modal.tsx";
-import { useQuote } from "../../../../../hooks/api/quotes.tsx";
+import { RouteFocusModal } from "@/components/common/modals/route-focus-modal/route-focus-modal.tsx";
+import { useQuote } from "@/hooks/api/quotes.tsx";
 import { ManageQuoteForm } from "../../components/index.ts";
 
 const QuoteManage = () => {

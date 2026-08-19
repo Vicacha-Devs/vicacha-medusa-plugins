@@ -1,4 +1,4 @@
-import { useQueryParams } from "../../../../../hooks/use-query-params.tsx";
+import { useQueryParams } from "@/hooks/use-query-params.tsx";
 
 export const useQuotesTableQuery = ({
   pageSize = 50,
