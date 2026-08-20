@@ -21,9 +21,20 @@ const Quotes = () => {
   );
 };
 
+const Breadcrumb = () =>{
+  const { t } = useTranslation()
+
+  return t("quotes.title")
+}
+
 export const config = defineRouteConfig({
   label: "Quotes",
   icon: DocumentText,
 });
+
+export const handle = {
+  breadcrumb: () => <Breadcrumb/>,
+}
+
 
 export default Quotes;

@@ -214,9 +214,21 @@ const NavigationCard = ({
   );
 };
 
+const Breadcrumb = () => {
+  const { t } = useTranslation()
+
+  return t("overview.title")
+}
+
 export const config = defineRouteConfig({
   label: "Overview (B2B)",
   icon: BuildingStorefront,
 });
+
+
+export const handle = {
+  breadcrumb: () => <Breadcrumb />,
+}
+
 
 export default B2BOverview;

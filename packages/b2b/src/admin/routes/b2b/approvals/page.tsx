@@ -20,9 +20,20 @@ const Approvals = () => {
   );
 };
 
+const Breadcrumb = () => {
+  const { t } = useTranslation()
+
+  return t("approvals.title")
+}
+
 export const config = defineRouteConfig({
   label: "Approvals",
   icon: CheckCircle,
 });
+
+export const handle = {
+  breadcrumb: () => <Breadcrumb />,
+}
+
 
 export default Approvals;

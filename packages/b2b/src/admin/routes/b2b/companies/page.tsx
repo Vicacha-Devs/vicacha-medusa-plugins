@@ -28,9 +28,20 @@ const Companies = () => {
   );
 };
 
+const Breadcrumb = () => {
+  const { t } = useTranslation()
+
+  return t("companies.title")
+}
+
 export const config = defineRouteConfig({
   label: "Companies",
   icon: BuildingStorefront,
 });
+
+export const handle = {
+  breadcrumb: () => <Breadcrumb />,
+}
+
 
 export default Companies;
