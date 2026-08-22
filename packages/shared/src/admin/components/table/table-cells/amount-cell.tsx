@@ -1,5 +1,5 @@
 import { clx } from "@medusajs/ui";
-import { formatAmount } from "@vicacha-devs/shared/admin";
+import { formatAmount } from "../../../utils";
 
 import { PlaceholderCell } from "./placeholder-cell";
 
