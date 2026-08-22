@@ -1,0 +1,21 @@
+{
+  "name": "@vicacha-devs/shared",
+  "version": "0.0.1",
+  "description": "Shared admin components, hooks, and utilities for Vicacha Devs Medusa plugins",
+  "private": true,
+  "exports": {
+    "./admin": "./src/admin/index.ts",
+    "./admin/*": "./src/admin/*.ts"
+  },
+  "peerDependencies": {
+    "@medusajs/icons": "*",
+    "@medusajs/ui": "*",
+    "@tanstack/react-table": "*",
+    "@uiw/react-json-view": "*",
+    "react": "*",
+    "react-hook-form": "*",
+    "react-i18next": "*",
+    "react-router-dom": "*",
+    "zod": "*"
+  }
+}

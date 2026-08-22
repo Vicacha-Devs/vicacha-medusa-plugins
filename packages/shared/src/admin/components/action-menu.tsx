@@ -3,7 +3,7 @@ import { EllipsisHorizontal } from "@medusajs/icons";
 import { PropsWithChildren, ReactNode } from "react";
 import { Link } from "react-router-dom";
 
-import { useDocumentDirection } from "../../hooks";
+import { useDocumentDirection } from "../hooks";
 import { ConditionalTooltip } from "./conditional-tooltip";
 
 export type Action = {
