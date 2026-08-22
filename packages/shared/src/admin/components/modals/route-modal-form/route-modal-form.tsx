@@ -3,7 +3,7 @@ import { PropsWithChildren } from "react"
 import { FieldValues, UseFormReturn } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { useBlocker } from "react-router-dom"
-import { Form } from "../../common/form"
+import { Form } from "../../form"
 
 type RouteModalFormProps<TFieldValues extends FieldValues> = PropsWithChildren<{
   form: UseFormReturn<TFieldValues>

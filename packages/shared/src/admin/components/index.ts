@@ -5,7 +5,7 @@ export * from "./delete-prompt";
 export * from "./filtering";
 export * from "./form";
 export * from "./json-view-section";
-export * from "./modals/route-focus-modal";
+export * from "./modals";
 export * from "./skeleton";
 export * from "./table";
 export * from "./thumbnail";

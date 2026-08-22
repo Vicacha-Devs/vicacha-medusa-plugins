@@ -6,8 +6,8 @@ import {
   Tooltip,
   clx,
 } from "@medusajs/ui";
-import * as LabelPrimitives from "@radix-ui/react-label";
-import { Slot } from "@radix-ui/react-slot";
+import * as RadixLabel from "@radix-ui/react-label";
+import * as Slot from "@radix-ui/react-slot";
 import React, {
   ReactNode,
   createContext,
@@ -24,6 +24,7 @@ import {
   useFormContext,
   useFormState,
 } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 const Provider = FormProvider;
 
@@ -102,14 +103,15 @@ const Item = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
 Item.displayName = "Form.Item";
 
 const Label = forwardRef<
-  React.ElementRef<typeof LabelPrimitives.Root>,
-  React.ComponentPropsWithoutRef<typeof LabelPrimitives.Root> & {
+  React.ElementRef<typeof RadixLabel.Root>,
+  React.ComponentPropsWithoutRef<typeof RadixLabel.Root> & {
     optional?: boolean;
     tooltip?: ReactNode;
     icon?: ReactNode;
   }
 >(({ className, optional = false, tooltip, icon, ...props }, ref) => {
   const { formLabelId, formItemId } = useFormField();
+  const { t } = useTranslation();
 
   return (
     <div className="flex items-center gap-x-1">
@@ -130,7 +132,7 @@ const Label = forwardRef<
       {icon}
       {optional && (
         <Text size="small" leading="compact" className="text-ui-fg-muted">
-          Optional
+          ({t("fields.optional")})
         </Text>
       )}
     </div>
@@ -139,8 +141,8 @@ const Label = forwardRef<
 Label.displayName = "Form.Label";
 
 const Control = forwardRef<
-  React.ElementRef<typeof Slot>,
-  React.ComponentPropsWithoutRef<typeof Slot>
+  React.ElementRef<typeof Slot.Root>,
+  React.ComponentPropsWithoutRef<typeof Slot.Root>
 >(({ ...props }, ref) => {
   const {
     error,
@@ -151,7 +153,7 @@ const Control = forwardRef<
   } = useFormField();
 
   return (
-    <Slot
+    <Slot.Root
       ref={ref}
       id={formItemId}
       aria-describedby={
