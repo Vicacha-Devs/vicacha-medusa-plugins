@@ -539,11 +539,41 @@ src/
 
 ## Roadmap
 
-- [ ] Validate Edit and Create companies.
-- [ ] Bug: creating companies does not create companies.
 - [ ] Fix: check all typing issues and solve them.
 - [ ] Implement UI [DataTable](https://docs.medusajs.com/ui/components/data-table) and useDataTable. Note: maybe not since the ConfigurableDataTable could be the new standard.
-- [x] **Internationalization (i18n)** — full translation coverage for `en`, `es`, `tr`, and `ar`, including RTL layout support for Arabic.
+- [ ] Implement ConfigurableDataTable for Employees in Company view.
+
+- [ ] Integrate RBAC for approvals?
+
+> Approval Settings — How It Works
+> Who is "admin" vs "sales manager"?
+> There is no role system. The two flags on `ApprovalSettings` determine which approval types get created for a cart — not who acts on them:
+>
+> - `requires_admin_approval: true` → creates an `Approval` row with `type: "admin"`
+> - `requires_sales_manager_approval: true` → creates an `Approval` row with `type: "sales_manager"`
+>
+> The `Employee.is_admin` boolean exists on employees but the approval workflow never checks it. The `type` field on an `Approval` row is just a label — the > API doesn't enforce that only employees with `is_admin = true` can approve a `type: "admin"` row. Any authenticated user who knows the approval ID can call `POST /admin/b2b/approvals/:id` or `POST /store/b2b/approvals/:id`.
+>
+> The full flow
+>
+> 1. Company's ApprovalSettings has flags set (via admin drawer)
+>
+> 2. Store customer POSTs /store/b2b/carts/:id/approvals
+   → createApprovalStep creates one Approval row per enabled flag
+   → creates an ApprovalStatus row for the cart (status: "pending")
+>
+> 3. Cart checkout is blocked — completeCartWorkflow.validate hook
+   throws NOT_ALLOWED if any Approval is still "pending"
+>
+> 4. Someone calls POST /admin/b2b/approvals/:id (or store equivalent)
+>    → updateApprovalStep sets that row's status + handled_by
+>    → updateApprovalStatusStep re-evaluates the cart:
+>        - All approved → ApprovalStatus = "approved"
+>        - Any rejected → ApprovalStatus = "rejected" (immediately)
+>
+> 5. Once all Approval rows are "approved", checkout can proceed
+> Key implication
+> The system is trust-based — there's no enforcement that only a "sales manager" employee can handle a `type: "sales_manager"` approval. If your use case requires that, it would need to be added: e.g., check `Employee.is_admin` or a future `role` field before allowing the approval action.
 
 - **B2B / B2C product and price segmentation** — control product visibility and assign prices per audience (B2B only, B2C only, or both), with support for audience-specific price lists. (stashed)
 

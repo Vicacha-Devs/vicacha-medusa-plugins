@@ -1,8 +1,25 @@
 import { Button, Drawer, Input, Label, Select, Text } from "@medusajs/ui";
-import { AdminUpdateCompany } from "../../../../../types";
-import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { useTranslation } from "react-i18next";
+import { AdminUpdateCompany } from "../../../../../types";
 import { useRegions } from "../../../../hooks/api";
+
+const companySchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().min(1, "Email is required").check(z.email({ error: "Invalid email address" })),
+  currency_code: z.string().min(1, "Currency is required"),
+  phone: z.string().optional(),
+  address: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  zip: z.string().optional(),
+  country: z.string().optional(),
+  logo_url: z.string().optional(),
+});
+
+type CompanyFormValues = z.infer<typeof companySchema>;
 
 export function CompanyForm({
   company,
@@ -16,144 +33,158 @@ export function CompanyForm({
   error: Error | null;
 }) {
   const { t } = useTranslation();
-
-  const [formData, setFormData] = useState<AdminUpdateCompany>(
-    company || ({} as AdminUpdateCompany)
-  );
-
   const { regions, isPending: regionsLoading } = useRegions();
 
-  const currencyCodes = regions?.map((region) => region.currency_code);
-  const countries = regions?.flatMap((region) => region.countries);
+  const currencyCodes = regions?.map((r) => r.currency_code);
+  const countries = regions?.flatMap((r) => r.countries);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const {
+    register,
+    handleSubmit: rhfHandleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<CompanyFormValues>({
+    resolver: zodResolver(companySchema),
+    defaultValues: {
+      name: company?.name ?? "",
+      email: company?.email ?? "",
+      currency_code: company?.currency_code ?? "",
+      phone: company?.phone ?? "",
+      address: company?.address ?? "",
+      city: company?.city ?? "",
+      state: company?.state ?? "",
+      zip: company?.zip ?? "",
+      country: company?.country ?? "",
+      logo_url: company?.logo_url ?? "",
+    },
+  });
 
-  const handleCurrencyChange = (value: string) => {
-    setFormData({ ...formData, currency_code: value });
-  };
-
-  const handleCountryChange = (value: string) => {
-    setFormData({ ...formData, country: value });
-  };
+  const onSubmit = rhfHandleSubmit((data) => handleSubmit(data));
 
   return (
-    <form>
+    <form onSubmit={onSubmit}>
       <Drawer.Body className="p-4">
         <div className="flex flex-col gap-2">
-          <Label size="xsmall">{t("companies.form.name")}</Label>
+          <Label size="xsmall">{t("companies.form.name")} *</Label>
           <Input
             type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
             placeholder="Medusa"
+            className={errors.name ? "border-ui-fg-error" : ""}
+            {...register("name")}
           />
+          {errors.name && (
+            <Text className="txt-compact-xsmall text-ui-fg-error">{errors.name.message}</Text>
+          )}
+
           <Label size="xsmall">{t("companies.form.phone")}</Label>
           <Input
             type="text"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
             placeholder="1234567890"
+            {...register("phone")}
           />
-          <Label size="xsmall">{t("companies.form.email")}</Label>
+
+          <Label size="xsmall">{t("companies.form.email")} *</Label>
           <Input
             type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
             placeholder="medusa@medusa.com"
+            className={errors.email ? "border-ui-fg-error" : ""}
+            {...register("email")}
           />
+          {errors.email && (
+            <Text className="txt-compact-xsmall text-ui-fg-error">{errors.email.message}</Text>
+          )}
+
           <Label size="xsmall">{t("companies.form.address")}</Label>
           <Input
             type="text"
-            name="address"
-            value={formData.address || ""}
-            onChange={handleChange}
             placeholder="1234 Main St"
+            {...register("address")}
           />
           <Label size="xsmall">{t("companies.form.city")}</Label>
           <Input
             type="text"
-            name="city"
-            value={formData.city || ""}
-            onChange={handleChange}
             placeholder="New York"
+            {...register("city")}
           />
           <Label size="xsmall">{t("companies.form.state")}</Label>
           <Input
             type="text"
-            name="state"
-            value={formData.state || ""}
-            onChange={handleChange}
             placeholder="NY"
+            {...register("state")}
           />
           <Label size="xsmall">{t("companies.form.zip")}</Label>
           <Input
             type="text"
-            name="zip"
-            value={formData.zip || ""}
-            onChange={handleChange}
             placeholder="10001"
+            {...register("zip")}
           />
           <div className="flex gap-4 w-full">
             <div className="flex flex-col gap-2 w-1/2">
               <Label size="xsmall">{t("companies.form.country")}</Label>
-              <Select
+              <Controller
                 name="country"
-                value={formData.country || ""}
-                onValueChange={handleCountryChange}
-                disabled={regionsLoading}
-              >
-                <Select.Trigger disabled={regionsLoading}>
-                  <Select.Value placeholder={t("companies.form.selectCountry")} />
-                </Select.Trigger>
-                <Select.Content className="z-50">
-                  {countries?.map((country) => (
-                    <Select.Item
-                      key={country?.iso_2 || ""}
-                      value={country?.iso_2 || ""}
-                    >
-                      {country?.name}
-                    </Select.Item>
-                  ))}
-                </Select.Content>
-              </Select>
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value || ""}
+                    onValueChange={field.onChange}
+                    disabled={regionsLoading}
+                  >
+                    <Select.Trigger disabled={regionsLoading}>
+                      <Select.Value placeholder={t("companies.form.selectCountry")} />
+                    </Select.Trigger>
+                    <Select.Content className="z-50">
+                      {countries?.map((country) => (
+                        <Select.Item
+                          key={country?.iso_2 || ""}
+                          value={country?.iso_2 || ""}
+                        >
+                          {country?.name}
+                        </Select.Item>
+                      ))}
+                    </Select.Content>
+                  </Select>
+                )}
+              />
             </div>
             <div className="flex flex-col gap-2 w-1/2">
-              <Label size="xsmall">{t("companies.form.currency")}</Label>
-
-              <Select
+              <Label size="xsmall">{t("companies.form.currency")} *</Label>
+              <Controller
                 name="currency_code"
-                value={formData.currency_code || ""}
-                onValueChange={handleCurrencyChange}
-                defaultValue={currencyCodes?.[0]}
-                disabled={regionsLoading}
-              >
-                <Select.Trigger disabled={regionsLoading}>
-                  <Select.Value placeholder={t("companies.form.selectCurrency")} />
-                </Select.Trigger>
-
-                <Select.Content className="z-50">
-                  {currencyCodes?.map((currencyCode) => (
-                    <Select.Item key={currencyCode} value={currencyCode}>
-                      {currencyCode.toUpperCase()}
-                    </Select.Item>
-                  ))}
-                </Select.Content>
-              </Select>
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value || ""}
+                    onValueChange={field.onChange}
+                    disabled={regionsLoading}
+                  >
+                    <Select.Trigger
+                      disabled={regionsLoading}
+                      className={errors.currency_code ? "border-ui-fg-error" : ""}
+                    >
+                      <Select.Value placeholder={t("companies.form.selectCurrency")} />
+                    </Select.Trigger>
+                    <Select.Content className="z-50">
+                      {currencyCodes?.map((currencyCode) => (
+                        <Select.Item key={currencyCode} value={currencyCode}>
+                          {currencyCode.toUpperCase()}
+                        </Select.Item>
+                      ))}
+                    </Select.Content>
+                  </Select>
+                )}
+              />
+              {errors.currency_code && (
+                <Text className="txt-compact-xsmall text-ui-fg-error">{errors.currency_code.message}</Text>
+              )}
             </div>
           </div>
           {/* TODO: Add logo upload */}
           <Label size="xsmall">{t("companies.form.logoUrl")}</Label>
           <Input
             type="text"
-            name="logo_url"
-            value={formData.logo_url || ""}
-            onChange={handleChange}
             placeholder="https://example.com/logo.png"
+            {...register("logo_url")}
           />
         </div>
       </Drawer.Body>
@@ -161,10 +192,7 @@ export function CompanyForm({
         <Drawer.Close asChild>
           <Button variant="secondary">{t("actions.cancel")}</Button>
         </Drawer.Close>
-        <Button
-          isLoading={loading}
-          onClick={async () => await handleSubmit(formData)}
-        >
+        <Button type="submit" isLoading={loading}>
           {t("actions.save")}
         </Button>
         {error && (

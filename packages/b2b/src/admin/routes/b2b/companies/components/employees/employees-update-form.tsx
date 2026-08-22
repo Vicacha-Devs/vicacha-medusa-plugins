@@ -7,8 +7,11 @@ import {
   Table,
   Text,
 } from "@medusajs/ui";
-import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { useTranslation } from "react-i18next";
+
 import {
   AdminUpdateEmployee,
   QueryCompany,
@@ -16,6 +19,13 @@ import {
 } from "../../../../../../types";
 import { CoolSwitch } from "../../../../../components/common";
 import { currencySymbolMap } from "../../../../../utils";
+
+const updateEmployeeSchema = z.object({
+  spending_limit: z.string().optional(),
+  is_admin: z.boolean(),
+});
+
+type UpdateEmployeeFormValues = z.infer<typeof updateEmployeeSchema>;
 
 export function EmployeesUpdateForm({
   company,
@@ -32,32 +42,25 @@ export function EmployeesUpdateForm({
 }) {
   const { t } = useTranslation();
 
-  const [formData, setFormData] = useState<{
-    spending_limit: string;
-    is_admin: boolean;
-  }>({
-    spending_limit: employee?.spending_limit?.toString() || "0",
-    is_admin: employee?.is_admin || false,
+  const {
+    handleSubmit: rhfHandleSubmit,
+    control,
+  } = useForm<UpdateEmployeeFormValues>({
+    resolver: zodResolver(updateEmployeeSchema),
+    defaultValues: {
+      spending_limit: employee?.spending_limit?.toString() || "0",
+      is_admin: employee?.is_admin || false,
+    },
   });
 
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = rhfHandleSubmit((data) => {
+    handleSubmit({
+      spending_limit: data.spending_limit ? Number(data.spending_limit) : undefined,
+      is_admin: data.is_admin,
+    });
+  });
 
-    const spendingLimit = formData.spending_limit
-      ? Number(formData.spending_limit)
-      : undefined;
-
-    const data = {
-      ...formData,
-      id: employee?.id,
-      spending_limit: spendingLimit,
-      raw_spending_limit: {
-        value: spendingLimit,
-      },
-    };
-
-    handleSubmit(data);
-  };
+  const currencyKey = (company.currency_code || "USD") as keyof typeof currencySymbolMap;
 
   return (
     <form onSubmit={onSubmit}>
@@ -113,33 +116,37 @@ export function EmployeesUpdateForm({
               <Label size="xsmall" className="txt-compact-small font-medium">
                 {t("fields.spendingLimit")}
               </Label>
-              <CurrencyInput
-                symbol={currencySymbolMap[company.currency_code || "USD"]}
-                code={company.currency_code || "USD"}
+              <Controller
                 name="spending_limit"
-                value={formData.spending_limit}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    spending_limit: e.target.value.replace(/[^0-9.]/g, ""),
-                  })
-                }
-                placeholder="1000"
+                control={control}
+                render={({ field }) => (
+                  <CurrencyInput
+                    symbol={currencySymbolMap[currencyKey]}
+                    code={company.currency_code || "USD"}
+                    placeholder="1000"
+                    value={field.value ?? ""}
+                    onChange={(e) => field.onChange(e.target.value.replace(/[^0-9]/g, ""))}
+                  />
+                )}
               />
             </div>
             <div className="flex flex-col gap-2">
               <Label size="xsmall" className="txt-compact-small font-medium">
                 {t("employees.form.adminAccess")}
               </Label>
-              <CoolSwitch
-                fieldName="is_admin"
-                label={t("employees.form.isAdmin")}
-                description={t("employees.form.isAdminDescription")}
-                checked={formData.is_admin}
-                onChange={(checked) =>
-                  setFormData({ ...formData, is_admin: checked })
-                }
-                tooltip={t("employees.form.isAdminTooltip")}
+              <Controller
+                name="is_admin"
+                control={control}
+                render={({ field }) => (
+                  <CoolSwitch
+                    fieldName="is_admin"
+                    label={t("employees.form.isAdmin")}
+                    description={t("employees.form.isAdminDescription")}
+                    checked={field.value}
+                    onChange={field.onChange}
+                    tooltip={t("employees.form.isAdminTooltip")}
+                  />
+                )}
               />
             </div>
           </div>
@@ -149,10 +156,10 @@ export function EmployeesUpdateForm({
         <Drawer.Close asChild>
           <Button variant="secondary">{t("actions.cancel")}</Button>
         </Drawer.Close>
-        <Button type="submit" disabled={loading}>
-          {loading ? t("actions.saving") : t("actions.save")}
+        <Button type="submit" isLoading={loading}>
+          {t("actions.save")}
         </Button>
-        {error && <Text className="text-red-500">{error.message}</Text>}
+        {error && <Text className="text-ui-fg-error">{error.message}</Text>}
       </Drawer.Footer>
     </form>
   );

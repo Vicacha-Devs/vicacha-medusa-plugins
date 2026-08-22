@@ -4,13 +4,27 @@ import {
   Drawer,
   Input,
   Label,
-  Text,
+  Text
 } from "@medusajs/ui";
-import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { useTranslation } from "react-i18next";
+
 import { AdminCreateEmployee, QueryCompany } from "../../../../../../types";
 import { CoolSwitch } from "../../../../../components/common";
 import { currencySymbolMap } from "../../../../../utils";
+
+const createEmployeeSchema = z.object({
+  first_name: z.string().optional(),
+  last_name: z.string().optional(),
+  email: z.string().min(1, "Email is required").check(z.email({ error: "Invalid email address" })),
+  phone: z.string().optional(),
+  spending_limit: z.string().optional(),
+  is_admin: z.boolean(),
+});
+
+type CreateEmployeeFormValues = z.infer<typeof createEmployeeSchema>;
 
 export function EmployeesCreateForm({
   handleSubmit,
@@ -25,42 +39,33 @@ export function EmployeesCreateForm({
 }) {
   const { t } = useTranslation();
 
-  const [formData, setFormData] = useState<
-    Omit<AdminCreateEmployee, "spending_limit"> & {
-      spending_limit: string;
-    }
-  >({
-    company_id: company.id,
-    is_admin: false,
-    spending_limit: "0",
-    customer_id: "",
+  const {
+    register,
+    handleSubmit: rhfHandleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<CreateEmployeeFormValues>({
+    resolver: zodResolver(createEmployeeSchema),
+    defaultValues: {
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone: "",
+      spending_limit: "0",
+      is_admin: false,
+    },
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const value =
-      e.target.type === "checkbox"
-        ? (e.target as HTMLInputElement).checked
-        : e.target.value;
+  const currencyKey = (company.currency_code || "USD") as keyof typeof currencySymbolMap;
 
-    setFormData({ ...formData, [e.target.name]: value });
-  };
-
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const spendingLimit = formData.spending_limit
-      ? parseInt(formData.spending_limit)
-      : 0;
-
-    const data = {
-      ...formData,
-      spending_limit: spendingLimit,
-    };
-
-    handleSubmit(data);
-  };
+  const onSubmit = rhfHandleSubmit((data) => {
+    handleSubmit({
+      ...data,
+      company_id: company.id,
+      customer_id: "",
+      spending_limit: data.spending_limit ? parseInt(data.spending_limit, 10) : 0,
+    });
+  });
 
   return (
     <form onSubmit={onSubmit}>
@@ -73,9 +78,8 @@ export function EmployeesCreateForm({
             </Label>
             <Input
               type="text"
-              name="first_name"
-              onChange={handleChange}
               placeholder="John"
+              {...register("first_name")}
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -84,21 +88,23 @@ export function EmployeesCreateForm({
             </Label>
             <Input
               type="text"
-              name="last_name"
-              onChange={handleChange}
               placeholder="Doe"
+              {...register("last_name")}
             />
           </div>
           <div className="flex flex-col gap-2">
             <Label size="xsmall" className="txt-compact-small font-medium">
-              {t("employees.form.email")}
+              {t("employees.form.email")} *
             </Label>
             <Input
               type="email"
-              name="email"
-              onChange={handleChange}
               placeholder="john.doe@example.com"
+              className={errors.email ? "border-ui-fg-error" : ""}
+              {...register("email")}
             />
+            {errors.email && (
+              <Text className="txt-compact-xsmall text-ui-fg-error">{errors.email.message}</Text>
+            )}
           </div>
           <div className="flex flex-col gap-2">
             <Label size="xsmall" className="txt-compact-small font-medium">
@@ -106,9 +112,8 @@ export function EmployeesCreateForm({
             </Label>
             <Input
               type="text"
-              name="phone"
-              onChange={handleChange}
               placeholder="0612345678"
+              {...register("phone")}
             />
           </div>
         </div>
@@ -120,34 +125,38 @@ export function EmployeesCreateForm({
                 currency: company.currency_code?.toUpperCase() || "USD",
               })}
             </Label>
-            <CurrencyInput
-              symbol={currencySymbolMap[company.currency_code || "USD"]}
-              code={company.currency_code || "USD"}
-              type="text"
+            <Controller
               name="spending_limit"
-              value={formData.spending_limit ? formData.spending_limit : ""}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  spending_limit: e.target.value.replace(/[^0-9]/g, ""),
-                })
-              }
-              placeholder="1000"
+              control={control}
+              render={({ field }) => (
+                <CurrencyInput
+                  symbol={currencySymbolMap[currencyKey]}
+                  code={company.currency_code || "USD"}
+                  type="text"
+                  placeholder="1000"
+                  value={field.value ?? ""}
+                  onChange={(e) => field.onChange(e.target.value.replace(/[^0-9]/g, ""))}
+                />
+              )}
             />
           </div>
           <div className="flex flex-col gap-2">
             <Label size="xsmall" className="txt-compact-small font-medium">
               {t("employees.form.adminAccess")}
             </Label>
-            <CoolSwitch
-              fieldName="is_admin"
-              label={t("employees.form.isAdmin")}
-              description={t("employees.form.isAdminDescription")}
-              checked={formData.is_admin || false}
-              onChange={(checked) =>
-                setFormData({ ...formData, is_admin: checked })
-              }
-              tooltip={t("employees.form.isAdminTooltip")}
+            <Controller
+              name="is_admin"
+              control={control}
+              render={({ field }) => (
+                <CoolSwitch
+                  fieldName="is_admin"
+                  label={t("employees.form.isAdmin")}
+                  description={t("employees.form.isAdminDescription")}
+                  checked={field.value}
+                  onChange={field.onChange}
+                  tooltip={t("employees.form.isAdminTooltip")}
+                />
+              )}
             />
           </div>
         </div>
@@ -156,10 +165,10 @@ export function EmployeesCreateForm({
         <Drawer.Close asChild>
           <Button variant="secondary">{t("actions.cancel")}</Button>
         </Drawer.Close>
-        <Button type="submit" disabled={loading}>
-          {loading ? t("actions.saving") : t("actions.save")}
+        <Button type="submit" isLoading={loading}>
+          {t("actions.save")}
         </Button>
-        {error && <Text className="text-red-500">{error.message}</Text>}
+        {error && <Text className="text-ui-fg-error">{error.message}</Text>}
       </Drawer.Footer>
     </form>
   );
