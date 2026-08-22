@@ -1,4 +1,6 @@
+import { Container, Heading, Text } from "@medusajs/ui";
 import { useTranslation } from "react-i18next";
+
 import { DataTable } from "../../../../components";
 import { useDataTable } from "../../../../hooks";
 import { useAdminCustomerGroups, useCompanies } from "../../../../hooks/api";
@@ -35,14 +37,22 @@ export const CompaniesTable = () => {
   const { table } = useDataTable({
     data: companies,
     columns,
-    enablePagination: true,
     count,
+    enablePagination: true,
     pageSize: PAGE_SIZE,
     prefix: PREFIX,
   });
 
   return (
-    <div className="flex size-full flex-col overflow-hidden">
+    <Container className="divide-y p-0">
+      <div className="flex items-center justify-between px-6 py-4">
+        <div>
+          <Heading>{t("companies.title")}</Heading>
+          <Text className="text-ui-fg-subtle" size="small">
+            {t("overview.nav.companies.description")}
+          </Text>
+        </div>
+      </div>
       <DataTable
         columns={columns}
         table={table}
@@ -61,6 +71,6 @@ export const CompaniesTable = () => {
           message: t("companies.table.noRecordsMessage"),
         }}
       />
-    </div>
+    </Container>
   );
 };

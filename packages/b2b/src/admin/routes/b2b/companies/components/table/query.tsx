@@ -8,7 +8,7 @@ export const useCompaniesTableQuery = ({
   prefix?: string;
 }) => {
   const raw = useQueryParams(
-    ["q", "offset", "order", "created_at", "updated_at"],
+    ["q", "offset", "order", "created_at", "updated_at", "city", "state", "country"],
     prefix
   );
 

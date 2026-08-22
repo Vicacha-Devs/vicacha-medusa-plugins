@@ -19,7 +19,9 @@
     "create": "Create",
     "send": "Send",
     "addItems": "Add Items",
-    "duplicate": "Duplicate"
+    "duplicate": "Duplicate",
+    "reject": "Reject",
+    "approve": "Approve"
   },
   "fields": {
     "id": "ID",

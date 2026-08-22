@@ -1,12 +1,21 @@
 import { Button, Drawer } from "@medusajs/ui";
-import { AdminCreateCompany } from "../../../../../types";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+
+import { AdminCreateCompany } from "../../../../../types";
 import { useCreateCompany } from "../../../../hooks/api";
 import { CompanyForm } from "./company-form.tsx";
 
-export function CompanyCreateDrawer() {
-  const [open, setOpen] = useState(false);
+interface CompanyCreateDrawerProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function CompanyCreateDrawer({ open: externalOpen, onOpenChange }: CompanyCreateDrawerProps = {}) {
+  const controlled = externalOpen !== undefined;
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlled ? externalOpen! : internalOpen;
+  const setOpen = onOpenChange ?? setInternalOpen;
   const { t } = useTranslation();
 
   const { mutateAsync, isPending, error } = useCreateCompany();
@@ -21,11 +30,13 @@ export function CompanyCreateDrawer() {
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
-      <Drawer.Trigger asChild>
-        <Button variant="secondary" size="small">
-          {t("actions.create")}
-        </Button>
-      </Drawer.Trigger>
+      {!controlled && (
+        <Drawer.Trigger asChild>
+          <Button variant="secondary" size="small">
+            {t("actions.create")}
+          </Button>
+        </Drawer.Trigger>
+      )}
       <Drawer.Content>
         <Drawer.Header>
           <Drawer.Title>{t("companies.form.createTitle")}</Drawer.Title>

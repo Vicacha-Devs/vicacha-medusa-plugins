@@ -4,7 +4,7 @@ import { ApprovalStatusType } from "../../../../../../types/approval";
 export const useApprovalsTableFilters = () => {
   const { t } = useTranslation();
 
-  const filters: any[] = [
+  const filters: unknown[] = [
     {
       label: t("approvals.filters.status"),
       key: "status",

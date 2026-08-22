@@ -1,5 +1,7 @@
+import { Container, Heading, Text } from "@medusajs/ui";
 import { useTranslation } from "react-i18next";
-import { DataTable } from "../../../../components";
+
+import { DataTable } from ".././../../../components";
 import { useDataTable } from "../../../../hooks";
 import { useApprovals } from "../../../../hooks/api";
 import { useApprovalsTableColumns } from "./table/columns.tsx";
@@ -32,7 +34,15 @@ export const ApprovalsTable = () => {
   });
 
   return (
-    <div className="flex size-full flex-col overflow-hidden">
+    <Container className="divide-y p-0">
+      <div className="flex items-center justify-between px-6 py-4">
+        <div>
+          <Heading>{t("approvals.title")}</Heading>
+          <Text className="text-ui-fg-subtle" size="small">
+            {t("overview.nav.approvals.description")}
+          </Text>
+        </div>
+      </div>
       <DataTable
         columns={columns}
         table={table}
@@ -49,6 +59,6 @@ export const ApprovalsTable = () => {
           message: t("approvals.table.noRecordsMessage"),
         }}
       />
-    </div>
+    </Container>
   );
 };

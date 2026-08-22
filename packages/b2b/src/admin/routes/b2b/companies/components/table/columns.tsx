@@ -44,6 +44,7 @@ export const useCompaniesTableColumns = (
         cell: ({ row }) => {
           const { address, city, state, zip } = row.original;
           const parts = [address, city, state, zip].filter(Boolean);
+          
           return <TextCell text={parts.join(", ")} />;
         },
       }),

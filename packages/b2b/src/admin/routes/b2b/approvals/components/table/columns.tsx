@@ -1,14 +1,15 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { TextCell } from "../../../../../components/common/table/table-cells/text-cell.tsx";
-import { StatusBadge } from "@medusajs/ui";
-import { ApprovalStatusType } from "../../../../../../types/approval";
-import ItemsPopover from "../approvals-items-popover.tsx";
+
+import { TextCell, TextHeader } from "../../../../../components/common/table/table-cells/text-cell.tsx";
 import { DateCell } from "../../../../../components/common/table/table-cells/date-cell.tsx";
 import { ApprovalActions } from "../approval-actions.tsx";
+import ItemsPopover from "../approvals-items-popover.tsx";
+import ApprovalStatusBadge from "../approval-status-badge.tsx";
 
-const columnHelper = createColumnHelper<any>();
+
+const columnHelper = createColumnHelper<unknown>();
 
 export const useApprovalsTableColumns = () => {
   const { t } = useTranslation();
@@ -24,27 +25,12 @@ export const useApprovalsTableColumns = () => {
         cell: ({ getValue }) => <DateCell date={getValue()} />,
       }),
       columnHelper.accessor("company.name", {
-        header: t("fields.company"),
+        header: () => <TextHeader text={t("fields.company")} />,
         cell: ({ getValue }) => <TextCell text={getValue()} />,
       }),
       columnHelper.accessor("approval_status.status", {
         header: t("fields.status"),
-        cell: ({ getValue }) => {
-          const status = getValue();
-          return (
-            <StatusBadge
-              color={
-                status === ApprovalStatusType.APPROVED
-                  ? "green"
-                  : status === ApprovalStatusType.REJECTED
-                  ? "red"
-                  : "purple"
-              }
-            >
-              {status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}
-            </StatusBadge>
-          );
-        },
+        cell: ({ getValue }) => <ApprovalStatusBadge status={getValue()}/>,
       }),
       columnHelper.accessor("items", {
         header: t("fields.items"),

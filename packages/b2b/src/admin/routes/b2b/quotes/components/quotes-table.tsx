@@ -1,4 +1,6 @@
+import { Container, Heading, Text } from "@medusajs/ui";
 import { useTranslation } from "react-i18next";
+
 import { DataTable } from "../../../../components";
 import { useDataTable } from "../../../../hooks";
 import { useQuotes } from "../../../../hooks/api";
@@ -40,7 +42,15 @@ export const QuotesTable = () => {
   });
 
   return (
-    <div className="flex size-full flex-col overflow-hidden">
+    <Container className="divide-y p-0">
+      <div className="flex items-center justify-between px-6 py-4">
+        <div>
+          <Heading>{t("quotes.title")}</Heading>
+          <Text className="text-ui-fg-subtle" size="small">
+            {t("overview.nav.quotes.description")}
+          </Text>
+        </div>
+      </div>
       <DataTable
         columns={columns}
         table={table}
@@ -58,6 +68,6 @@ export const QuotesTable = () => {
           message: t("quotes.table.noRecordsMessage"),
         }}
       />
-    </div>
+    </Container>
   );
 };
