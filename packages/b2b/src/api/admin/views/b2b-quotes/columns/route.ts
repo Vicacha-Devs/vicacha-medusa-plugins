@@ -1,0 +1,91 @@
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
+
+export const GET = async (_req: MedusaRequest, res: MedusaResponse) => {
+  const response = {
+    columns: [
+      {
+        id: "draft_order.display_id",
+        field: "draft_order.display_id",
+        name: "ID",
+        data_type: "string",
+        render_mode: "b2b-display-id-prefix",
+        sortable: false,
+        hideable: false,
+        default_visible: true,
+        default_order: 10,
+        filter: { enabled: false },
+      },
+      {
+        id: "status",
+        field: "status",
+        name: "Status",
+        data_type: "enum",
+        render_mode: "b2b-quote-status",
+        sortable: false,
+        hideable: true,
+        default_visible: true,
+        default_order: 20,
+        filter: {
+          enabled: true,
+          enumValues: [
+            "pending_merchant",
+            "pending_customer",
+            "accepted",
+            "customer_rejected",
+            "merchant_rejected",
+          ],
+        },
+      },
+      {
+        id: "customer.email",
+        field: "customer.email",
+        name: "Email",
+        data_type: "string",
+        render_mode: "email",
+        sortable: false,
+        hideable: true,
+        default_visible: true,
+        default_order: 30,
+        filter: { enabled: false },
+      },
+      {
+        id: "company",
+        field: "draft_order.customer.employee.company.name",
+        name: "Company",
+        data_type: "string",
+        render_mode: "text",
+        sortable: false,
+        hideable: true,
+        default_visible: true,
+        default_order: 40,
+        filter: { enabled: false },
+      },
+      {
+        id: "draft_order.total",
+        field: "draft_order.total",
+        name: "Total",
+        data_type: "currency",
+        render_mode: "b2b-quote-total",
+        sortable: false,
+        hideable: true,
+        default_visible: true,
+        default_order: 50,
+        filter: { enabled: false },
+      },
+      {
+        id: "created_at",
+        field: "created_at",
+        name: "Created At",
+        data_type: "date",
+        render_mode: "date",
+        sortable: true,
+        hideable: true,
+        default_visible: true,
+        default_order: 60,
+        filter: { enabled: false },
+      },
+    ],
+  }
+
+  return res.json(response)
+}

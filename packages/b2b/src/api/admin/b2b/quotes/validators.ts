@@ -9,7 +9,7 @@ export const AdminGetQuoteParams = createFindParams({
   limit: 15,
   offset: 0,
 })
-  .merge(
+  .extend(
     z.object({
       q: z.string().optional(),
       id: z
@@ -19,6 +19,9 @@ export const AdminGetQuoteParams = createFindParams({
         .union([z.string(), z.array(z.string()), createOperatorMap()])
         .optional(),
       status: z
+        .union([z.string(), z.array(z.string()), createOperatorMap()])
+        .optional(),
+      customer_id: z
         .union([z.string(), z.array(z.string()), createOperatorMap()])
         .optional(),
       created_at: createOperatorMap().optional(),

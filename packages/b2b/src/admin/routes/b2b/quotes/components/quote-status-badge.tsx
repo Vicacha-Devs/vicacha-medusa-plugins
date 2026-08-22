@@ -1,5 +1,6 @@
-import { StatusBadge } from "@medusajs/ui";
 import { useTranslation } from "react-i18next";
+
+import { DataTableStatusCell } from "../../../../components/common/table/data-table/data-table-status-cell";
 
 const StatusColors: Record<string, "green" | "orange" | "red" | "blue"> = {
   accepted: "green",
@@ -21,8 +22,8 @@ export default function QuoteStatusBadge({ status }: { status: string }) {
   };
 
   return (
-    <StatusBadge color={StatusColors[status]}>
+    <DataTableStatusCell color={StatusColors[status]}>
       {titles[status]}
-    </StatusBadge>
+    </DataTableStatusCell>
   );
 }

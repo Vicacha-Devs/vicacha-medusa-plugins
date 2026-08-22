@@ -1,30 +1,44 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk";
+import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared";
+import { ConfigurableDataTable, LayoutComposer } from "@medusajs/dashboard/components";
 import { BuildingStorefront } from "@medusajs/icons";
-import { Container, Heading, Toaster } from "@medusajs/ui";
+import { Toaster } from "@medusajs/ui";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  CompaniesTable,
-  CompanyCreateDrawer,
-} from "./components/index.ts";
+
+import { useFeatureFlag } from "../../../hooks/api";
+import { useCompaniesTableAdapter } from "./components/companies-table-adapter";
+import { CompaniesTable, CompanyCreateDrawer } from "./components";
 
 const Companies = () => {
   const { t } = useTranslation();
+  const [createOpen, setCreateOpen] = useState(false);
+  const isViewConfigEnabled = useFeatureFlag("view_configurations");
+  const adapter = useCompaniesTableAdapter();
 
   return (
-    <>
-      <Container className="flex flex-col p-0 overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4">
-          <Heading className="font-sans font-medium h1-core">
-            {t("companies.title")}
-          </Heading>
-
-          <CompanyCreateDrawer />
-        </div>
-
-        <CompaniesTable />
-      </Container>
-      <Toaster />
-    </>
+    <LayoutComposer
+      widgetsZonePrefix="companies_list.list"
+      preferredLayoutId={CORE_LAYOUT_IDS.SINGLE_COLUMN}
+      sections={{
+        main: (
+          <LayoutComposer.Entry id="CompaniesListTable">
+            {isViewConfigEnabled ? (
+              <ConfigurableDataTable
+                adapter={adapter}
+                heading={t("companies.title")}
+                subHeading={t("overview.nav.companies.description")}
+                actions={[{ label: t("actions.create"), onClick: () => setCreateOpen(true) }]}
+              />
+            ): (
+              <CompaniesTable />
+            )}
+            <CompanyCreateDrawer open={createOpen} onOpenChange={setCreateOpen} />
+            <Toaster />
+          </LayoutComposer.Entry>
+        )
+      }}
+    />
   );
 };
 

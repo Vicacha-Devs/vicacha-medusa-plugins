@@ -11,7 +11,7 @@ export const AdminGetCompanyParams = createFindParams({
   limit: 50,
   offset: 0,
 })
-  .merge(
+  .extend(
     z.object({
       q: z.string().optional(),
       id: z

@@ -1,22 +1,40 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk";
+import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared";
+import { ConfigurableDataTable, LayoutComposer } from "@medusajs/dashboard/components";
 import { CheckCircle } from "@medusajs/icons";
-import { Container, Heading, Toaster } from "@medusajs/ui";
+import { Toaster } from "@medusajs/ui";
 import { useTranslation } from "react-i18next";
+
+import { useFeatureFlag } from "../../../hooks/api";
 import { ApprovalsTable } from "./components/approvals-table.tsx";
+import { useApprovalsTableAdapter } from "./components/approvals-table-adapter.tsx";
 
 const Approvals = () => {
   const { t } = useTranslation();
+  const isViewConfigEnabled = useFeatureFlag("view_configurations");
+  const adapter = useApprovalsTableAdapter();
 
   return (
-    <>
-      <Container className="flex flex-col p-0 overflow-hidden">
-        <Heading className="p-6 pb-0 font-sans font-medium h1-core">
-          {t("approvals.title")}
-        </Heading>
-        <ApprovalsTable />
-      </Container>
-      <Toaster />
-    </>
+    <LayoutComposer
+      widgetsZonePrefix="approvals_list.list"
+      preferredLayoutId={CORE_LAYOUT_IDS.SINGLE_COLUMN}
+      sections={{
+        main: (
+          <LayoutComposer.Entry id="ApprovalsListTable">
+            {isViewConfigEnabled ? (
+              <ConfigurableDataTable
+                adapter={adapter}
+                heading={t("approvals.title")}
+                subHeading={t("overview.nav.approvals.description")}
+              />
+            ): (
+              <ApprovalsTable />
+            )}
+            <Toaster />
+          </LayoutComposer.Entry>
+        )
+      }}
+    />
   );
 };
 
