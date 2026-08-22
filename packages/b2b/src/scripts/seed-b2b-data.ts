@@ -43,7 +43,7 @@ export default async function seed_b2b_data({
     (group) => group.name === "B2B"
   );
 
-  const customerGroupsToCreate = [];
+  const customerGroupsToCreate: { name: string }[] = [];
 
   if (!existingB2C) {
     customerGroupsToCreate.push({
@@ -114,7 +114,7 @@ export default async function seed_b2b_data({
       (channel) => channel.name === "B2B"
     );
 
-  const salesChannelsToCreate = [];
+  const salesChannelsToCreate: { name: string; description: string }[] = [];
 
   if (!existingB2CSalesChannel) {
     salesChannelsToCreate.push({

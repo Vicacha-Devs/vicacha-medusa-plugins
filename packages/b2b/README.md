@@ -539,13 +539,15 @@ src/
 
 ## Roadmap
 
-- **B2B / B2C product and price segmentation** — control product visibility and assign prices per audience (B2B only, B2C only, or both), with support for audience-specific price lists.
+- [ ] Validate Edit and Create companies.
+- [ ] Bug: creating companies does not create companies.
+- [ ] Fix: check all typing issues and solve them.
+- [ ] Implement UI [DataTable](https://docs.medusajs.com/ui/components/data-table) and useDataTable. Note: maybe not since the ConfigurableDataTable could be the new standard.
+- [x] **Internationalization (i18n)** — full translation coverage for `en`, `es`, `tr`, and `ar`, including RTL layout support for Arabic.
 
-- **Full admin table feature parity** — bring all table views in line with Medusa's native admin experience: view configurations (column visibility and ordering), server-side search, composable filter chains, and bulk actions.
+- **B2B / B2C product and price segmentation** — control product visibility and assign prices per audience (B2B only, B2C only, or both), with support for audience-specific price lists. (stashed)
 
-- **Internationalization (i18n)** — full translation coverage for `en`, `es`, `tr`, and `ar`, including RTL layout support for Arabic.
-
-- **Git hooks** — enforce code quality at commit and push time: pre-commit type-checking and linting, commit-message format validation, and pre-push test gating.
+- **Full admin table feature parity** — bring all table views in line with Medusa's native admin experience: view configurations (column visibility and ordering), server-side search, composable filter chains, and bulk actions. (use price-lists view as example)
 
 ---
 
