@@ -1,5 +1,7 @@
 import { clx } from "@medusajs/ui";
+
 import { PlaceholderCell } from "./placeholder-cell";
+import { ConditionalTooltip } from "../../conditional-tooltip";
 
 type CellProps = {
   text?: string | number;
@@ -21,22 +23,26 @@ export const TextCell = ({
     return <PlaceholderCell />;
   }
 
+  const stringLength = text.toString().length;
+
   return (
-    <div
-      className={clx(
-        "flex h-full w-full items-center gap-x-3 overflow-hidden",
-        {
-          "justify-start text-start": align === "left",
-          "justify-center text-center": align === "center",
-          "justify-end text-end": align === "right",
-        }
-      )}
-      style={{
-        maxWidth: maxWidth,
-      }}
-    >
-      <span className="truncate">{text}</span>
-    </div>
+    <ConditionalTooltip content={text} showTooltip={stringLength > 20}>
+      <div
+        className={clx(
+          "flex h-full w-full items-center gap-x-3 overflow-hidden",
+          {
+            "justify-start text-start": align === "left",
+            "justify-center text-center": align === "center",
+            "justify-end text-end": align === "right",
+          }
+        )}
+        style={{
+          maxWidth: maxWidth,
+        }}
+      >
+        <span className="truncate">{text}</span>
+      </div>
+    </ConditionalTooltip>
   );
 };
 

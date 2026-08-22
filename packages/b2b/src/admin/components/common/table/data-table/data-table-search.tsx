@@ -33,7 +33,6 @@ export const DataTableSearch = ({
   // Keep the input in sync when the URL changes externally (e.g. back/forward).
   useEffect(() => {
     setValue(urlValue);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlValue]);
 
   // Debounce writes to the URL so we don't refetch on every keystroke.
@@ -63,8 +62,7 @@ export const DataTableSearch = ({
     }, 300);
 
     return () => clearTimeout(timeout);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
+  }, [value, urlValue, queryKey, offsetKey, setSearchParams]);
 
   return (
     <Input
