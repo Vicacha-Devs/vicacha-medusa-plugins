@@ -1,11 +1,12 @@
 import { EllipsisHorizontal, PencilSquare, Trash } from "@medusajs/icons";
 import { DropdownMenu, IconButton, toast } from "@medusajs/ui";
+import { DeletePrompt } from "@vicacha-devs/shared/admin";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { EmployeesUpdateDrawer } from ".";
+
 import { QueryCompany, QueryEmployee } from "../../../../../../types";
-import { DeletePrompt } from "../../../../../components/common";
 import { useDeleteEmployee } from "../../../../../hooks/api";
+import { EmployeesUpdateDrawer } from ".";
 
 export const EmployeesActionsMenu = ({
   company,

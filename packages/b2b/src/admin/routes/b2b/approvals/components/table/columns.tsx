@@ -2,8 +2,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { TextCell, TextHeader } from "../../../../../components/common/table/table-cells/text-cell.tsx";
-import { DateCell } from "../../../../../components/common/table/table-cells/date-cell.tsx";
+import { TextCell, TextHeader, DateCell } from "@vicacha-devs/shared/admin";
 import { ApprovalActions } from "../approval-actions.tsx";
 import ItemsPopover from "../approvals-items-popover.tsx";
 import ApprovalStatusBadge from "../approval-status-badge.tsx";

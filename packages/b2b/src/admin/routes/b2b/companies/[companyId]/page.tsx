@@ -8,11 +8,12 @@ import {
   Text,
   Toaster,
 } from "@medusajs/ui";
-import { QueryEmployee } from "../../../../../types";
+import { formatAmount } from "@vicacha-devs/shared/admin";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+
+import { QueryEmployee } from "../../../../../types";
 import { useAdminCustomerGroups, useCompany } from "../../../../hooks/api";
-import { formatAmount } from "../../../../utils";
 import { CompanyActionsMenu } from "../components/index.ts";
 import {
   EmployeeCreateDrawer,

@@ -6,14 +6,13 @@ import {
   Label,
   Text
 } from "@medusajs/ui";
-import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { CoolSwitch, currencySymbolMap } from "@vicacha-devs/shared/admin";
+import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { z } from "zod";
 
 import { AdminCreateEmployee, QueryCompany } from "../../../../../../types";
-import { CoolSwitch } from "../../../../../components/common";
-import { currencySymbolMap } from "../../../../../utils";
 
 const createEmployeeSchema = z.object({
   first_name: z.string().optional(),

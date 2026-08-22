@@ -30,6 +30,12 @@ type UseDataTableProps<TData> = {
   prefix?: string;
 };
 
+/**
+ * 
+ * @param
+ * @returns 
+ * @deprecated new Medusa implementation is different. No new support since we will prefer to use ConfigurableDataTable instead.
+ */
 export const useDataTable = <TData,>({
   data = [],
   columns,

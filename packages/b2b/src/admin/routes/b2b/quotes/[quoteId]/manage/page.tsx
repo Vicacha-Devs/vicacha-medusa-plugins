@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { RouteFocusModal } from "../../../../../components/common/modals/route-focus-modal/route-focus-modal.tsx";
+import { RouteFocusModal } from "@vicacha-devs/shared/admin";
 import { useQuote } from "../../../../../hooks/api/quotes.tsx";
 import { ManageQuoteForm } from "../../components/index.ts";
 

@@ -1,8 +1,7 @@
 import { Container, Heading, Text } from "@medusajs/ui";
+import { DataTable, useDataTable } from "@vicacha-devs/shared/admin";
 import { useTranslation } from "react-i18next";
 
-import { DataTable } from "../../../../components";
-import { useDataTable } from "../../../../hooks";
 import { useAdminCustomerGroups, useCompanies } from "../../../../hooks/api";
 import { useCompaniesTableColumns } from "./table/columns.tsx";
 import { useCompaniesTableFilters } from "./table/filters.tsx";

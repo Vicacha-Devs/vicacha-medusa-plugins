@@ -1,8 +1,9 @@
 import { Button, Drawer, toast } from "@medusajs/ui";
+import { CoolSwitch } from "@vicacha-devs/shared/admin";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+
 import { QueryCompany } from "../../../../../types";
-import { CoolSwitch } from "../../../../components/common";
 import { useUpdateApprovalSettings } from "../../../../hooks/api";
 
 export function CompanyApprovalSettingsDrawer({

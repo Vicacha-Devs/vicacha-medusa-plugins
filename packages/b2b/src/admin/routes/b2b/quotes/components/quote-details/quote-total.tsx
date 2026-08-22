@@ -1,7 +1,7 @@
 import { AdminOrder, AdminOrderPreview } from "@medusajs/framework/types";
 import { Text } from "@medusajs/ui";
+import { formatAmount } from "@vicacha-devs/shared/admin";
 import { useTranslation } from "react-i18next";
-import { formatAmount } from "../../../../../utils";
 
 export const QuoteTotal = ({
   order,

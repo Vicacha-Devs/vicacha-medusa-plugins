@@ -4,7 +4,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { QueryCompany } from "../../../../../../types";
-import { TextCell } from "../../../../../components/common/table/table-cells/text-cell.tsx";
+import { TextCell } from "@vicacha-devs/shared/admin";
 import { CompanyActionsMenu } from "../company-actions-menu.tsx";
 
 const columnHelper = createColumnHelper<QueryCompany>();

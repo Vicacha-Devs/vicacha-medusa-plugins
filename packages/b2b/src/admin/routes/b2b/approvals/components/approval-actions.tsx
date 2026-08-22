@@ -1,10 +1,10 @@
 import { Check, XMark } from "@medusajs/icons";
 import { usePrompt } from "@medusajs/ui";
+import { ActionMenu } from "@vicacha-devs/shared/admin";
 import { useTranslation } from "react-i18next";
 
 import { ApprovalStatusType, ApprovalType } from "../../../../../types/approval";
 import { useUpdateApproval } from "../../../../hooks/api/approvals.tsx";
-import { ActionMenu } from "../../../../components";
 
 export const ApprovalActions = ({ cart }: { cart: Record<string, any> }) => {
   const { t } = useTranslation();

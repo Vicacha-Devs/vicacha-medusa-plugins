@@ -1,4 +1,4 @@
-import { useQueryParams } from "../../../../../hooks/use-query-params.tsx";
+import { useQueryParams } from "@vicacha-devs/shared/admin";
 
 export const useQuotesTableQuery = ({
   pageSize = 50,

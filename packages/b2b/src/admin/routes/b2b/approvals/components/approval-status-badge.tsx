@@ -1,4 +1,4 @@
-import { DataTableStatusCell } from "../../../../components/common/table/data-table/data-table-status-cell";
+import { DataTableStatusCell } from "@vicacha-devs/shared/admin";
 import { useTranslation } from "react-i18next";
 
 const StatusColors: Record<string, "red" | "purple" | "green"> = {

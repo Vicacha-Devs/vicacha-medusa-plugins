@@ -19,16 +19,16 @@ import { useTranslation } from "react-i18next";
 import {
   ActionMenu,
   AmountCell,
+  Form,
   Thumbnail,
-} from "../../../../../components/common";
-import { Form } from "../../../../../components/common/form";
+} from "@vicacha-devs/shared/admin";
 import {
   useAddItemsToQuote,
   useRemoveQuoteItem,
   useUpdateAddedQuoteItem,
   useUpdateQuoteItem,
 } from "../../../../../hooks/api";
-import { currencySymbolMap } from "../../../../../utils";
+import { currencySymbolMap } from "@vicacha-devs/shared/admin";
 
 type ManageItemProps = {
   originalItem: AdminOrder["items"][0];

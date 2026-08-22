@@ -4,9 +4,9 @@ import {
   AdminOrderPreview,
 } from "@medusajs/framework/types";
 import { Badge, Copy, Text } from "@medusajs/ui";
+import { AmountCell, Thumbnail } from "@vicacha-devs/shared/admin";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { AmountCell, Thumbnail } from "../../../../../components/common";
 
 export const QuoteItems = ({
   order,

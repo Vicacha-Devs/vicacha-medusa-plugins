@@ -1,8 +1,7 @@
 import { Container, Heading, Text } from "@medusajs/ui";
+import { DataTable, useDataTable } from "@vicacha-devs/shared/admin";
 import { useTranslation } from "react-i18next";
 
-import { DataTable } from "../../../../components";
-import { useDataTable } from "../../../../hooks";
 import { useQuotes } from "../../../../hooks/api";
 import { useQuotesTableColumns } from "./table/columns.tsx";
 import { useQuotesTableFilters } from "./table/filters.tsx";

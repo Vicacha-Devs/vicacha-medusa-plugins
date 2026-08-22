@@ -18,6 +18,12 @@ interface DataTableProps<TData>
 // const MemoizedDataTableRoot = memo(DataTableRoot) as typeof DataTableRoot
 const MemoizedDataTableQuery = memo(DataTableQuery);
 
+/**
+ * 
+ * @param
+ * @returns 
+ * @deprecated new Medusa implementation is different. No new support since we will prefer to use ConfigurableDataTable instead.
+ */
 export const DataTable = <TData,>({
   table,
   columns,

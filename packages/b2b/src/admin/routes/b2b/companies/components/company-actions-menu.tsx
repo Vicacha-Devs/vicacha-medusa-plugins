@@ -1,12 +1,12 @@
 import { HttpTypes } from "@medusajs/framework/types";
 import { Link, LockClosedSolid, PencilSquare, Trash } from "@medusajs/icons";
 import { toast } from "@medusajs/ui";
-import { QueryCompany } from "../../../../../types";
+import { ActionMenu, DeletePrompt } from "@vicacha-devs/shared/admin";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { ActionMenu } from "../../../../components/common";
-import { DeletePrompt } from "../../../../components/common/delete-prompt.tsx";
+
+import { QueryCompany } from "../../../../../types";
 import { useDeleteCompany } from "../../../../hooks/api";
 import {
   CompanyApprovalSettingsDrawer,

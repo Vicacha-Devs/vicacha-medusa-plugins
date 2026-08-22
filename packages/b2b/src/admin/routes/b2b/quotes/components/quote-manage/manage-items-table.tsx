@@ -1,8 +1,8 @@
 import { OnChangeFn, RowSelectionState } from "@tanstack/react-table";
+import { DataTable, useDataTable } from "@vicacha-devs/shared/admin";
 import { useState } from "react";
-import { DataTable } from "../../../../../components";
+
 import { useVariants } from "../../../../../hooks/api";
-import { useDataTable } from "../../../../../hooks/use-data-table.tsx";
 import { useManageItemsTableColumns } from "./table/columns.tsx";
 import { useManageItemsTableFilters } from "./table/filters.tsx";
 import { useManageItemsTableQuery } from "./table/query.tsx";
