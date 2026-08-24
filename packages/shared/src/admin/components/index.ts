@@ -9,3 +9,4 @@ export * from "./modals";
 export * from "./skeleton";
 export * from "./table";
 export * from "./thumbnail";
+export * from "./utilities"

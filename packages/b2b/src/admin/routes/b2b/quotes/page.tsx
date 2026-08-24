@@ -3,9 +3,9 @@ import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared";
 import { ConfigurableDataTable, LayoutComposer } from "@medusajs/dashboard/components";
 import { DocumentText } from "@medusajs/icons";
 import { Toaster } from "@medusajs/ui";
+import { useFeatureFlag } from "@vicacha-devs/shared/admin"
 import { useTranslation } from "react-i18next"
 
-import { useFeatureFlag } from "../../../hooks/api/feature-flags.tsx";
 import { QuotesTable } from "./components/quotes-table.tsx";
 import { useQuotesTableAdapter } from "./components/quotes-table-adapter.tsx";
 

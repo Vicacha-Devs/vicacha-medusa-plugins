@@ -3,10 +3,10 @@ import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared";
 import { ConfigurableDataTable, LayoutComposer } from "@medusajs/dashboard/components";
 import { BuildingStorefront } from "@medusajs/icons";
 import { Toaster } from "@medusajs/ui";
+import { useFeatureFlag } from "@vicacha-devs/shared/admin"
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { useFeatureFlag } from "../../../hooks/api";
 import { useCompaniesTableAdapter } from "./components/companies-table-adapter";
 import { CompaniesTable, CompanyCreateDrawer } from "./components";
 
