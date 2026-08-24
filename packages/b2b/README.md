@@ -542,6 +542,7 @@ src/
 - [ ] Fix: check all typing issues and solve them.
 - [ ] Implement UI [DataTable](https://docs.medusajs.com/ui/components/data-table) and useDataTable. Note: maybe not since the ConfigurableDataTable could be the new standard.
 - [ ] Implement ConfigurableDataTable for Employees in Company view.
+- [ ] For Employee created Customers in Company, make workflow to add them to the B2B Customer Group.
 
 - [ ] Integrate RBAC for approvals?
 

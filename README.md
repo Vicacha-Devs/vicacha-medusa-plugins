@@ -57,8 +57,11 @@ All tasks are orchestrated by Turborepo. Build respects inter-package dependency
 ## Roadmap
 
 - [ ] **Git hooks** — enforce code quality at commit and push time: pre-commit type-checking and linting, commit-message format validation, and pre-push test gating.
-- [ ] Implement mussing components for admin look-and-feel as declared [in this request](https://github.com/medusajs/medusa/discussions/16536) in another package, components in `src/admin/components/common` are mostly copies of those components.
+- [ ] Implement missing components for admin look-and-feel as declared [in this request](https://github.com/medusajs/medusa/discussions/16536) in another package, components in `src/admin/components/common` are mostly copies of those components.
 
 > Note: We already copied `useFeatureFlag`  (see the [request](https://github.com/medusajs/medusa/discussions/16500)).
 
 - [ ] Create a new skill for making plugins.
+- [ ] When creating a new entry, the admin should refresh itself to show the new entry.
+- [ ] Rename shared to medusa-plugin-shared.
+- [ ] Check i18n in all plugins, clean and update.
