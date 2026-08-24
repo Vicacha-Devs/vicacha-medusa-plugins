@@ -35,7 +35,7 @@
     "react-hook-form": "*",
     "react-i18next": "*",
     "react-router-dom": "*",
-    "zod": "*"
+    "zod": "4.2.0"
   },
   "devDependencies": {
     "vite": "5.2.11",
@@ -55,7 +55,6 @@
     "react": "18.2.0",
     "react-hook-form": "7.85.0",
     "react-i18next": "13.5.0",
-    "react-router-dom": "6.30.4",
-    "zod": "4.2.0"
+    "react-router-dom": "6.30.4"
   }
 }
