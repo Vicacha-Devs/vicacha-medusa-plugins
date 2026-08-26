@@ -1,7 +1,7 @@
 import { clx } from "@medusajs/ui";
 
 import { PlaceholderCell } from "./placeholder-cell";
-import { ConditionalTooltip } from "../../conditional-tooltip";
+import { ConditionalTooltip } from "../../common";
 
 type CellProps = {
   text?: string | number;

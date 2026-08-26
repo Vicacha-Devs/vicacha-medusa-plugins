@@ -3,8 +3,8 @@ import { EllipsisHorizontal } from "@medusajs/icons";
 import { PropsWithChildren, ReactNode } from "react";
 import { Link } from "react-router-dom";
 
-import { useDocumentDirection } from "../hooks";
 import { ConditionalTooltip } from "./conditional-tooltip";
+import { useDocumentDirection } from "../../hooks";
 
 export type Action = {
   icon: ReactNode;
