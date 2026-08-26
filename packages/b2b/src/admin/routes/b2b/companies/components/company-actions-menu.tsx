@@ -1,7 +1,7 @@
 import { HttpTypes } from "@medusajs/framework/types";
 import { Link, LockClosedSolid, PencilSquare, Trash } from "@medusajs/icons";
 import { toast } from "@medusajs/ui";
-import { ActionMenu, DeletePrompt } from "@vicacha-devs/shared/admin";
+import { ActionMenu, DeletePrompt } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";

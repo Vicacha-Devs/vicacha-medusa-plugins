@@ -3,7 +3,7 @@ import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared";
 import { ConfigurableDataTable, LayoutComposer } from "@medusajs/dashboard/components";
 import { CheckCircle } from "@medusajs/icons";
 import { Toaster } from "@medusajs/ui";
-import { useFeatureFlag } from "@vicacha-devs/shared/admin"
+import { useFeatureFlag } from "@vicacha-devs/medusa-shared-admin/admin"
 import { useTranslation } from "react-i18next";
 
 import { ApprovalsTable } from "./components/approvals-table.tsx";

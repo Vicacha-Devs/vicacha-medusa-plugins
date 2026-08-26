@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-import { DataTableStatusCell } from "@vicacha-devs/shared/admin";
+import { DataTableStatusCell } from "@vicacha-devs/medusa-shared-admin/admin";
 
 const StatusColors: Record<string, "green" | "orange" | "red" | "blue"> = {
   accepted: "green",

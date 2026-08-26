@@ -8,7 +8,7 @@ import {
   Text,
   Toaster,
 } from "@medusajs/ui";
-import { formatAmount } from "@vicacha-devs/shared/admin";
+import { formatAmount } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 

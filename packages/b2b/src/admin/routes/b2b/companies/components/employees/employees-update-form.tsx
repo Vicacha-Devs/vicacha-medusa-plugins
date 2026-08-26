@@ -8,7 +8,7 @@ import {
   Text,
 } from "@medusajs/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CoolSwitch, currencySymbolMap } from "@vicacha-devs/shared/admin";
+import { CoolSwitch, currencySymbolMap } from "@vicacha-devs/medusa-shared-admin/admin";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";

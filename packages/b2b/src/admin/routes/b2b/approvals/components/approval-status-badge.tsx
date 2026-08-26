@@ -1,4 +1,4 @@
-import { DataTableStatusCell } from "@vicacha-devs/shared/admin";
+import { DataTableStatusCell } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useTranslation } from "react-i18next";
 
 const StatusColors: Record<string, "red" | "purple" | "green"> = {

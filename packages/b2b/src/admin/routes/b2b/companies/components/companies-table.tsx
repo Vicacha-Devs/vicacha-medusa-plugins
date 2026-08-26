@@ -1,5 +1,5 @@
 import { Container, Heading, Text } from "@medusajs/ui";
-import { DataTable, useDataTable } from "@vicacha-devs/shared/admin";
+import { DataTable, useDataTable } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useTranslation } from "react-i18next";
 
 import { useAdminCustomerGroups, useCompanies } from "../../../../hooks/api";

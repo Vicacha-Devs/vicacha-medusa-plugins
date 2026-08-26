@@ -1,5 +1,5 @@
 import { Button, Drawer, toast } from "@medusajs/ui";
-import { CoolSwitch } from "@vicacha-devs/shared/admin";
+import { CoolSwitch } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 

@@ -4,7 +4,7 @@ import {
   AdminOrderPreview,
 } from "@medusajs/framework/types";
 import { Badge, Copy, Text } from "@medusajs/ui";
-import { AmountCell, Thumbnail } from "@vicacha-devs/shared/admin";
+import { AmountCell, Thumbnail } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 

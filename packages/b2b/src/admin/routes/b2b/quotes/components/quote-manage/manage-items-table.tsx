@@ -1,5 +1,5 @@
 import { OnChangeFn, RowSelectionState } from "@tanstack/react-table";
-import { DataTable, useDataTable } from "@vicacha-devs/shared/admin";
+import { DataTable, useDataTable } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useState } from "react";
 
 import { useVariants } from "../../../../../hooks/api";

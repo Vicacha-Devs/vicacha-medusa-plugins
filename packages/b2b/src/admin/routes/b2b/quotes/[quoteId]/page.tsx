@@ -8,7 +8,7 @@ import {
   Toaster,
   usePrompt,
 } from "@medusajs/ui";
-import { JsonViewSection, formatAmount } from "@vicacha-devs/shared/admin";
+import { JsonViewSection, formatAmount } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useParams } from "react-router-dom";

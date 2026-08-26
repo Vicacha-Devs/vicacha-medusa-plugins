@@ -1,4 +1,4 @@
-import { useQueryParams } from "@vicacha-devs/shared/admin";
+import { useQueryParams } from "@vicacha-devs/medusa-shared-admin/admin";
 
 export const useCompaniesTableQuery = ({
   pageSize = 50,

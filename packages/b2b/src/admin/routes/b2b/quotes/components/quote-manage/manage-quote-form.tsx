@@ -5,7 +5,7 @@ import {
   formatAmount,
   RouteFocusModal,
   useRouteModal
-} from "@vicacha-devs/shared/admin";
+} from "@vicacha-devs/medusa-shared-admin/admin";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";

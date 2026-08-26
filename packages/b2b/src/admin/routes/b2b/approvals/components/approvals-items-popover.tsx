@@ -1,6 +1,6 @@
 import { MagnifyingGlass } from "@medusajs/icons";
 import { Popover, Table, Text } from "@medusajs/ui";
-import { formatAmount } from "@vicacha-devs/shared/admin";
+import { formatAmount } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useTranslation } from "react-i18next";
 
 const ItemsPopover = ({

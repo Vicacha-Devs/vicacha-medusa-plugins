@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { RouteFocusModal } from "@vicacha-devs/shared/admin";
+import { RouteFocusModal } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useQuote } from "../../../../../hooks/api/quotes.tsx";
 import { ManageQuoteForm } from "../../components/index.ts";
 

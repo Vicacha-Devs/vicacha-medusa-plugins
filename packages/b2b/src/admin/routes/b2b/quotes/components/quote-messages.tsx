@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { z } from "zod";
 import { QueryQuote } from "../../../../../types";
-import { Form } from "@vicacha-devs/shared/admin";
+import { Form } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useCreateQuoteMessage } from "../../../../hooks/api/quotes.tsx";
 import { QuoteItem } from "./quote-details/index.tsx";
 

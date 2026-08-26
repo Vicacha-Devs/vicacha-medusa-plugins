@@ -10,7 +10,7 @@ import {
   RouteFocusModal,
   StackedFocusModal,
   useStackedModal,
-} from "@vicacha-devs/shared/admin";
+} from "@vicacha-devs/medusa-shared-admin/admin";
 import { useAddItemsToQuote } from "../../../../../hooks/api";
 import { ManageItem } from "./manage-item.tsx";
 import { ManageItemsTable } from "./manage-items-table.tsx";

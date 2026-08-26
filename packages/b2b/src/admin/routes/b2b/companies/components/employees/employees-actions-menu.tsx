@@ -1,6 +1,6 @@
 import { EllipsisHorizontal, PencilSquare, Trash } from "@medusajs/icons";
 import { DropdownMenu, IconButton, toast } from "@medusajs/ui";
-import { DeletePrompt } from "@vicacha-devs/shared/admin";
+import { DeletePrompt } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 

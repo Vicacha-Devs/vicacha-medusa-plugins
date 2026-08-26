@@ -1,6 +1,6 @@
 import { Checkbox } from "@medusajs/ui";
 import { createColumnHelper } from "@tanstack/react-table";
-import { ProductCell, ProductHeader } from "@vicacha-devs/shared/admin";
+import { ProductCell, ProductHeader } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 

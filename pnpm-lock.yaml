@@ -295,7 +295,7 @@ importers:
       '@types/react-dom':
         specifier: 18.2.25
         version: 18.2.25
-      '@vicacha-devs/shared':
+      '@vicacha-devs/medusa-shared-admin':
         specifier: workspace:*
         version: link:../shared
       cmdk:

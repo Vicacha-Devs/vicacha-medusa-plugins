@@ -1,6 +1,6 @@
 import { Check, XMark } from "@medusajs/icons";
 import { usePrompt } from "@medusajs/ui";
-import { ActionMenu } from "@vicacha-devs/shared/admin";
+import { ActionMenu } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useTranslation } from "react-i18next";
 
 import { ApprovalStatusType, ApprovalType } from "../../../../../types/approval";

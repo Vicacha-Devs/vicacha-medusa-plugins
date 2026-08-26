@@ -2,7 +2,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { DateCell, TextCell } from "@vicacha-devs/shared/admin";
+import { DateCell, TextCell } from "@vicacha-devs/medusa-shared-admin/admin";
 import QuoteStatusBadge from "../quote-status-badge.tsx";
 
 const columnHelper = createColumnHelper<any>();

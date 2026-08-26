@@ -21,14 +21,14 @@ import {
   AmountCell,
   Form,
   Thumbnail,
-} from "@vicacha-devs/shared/admin";
+} from "@vicacha-devs/medusa-shared-admin/admin";
 import {
   useAddItemsToQuote,
   useRemoveQuoteItem,
   useUpdateAddedQuoteItem,
   useUpdateQuoteItem,
 } from "../../../../../hooks/api";
-import { currencySymbolMap } from "@vicacha-devs/shared/admin";
+import { currencySymbolMap } from "@vicacha-devs/medusa-shared-admin/admin";
 
 type ManageItemProps = {
   originalItem: AdminOrder["items"][0];
