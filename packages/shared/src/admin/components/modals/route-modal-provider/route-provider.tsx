@@ -9,7 +9,7 @@ type RouteModalProviderProps = PropsWithChildren<{
 export const RouteModalProvider = ({
   prev,
   children,
-}: RouteModalProviderProps) => {
+}: RouteModalProviderProps): JSX.Element => {
   const navigate = useNavigate()
   const location = useLocation()
 

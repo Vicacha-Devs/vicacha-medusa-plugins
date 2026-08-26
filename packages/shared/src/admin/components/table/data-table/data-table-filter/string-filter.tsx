@@ -14,7 +14,7 @@ export const StringFilter = ({
   prefix,
   readonly,
   openOnMount,
-}: StringFilterProps) => {
+}: StringFilterProps): JSX.Element => {
   const [open, setOpen] = useState(openOnMount);
 
   const { key, label } = filter;

@@ -20,7 +20,7 @@ const FilterChip = ({
   readonly,
   hasOperator,
   onRemove,
-}: FilterChipProps) => {
+}: FilterChipProps): JSX.Element => {
   const { t } = useTranslation()
 
   const handleRemove = (e: MouseEvent<HTMLButtonElement>) => {

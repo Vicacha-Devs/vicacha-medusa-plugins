@@ -25,7 +25,7 @@ export const SelectFilter = ({
   searchable,
   options,
   openOnMount,
-}: SelectFilterProps) => {
+}: SelectFilterProps): JSX.Element => {
   const [open, setOpen] = useState(openOnMount)
   const [search, setSearch] = useState("")
   const [searchRef, setSearchRef] = useState<HTMLInputElement | null>(null)

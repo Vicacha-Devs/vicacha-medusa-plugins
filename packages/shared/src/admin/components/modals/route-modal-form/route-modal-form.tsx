@@ -16,7 +16,7 @@ export const RouteModalForm = <TFieldValues extends FieldValues = any>({
   blockSearchParams: blockSearch = false,
   children,
   onClose,
-}: RouteModalFormProps<TFieldValues>) => {
+}: RouteModalFormProps<TFieldValues>): JSX.Element => {
   const { t } = useTranslation()
 
   const {

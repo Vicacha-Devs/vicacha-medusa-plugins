@@ -1,5 +1,6 @@
 import { Drawer, clx } from "@medusajs/ui"
 import {
+  type ComponentType,
   ComponentPropsWithoutRef,
   PropsWithChildren,
   forwardRef,
@@ -18,7 +19,7 @@ type StackedDrawerProps = PropsWithChildren<{
 /**
  * A stacked modal that can be rendered above a parent modal.
  */
-export const Root = ({ id, children }: StackedDrawerProps) => {
+export const Root = ({ id, children }: StackedDrawerProps): JSX.Element => {
   const { register, unregister, getIsOpen, setIsOpen } = useStackedModal()
 
   useEffect(() => {
@@ -73,7 +74,18 @@ const Content = forwardRef<
 })
 Content.displayName = "StackedDrawer.Content"
 
-export const StackedDrawer = Object.assign(Root, {
+type StackedDrawerType = ((props: StackedDrawerProps) => JSX.Element) & {
+  Close: ComponentType<any>
+  Header: ComponentType<any>
+  Body: ComponentType<any>
+  Content: ComponentType<any>
+  Trigger: ComponentType<any>
+  Footer: ComponentType<any>
+  Description: ComponentType<any>
+  Title: ComponentType<any>
+}
+
+export const StackedDrawer: StackedDrawerType = Object.assign(Root, {
   Close,
   Header,
   Body,
@@ -82,4 +94,4 @@ export const StackedDrawer = Object.assign(Root, {
   Footer,
   Description,
   Title,
-})
+}) as unknown as StackedDrawerType

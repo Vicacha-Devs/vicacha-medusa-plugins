@@ -4,11 +4,12 @@
   "description": "Shared admin components, hooks, and utilities for Vicacha Devs Medusa plugins",
   "private": true,
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && tsc -p tsconfig.dts.json",
     "dev": "vite build --watch"
   },
   "exports": {
     "./admin": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/admin.mjs",
       "default": "./dist/admin.mjs"
     },
@@ -56,6 +57,7 @@
     "react-hook-form": "7.85.0",
     "react-i18next": "13.5.0",
     "react-router-dom": "6.30.4",
-    "vite": "5.2.11"
+    "vite": "5.2.11",
+    "vite-plugin-dts": "^5.0.3"
   }
 }

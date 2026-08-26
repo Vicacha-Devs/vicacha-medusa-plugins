@@ -8,7 +8,7 @@ type StackedModalProviderProps = PropsWithChildren<{
 export const StackedModalProvider = ({
   children,
   onOpenChange,
-}: StackedModalProviderProps) => {
+}: StackedModalProviderProps): JSX.Element => {
   const [state, setState] = useState<Record<string, boolean>>({})
 
   const getIsOpen = (id: string) => {

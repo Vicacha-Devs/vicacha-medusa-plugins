@@ -23,7 +23,7 @@ export const DataTableStatusIndicator = ({
   color,
   className,
   children,
-}: DataTableStatusIndicatorProps) => {
+}: DataTableStatusIndicatorProps): JSX.Element => {
   return (
     <div
       className={clx(
@@ -61,7 +61,7 @@ type DataTableStatusCellProps = PropsWithChildren<{
 export const DataTableStatusCell = ({
   color,
   children,
-}: DataTableStatusCellProps) => {
+}: DataTableStatusCellProps): JSX.Element => {
   return (
     <DataTableStatusIndicator color={color} className="w-full overflow-hidden">
       {children}

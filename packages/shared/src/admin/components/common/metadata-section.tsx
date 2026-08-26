@@ -1,5 +1,6 @@
 import { ArrowUpRightOnBox } from "@medusajs/icons"
 import { Badge, Container, Heading, IconButton } from "@medusajs/ui"
+import type { JSX } from "react"
 import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 
@@ -11,7 +12,7 @@ type MetadataSectionProps<TData extends object> = {
 export const MetadataSection = <TData extends object>({
   data,
   href = "metadata/edit",
-}: MetadataSectionProps<TData>) => {
+}: MetadataSectionProps<TData>): JSX.Element | null => {
   const { t } = useTranslation()
 
   if (!data) {

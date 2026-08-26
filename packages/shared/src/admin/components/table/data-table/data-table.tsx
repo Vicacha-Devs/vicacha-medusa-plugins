@@ -41,7 +41,7 @@ export const DataTable = <TData,>({
   noHeader = false,
   layout = "fit",
   noRecords: noRecordsProps = {},
-}: DataTableProps<TData>) => {
+}: DataTableProps<TData>): JSX.Element => {
   if (isLoading) {
     return (
       <TableSkeleton

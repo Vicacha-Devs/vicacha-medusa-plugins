@@ -27,7 +27,7 @@ export const NumberFilter = ({
   prefix,
   readonly,
   openOnMount,
-}: NumberFilterProps) => {
+}: NumberFilterProps): JSX.Element => {
   const { t } = useTranslation()
   const [open, setOpen] = useState(openOnMount)
 

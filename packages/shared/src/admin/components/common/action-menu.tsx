@@ -38,7 +38,7 @@ export const ActionMenu = ({
   groups,
   variant = "transparent",
   children,
-}: ActionMenuProps) => {
+}: ActionMenuProps): JSX.Element => {
   const direction = useDocumentDirection();
   const inner = children ?? (
     <IconButton size="small" variant={variant}>

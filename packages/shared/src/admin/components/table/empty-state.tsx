@@ -1,5 +1,6 @@
 import { ExclamationCircle, MagnifyingGlass, PlusMini } from "@medusajs/icons";
 import { Button, Text, clx } from "@medusajs/ui";
+import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
@@ -9,7 +10,7 @@ export type NoResultsProps = {
   className?: string;
 };
 
-export const NoResults = ({ title, message, className }: NoResultsProps) => {
+export const NoResults = ({ title, message, className }: NoResultsProps): JSX.Element => {
   const { t } = useTranslation();
 
   return (
@@ -46,7 +47,7 @@ type NoRecordsProps = {
   buttonVariant?: string;
 } & ActionProps;
 
-const DefaultButton = ({ action }: ActionProps) =>
+const DefaultButton = ({ action }: ActionProps): JSX.Element | undefined =>
   action && (
     <Link to={action.to}>
       <Button variant="secondary" size="small">
@@ -55,7 +56,7 @@ const DefaultButton = ({ action }: ActionProps) =>
     </Link>
   );
 
-const TransparentIconLeftButton = ({ action }: ActionProps) =>
+const TransparentIconLeftButton = ({ action }: ActionProps): JSX.Element | undefined =>
   action && (
     <Link to={action.to}>
       <Button variant="transparent" className="text-ui-fg-interactive">
@@ -70,7 +71,7 @@ export const NoRecords = ({
   action,
   className,
   buttonVariant = "default",
-}: NoRecordsProps) => {
+}: NoRecordsProps): JSX.Element => {
   const { t } = useTranslation();
 
   return (

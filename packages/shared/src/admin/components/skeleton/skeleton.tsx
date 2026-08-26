@@ -1,12 +1,12 @@
 import { Container, Heading, Text, clx } from "@medusajs/ui"
-import { CSSProperties, ComponentPropsWithoutRef } from "react"
+import { CSSProperties, ComponentPropsWithoutRef, type JSX } from "react"
 
 type SkeletonProps = {
   className?: string
   style?: CSSProperties
 }
 
-export const Skeleton = ({ className, style }: SkeletonProps) => {
+export const Skeleton = ({ className, style }: SkeletonProps): JSX.Element => {
   return (
     <div
       aria-hidden
@@ -33,7 +33,7 @@ type HeadingSkeletonProps = {
 export const HeadingSkeleton = ({
   level = "h1",
   characters = 10,
-}: HeadingSkeletonProps) => {
+}: HeadingSkeletonProps): JSX.Element => {
   let charWidth = 9
 
   switch (level) {
@@ -66,7 +66,7 @@ export const TextSkeleton = ({
   size = "small",
   leading = "compact",
   characters = 10,
-}: TextSkeletonProps) => {
+}: TextSkeletonProps): JSX.Element => {
   let charWidth = 9
 
   switch (size) {
@@ -103,7 +103,7 @@ export const TextSkeleton = ({
   )
 }
 
-export const IconButtonSkeleton = () => {
+export const IconButtonSkeleton = (): JSX.Element => {
   return <Skeleton className="h-7 w-7 rounded-md" />
 }
 
@@ -113,7 +113,7 @@ type GeneralSectionSkeletonProps = {
 
 export const GeneralSectionSkeleton = ({
   rowCount,
-}: GeneralSectionSkeletonProps) => {
+}: GeneralSectionSkeletonProps): JSX.Element => {
   const rows = Array.from({ length: rowCount ?? 0 }, (_, i) => i)
 
   return (
@@ -136,7 +136,7 @@ export const GeneralSectionSkeleton = ({
   )
 }
 
-export const TableFooterSkeleton = ({ layout }: { layout: "fill" | "fit" }) => {
+export const TableFooterSkeleton = ({ layout }: { layout: "fill" | "fit" }): JSX.Element => {
   return (
     <div
       className={clx("flex items-center justify-between p-4", {
@@ -169,7 +169,7 @@ export const TableSkeleton = ({
   orderBy = true,
   pagination = true,
   layout = "fit",
-}: TableSkeletonProps) => {
+}: TableSkeletonProps): JSX.Element => {
   // Row count + header row
   const totalRowCount = rowCount + 1
 
@@ -204,7 +204,7 @@ export const TableSkeleton = ({
   )
 }
 
-export const TableSectionSkeleton = (props: TableSkeletonProps) => {
+export const TableSectionSkeleton = (props: TableSkeletonProps): JSX.Element => {
   return (
     <Container className="divide-y p-0" aria-hidden>
       <div className="flex items-center justify-between px-6 py-4" aria-hidden>
@@ -216,7 +216,7 @@ export const TableSectionSkeleton = (props: TableSkeletonProps) => {
   )
 }
 
-export const JsonViewSectionSkeleton = () => {
+export const JsonViewSectionSkeleton = (): JSX.Element => {
   return (
     <Container className="divide-y p-0" aria-hidden>
       <div className="flex items-center justify-between px-6 py-4" aria-hidden>
@@ -240,7 +240,7 @@ export const SingleColumnPageSkeleton = ({
   sections = 2,
   showJSON = false,
   showMetadata = false,
-}: SingleColumnPageSkeletonProps) => {
+}: SingleColumnPageSkeletonProps): JSX.Element => {
   return (
     <div className="flex flex-col gap-y-3">
       {Array.from({ length: sections }, (_, i) => i).map((section) => {
@@ -273,7 +273,7 @@ export const TwoColumnPageSkeleton = ({
   sidebarSections = 1,
   showJSON = false,
   showMetadata = true,
-}: TwoColumnPageSkeletonProps) => {
+}: TwoColumnPageSkeletonProps): JSX.Element => {
   const showExtraData = showJSON || showMetadata
 
   return (

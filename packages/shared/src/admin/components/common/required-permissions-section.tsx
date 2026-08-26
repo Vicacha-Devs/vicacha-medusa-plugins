@@ -1,4 +1,5 @@
 import { Badge, Container, Heading, Text } from "@medusajs/ui"
+import type { JSX } from "react"
 import { useTranslation } from "react-i18next"
 
 import { useFeatureFlag } from "../../hooks"
@@ -12,7 +13,7 @@ import { useRequiredPermissions } from "../../providers"
  * it renders a "no permissions required" state so the panel is informative
  * either way.
  */
-export const RequiredPermissionsSection = () => {
+export const RequiredPermissionsSection = (): JSX.Element | null => {
   const { t } = useTranslation()
   const isRbacEnabled = useFeatureFlag("rbac")
   const requirements = useRequiredPermissions()

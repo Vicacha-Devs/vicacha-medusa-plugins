@@ -1,5 +1,6 @@
 import { Trash } from "@medusajs/icons";
 import { Button, Prompt } from "@medusajs/ui";
+import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
 
 interface DeletePromptProps {
@@ -14,7 +15,7 @@ export const DeletePrompt = ({
   loading,
   open,
   setOpen,
-}: DeletePromptProps) => {
+}: DeletePromptProps): JSX.Element => {
   const { t } = useTranslation();
 
   const handleConfirmDelete = async () => {

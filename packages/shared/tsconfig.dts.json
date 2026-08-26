@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./src/admin",
+    "declarationDir": "./dist",
+    "emitDeclarationOnly": true,
+    "noEmitOnError": false,
+    "noCheck": true
+  },
+  "include": ["src/admin/**/*"]
+}

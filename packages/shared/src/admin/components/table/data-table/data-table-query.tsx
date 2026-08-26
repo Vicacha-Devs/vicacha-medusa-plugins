@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { DataTableFilter, Filter } from "./data-table-filter";
 import { DataTableSearch } from "./data-table-search";
 
@@ -13,7 +14,7 @@ export const DataTableQuery = ({
   orderBy,
   filters,
   prefix,
-}: DataTableQueryProps) => {
+}: DataTableQueryProps): ReactNode => {
   return (
     (search || orderBy || filters || prefix) && (
       <div className="flex items-start justify-between gap-x-4 px-6 py-4">

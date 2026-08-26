@@ -1,5 +1,6 @@
 import { FocusModal, clx } from "@medusajs/ui"
 import {
+  type ComponentType,
   ComponentPropsWithoutRef,
   PropsWithChildren,
   forwardRef,
@@ -26,7 +27,7 @@ export const Root = ({
   id,
   onOpenChangeCallback,
   children,
-}: StackedFocusModalProps) => {
+}: StackedFocusModalProps): JSX.Element => {
   const { register, unregister, getIsOpen, setIsOpen } = useStackedModal()
 
   useEffect(() => {
@@ -86,7 +87,18 @@ const Content = forwardRef<
 })
 Content.displayName = "StackedFocusModal.Content"
 
-export const StackedFocusModal = Object.assign(Root, {
+type StackedFocusModalType = ((props: StackedFocusModalProps) => JSX.Element) & {
+  Close: ComponentType<any>
+  Header: ComponentType<any>
+  Body: ComponentType<any>
+  Content: ComponentType<any>
+  Trigger: ComponentType<any>
+  Footer: ComponentType<any>
+  Description: ComponentType<any>
+  Title: ComponentType<any>
+}
+
+export const StackedFocusModal: StackedFocusModalType = Object.assign(Root, {
   Close,
   Header,
   Body,
@@ -95,4 +107,4 @@ export const StackedFocusModal = Object.assign(Root, {
   Footer,
   Description,
   Title,
-})
+}) as unknown as StackedFocusModalType

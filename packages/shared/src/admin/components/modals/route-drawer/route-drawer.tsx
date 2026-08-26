@@ -1,5 +1,5 @@
 import { Drawer, clx } from "@medusajs/ui"
-import { PropsWithChildren, useEffect, useState } from "react"
+import { type ComponentType, PropsWithChildren, useEffect, useState } from "react"
 import { Path, useNavigate } from "react-router-dom"
 import { useStateAwareTo } from "../hooks/use-state-aware-to"
 import { RouteModalForm } from "../route-modal-form"
@@ -10,7 +10,7 @@ type RouteDrawerProps = PropsWithChildren<{
   prev?: string | Partial<Path> | number
 }>
 
-const Root = ({ prev = "..", children }: RouteDrawerProps) => {
+const Root = ({ prev = "..", children }: RouteDrawerProps): JSX.Element => {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [stackedModalOpen, onStackedModalOpen] = useState(false)
@@ -70,12 +70,22 @@ const Footer = Drawer.Footer
 const Close = Drawer.Close
 const Form = RouteModalForm
 
+type RouteDrawerType = ((props: RouteDrawerProps) => JSX.Element) & {
+  Header: ComponentType<any>
+  Title: ComponentType<any>
+  Body: ComponentType<any>
+  Description: ComponentType<any>
+  Footer: ComponentType<any>
+  Close: ComponentType<any>
+  Form: ComponentType<any>
+}
+
 /**
  * Drawer that is used to render a form on a separate route.
  *
  * Typically used for forms editing a resource.
  */
-export const RouteDrawer = Object.assign(Root, {
+export const RouteDrawer: RouteDrawerType = Object.assign(Root, {
   Header,
   Title,
   Body,
@@ -83,4 +93,4 @@ export const RouteDrawer = Object.assign(Root, {
   Footer,
   Close,
   Form,
-})
+}) as unknown as RouteDrawerType

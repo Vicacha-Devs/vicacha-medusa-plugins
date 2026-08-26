@@ -48,7 +48,7 @@ export const DataTableFilter = ({
   filters,
   readonly,
   prefix,
-}: DataTableFilterProps) => {
+}: DataTableFilterProps): JSX.Element => {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const [open, setOpen] = useState(false);
@@ -219,7 +219,7 @@ type ClearAllFiltersProps = {
   prefix?: string;
 };
 
-const ClearAllFilters = ({ filters, prefix }: ClearAllFiltersProps) => {
+const ClearAllFilters = ({ filters, prefix }: ClearAllFiltersProps): JSX.Element => {
   const { removeAllFilters } = useDataTableFilterContext();
   const [_, setSearchParams] = useSearchParams();
 

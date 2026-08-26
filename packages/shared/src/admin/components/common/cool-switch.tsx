@@ -1,5 +1,6 @@
 import { Switch, Label, Container, Text, Tooltip } from "@medusajs/ui";
 import { InformationCircleSolid } from "@medusajs/icons";
+import type { JSX } from "react";
 
 const CoolSwitch = ({
   checked,
@@ -15,7 +16,7 @@ const CoolSwitch = ({
   label: string;
   description: string;
   tooltip?: string;
-}) => {
+}): JSX.Element => {
   return (
     <Container className="bg-ui-bg-subtle flex flex-col gap-2">
       <div className="flex items-center gap-2">

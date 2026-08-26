@@ -1,4 +1,5 @@
 import { clx } from "@medusajs/ui";
+import type { JSX } from "react";
 import { formatAmount } from "../../../utils";
 
 import { PlaceholderCell } from "./placeholder-cell";
@@ -17,7 +18,7 @@ export const AmountCell = ({
   originalAmount,
   align = "left",
   className,
-}: AmountCellProps) => {
+}: AmountCellProps): JSX.Element => {
   if (typeof amount === "undefined" || amount === null) {
     return <PlaceholderCell />;
   }

@@ -1,4 +1,5 @@
 import { clx } from "@medusajs/ui";
+import type { JSX } from "react";
 
 import { PlaceholderCell } from "./placeholder-cell";
 import { ConditionalTooltip } from "../../common";
@@ -18,7 +19,7 @@ export const TextCell = ({
   text,
   align = "left",
   maxWidth = 220,
-}: CellProps) => {
+}: CellProps): JSX.Element => {
   if (!text) {
     return <PlaceholderCell />;
   }
@@ -46,7 +47,7 @@ export const TextCell = ({
   );
 };
 
-export const TextHeader = ({ text, align = "left" }: HeaderProps) => {
+export const TextHeader = ({ text, align = "left" }: HeaderProps): JSX.Element => {
   return (
     <div
       className={clx("flex h-full w-full items-center", {

@@ -21,7 +21,7 @@ export const DataTableSearch = ({
   prefix,
   autofocus = false,
   placeholder = "Search",
-}: DataTableSearchProps) => {
+}: DataTableSearchProps): JSX.Element => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const queryKey = prefix ? `${prefix}_q` : "q";

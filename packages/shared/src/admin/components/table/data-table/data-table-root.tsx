@@ -86,7 +86,7 @@ export const DataTableRoot = <TData,>({
   noResults = false,
   noHeader = false,
   layout = "fit",
-}: DataTableRootProps<TData>) => {
+}: DataTableRootProps<TData>): JSX.Element => {
   const { t } = useTranslation();
   const [showStickyBorder, setShowStickyBorder] = useState(false);
 
@@ -362,7 +362,7 @@ type PaginationProps = Omit<
   "translations"
 >;
 
-const Pagination = (props: PaginationProps) => {
+const Pagination = (props: PaginationProps): JSX.Element => {
   const { t } = useTranslation();
 
   const translations = {

@@ -44,7 +44,7 @@ const Field = <
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >({
   ...props
-}: ControllerProps<TFieldValues, TName>) => {
+}: ControllerProps<TFieldValues, TName>): JSX.Element => {
   return (
     <FormFieldContext.Provider value={{ name: props.name }}>
       <Controller {...props} />
@@ -211,13 +211,21 @@ const ErrorMessage = forwardRef<
 });
 ErrorMessage.displayName = "Form.ErrorMessage";
 
-const Form = Object.assign(Provider, {
+type FormType = React.ComponentType<any> & {
+  Item: React.ComponentType<any>
+  Label: React.ComponentType<any>
+  Control: React.ComponentType<any>
+  Hint: React.ComponentType<any>
+  ErrorMessage: React.ComponentType<any>
+  Field: React.ComponentType<any>
+}
+const Form: FormType = Object.assign(Provider, {
   Item,
   Label,
   Control,
   Hint,
   ErrorMessage,
   Field,
-});
+}) as unknown as FormType;
 
 export { Form };

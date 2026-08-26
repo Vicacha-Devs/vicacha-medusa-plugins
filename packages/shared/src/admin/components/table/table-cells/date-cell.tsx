@@ -1,5 +1,6 @@
 import { Tooltip } from "@medusajs/ui";
 import { format } from "date-fns/format";
+import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
 
 import { PlaceholderCell } from "./placeholder-cell";
@@ -8,7 +9,7 @@ type DateCellProps = {
   date?: Date | string | null;
 };
 
-export const DateCell = ({ date }: DateCellProps) => {
+export const DateCell = ({ date }: DateCellProps): JSX.Element => {
   if (!date) {
     return <PlaceholderCell />;
   }
@@ -36,7 +37,7 @@ export const DateCell = ({ date }: DateCellProps) => {
   );
 };
 
-export const DateHeader = () => {
+export const DateHeader = (): JSX.Element => {
   const { t } = useTranslation();
 
   return (

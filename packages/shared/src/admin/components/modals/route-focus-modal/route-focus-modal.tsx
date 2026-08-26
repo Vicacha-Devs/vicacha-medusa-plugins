@@ -1,5 +1,5 @@
 import { FocusModal, clx } from "@medusajs/ui"
-import { PropsWithChildren, useEffect, useState } from "react"
+import { type ComponentType, PropsWithChildren, useEffect, useState } from "react"
 import { Path, useNavigate } from "react-router-dom"
 import { useStateAwareTo } from "../hooks/use-state-aware-to"
 import { RouteModalForm } from "../route-modal-form"
@@ -11,7 +11,7 @@ type RouteFocusModalProps = PropsWithChildren<{
   prev?: string | Partial<Path> | number
 }>
 
-const Root = ({ prev = "..", children }: RouteFocusModalProps) => {
+const Root = ({ prev = "..", children }: RouteFocusModalProps): JSX.Element => {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [stackedModalOpen, onStackedModalOpen] = useState(false)
@@ -60,7 +60,7 @@ type ContentProps = PropsWithChildren<{
   stackedModalOpen: boolean
 }>
 
-const Content = ({ stackedModalOpen, children }: ContentProps) => {
+const Content = ({ stackedModalOpen, children }: ContentProps): JSX.Element => {
   const { __internal } = useRouteModal()
 
   const shouldPreventClose = !__internal.closeOnEscape
@@ -91,13 +91,23 @@ const Body = FocusModal.Body
 const Close = FocusModal.Close
 const Form = RouteModalForm
 
+type RouteFocusModalType = ((props: RouteFocusModalProps) => JSX.Element) & {
+  Header: ComponentType<any>
+  Title: ComponentType<any>
+  Body: ComponentType<any>
+  Description: ComponentType<any>
+  Footer: ComponentType<any>
+  Close: ComponentType<any>
+  Form: ComponentType<any>
+}
+
 /**
  * FocusModal that is used to render a form on a separate route.
  *
  * Typically used for forms creating a resource or forms that require
  * a lot of space.
  */
-export const RouteFocusModal = Object.assign(Root, {
+export const RouteFocusModal: RouteFocusModalType = Object.assign(Root, {
   Header,
   Title,
   Body,
@@ -105,4 +115,4 @@ export const RouteFocusModal = Object.assign(Root, {
   Footer,
   Close,
   Form,
-})
+}) as unknown as RouteFocusModalType

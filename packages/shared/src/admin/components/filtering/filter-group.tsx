@@ -8,7 +8,7 @@ type FilterGroupProps = {
   };
 };
 
-export const FilterGroup = ({ filters }: FilterGroupProps) => {
+export const FilterGroup = ({ filters }: FilterGroupProps): JSX.Element | null => {
   const [searchParams] = useSearchParams();
   const filterKeys = Object.keys(filters);
 
@@ -36,7 +36,7 @@ type AddFilterMenuProps = {
   availableKeys: string[];
 };
 
-const AddFilterMenu = ({ availableKeys }: AddFilterMenuProps) => {
+const AddFilterMenu = ({ availableKeys }: AddFilterMenuProps): JSX.Element => {
   return (
     <DropdownMenu>
       <DropdownMenu.Trigger asChild>

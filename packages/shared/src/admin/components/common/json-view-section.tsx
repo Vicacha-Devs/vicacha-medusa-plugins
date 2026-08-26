@@ -22,7 +22,7 @@ type JsonViewSectionProps = {
   title?: string
 }
 
-export const JsonViewSection = ({ data }: JsonViewSectionProps) => {
+export const JsonViewSection = ({ data }: JsonViewSectionProps): JSX.Element => {
   const { t } = useTranslation()
   const numberOfKeys = Object.keys(data).length
 
