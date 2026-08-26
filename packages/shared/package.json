@@ -1,5 +1,5 @@
 {
-  "name": "@vicacha-devs/shared",
+  "name": "@vicacha-devs/medusa-shared-admin",
   "version": "0.0.1",
   "description": "Shared admin components, hooks, and utilities for Vicacha Devs Medusa plugins",
   "private": true,
