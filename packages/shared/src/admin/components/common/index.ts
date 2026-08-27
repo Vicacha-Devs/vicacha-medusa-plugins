@@ -1,4 +1,5 @@
 export * from "./action-menu";
+export * from "./chip-group"
 export * from "./conditional-tooltip";
 export * from "./cool-switch";
 export * from "./delete-prompt";
