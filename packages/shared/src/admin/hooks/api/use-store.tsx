@@ -11,8 +11,8 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
-import { queryKeysFactory } from "../lib/query-key-factory"
-import { pricePreferencesQueryKeys } from "./api/price-references"
+import { queryKeysFactory } from "../../lib/query-key-factory"
+import { pricePreferencesQueryKeys } from "./use-price-preferences"
 
 
 const STORE_QUERY_KEY = "store" as const

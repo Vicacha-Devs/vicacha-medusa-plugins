@@ -5,7 +5,7 @@ import {
 } from "@tanstack/react-query"
 import { FetchError } from "@medusajs/js-sdk"
 import type Medusa from "@medusajs/js-sdk"
-import { queryKeysFactory } from "../lib"
+import { queryKeysFactory } from "../../lib"
 import { AdminRegion, PaginatedResponse } from "@medusajs/framework/types"
 
 const REGIONS_QUERY_KEY = "regions" as const
