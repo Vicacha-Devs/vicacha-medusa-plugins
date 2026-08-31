@@ -32,6 +32,7 @@ export default defineConfig({
         "lodash",
         "cmdk",
         "@uiw/react-json-view",
+        /^@dnd-kit\/.*/,
       ],
     },
     outDir: "dist",

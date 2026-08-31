@@ -3,6 +3,7 @@ export * from "./chip-group"
 export * from "./conditional-tooltip";
 export * from "./cool-switch";
 export * from "./delete-prompt";
+export * from "./file-upload";
 export * from "./json-view-section"
 export * from "./metadata-section"
 export * from "./required-permissions-section"
