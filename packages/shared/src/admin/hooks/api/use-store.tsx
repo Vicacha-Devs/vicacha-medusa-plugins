@@ -1,6 +1,5 @@
 import { AdminStoreParams, AdminStoreResponse, AdminUpdateStore, SelectParams } from "@medusajs/framework/types"
 import { FetchError } from "@medusajs/js-sdk"
-import type Medusa from "@medusajs/js-sdk"
 import {
   MutationOptions,
   QueryKey,
@@ -13,6 +12,7 @@ import {
 
 import { queryKeysFactory } from "../../lib/query-key-factory"
 import { pricePreferencesQueryKeys } from "./use-price-preferences"
+import { sdk } from "../../lib"
 
 
 const STORE_QUERY_KEY = "store" as const
@@ -20,14 +20,12 @@ export const storeQueryKeys = queryKeysFactory(STORE_QUERY_KEY)
 
 
 interface RetrieveActiveStoreProps {
-  sdk: Medusa,
   query?: AdminStoreParams
 }
 /**
  * Workaround to keep the V1 version of retrieving the store.
  */
 export async function retrieveActiveStore({
-  sdk, 
   query
 } : RetrieveActiveStoreProps): Promise<AdminStoreResponse> {
   const response = await sdk.admin.store.list(query)
@@ -42,7 +40,6 @@ export async function retrieveActiveStore({
 }
 
 interface UseStoreProps {
-  sdk: Medusa,
   query?: SelectParams,
   options?: Omit<
     UseQueryOptions<
@@ -56,12 +53,11 @@ interface UseStoreProps {
 }
 
 export const useStore = ({
-  sdk,
   query,
   options
 }: UseStoreProps) => {
   const { data, ...rest } = useQuery({
-    queryFn: () => retrieveActiveStore({sdk, query}),
+    queryFn: () => retrieveActiveStore({ query}),
     queryKey: storeQueryKeys.details(),
     ...options,
   })
@@ -73,7 +69,6 @@ export const useStore = ({
 }
 
 interface UseUpdateStoreProps {
-  sdk: Medusa,
   id: string,
   options?: MutationOptions<
     AdminStoreResponse,
@@ -83,7 +78,6 @@ interface UseUpdateStoreProps {
 }
 
 export const useUpdateStore = ({
-  sdk,
   id,
   options
 }: UseUpdateStoreProps): UseMutationResult<AdminStoreResponse, FetchError, AdminUpdateStore> => {

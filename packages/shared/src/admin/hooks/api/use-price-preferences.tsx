@@ -1,8 +1,9 @@
 import { AdminPricePreferenceListParams, AdminPricePreferenceListResponse } from "@medusajs/framework/types"
-import Medusa, { FetchError } from "@medusajs/js-sdk"
+import { FetchError } from "@medusajs/js-sdk"
 import { QueryKey, useQuery, UseQueryOptions } from "@tanstack/react-query"
 
 import { queryKeysFactory } from "../../lib/query-key-factory"
+import { sdk } from "../../lib"
 
 const PRICE_PREFERENCES_QUERY_KEY = "price-preferences" as const
 export const pricePreferencesQueryKeys = queryKeysFactory(
@@ -10,7 +11,6 @@ export const pricePreferencesQueryKeys = queryKeysFactory(
 )
 
 interface UsePricePreferencesProps {
-  sdk: Medusa,
   query?: AdminPricePreferenceListParams,
   options?: Omit<
     UseQueryOptions<
@@ -24,7 +24,6 @@ interface UsePricePreferencesProps {
 }
 
 export const usePricePreferences = ({
-  sdk,
   query,
   options
 }: UsePricePreferencesProps) => {
