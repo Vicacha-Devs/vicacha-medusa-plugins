@@ -29,14 +29,19 @@ import { IconButton, Text } from "@medusajs/ui"
 import { useState } from "react"
 import { useFieldArray, UseFormReturn } from "react-hook-form"
 import { useTranslation } from "react-i18next"
+import { z } from "zod"
 
-import { formatFileSize } from "../../lib"
-import { ActionMenu } from "../common"
+import { formatFileSize } from "../../../lib"
+import { ActionMenu } from "../../common"
+import { MediaSchema } from "../constants"
 import { UploadMediaFormItem } from "./upload-media-form-item"
 
+export type MediaSectionFormValues = {
+  media: z.infer<typeof MediaSchema>[]
+}
+
 type CreateMediaSectionProps = {
-  // TODO: make this generic
-  form: UseFormReturn<any>
+  form: UseFormReturn<MediaSectionFormValues>
 }
 
 const dropAnimationConfig: DropAnimation = {
