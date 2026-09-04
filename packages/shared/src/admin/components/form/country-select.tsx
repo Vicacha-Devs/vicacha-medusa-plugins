@@ -26,7 +26,7 @@ export function CountrySelect({ value, onChange, placeholder }: CountrySelectPro
 
   return (
     <Select
-      value={normalizedValue || undefined}
+      value={normalizedValue}
       onValueChange={(iso2) => {
         const country = COUNTRIES.find((c) => c.iso_2 === iso2)
         if (country) onChange(iso2, country.display_name)
