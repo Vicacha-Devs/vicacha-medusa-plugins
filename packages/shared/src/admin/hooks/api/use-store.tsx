@@ -7,12 +7,10 @@ import {
   UseMutationResult,
   useMutation,
   useQuery,
-  useQueryClient,
 } from "@tanstack/react-query"
 
-import { queryKeysFactory } from "../../lib/query-key-factory"
+import { queryClient, queryKeysFactory, sdk } from "../../lib"
 import { pricePreferencesQueryKeys } from "./use-price-preferences"
-import { sdk } from "../../lib"
 
 
 const STORE_QUERY_KEY = "store" as const
@@ -81,7 +79,6 @@ export const useUpdateStore = ({
   id,
   options
 }: UseUpdateStoreProps): UseMutationResult<AdminStoreResponse, FetchError, AdminUpdateStore> => {
-  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: (payload) => sdk.admin.store.update(id, payload),
