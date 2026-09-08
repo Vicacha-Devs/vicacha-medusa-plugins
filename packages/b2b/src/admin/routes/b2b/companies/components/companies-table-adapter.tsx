@@ -1,14 +1,16 @@
 import { createTableAdapter, TableAdapter } from "@medusajs/dashboard/lib"
+import { useCustomerGroups } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
+
 import { QueryCompany } from "../../../../../types"
-import { useAdminCustomerGroups, useCompanies } from "../../../../hooks/api"
+import { useCompanies } from "../../../../hooks/api"
 import { CompanyActionsMenu } from "./company-actions-menu.tsx"
 import "./companies-table-renderers.tsx"
 
 export function useCompaniesTableAdapter(): TableAdapter<QueryCompany> {
   const { t } = useTranslation()
-  const { data: customerGroups } = useAdminCustomerGroups()
+  const { data: customerGroups } = useCustomerGroups({})
 
   return useMemo(
     () =>

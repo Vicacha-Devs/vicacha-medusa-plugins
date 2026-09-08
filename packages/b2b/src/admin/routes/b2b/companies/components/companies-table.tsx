@@ -1,8 +1,8 @@
 import { Container, Heading, Text } from "@medusajs/ui";
-import { DataTable, useDataTable } from "@vicacha-devs/medusa-shared-admin/admin";
+import { DataTable, useDataTable, useCustomerGroups } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useTranslation } from "react-i18next";
 
-import { useAdminCustomerGroups, useCompanies } from "../../../../hooks/api";
+import { useCompanies } from "../../../../hooks/api";
 import { useCompaniesTableColumns } from "./table/columns.tsx";
 import { useCompaniesTableFilters } from "./table/filters.tsx";
 import { useCompaniesTableQuery } from "./table/query.tsx";
@@ -25,7 +25,7 @@ export const CompaniesTable = () => {
     order: "-created_at",
   });
 
-  const { data: customerGroups } = useAdminCustomerGroups();
+  const { data: customerGroups } = useCustomerGroups({});
 
   const companies = data?.companies ?? [];
   const count = data?.count;

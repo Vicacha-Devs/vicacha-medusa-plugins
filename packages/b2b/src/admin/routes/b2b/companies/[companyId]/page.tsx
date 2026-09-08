@@ -8,12 +8,12 @@ import {
   Text,
   Toaster,
 } from "@medusajs/ui";
-import { formatAmount } from "@vicacha-devs/medusa-shared-admin/admin";
+import { formatCurrency, useCustomerGroups } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 import { QueryEmployee } from "../../../../../types";
-import { useAdminCustomerGroups, useCompany } from "../../../../hooks/api";
+import { useCompany } from "../../../../hooks/api";
 import { CompanyActionsMenu } from "../components/index.ts";
 import {
   EmployeeCreateDrawer,
@@ -28,7 +28,7 @@ const CompanyDetails = () => {
       "*employees,*employees.customer,*employees.company,*customer_group,*approval_settings",
   });
 
-  const { data: customerGroups } = useAdminCustomerGroups();
+  const { data: customerGroups } = useCustomerGroups({});
 
   const company = data?.company;
 
@@ -196,7 +196,7 @@ const CompanyDetails = () => {
                       </Table.Cell>
                       <Table.Cell>{employee.customer?.email}</Table.Cell>
                       <Table.Cell>
-                        {formatAmount(
+                        {formatCurrency(
                           employee.spending_limit,
                           company?.currency_code || "USD"
                         )}

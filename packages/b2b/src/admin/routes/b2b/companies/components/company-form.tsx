@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
 import { AdminUpdateCompany } from "../../../../../types";
-import { useRegions } from "../../../../hooks/api";
+import { useRegions } from "@vicacha-devs/medusa-shared-admin/admin";
 
 const companySchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -33,7 +33,7 @@ export function CompanyForm({
   error: Error | null;
 }) {
   const { t } = useTranslation();
-  const { regions, isPending: regionsLoading } = useRegions();
+  const { regions, isPending: regionsLoading } = useRegions({});
 
   const currencyCodes = regions?.map((r) => r.currency_code);
   const countries = regions?.flatMap((r) => r.countries);

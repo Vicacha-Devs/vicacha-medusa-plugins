@@ -1,6 +1,6 @@
 import { MagnifyingGlass } from "@medusajs/icons";
 import { Popover, Table, Text } from "@medusajs/ui";
-import { formatAmount } from "@vicacha-devs/medusa-shared-admin/admin";
+import { formatCurrency } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useTranslation } from "react-i18next";
 
 const ItemsPopover = ({
@@ -45,11 +45,11 @@ const ItemsPopover = ({
                     </Text>
                     <Text className="text-sm text-gray-500">
                       {item.quantity} x{" "}
-                      {formatAmount(item.unit_price, currencyCode)}
+                      {formatCurrency(item.unit_price, currencyCode)}
                       <br />
                       <Text className="font-medium">
                         {t("approvals.items.itemTotal")}{" "}
-                        {formatAmount(
+                        {formatCurrency(
                           item.quantity * item.unit_price,
                           currencyCode
                         )}

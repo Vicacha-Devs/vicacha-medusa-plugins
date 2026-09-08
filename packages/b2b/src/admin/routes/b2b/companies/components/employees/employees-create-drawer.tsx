@@ -1,12 +1,13 @@
 import { HttpTypes } from "@medusajs/types";
 import { Button, Drawer, toast } from "@medusajs/ui";
-import { AdminCreateEmployee, QueryCompany } from "../../../../../../types";
+import { useCreateCustomer } from "@vicacha-devs/medusa-shared-admin/admin"
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+
 import {
-  useAdminCreateCustomer,
   useCreateEmployee,
 } from "../../../../../hooks/api";
+import { AdminCreateEmployee, QueryCompany } from "../../../../../../types";
 import { EmployeesCreateForm } from "./employees-create-form.tsx";
 
 export function EmployeeCreateDrawer({ company }: { company: QueryCompany }) {
@@ -23,7 +24,7 @@ export function EmployeeCreateDrawer({ company }: { company: QueryCompany }) {
     mutateAsync: createCustomer,
     isPending: createCustomerLoading,
     error: createCustomerError,
-  } = useAdminCreateCustomer();
+  } = useCreateCustomer();
 
   const handleSubmit = async (
     formData: AdminCreateEmployee & HttpTypes.AdminCreateCustomer
