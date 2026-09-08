@@ -1,8 +1,8 @@
 import { clx } from "@medusajs/ui";
 import type { JSX } from "react";
-import { formatAmount } from "../../../utils";
 
 import { PlaceholderCell } from "./placeholder-cell";
+import { formatCurrency } from "../../../lib";
 
 type AmountCellProps = {
   currencyCode: string;
@@ -19,11 +19,11 @@ export const AmountCell = ({
   align = "left",
   className,
 }: AmountCellProps): JSX.Element => {
-  if (typeof amount === "undefined" || amount === null) {
+  if (typeof amount === "undefined" || amount === null || !currencyCode) {
     return <PlaceholderCell />;
   }
 
-  const formatted = formatAmount(amount, currencyCode);
+  const formatted = formatCurrency(amount, currencyCode);
   const originalAmountPresent = typeof originalAmount === "number";
   const originalAmountDiffers = originalAmount !== amount;
   const shouldShowAmountDiff = originalAmountPresent && originalAmountDiffers;
@@ -43,7 +43,7 @@ export const AmountCell = ({
       {shouldShowAmountDiff ? (
         <>
           <span className="truncate line-through text-xs">
-            {formatAmount(originalAmount!, currencyCode)}
+            {formatCurrency(originalAmount!, currencyCode)}
           </span>
           <span className="truncate text-blue-400 txt-small">{formatted}</span>
         </>
