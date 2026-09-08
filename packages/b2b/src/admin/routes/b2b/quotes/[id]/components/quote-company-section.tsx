@@ -1,5 +1,5 @@
 import { Container, Heading } from "@medusajs/ui"
-import { SectionRow } from "@vicacha-devs/medusa-shared-admin/admin"
+import { SectionRow, Thumbnail } from "@vicacha-devs/medusa-shared-admin/admin"
 import { ArrowUpRightOnBox } from "@medusajs/icons"
 import { Link } from "react-router-dom"
 import { useTranslation } from "react-i18next"
@@ -32,12 +32,15 @@ export const QuoteCompanySection = ({ quote }: QuoteCompanySectionProps) => {
       <SectionRow
         title={t("fields.name")}
         value={
-          <Link
-            to={`/b2b/companies/${company.id}`}
-            className="txt-compact-small text-ui-fg-interactive hover:text-ui-fg-interactive-hover transition-colors"
-          >
-            {company.name}
-          </Link>
+          <div className="flex items-center gap-3">
+            <Thumbnail src={company.logo_url} />
+            <Link
+              to={`/b2b/companies/${company.id}`}
+              className="txt-compact-small text-ui-fg-interactive hover:text-ui-fg-interactive-hover transition-colors"
+            >
+              {company.name}
+            </Link>
+          </div>
         }
       />
       {company.currency_code && (

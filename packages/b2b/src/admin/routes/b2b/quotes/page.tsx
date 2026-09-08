@@ -43,7 +43,8 @@ const Breadcrumb = () => {
 }
 
 export const config = defineRouteConfig({
-  label: "Quotes",
+  label: "quotes.title",
+  translationNs: "b2b",
   icon: DocumentText,
 })
 

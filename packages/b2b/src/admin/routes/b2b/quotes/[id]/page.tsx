@@ -185,9 +185,11 @@ const QuoteDetail = () => {
 }
 
 const Breadcrumb = ({ id }: { id?: string }) => {
+  const { t } = useTranslation()
   const { quote } = useQuote(id ?? "", undefined, { enabled: !!id })
   const displayId = (quote as any)?.draft_order?.display_id
-  return displayId != null ? `#${displayId}` : id ?? "Quote"
+  
+  return displayId != null ? `#${displayId}` : id ?? t("quote.title")
 }
 
 export const handle = {
