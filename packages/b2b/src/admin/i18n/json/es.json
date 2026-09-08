@@ -207,7 +207,14 @@
     "label": "Cotizaciones",
     "table": {
       "noRecordsTitle": "No se encontraron cotizaciones",
-      "noRecordsMessage": "Actualmente no hay cotizaciones. Crea una desde la tienda."
+      "noRecordsMessage": "Actualmente no hay cotizaciones. Crea una desde la tienda.",
+      "customer": "Cliente",
+      "draftOrder": "Pedido borrador",
+      "messages": "Mensajes"
+    },
+    "filters": {
+      "customerId": "ID de cliente",
+      "draftOrderId": "ID de pedido borrador"
     },
     "status": {
       "accepted": "Aceptada",
@@ -226,32 +233,55 @@
       "phone": "Teléfono",
       "spendingLimit": "Límite de gasto",
       "company": "Empresa",
-      "name": "Nombre"
+      "name": "Nombre",
+      "draftOrder": "Pedido borrador",
+      "order": "Pedido",
+      "orderChange": "Cambio de pedido",
+      "cart": "Carrito",
+      "noCart": "Sin carrito",
+      "noDraftOrder": "Sin pedido borrador",
+      "noCustomer": "Sin cliente",
+      "unlimited": "Ilimitado"
+    },
+    "orderStatus": {
+      "pending": "Pendiente",
+      "completed": "Completado",
+      "cancelled": "Cancelado",
+      "requires_action": "Requiere acción",
+      "draft": "Borrador",
+      "archived": "Archivado"
     },
     "summary": {
       "title": "Resumen de la cotización",
       "manage": "Gestionar"
     },
     "cost": {
+      "title": "Desglose de costos",
       "discounts": "Descuentos",
       "shipping": "Envío"
     },
     "total": {
+      "title": "Total",
       "original": "Total original",
       "quote": "Total de la cotización"
     },
     "messages": {
       "title": "Mensajes",
+      "empty": "Aún no hay mensajes",
+      "placeholder": "Escribe un mensaje…",
       "pickItem": "Seleccionar artículo de la cotización",
       "pickItemHint": "Selecciona un artículo de la cotización para escribir un mensaje sobre él",
       "selectItem": "Seleccionar artículo",
       "send": "Enviar",
-      "sentSuccess": "Mensaje enviado correctamente al cliente"
+      "sentSuccess": "Mensaje enviado correctamente al cliente",
+      "adminSender": "Administrador",
+      "customerSender": "Cliente"
     },
     "manage": {
       "title": "Gestionar cotización",
       "priceOverrideHint": "Modificar el precio unitario de este producto",
-      "updatePrice": "Actualizar precio"
+      "updatePrice": "Actualizar precio",
+      "searchPlaceholder": "Buscar..."
     },
     "prompts": {
       "send": {

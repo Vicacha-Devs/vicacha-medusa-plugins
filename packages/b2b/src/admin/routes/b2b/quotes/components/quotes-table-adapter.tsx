@@ -1,10 +1,10 @@
 import { createTableAdapter, TableAdapter } from "@medusajs/dashboard/lib"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
-
 import { QueryQuote } from "../../../../../types"
 import { useQuotes } from "../../../../hooks/api"
-import "./quotes-table-renderers.tsx"
+import { QuoteActionsMenu } from "./quote-actions-menu"
+import "./quotes-table-renderers"
 
 export function useQuotesTableAdapter(): TableAdapter<QueryQuote> {
   const { t } = useTranslation()
@@ -13,24 +13,20 @@ export function useQuotesTableAdapter(): TableAdapter<QueryQuote> {
     () =>
       createTableAdapter<QueryQuote>({
         entity: "b2b-quotes",
-        queryPrefix: "quo",
+        queryPrefix: "quot",
         pageSize: 50,
         useData: (_fields, params) => {
-          const { quotes, count, isPending, isError, error } = useQuotes({
-            ...params,
-            fields:
-              "+draft_order.total,+draft_order.customer.email,*draft_order.customer.employee.company",
-            order: "-created_at",
-          })
+          const result = useQuotes({ ...params, order: "-created_at" })
           return {
-            data: quotes,
-            count,
-            isLoading: isPending,
-            isError,
-            error,
+            data: result.quotes,
+            count: result.count,
+            isLoading: result.isPending,
+            isError: result.isError,
+            error: result.error,
           }
         },
         getRowHref: (row) => `/b2b/quotes/${row.id}`,
+        renderRowActions: (row) => <QuoteActionsMenu quote={row} />,
         emptyState: {
           empty: {
             heading: t("quotes.table.noRecordsTitle"),

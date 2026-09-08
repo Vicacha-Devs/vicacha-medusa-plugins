@@ -1,5 +1,4 @@
-export * from "./quote-details/index.tsx";
-export * from "./quote-manage/index";
-export * from "./quote-messages.tsx";
-export * from "./quote-status-badge.tsx";
-export * from "./quotes-table.tsx";
+export { QuotesTable } from "./quotes-table"
+export { useQuotesTableAdapter } from "./quotes-table-adapter"
+export { QuoteActionsMenu } from "./quote-actions-menu"
+export { default as QuoteStatusBadge } from "./quote-status-badge"

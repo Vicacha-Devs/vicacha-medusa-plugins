@@ -1,13 +1,6 @@
 import { HttpTypes } from "@medusajs/framework/types";
 import { ClientHeaders, FetchError } from "@medusajs/js-sdk";
 import {
-  AdminCreateQuoteMessage,
-  AdminQuoteResponse,
-  QuoteFilterParams,
-  StoreQuoteResponse,
-  StoreQuotesResponse,
-} from "../../../types";
-import {
   QueryKey,
   useMutation,
   UseMutationOptions,
@@ -15,10 +8,17 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from "@tanstack/react-query";
-import { queryKeysFactory } from "../../lib/query-key-factory";
-import { sdk } from "../../lib/client";
-import { orderPreviewQueryKey } from "./order-preview";
+import {
+  AdminCreateQuoteMessage,
+  AdminQuoteResponse,
+  QuoteFilterParams,
+  StoreQuoteResponse,
+  StoreQuotesResponse,
+} from "../../../types";
+import { queryKeysFactory, sdk } from "@vicacha-devs/medusa-shared-admin/admin";
 
+
+export const orderPreviewQueryKey = queryKeysFactory("custom_orders");
 export const quoteQueryKey = queryKeysFactory("quote");
 
 export const useQuotes = (
@@ -39,7 +39,7 @@ export const useQuotes = (
   const { data, ...rest } = useQuery({
     ...options,
     queryFn: () => fetchQuotes(query)!,
-    queryKey: quoteQueryKey.list(),
+    queryKey: quoteQueryKey.list(query),
   });
 
   return { ...data, ...rest };
@@ -85,16 +85,15 @@ export const useAddItemsToQuote = (
   const queryClient = useQueryClient();
 
   return useMutation({
+    ...options,
     mutationFn: (payload: HttpTypes.AdminAddOrderEditItems) =>
       sdk.admin.orderEdit.addItems(id, payload),
     onSuccess: (data: any, variables: any, context: any) => {
       queryClient.invalidateQueries({
         queryKey: orderPreviewQueryKey.detail(id),
       });
-
       options?.onSuccess?.(data, variables, context);
     },
-    ...options,
   });
 };
 
@@ -109,6 +108,7 @@ export const useUpdateQuoteItem = (
   const queryClient = useQueryClient();
 
   return useMutation({
+    ...options,
     mutationFn: ({
       itemId,
       ...payload
@@ -119,10 +119,8 @@ export const useUpdateQuoteItem = (
       queryClient.invalidateQueries({
         queryKey: orderPreviewQueryKey.detail(id),
       });
-
       options?.onSuccess?.(data, variables, context);
     },
-    ...options,
   });
 };
 
@@ -137,6 +135,7 @@ export const useRemoveQuoteItem = (
   const queryClient = useQueryClient();
 
   return useMutation({
+    ...options,
     mutationFn: (actionId: string) =>
       sdk.admin.orderEdit.removeAddedItem(id, actionId),
     onSuccess: (data: any, variables: any, context: any) => {
@@ -145,7 +144,6 @@ export const useRemoveQuoteItem = (
       });
       options?.onSuccess?.(data, variables, context);
     },
-    ...options,
   });
 };
 
@@ -160,6 +158,7 @@ export const useUpdateAddedQuoteItem = (
   const queryClient = useQueryClient();
 
   return useMutation({
+    ...options,
     mutationFn: ({
       actionId,
       ...payload
@@ -170,10 +169,8 @@ export const useUpdateAddedQuoteItem = (
       queryClient.invalidateQueries({
         queryKey: orderPreviewQueryKey.detail(id),
       });
-
       options?.onSuccess?.(data, variables, context);
     },
-    ...options,
   });
 };
 
@@ -188,15 +185,20 @@ export const useConfirmQuote = (
   const queryClient = useQueryClient();
 
   return useMutation({
+    ...options,
     mutationFn: () => sdk.admin.orderEdit.request(id),
     onSuccess: (data: any, variables: any, context: any) => {
       queryClient.invalidateQueries({
         queryKey: orderPreviewQueryKey.details(),
       });
-
+      queryClient.invalidateQueries({
+        queryKey: quoteQueryKey.detail(id),
+      });
+      queryClient.invalidateQueries({
+        queryKey: quoteQueryKey.lists(),
+      });
       options?.onSuccess?.(data, variables, context);
     },
-    ...options,
   });
 };
 
@@ -206,29 +208,24 @@ export const useSendQuote = (
 ) => {
   const queryClient = useQueryClient();
 
-  const sendQuote = async (id: string) =>
-    sdk.client.fetch<AdminQuoteResponse>(`/admin/b2b/quotes/${id}/send`, {
-      method: "POST",
-    });
-
   return useMutation({
-    mutationFn: () => sendQuote(id),
+    ...options,
+    mutationFn: () =>
+      sdk.client.fetch<AdminQuoteResponse>(`/admin/b2b/quotes/${id}/send`, {
+        method: "POST",
+      }),
     onSuccess: (data: any, variables: any, context: any) => {
       queryClient.invalidateQueries({
         queryKey: orderPreviewQueryKey.details(),
       });
-
       queryClient.invalidateQueries({
         queryKey: quoteQueryKey.detail(id),
       });
-
       queryClient.invalidateQueries({
         queryKey: quoteQueryKey.lists(),
       });
-
       options?.onSuccess?.(data, variables, context);
     },
-    ...options,
   });
 };
 
@@ -238,29 +235,24 @@ export const useRejectQuote = (
 ) => {
   const queryClient = useQueryClient();
 
-  const rejectQuote = async (id: string) =>
-    sdk.client.fetch<AdminQuoteResponse>(`/admin/b2b/quotes/${id}/reject`, {
-      method: "POST",
-    });
-
   return useMutation({
-    mutationFn: () => rejectQuote(id),
+    ...options,
+    mutationFn: () =>
+      sdk.client.fetch<AdminQuoteResponse>(`/admin/b2b/quotes/${id}/reject`, {
+        method: "POST",
+      }),
     onSuccess: (data: AdminQuoteResponse, variables: any, context: any) => {
       queryClient.invalidateQueries({
         queryKey: orderPreviewQueryKey.details(),
       });
-
       queryClient.invalidateQueries({
         queryKey: quoteQueryKey.detail(id),
       });
-
       queryClient.invalidateQueries({
         queryKey: quoteQueryKey.lists(),
       });
-
       options?.onSuccess?.(data, variables, context);
     },
-    ...options,
   });
 };
 
@@ -274,21 +266,18 @@ export const useCreateQuoteMessage = (
 ) => {
   const queryClient = useQueryClient();
 
-  const sendQuote = async (id: string, body: AdminCreateQuoteMessage) =>
-    sdk.client.fetch<AdminQuoteResponse>(`/admin/b2b/quotes/${id}/messages`, {
-      body,
-      method: "POST",
-    });
-
   return useMutation({
-    mutationFn: (body) => sendQuote(id, body),
+    ...options,
+    mutationFn: (body: AdminCreateQuoteMessage) =>
+      sdk.client.fetch<AdminQuoteResponse>(`/admin/b2b/quotes/${id}/messages`, {
+        body,
+        method: "POST",
+      }),
     onSuccess: (data: AdminQuoteResponse, variables: any, context: any) => {
       queryClient.invalidateQueries({
         queryKey: quoteQueryKey.details(),
       });
-
       options?.onSuccess?.(data, variables, context);
     },
-    ...options,
   });
 };

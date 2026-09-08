@@ -209,7 +209,14 @@
     "label": "Quotes",
     "table": {
       "noRecordsTitle": "No quotes found",
-      "noRecordsMessage": "There are currently no quotes. Create one from the storefront."
+      "noRecordsMessage": "There are currently no quotes. Create one from the storefront.",
+      "customer": "Customer",
+      "draftOrder": "Draft Order",
+      "messages": "Messages"
+    },
+    "filters": {
+      "customerId": "Customer ID",
+      "draftOrderId": "Draft Order ID"
     },
     "status": {
       "accepted": "Accepted",
@@ -228,32 +235,55 @@
       "phone": "Phone",
       "spendingLimit": "Spending Limit",
       "company": "Company",
-      "name": "Name"
+      "name": "Name",
+      "draftOrder": "Draft Order",
+      "order": "Order",
+      "orderChange": "Order Change",
+      "cart": "Cart",
+      "noCart": "No cart",
+      "noDraftOrder": "No draft order",
+      "noCustomer": "No customer",
+      "unlimited": "Unlimited"
+    },
+    "orderStatus": {
+      "pending": "Pending",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "requires_action": "Requires Action",
+      "draft": "Draft",
+      "archived": "Archived"
     },
     "summary": {
       "title": "Quote Summary",
       "manage": "Manage"
     },
     "cost": {
+      "title": "Cost Breakdown",
       "discounts": "Discounts",
       "shipping": "Shipping"
     },
     "total": {
+      "title": "Total",
       "original": "Original Total",
       "quote": "Quote Total"
     },
     "messages": {
       "title": "Messages",
+      "empty": "No messages yet",
+      "placeholder": "Write a message…",
       "pickItem": "Pick Quote Item",
       "pickItemHint": "Select a quote item to write a message around",
       "selectItem": "Select Item",
       "send": "Send",
-      "sentSuccess": "Successfully sent message to customer"
+      "sentSuccess": "Successfully sent message to customer",
+      "adminSender": "Admin",
+      "customerSender": "Customer"
     },
     "manage": {
       "title": "Manage Quote",
       "priceOverrideHint": "Override the unit price of this product",
-      "updatePrice": "Update Price"
+      "updatePrice": "Update Price",
+      "searchPlaceholder": "Search..."
     },
     "prompts": {
       "send": {

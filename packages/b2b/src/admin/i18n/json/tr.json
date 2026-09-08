@@ -207,7 +207,14 @@
     "label": "Teklifler",
     "table": {
       "noRecordsTitle": "Teklif bulunamadı",
-      "noRecordsMessage": "Şu anda hiç teklif yok. Mağazadan bir tane oluşturun."
+      "noRecordsMessage": "Şu anda hiç teklif yok. Mağazadan bir tane oluşturun.",
+      "customer": "Müşteri",
+      "draftOrder": "Taslak Sipariş",
+      "messages": "Mesajlar"
+    },
+    "filters": {
+      "customerId": "Müşteri ID",
+      "draftOrderId": "Taslak Sipariş ID"
     },
     "status": {
       "accepted": "Kabul Edildi",
@@ -226,32 +233,55 @@
       "phone": "Telefon",
       "spendingLimit": "Harcama Limiti",
       "company": "Şirket",
-      "name": "Ad"
+      "name": "Ad",
+      "draftOrder": "Taslak Sipariş",
+      "order": "Sipariş",
+      "orderChange": "Sipariş Değişikliği",
+      "cart": "Sepet",
+      "noCart": "Sepet yok",
+      "noDraftOrder": "Taslak sipariş yok",
+      "noCustomer": "Müşteri yok",
+      "unlimited": "Sınırsız"
+    },
+    "orderStatus": {
+      "pending": "Bekliyor",
+      "completed": "Tamamlandı",
+      "cancelled": "İptal Edildi",
+      "requires_action": "İşlem Gerekiyor",
+      "draft": "Taslak",
+      "archived": "Arşivlendi"
     },
     "summary": {
       "title": "Teklif Özeti",
       "manage": "Yönet"
     },
     "cost": {
+      "title": "Maliyet Detayı",
       "discounts": "İndirimler",
       "shipping": "Kargo"
     },
     "total": {
+      "title": "Toplam",
       "original": "Orijinal Toplam",
       "quote": "Teklif Toplamı"
     },
     "messages": {
       "title": "Mesajlar",
+      "empty": "Henüz mesaj yok",
+      "placeholder": "Bir mesaj yazın…",
       "pickItem": "Pick Quote Item",
       "pickItemHint": "Select a quote item to write a message around",
       "selectItem": "Öğe Seç",
       "send": "Gönder",
-      "sentSuccess": "Successfully sent message to customer"
+      "sentSuccess": "Successfully sent message to customer",
+      "adminSender": "Yönetici",
+      "customerSender": "Müşteri"
     },
     "manage": {
       "title": "Teklifi Yönet",
       "priceOverrideHint": "Override the unit price of this product",
-      "updatePrice": "Fiyatı Güncelle"
+      "updatePrice": "Fiyatı Güncelle",
+      "searchPlaceholder": "Ara..."
     },
     "prompts": {
       "send": {

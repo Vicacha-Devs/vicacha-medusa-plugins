@@ -207,7 +207,14 @@
     "label": "عروض الأسعار",
     "table": {
       "noRecordsTitle": "لم يتم العثور على عروض أسعار",
-      "noRecordsMessage": "لا توجد عروض أسعار حاليًا. أنشئ واحدًا من المتجر."
+      "noRecordsMessage": "لا توجد عروض أسعار حاليًا. أنشئ واحدًا من المتجر.",
+      "customer": "العميل",
+      "draftOrder": "طلب مسودة",
+      "messages": "الرسائل"
+    },
+    "filters": {
+      "customerId": "معرف العميل",
+      "draftOrderId": "معرف طلب المسودة"
     },
     "status": {
       "accepted": "مقبول",
@@ -226,32 +233,55 @@
       "phone": "الهاتف",
       "spendingLimit": "حد الإنفاق",
       "company": "الشركة",
-      "name": "الاسم"
+      "name": "الاسم",
+      "draftOrder": "طلب مسودة",
+      "order": "الطلب",
+      "orderChange": "تغيير الطلب",
+      "cart": "سلة التسوق",
+      "noCart": "لا توجد سلة تسوق",
+      "noDraftOrder": "لا يوجد طلب مسودة",
+      "noCustomer": "لا يوجد عميل",
+      "unlimited": "غير محدود"
+    },
+    "orderStatus": {
+      "pending": "معلق",
+      "completed": "مكتمل",
+      "cancelled": "ملغى",
+      "requires_action": "يتطلب إجراءً",
+      "draft": "مسودة",
+      "archived": "مؤرشف"
     },
     "summary": {
       "title": "ملخص عرض السعر",
       "manage": "إدارة"
     },
     "cost": {
+      "title": "تفاصيل التكاليف",
       "discounts": "الخصومات",
       "shipping": "الشحن"
     },
     "total": {
+      "title": "الإجمالي",
       "original": "الإجمالي الأصلي",
       "quote": "إجمالي عرض السعر"
     },
     "messages": {
       "title": "الرسائل",
+      "empty": "لا توجد رسائل بعد",
+      "placeholder": "اكتب رسالة…",
       "pickItem": "Pick Quote Item",
       "pickItemHint": "Select a quote item to write a message around",
       "selectItem": "اختر عنصرًا",
       "send": "إرسال",
-      "sentSuccess": "Successfully sent message to customer"
+      "sentSuccess": "Successfully sent message to customer",
+      "adminSender": "المسؤول",
+      "customerSender": "العميل"
     },
     "manage": {
       "title": "إدارة عرض السعر",
       "priceOverrideHint": "Override the unit price of this product",
-      "updatePrice": "تحديث السعر"
+      "updatePrice": "تحديث السعر",
+      "searchPlaceholder": "بحث..."
     },
     "prompts": {
       "send": {

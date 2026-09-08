@@ -2,7 +2,7 @@ import type {
   AuthenticatedMedusaRequest,
   MedusaResponse,
 } from "@medusajs/framework";
-import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
+import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils";
 import { AdminGetQuoteParamsType } from "../validators";
 
 export const GET = async (
@@ -22,6 +22,29 @@ export const GET = async (
     },
     { throwIfKeyNotFound: true }
   );
+
+  const messages: any[] = (quote as any).messages ?? [];
+
+  const adminIds = [
+    ...new Set(messages.map((m) => m.admin_id).filter(Boolean)),
+  ];
+
+  if (adminIds.length > 0) {
+    const userService = req.scope.resolve(Modules.USER);
+    const users = await userService.listUsers({ id: adminIds });
+    const userById = new Map(users.map((u: any) => [u.id, u]));
+
+    (quote as any).messages = messages.map((m) => {
+      if (!m.admin_id) return m;
+      const u = userById.get(m.admin_id);
+      return {
+        ...m,
+        admin_name: u
+          ? [u.first_name, u.last_name].filter(Boolean).join(" ") || u.email
+          : null,
+      };
+    });
+  }
 
   res.json({ quote });
 };

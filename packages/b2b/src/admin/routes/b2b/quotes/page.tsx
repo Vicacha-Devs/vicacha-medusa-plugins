@@ -1,13 +1,12 @@
-import { defineRouteConfig } from "@medusajs/admin-sdk";
-import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared";
-import { ConfigurableDataTable, LayoutComposer } from "@medusajs/dashboard/components";
-import { DocumentText } from "@medusajs/icons";
-import { Toaster } from "@medusajs/ui";
+import { defineRouteConfig } from "@medusajs/admin-sdk"
+import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared"
+import { ConfigurableDataTable, LayoutComposer } from "@medusajs/dashboard/components"
+import { DocumentText } from "@medusajs/icons"
+import { Toaster } from "@medusajs/ui"
 import { useFeatureFlag } from "@vicacha-devs/medusa-shared-admin/admin"
 import { useTranslation } from "react-i18next"
 
-import { QuotesTable } from "./components/quotes-table.tsx";
-import { useQuotesTableAdapter } from "./components/quotes-table-adapter.tsx";
+import { QuotesTable, useQuotesTableAdapter } from "./components"
 
 const Quotes = () => {
   const { t } = useTranslation()
@@ -27,31 +26,29 @@ const Quotes = () => {
                 heading={t("quotes.title")}
                 subHeading={t("overview.nav.quotes.description")}
               />
-            ): (
+            ) : (
               <QuotesTable />
             )}
             <Toaster />
           </LayoutComposer.Entry>
-        )
+        ),
       }}
     />
-  );
-};
+  )
+}
 
-const Breadcrumb = () =>{
+const Breadcrumb = () => {
   const { t } = useTranslation()
-
   return t("quotes.title")
 }
 
 export const config = defineRouteConfig({
   label: "Quotes",
   icon: DocumentText,
-});
+})
 
 export const handle = {
-  breadcrumb: () => <Breadcrumb/>,
+  breadcrumb: () => <Breadcrumb />,
 }
 
-
-export default Quotes;
+export default Quotes

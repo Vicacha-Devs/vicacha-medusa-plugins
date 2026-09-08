@@ -1,16 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AdminOrder } from "@medusajs/framework/types";
-import { Button, Heading, toast } from "@medusajs/ui";
+import { Button, Heading, Skeleton, toast } from "@medusajs/ui";
 import {
-  formatAmount,
+  safeFormatCurrency,
   RouteFocusModal,
+  useOrderPreview,
   useRouteModal
 } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
-import { useConfirmQuote, useOrderPreview } from "../../../../../hooks/api";
+import { useConfirmQuote } from "../../../../../../hooks/api";
 import { ManageItemsSection } from "./manage-items-section.tsx";
 
 export const ManageQuoteFormSchema = z.object({});
@@ -24,9 +25,9 @@ type ReturnCreateFormProps = {
 export const ManageQuoteForm = ({ order }: ReturnCreateFormProps) => {
   const { t } = useTranslation();
   const { handleSuccess } = useRouteModal();
-  const { order: preview } = useOrderPreview(order.id);
+  const { order: preview } = useOrderPreview(order.id, { fields: "currency_code,total,items,summary" });
 
-  const { mutateAsync: confirmQuote, isPending: isRequesting } =
+  const { mutateAsync: confirmQuote } =
     useConfirmQuote(order.id);
 
   const form = useForm<ManageQuoteFormSchemaType>({
@@ -48,7 +49,19 @@ export const ManageQuoteForm = ({ order }: ReturnCreateFormProps) => {
   });
 
   if (!preview) {
-    return <></>;
+    return (
+      <RouteFocusModal.Form form={form}>
+        <div className="flex h-full flex-col">
+          <RouteFocusModal.Header />
+          <RouteFocusModal.Body className="flex size-full justify-center overflow-y-auto">
+            <div className="mt-16 w-[720px] max-w-[100%] space-y-4 px-4 md:p-0">
+              <Skeleton className="h-8 w-48" />
+              <Skeleton className="h-40 w-full" />
+            </div>
+          </RouteFocusModal.Body>
+        </div>
+      </RouteFocusModal.Form>
+    );
   }
 
   return (
@@ -70,7 +83,7 @@ export const ManageQuoteForm = ({ order }: ReturnCreateFormProps) => {
                 </span>
 
                 <span className="txt-small text-ui-fg-subtle">
-                  {formatAmount(order.total, order.currency_code)}
+                  {safeFormatCurrency(order.total, order.currency_code)}
                 </span>
               </div>
 
@@ -80,7 +93,7 @@ export const ManageQuoteForm = ({ order }: ReturnCreateFormProps) => {
                 </span>
 
                 <span className="txt-small text-ui-fg-subtle">
-                  {formatAmount(preview.total, order.currency_code)}
+                  {safeFormatCurrency(preview.total, order.currency_code)}
                 </span>
               </div>
             </div>
