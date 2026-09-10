@@ -44,7 +44,7 @@ export const getStylizedAmount = (amount: number, currencyCode: string) => {
   const symbol = getNativeSymbol(currencyCode)
   const decimalDigits = getDecimalDigits(currencyCode)
 
-  const lessThanRoundingPrecission = isAmountLessThenRoundingError(
+  const lessThanRoundingPrecision = isAmountLessThenRoundingError(
     amount,
     currencyCode
   )
@@ -52,7 +52,7 @@ export const getStylizedAmount = (amount: number, currencyCode: string) => {
   const total = amount.toLocaleString(undefined, {
     minimumFractionDigits: decimalDigits,
     maximumFractionDigits: decimalDigits,
-    signDisplay: lessThanRoundingPrecission ? "exceptZero" : "auto",
+    signDisplay: lessThanRoundingPrecision ? "exceptZero" : "auto",
   })
 
   return `${symbol} ${total} ${currencyCode.toUpperCase()}`
