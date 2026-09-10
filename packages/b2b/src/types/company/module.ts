@@ -3,14 +3,7 @@
 import { CustomerGroupDTO } from "@medusajs/framework/types";
 import { CustomerDTO } from "@medusajs/framework/types";
 import { ModuleApprovalSettings } from "../approval/module";
-
-export enum ModuleCompanySpendingLimitResetFrequency {
-  NEVER = "never",
-  DAILY = "daily",
-  WEEKLY = "weekly",
-  MONTHLY = "monthly",
-  YEARLY = "yearly",
-}
+import { ESpendingLimitResetFrequency } from "../enums";
 
 export type ModuleCompany = {
   id: string;
@@ -24,7 +17,8 @@ export type ModuleCompany = {
   country: string | null;
   logo_url: string | null;
   currency_code: string | null;
-  spending_limit_reset_frequency: ModuleCompanySpendingLimitResetFrequency;
+  spending_limit_reset_frequency: ESpendingLimitResetFrequency;
+  spending_limit_reset_at: Date | null;
   created_at: Date;
   updated_at: Date;
   customer_group: CustomerGroupDTO;
@@ -42,7 +36,7 @@ export type ModuleCreateCompany = {
   country: string | null;
   logo_url: string | null;
   currency_code: string;
-  spending_limit_reset_frequency: ModuleCompanySpendingLimitResetFrequency | null;
+  spending_limit_reset_frequency: ESpendingLimitResetFrequency;
 };
 
 export interface ModuleUpdateCompany extends Partial<ModuleCompany> {
@@ -59,6 +53,7 @@ export interface ModuleEmployee {
   id: string;
   spending_limit: number;
   is_admin: boolean;
+  is_active: boolean;
   company_id: string;
   created_at: Date;
   updated_at: Date;
@@ -70,6 +65,7 @@ export type ModuleCreateEmployee = {
   customer_id: string;
   spending_limit: number;
   is_admin: boolean;
+  is_active?: boolean;
   company_id: string;
 };
 

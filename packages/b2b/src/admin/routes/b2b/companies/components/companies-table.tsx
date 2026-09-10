@@ -1,37 +1,26 @@
-import { Container, Heading, Text } from "@medusajs/ui";
-import { DataTable, useDataTable, useCustomerGroups } from "@vicacha-devs/medusa-shared-admin/admin";
-import { useTranslation } from "react-i18next";
+import { Button, Container, Heading, Text } from "@medusajs/ui"
+import { DataTable, useDataTable } from "@vicacha-devs/medusa-shared-admin/admin"
+import { useTranslation } from "react-i18next"
 
-import { useCompanies } from "../../../../hooks/api";
-import { useCompaniesTableColumns } from "./table/columns.tsx";
-import { useCompaniesTableFilters } from "./table/filters.tsx";
-import { useCompaniesTableQuery } from "./table/query.tsx";
+import { useCompanies } from "../../../../hooks/api"
+import { useCompaniesTableColumns } from "./table/columns"
+import { useCompaniesTableFilters } from "./table/filters"
+import { useCompaniesTableQuery } from "./table/query"
 
-const PAGE_SIZE = 50;
-const PREFIX = "comp";
+const PAGE_SIZE = 50
+const PREFIX = "comp"
 
-export const CompaniesTable = () => {
-  const { t } = useTranslation();
+export const CompaniesTable = ({ onCreateClick }: { onCreateClick?: () => void }) => {
+  const { t } = useTranslation()
 
-  const { searchParams, raw } = useCompaniesTableQuery({
-    pageSize: PAGE_SIZE,
-    prefix: PREFIX,
-  });
+  const { searchParams, raw } = useCompaniesTableQuery({ pageSize: PAGE_SIZE, prefix: PREFIX })
 
-  const { data, isPending } = useCompanies({
-    ...searchParams,
-    fields:
-      "*employees,*employees.customer,*employees.company,*customer_group,*approval_settings",
-    order: "-created_at",
-  });
+  const { data, isPending } = useCompanies({ ...searchParams, order: "-created_at" })
+  const companies = data?.companies ?? []
+  const count = data?.count
 
-  const { data: customerGroups } = useCustomerGroups({});
-
-  const companies = data?.companies ?? [];
-  const count = data?.count;
-
-  const columns = useCompaniesTableColumns(customerGroups);
-  const filters = useCompaniesTableFilters();
+  const columns = useCompaniesTableColumns()
+  const filters = useCompaniesTableFilters()
 
   const { table } = useDataTable({
     data: companies,
@@ -40,7 +29,8 @@ export const CompaniesTable = () => {
     enablePagination: true,
     pageSize: PAGE_SIZE,
     prefix: PREFIX,
-  });
+    getRowId: (row) => row.id,
+  })
 
   return (
     <Container className="divide-y p-0">
@@ -51,12 +41,17 @@ export const CompaniesTable = () => {
             {t("overview.nav.companies.description")}
           </Text>
         </div>
+        {onCreateClick && (
+          <Button size="small" variant="secondary" onClick={onCreateClick}>
+            {t("actions.create")}
+          </Button>
+        )}
       </div>
       <DataTable
         columns={columns}
         table={table}
-        pagination
         navigateTo={(row) => `/b2b/companies/${row.original.id}`}
+        pagination
         filters={filters}
         count={count}
         search
@@ -71,5 +66,5 @@ export const CompaniesTable = () => {
         }}
       />
     </Container>
-  );
-};
+  )
+}

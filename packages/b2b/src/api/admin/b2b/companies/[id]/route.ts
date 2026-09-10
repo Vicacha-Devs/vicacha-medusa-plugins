@@ -12,6 +12,16 @@ import {
   AdminUpdateCompanyType,
 } from "../validators";
 
+const detailFields = (base: string[]) =>
+  Array.from(new Set([
+    ...base,
+    "*employees",
+    "employees.customer.*",
+    "customer_group.id",
+    "customer_group.name",
+    "approval_settings.*",
+  ]));
+
 export const GET = async (
   req: AuthenticatedMedusaRequest<AdminGetCompanyParamsType>,
   res: MedusaResponse
@@ -24,7 +34,7 @@ export const GET = async (
   } = await query.graph(
     {
       entity: "companies",
-      fields: req.queryConfig.fields,
+      fields: detailFields(req.queryConfig.fields),
       filters: { id },
     },
     { throwIfKeyNotFound: true }
@@ -50,7 +60,7 @@ export const POST = async (
   } = await query.graph(
     {
       entity: "companies",
-      fields: req.queryConfig.fields,
+      fields: detailFields(req.queryConfig.fields),
       filters: { id },
     },
     { throwIfKeyNotFound: true }

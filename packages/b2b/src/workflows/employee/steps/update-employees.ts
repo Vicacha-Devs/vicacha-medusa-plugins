@@ -7,7 +7,7 @@ import {
   QueryEmployee,
 } from "@b2b/types";
 
-export const updateEmployeesStep = createStep(
+export const updateEmployeesStep = createStep<ModuleUpdateEmployee, QueryEmployee, QueryEmployee>(
   "update-employees",
   async (
     input: ModuleUpdateEmployee,
@@ -45,10 +45,11 @@ export const updateEmployeesStep = createStep(
       currentData as unknown as QueryEmployee
     );
   },
-  async (currentData: ModuleUpdateEmployee, { container }) => {
+  async (currentData: QueryEmployee | undefined, { container }) => {
+    if (!currentData) return
     const companyModuleService =
       container.resolve<ICompanyModuleService>(COMPANY_MODULE);
 
-    await companyModuleService.updateEmployees(currentData);
+    await companyModuleService.updateEmployees(currentData as unknown as ModuleUpdateEmployee);
   }
 );

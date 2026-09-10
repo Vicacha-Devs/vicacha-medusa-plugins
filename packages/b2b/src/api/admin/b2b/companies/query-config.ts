@@ -1,5 +1,5 @@
 /* Company Query Config */
-export const adminCompanyFields = [
+const adminCompanyBaseFields = [
   "id",
   "name",
   "logo_url",
@@ -11,17 +11,41 @@ export const adminCompanyFields = [
   "zip",
   "country",
   "currency_code",
+  "spending_limit_reset_frequency",
+  "spending_limit_reset_at",
   "created_at",
   "updated_at",
+];
+
+export const adminCompanyListFields = [
+  ...adminCompanyBaseFields,
+];
+
+export const adminCompanyRemoteLinkFields = [
+  "customer_group.id",
+  "customer_group.name",
+  "approval_settings.*",
+];
+
+export const adminCompanyFields = [
+  ...adminCompanyBaseFields,
   "*employees",
-  "*employees.customer",
-  "*customer_group",
-  "*approval_settings",
+  "employees.customer.*",
+  "customer_group.id",
+  "customer_group.name",
+  "approval_settings.*",
+];
+
+export const adminCompanyDetailRemoteLinkFields = [
+  "customer_group.id",
+  "customer_group.name",
+  "approval_settings.*",
+  "employees.customer.*",
 ];
 
 export const adminCompanyQueryConfig = {
   list: {
-    defaults: adminCompanyFields,
+    defaults: adminCompanyListFields,
     isList: true,
   },
   retrieve: {
@@ -35,9 +59,13 @@ export const adminEmployeeFields = [
   "id",
   "spending_limit",
   "is_admin",
-  "customer_id",
-  "*customer",
+  "is_active",
   "company_id",
+  "customer.id",
+  "customer.first_name",
+  "customer.last_name",
+  "customer.email",
+  "customer.phone",
   "*company",
 ];
 

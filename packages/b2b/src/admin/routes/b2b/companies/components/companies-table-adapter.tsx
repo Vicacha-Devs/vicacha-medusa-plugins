@@ -1,16 +1,13 @@
 import { createTableAdapter, TableAdapter } from "@medusajs/dashboard/lib"
-import { useCustomerGroups } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
-
 import { QueryCompany } from "../../../../../types"
 import { useCompanies } from "../../../../hooks/api"
-import { CompanyActionsMenu } from "./company-actions-menu.tsx"
-import "./companies-table-renderers.tsx"
+import { CompanyActionsMenu } from "./company-actions-menu"
+import "./companies-table-renderers"
 
 export function useCompaniesTableAdapter(): TableAdapter<QueryCompany> {
   const { t } = useTranslation()
-  const { data: customerGroups } = useCustomerGroups({})
 
   return useMemo(
     () =>
@@ -21,8 +18,6 @@ export function useCompaniesTableAdapter(): TableAdapter<QueryCompany> {
         useData: (_fields, params) => {
           const { data, isPending, isError, error } = useCompanies({
             ...params,
-            fields:
-              "*employees,*employees.customer,*employees.company,*customer_group,*approval_settings",
             order: "-created_at",
           })
           return {
@@ -34,9 +29,7 @@ export function useCompaniesTableAdapter(): TableAdapter<QueryCompany> {
           }
         },
         getRowHref: (row) => `/b2b/companies/${row.id}`,
-        renderRowActions: (row) => (
-          <CompanyActionsMenu company={row} customerGroups={customerGroups} />
-        ),
+        renderRowActions: (row) => <CompanyActionsMenu company={row} />,
         emptyState: {
           empty: {
             heading: t("companies.table.noRecordsTitle"),
@@ -48,6 +41,6 @@ export function useCompaniesTableAdapter(): TableAdapter<QueryCompany> {
           },
         },
       }),
-    [t, customerGroups]
+    [t]
   )
 }

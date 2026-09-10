@@ -1,20 +1,18 @@
-import { defineRouteConfig } from "@medusajs/admin-sdk";
-import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared";
-import { ConfigurableDataTable, LayoutComposer } from "@medusajs/dashboard/components";
-import { BuildingStorefront } from "@medusajs/icons";
-import { Toaster } from "@medusajs/ui";
+import { defineRouteConfig } from "@medusajs/admin-sdk"
+import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared"
+import { ConfigurableDataTable, LayoutComposer } from "@medusajs/dashboard/components"
+import { Buildings } from "@medusajs/icons"
 import { useFeatureFlag } from "@vicacha-devs/medusa-shared-admin/admin"
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 
-import { useCompaniesTableAdapter } from "./components/companies-table-adapter";
-import { CompaniesTable, CompanyCreateDrawer } from "./components";
+import { CompaniesTable, useCompaniesTableAdapter } from "./components"
 
 const Companies = () => {
-  const { t } = useTranslation();
-  const [createOpen, setCreateOpen] = useState(false);
-  const isViewConfigEnabled = useFeatureFlag("view_configurations");
-  const adapter = useCompaniesTableAdapter();
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const isViewConfigEnabled = useFeatureFlag("view_configurations")
+  const adapter = useCompaniesTableAdapter()
 
   return (
     <LayoutComposer
@@ -28,34 +26,31 @@ const Companies = () => {
                 adapter={adapter}
                 heading={t("companies.title")}
                 subHeading={t("overview.nav.companies.description")}
-                actions={[{ label: t("actions.create"), onClick: () => setCreateOpen(true) }]}
+                actions={[{ label: t("actions.create"), to: "create" }]}
               />
-            ): (
-              <CompaniesTable />
+            ) : (
+              <CompaniesTable onCreateClick={() => navigate("create")} />
             )}
-            <CompanyCreateDrawer open={createOpen} onOpenChange={setCreateOpen} />
-            <Toaster />
           </LayoutComposer.Entry>
-        )
+        ),
       }}
     />
-  );
-};
+  )
+}
 
 const Breadcrumb = () => {
   const { t } = useTranslation()
-
   return t("companies.title")
 }
 
 export const config = defineRouteConfig({
-  label: "Companies",
-  icon: BuildingStorefront,
-});
+  label: "companies.title",
+  translationNs: "b2b",
+  icon: Buildings,
+})
 
 export const handle = {
   breadcrumb: () => <Breadcrumb />,
 }
 
-
-export default Companies;
+export default Companies

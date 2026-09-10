@@ -7,8 +7,7 @@ import { ContainerRegistrationKeys, Modules, OrderStatus } from "@medusajs/frame
 
 import { APPROVAL_MODULE } from "../modules/approval"
 import { QUOTE_MODULE } from "../modules/quote"
-import { EQuoteStatus } from "../types/enums"
-import { ModuleCompanySpendingLimitResetFrequency } from "../types/company/module"
+import { EQuoteStatus, ESpendingLimitResetFrequency } from "../types/enums"
 import { createCompaniesWorkflow } from "../workflows/company/workflows/create-companies"
 import { createEmployeesWorkflow } from "../workflows/employee/workflows/create-employees"
 import { merchantSendQuoteWorkflow } from "../workflows/quote/workflows/merchant-send-quote"
@@ -162,7 +161,7 @@ export default async function seedB2bTestData({
         country: "CO",
         logo_url: null,
         currency_code: currency,
-        spending_limit_reset_frequency: ModuleCompanySpendingLimitResetFrequency.MONTHLY,
+        spending_limit_reset_frequency: ESpendingLimitResetFrequency.MONTHLY,
       },
       {
         name: "Globex Travel",
@@ -175,7 +174,7 @@ export default async function seedB2bTestData({
         country: "CO",
         logo_url: null,
         currency_code: currency,
-        spending_limit_reset_frequency: ModuleCompanySpendingLimitResetFrequency.WEEKLY,
+        spending_limit_reset_frequency: ESpendingLimitResetFrequency.WEEKLY,
       },
     ],
   })

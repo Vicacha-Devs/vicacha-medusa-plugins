@@ -1,12 +1,12 @@
 import { useTranslation } from "react-i18next"
 
 export const useCompaniesTableFilters = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
-  const filters = [
+  return [
     {
-      label: t("fields.city"),
-      key: "city",
+      label: t("fields.country"),
+      key: "country",
       type: "string" as const,
     },
     {
@@ -15,11 +15,9 @@ export const useCompaniesTableFilters = () => {
       type: "string" as const,
     },
     {
-      label: t("fields.country"),
-      key: "country",
+      label: t("fields.city"),
+      key: "city",
       type: "string" as const,
     },
-  ];
-
-  return filters;
-};
+  ]
+}

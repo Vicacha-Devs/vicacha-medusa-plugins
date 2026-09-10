@@ -1,83 +1,76 @@
-import { HttpTypes } from "@medusajs/framework/types";
-import { Avatar, Badge } from "@medusajs/ui";
-import { createColumnHelper } from "@tanstack/react-table";
-import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import { QueryCompany } from "../../../../../../types";
-import { TextCell } from "@vicacha-devs/medusa-shared-admin/admin";
-import { CompanyActionsMenu } from "../company-actions-menu.tsx";
+import { createColumnHelper } from "@tanstack/react-table"
+import { useMemo } from "react"
+import { useTranslation } from "react-i18next"
+import { DateCell } from "@vicacha-devs/medusa-shared-admin/admin"
+import { QueryCompany } from "../../../../../../types"
 
-const columnHelper = createColumnHelper<QueryCompany>();
+const columnHelper = createColumnHelper<QueryCompany>()
 
-export const useCompaniesTableColumns = (
-  customerGroups?: HttpTypes.AdminCustomerGroup[]
-) => {
-  const { t } = useTranslation();
+export const useCompaniesTableColumns = () => {
+  const { t } = useTranslation()
 
   return useMemo(
     () => [
-      columnHelper.display({
-        id: "avatar",
+      columnHelper.accessor("logo_url", {
         header: "",
-        cell: ({ row }) => (
-          <Avatar
-            src={row.original.logo_url || undefined}
-            fallback={row.original.name?.charAt(0) ?? ""}
-          />
-        ),
+        cell: ({ getValue }) => {
+          const url = getValue()
+          if (!url) return null
+          return (
+            <img
+              src={url}
+              alt=""
+              className="h-6 w-auto max-w-[48px] object-contain"
+            />
+          )
+        },
       }),
       columnHelper.accessor("name", {
         header: t("fields.name"),
-        cell: ({ getValue }) => <TextCell text={getValue()} />,
-      }),
-      columnHelper.accessor("phone", {
-        header: t("fields.phone"),
-        cell: ({ getValue }) => <TextCell text={getValue()} />,
+        cell: ({ getValue }) => (
+          <span className="txt-compact-small font-medium">{getValue()}</span>
+        ),
       }),
       columnHelper.accessor("email", {
         header: t("fields.email"),
-        cell: ({ getValue }) => <TextCell text={getValue()} />,
+        cell: ({ getValue }) => (
+          <span className="txt-compact-small">{getValue() || "—"}</span>
+        ),
       }),
-      columnHelper.display({
-        id: "address",
-        header: t("fields.address"),
-        cell: ({ row }) => {
-          const { address, city, state, zip } = row.original;
-          const parts = [address, city, state, zip].filter(Boolean);
-          
-          return <TextCell text={parts.join(", ")} />;
+      columnHelper.accessor("phone", {
+        header: t("fields.phone"),
+        cell: ({ getValue }) => (
+          <span className="txt-compact-small">{getValue() || "—"}</span>
+        ),
+      }),
+      columnHelper.accessor("country" as any, {
+        header: t("fields.country"),
+        cell: ({ getValue }) => (
+          <span className="txt-compact-small">{(getValue() as string) || "—"}</span>
+        ),
+      }),
+      columnHelper.accessor("currency_code" as any, {
+        header: t("fields.currency"),
+        cell: ({ getValue }) => {
+          const code = getValue() as string | null
+          return (
+            <span className="txt-compact-small">
+              {code ? code.toUpperCase() : "—"}
+            </span>
+          )
         },
       }),
-      columnHelper.display({
-        id: "employees",
+      columnHelper.accessor("employees_count" as any, {
         header: t("companies.table.employees"),
-        cell: ({ row }) => (
-          <TextCell text={row.original.employees?.length ?? 0} />
+        cell: ({ getValue }) => (
+          <span className="txt-compact-small">{(getValue() as number) ?? 0}</span>
         ),
       }),
-      columnHelper.display({
-        id: "customer_group",
-        header: t("companies.table.customerGroup"),
-        cell: ({ row }) =>
-          row.original.customer_group?.name ? (
-            <Badge size="small" color="blue">
-              {row.original.customer_group.name}
-            </Badge>
-          ) : (
-            <TextCell text="-" />
-          ),
-      }),
-      columnHelper.display({
-        id: "actions",
-        header: "",
-        cell: ({ row }) => (
-          <CompanyActionsMenu
-            company={row.original}
-            customerGroups={customerGroups}
-          />
-        ),
+      columnHelper.accessor("created_at", {
+        header: t("fields.createdAt"),
+        cell: ({ getValue }) => <DateCell date={getValue()} />,
       }),
     ],
-    [t, customerGroups]
-  );
-};
+    [t]
+  )
+}

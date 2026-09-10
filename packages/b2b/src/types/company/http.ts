@@ -1,7 +1,7 @@
 import { FindParams, PaginatedResponse } from "@medusajs/framework/types";
 import { QueryCompany, QueryEmployee } from "./query";
 import { ModuleCompanyFilters, ModuleEmployeeFilters } from "./service";
-import { ModuleCompanySpendingLimitResetFrequency } from "./module";
+import { ESpendingLimitResetFrequency } from "../enums";
 
 /* Filters */
 
@@ -33,6 +33,8 @@ export type AdminCreateCompany = {
   country: string | null;
   logo_url: string | null;
   currency_code: string | null;
+  spending_limit_reset_frequency: ESpendingLimitResetFrequency;
+  spending_limit_reset_at: string | null;
 };
 
 export type AdminUpdateCompany = Partial<AdminCreateCompany>;
@@ -97,7 +99,7 @@ export type StoreUpdateCompany = {
   country: string | null;
   logo_url: string | null;
   currency_code: string;
-  spending_limit_reset_frequency?: ModuleCompanySpendingLimitResetFrequency;
+  spending_limit_reset_frequency?: ESpendingLimitResetFrequency;
 };
 
 /* Employee */

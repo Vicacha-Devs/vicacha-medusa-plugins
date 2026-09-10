@@ -1,25 +1,27 @@
-import { useQueryParams } from "@vicacha-devs/medusa-shared-admin/admin";
+import { useQueryParams } from "@vicacha-devs/medusa-shared-admin/admin"
 
 export const useCompaniesTableQuery = ({
   pageSize = 50,
   prefix,
 }: {
-  pageSize?: number;
-  prefix?: string;
+  pageSize?: number
+  prefix?: string
 }) => {
   const raw = useQueryParams(
-    ["q", "offset", "order", "created_at", "updated_at", "city", "state", "country"],
+    ["q", "offset", "order", "created_at", "updated_at"],
     prefix
-  );
+  )
 
-  const { offset, created_at, updated_at, ...rest } = raw;
-  const searchParams = {
-    ...rest,
-    limit: pageSize,
-    offset: offset ? Number(offset) : 0,
-    created_at: created_at ? JSON.parse(created_at) : undefined,
-    updated_at: updated_at ? JSON.parse(updated_at) : undefined,
-  };
+  const { offset, created_at, updated_at, ...rest } = raw
 
-  return { searchParams, raw };
-};
+  return {
+    searchParams: {
+      ...rest,
+      limit: pageSize,
+      offset: offset ? Number(offset) : 0,
+      created_at: created_at ? JSON.parse(created_at) : undefined,
+      updated_at: updated_at ? JSON.parse(updated_at) : undefined,
+    },
+    raw,
+  }
+}

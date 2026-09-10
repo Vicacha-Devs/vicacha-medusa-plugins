@@ -1,50 +1,93 @@
-import { Button, Drawer, Input, Label, Select, Text } from "@medusajs/ui";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useTranslation } from "react-i18next";
-import { AdminUpdateCompany } from "../../../../../types";
-import { useRegions } from "@vicacha-devs/medusa-shared-admin/admin";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Button, Input, Select, Tabs } from "@medusajs/ui"
+import { currencies, Form, KeyboundForm, RouteDrawer, useRegions } from "@vicacha-devs/medusa-shared-admin/admin"
+import { useMemo } from "react"
+import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
+import { z } from "zod"
 
-const companySchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().min(1, "Email is required").check(z.email({ error: "Invalid email address" })),
-  currency_code: z.string().min(1, "Currency is required"),
-  phone: z.string().optional(),
-  address: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  zip: z.string().optional(),
-  country: z.string().optional(),
-  logo_url: z.string().optional(),
-});
+import { AdminCreateCompany, AdminUpdateCompany } from "../../../../../types"
+import { ESpendingLimitResetFrequency } from "../../../../../types/enums"
 
-type CompanyFormValues = z.infer<typeof companySchema>;
+const ALL_CURRENCIES = Object.values(currencies).sort((a, b) =>
+  a.name.localeCompare(b.name)
+)
 
-export function CompanyForm({
-  company,
-  handleSubmit,
-  loading,
-  error,
-}: {
-  company?: AdminUpdateCompany;
-  handleSubmit: (data: AdminUpdateCompany) => Promise<void>;
-  loading: boolean;
-  error: Error | null;
-}) {
-  const { t } = useTranslation();
-  const { regions, isPending: regionsLoading } = useRegions({});
+const makeSchema = (t: (key: string) => string) =>
+  z.object({
+    name: z.string().min(1, t("companies.form.name")),
+    email: z.email(),
+    currency_code: z.string().min(1, t("companies.form.currency")),
+    phone: z.string().optional().or(z.literal("")),
+    address: z.string().optional().or(z.literal("")),
+    city: z.string().optional().or(z.literal("")),
+    state: z.string().optional().or(z.literal("")),
+    zip: z.string().optional().or(z.literal("")),
+    country: z.string().optional().or(z.literal("")),
+    logo_url: z.string().optional().or(z.literal("")),
+    spending_limit_reset_frequency: z.nativeEnum(ESpendingLimitResetFrequency).optional(),
+    spending_limit_reset_at: z.string().optional().or(z.literal("")),
+  })
 
-  const currencyCodes = regions?.map((r) => r.currency_code);
-  const countries = regions?.flatMap((r) => r.countries);
+type FormValues = z.infer<ReturnType<typeof makeSchema>>
 
-  const {
-    register,
-    handleSubmit: rhfHandleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<CompanyFormValues>({
-    resolver: zodResolver(companySchema),
+interface CreateFormProps {
+  mode: "create"
+  company?: undefined
+  onSubmit: (data: AdminCreateCompany) => Promise<void>
+  loading: boolean
+}
+
+interface UpdateFormProps {
+  mode: "update"
+  company: {
+    name: string
+    email: string
+    currency_code: string | null
+    phone: string | null
+    address: string | null
+    city: string | null
+    state: string | null
+    zip: string | null
+    country: string | null
+    logo_url: string | null
+    spending_limit_reset_frequency: ESpendingLimitResetFrequency | null
+    spending_limit_reset_at: string | Date | null
+  }
+  onSubmit: (data: AdminUpdateCompany) => Promise<void>
+  loading: boolean
+}
+
+type CompanyFormProps = CreateFormProps | UpdateFormProps
+
+export function CompanyForm({ company, onSubmit, loading }: CompanyFormProps) {
+  const { t } = useTranslation()
+  const schema = useMemo(() => makeSchema(t), [t])
+
+  const { regions, isPending: regionsLoading } = useRegions({})
+
+  const currencyCodes = useMemo(
+    () => new Set(regions?.map((r) => r.currency_code.toUpperCase()) ?? []),
+    [regions]
+  )
+  const availableCurrencies = useMemo(
+    () => ALL_CURRENCIES.filter((c) => !currencyCodes.size || currencyCodes.has(c.code)),
+    [currencyCodes]
+  )
+
+  const availableCountries = useMemo(() => {
+    const seen = new Set<string>()
+    return (regions?.flatMap((r) => (r as any).countries ?? []) ?? [])
+      .filter((c: any) => {
+        if (seen.has(c.iso_2)) return false
+        seen.add(c.iso_2)
+        return true
+      })
+      .sort((a: any, b: any) => a.display_name.localeCompare(b.display_name))
+  }, [regions])
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(schema),
     defaultValues: {
       name: company?.name ?? "",
       email: company?.email ?? "",
@@ -56,151 +99,244 @@ export function CompanyForm({
       zip: company?.zip ?? "",
       country: company?.country ?? "",
       logo_url: company?.logo_url ?? "",
+      spending_limit_reset_frequency: company?.spending_limit_reset_frequency ?? ESpendingLimitResetFrequency.MONTHLY,
+      spending_limit_reset_at: company?.spending_limit_reset_at
+        ? new Date(company.spending_limit_reset_at as any).toISOString().split("T")[0]
+        : "",
     },
-  });
-
-  const onSubmit = rhfHandleSubmit((data) => handleSubmit(data));
+  })
 
   return (
-    <form onSubmit={onSubmit}>
-      <Drawer.Body className="p-4">
-        <div className="flex flex-col gap-2">
-          <Label size="xsmall">{t("companies.form.name")} *</Label>
-          <Input
-            type="text"
-            placeholder="Medusa"
-            className={errors.name ? "border-ui-fg-error" : ""}
-            {...register("name")}
-          />
-          {errors.name && (
-            <Text className="txt-compact-xsmall text-ui-fg-error">{errors.name.message}</Text>
-          )}
-
-          <Label size="xsmall">{t("companies.form.phone")}</Label>
-          <Input
-            type="text"
-            placeholder="1234567890"
-            {...register("phone")}
-          />
-
-          <Label size="xsmall">{t("companies.form.email")} *</Label>
-          <Input
-            type="email"
-            placeholder="medusa@medusa.com"
-            className={errors.email ? "border-ui-fg-error" : ""}
-            {...register("email")}
-          />
-          {errors.email && (
-            <Text className="txt-compact-xsmall text-ui-fg-error">{errors.email.message}</Text>
-          )}
-
-          <Label size="xsmall">{t("companies.form.address")}</Label>
-          <Input
-            type="text"
-            placeholder="1234 Main St"
-            {...register("address")}
-          />
-          <Label size="xsmall">{t("companies.form.city")}</Label>
-          <Input
-            type="text"
-            placeholder="New York"
-            {...register("city")}
-          />
-          <Label size="xsmall">{t("companies.form.state")}</Label>
-          <Input
-            type="text"
-            placeholder="NY"
-            {...register("state")}
-          />
-          <Label size="xsmall">{t("companies.form.zip")}</Label>
-          <Input
-            type="text"
-            placeholder="10001"
-            {...register("zip")}
-          />
-          <div className="flex gap-4 w-full">
-            <div className="flex flex-col gap-2 w-1/2">
-              <Label size="xsmall">{t("companies.form.country")}</Label>
-              <Controller
-                name="country"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    value={field.value || ""}
-                    onValueChange={field.onChange}
-                    disabled={regionsLoading}
-                  >
-                    <Select.Trigger disabled={regionsLoading}>
-                      <Select.Value placeholder={t("companies.form.selectCountry")} />
-                    </Select.Trigger>
-                    <Select.Content className="z-50">
-                      {countries?.map((country) => (
-                        <Select.Item
-                          key={country?.iso_2 || ""}
-                          value={country?.iso_2 || ""}
-                        >
-                          {country?.name}
-                        </Select.Item>
-                      ))}
-                    </Select.Content>
-                  </Select>
-                )}
-              />
-            </div>
-            <div className="flex flex-col gap-2 w-1/2">
-              <Label size="xsmall">{t("companies.form.currency")} *</Label>
-              <Controller
-                name="currency_code"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    value={field.value || ""}
-                    onValueChange={field.onChange}
-                    disabled={regionsLoading}
-                  >
-                    <Select.Trigger
-                      disabled={regionsLoading}
-                      className={errors.currency_code ? "border-ui-fg-error" : ""}
-                    >
-                      <Select.Value placeholder={t("companies.form.selectCurrency")} />
-                    </Select.Trigger>
-                    <Select.Content className="z-50">
-                      {currencyCodes?.map((currencyCode) => (
-                        <Select.Item key={currencyCode} value={currencyCode}>
-                          {currencyCode.toUpperCase()}
-                        </Select.Item>
-                      ))}
-                    </Select.Content>
-                  </Select>
-                )}
-              />
-              {errors.currency_code && (
-                <Text className="txt-compact-xsmall text-ui-fg-error">{errors.currency_code.message}</Text>
-              )}
-            </div>
+    <RouteDrawer.Form form={form}>
+      <KeyboundForm
+        onSubmit={form.handleSubmit((data) => onSubmit(data as any))}
+        className="flex flex-1 flex-col overflow-hidden"
+      >
+        <Tabs defaultValue="details" className="flex flex-1 flex-col overflow-hidden">
+          <div className="border-b px-4 pt-2">
+            <Tabs.List>
+              <Tabs.Trigger value="details">{t("companies.form.tabs.details")}</Tabs.Trigger>
+              <Tabs.Trigger value="admin">{t("companies.form.tabs.admin")}</Tabs.Trigger>
+            </Tabs.List>
           </div>
-          {/* TODO: Add logo upload */}
-          <Label size="xsmall">{t("companies.form.logoUrl")}</Label>
-          <Input
-            type="text"
-            placeholder="https://example.com/logo.png"
-            {...register("logo_url")}
-          />
-        </div>
-      </Drawer.Body>
-      <Drawer.Footer>
-        <Drawer.Close asChild>
-          <Button variant="secondary">{t("actions.cancel")}</Button>
-        </Drawer.Close>
-        <Button type="submit" isLoading={loading}>
-          {t("actions.save")}
-        </Button>
-        {error && (
-          <Text className="txt-compact-small text-ui-fg-warning">
-            Error: {error?.message}
-          </Text>
-        )}
-      </Drawer.Footer>
-    </form>
-  );
+
+          <RouteDrawer.Body className="flex flex-1 flex-col overflow-auto p-4">
+            <Tabs.Content value="details" className="flex flex-col gap-y-4">
+              <Form.Field
+                control={form.control}
+                name="name"
+                render={({ field }: any) => (
+                  <Form.Item>
+                    <Form.Label>{t("companies.form.name")}</Form.Label>
+                    <Form.Control>
+                      <Input {...field} />
+                    </Form.Control>
+                    <Form.ErrorMessage />
+                  </Form.Item>
+                )}
+              />
+              <Form.Field
+                control={form.control}
+                name="email"
+                render={({ field }: any) => (
+                  <Form.Item>
+                    <Form.Label>{t("companies.form.email")}</Form.Label>
+                    <Form.Control>
+                      <Input type="email" {...field} />
+                    </Form.Control>
+                    <Form.ErrorMessage />
+                  </Form.Item>
+                )}
+              />
+              <Form.Field
+                control={form.control}
+                name="phone"
+                render={({ field }: any) => (
+                  <Form.Item>
+                    <Form.Label optional>{t("companies.form.phone")}</Form.Label>
+                    <Form.Control>
+                      <Input {...field} />
+                    </Form.Control>
+                    <Form.ErrorMessage />
+                  </Form.Item>
+                )}
+              />
+              <Form.Field
+                control={form.control}
+                name="address"
+                render={({ field }: any) => (
+                  <Form.Item>
+                    <Form.Label optional>{t("companies.form.address")}</Form.Label>
+                    <Form.Control>
+                      <Input {...field} />
+                    </Form.Control>
+                    <Form.ErrorMessage />
+                  </Form.Item>
+                )}
+              />
+              <Form.Field
+                control={form.control}
+                name="city"
+                render={({ field }: any) => (
+                  <Form.Item>
+                    <Form.Label optional>{t("companies.form.city")}</Form.Label>
+                    <Form.Control>
+                      <Input {...field} />
+                    </Form.Control>
+                    <Form.ErrorMessage />
+                  </Form.Item>
+                )}
+              />
+              <Form.Field
+                control={form.control}
+                name="state"
+                render={({ field }: any) => (
+                  <Form.Item>
+                    <Form.Label optional>{t("companies.form.state")}</Form.Label>
+                    <Form.Control>
+                      <Input {...field} />
+                    </Form.Control>
+                    <Form.ErrorMessage />
+                  </Form.Item>
+                )}
+              />
+              <Form.Field
+                control={form.control}
+                name="zip"
+                render={({ field }: any) => (
+                  <Form.Item>
+                    <Form.Label optional>{t("companies.form.zip")}</Form.Label>
+                    <Form.Control>
+                      <Input {...field} />
+                    </Form.Control>
+                    <Form.ErrorMessage />
+                  </Form.Item>
+                )}
+              />
+              <Form.Field
+                control={form.control}
+                name="country"
+                render={({ field }: any) => (
+                  <Form.Item>
+                    <Form.Label optional>{t("companies.form.country")}</Form.Label>
+                    <Form.Control>
+                      <Select
+                        value={field.value?.toLowerCase() ?? ""}
+                        onValueChange={(v) => field.onChange(v)}
+                        disabled={regionsLoading}
+                      >
+                        <Select.Trigger>
+                          <Select.Value placeholder={t("companies.form.selectCountry")} />
+                        </Select.Trigger>
+                        <Select.Content>
+                          {availableCountries.map((c: any) => (
+                            <Select.Item key={c.iso_2} value={c.iso_2}>
+                              {c.display_name}
+                            </Select.Item>
+                          ))}
+                        </Select.Content>
+                      </Select>
+                    </Form.Control>
+                    <Form.ErrorMessage />
+                  </Form.Item>
+                )}
+              />
+              <Form.Field
+                control={form.control}
+                name="logo_url"
+                render={({ field }: any) => (
+                  <Form.Item>
+                    <Form.Label optional>{t("companies.form.logoUrl")}</Form.Label>
+                    <Form.Control>
+                      <Input type="url" {...field} />
+                    </Form.Control>
+                    <Form.ErrorMessage />
+                  </Form.Item>
+                )}
+              />
+            </Tabs.Content>
+
+            <Tabs.Content value="admin" className="flex flex-col gap-y-4">
+              <Form.Field
+                control={form.control}
+                name="currency_code"
+                render={({ field }: any) => (
+                  <Form.Item>
+                    <Form.Label>{t("companies.form.currency")}</Form.Label>
+                    <Form.Control>
+                      <Select
+                        value={field.value?.toUpperCase() ?? ""}
+                        onValueChange={(v) => field.onChange(v.toLowerCase())}
+                        disabled={regionsLoading}
+                      >
+                        <Select.Trigger>
+                          <Select.Value placeholder={t("companies.form.selectCurrency")} />
+                        </Select.Trigger>
+                        <Select.Content>
+                          {availableCurrencies.map((c) => (
+                            <Select.Item key={c.code} value={c.code}>
+                              {c.code} — {c.name}
+                            </Select.Item>
+                          ))}
+                        </Select.Content>
+                      </Select>
+                    </Form.Control>
+                    <Form.ErrorMessage />
+                  </Form.Item>
+                )}
+              />
+              <Form.Field
+                control={form.control}
+                name="spending_limit_reset_frequency"
+                render={({ field }: any) => (
+                  <Form.Item>
+                    <Form.Label optional>{t("companies.form.spendingLimitResetFrequency")}</Form.Label>
+                    <Form.Control>
+                      <Select value={field.value ?? ""} onValueChange={field.onChange}>
+                        <Select.Trigger>
+                          <Select.Value placeholder={t("companies.form.selectFrequency")} />
+                        </Select.Trigger>
+                        <Select.Content>
+                          {Object.values(ESpendingLimitResetFrequency).map((freq) => (
+                            <Select.Item key={freq} value={freq}>
+                              {t(`companies.form.resetFrequency.${freq}`)}
+                            </Select.Item>
+                          ))}
+                        </Select.Content>
+                      </Select>
+                    </Form.Control>
+                    <Form.ErrorMessage />
+                  </Form.Item>
+                )}
+              />
+              <Form.Field
+                control={form.control}
+                name="spending_limit_reset_at"
+                render={({ field }: any) => (
+                  <Form.Item>
+                    <Form.Label optional>{t("companies.form.spendingLimitResetAt")}</Form.Label>
+                    <Form.Control>
+                      <Input type="date" {...field} />
+                    </Form.Control>
+                    <Form.ErrorMessage />
+                  </Form.Item>
+                )}
+              />
+            </Tabs.Content>
+          </RouteDrawer.Body>
+        </Tabs>
+
+        <RouteDrawer.Footer>
+          <div className="flex items-center justify-end gap-x-2">
+            <RouteDrawer.Close asChild>
+              <Button size="small" variant="secondary">{t("actions.cancel")}</Button>
+            </RouteDrawer.Close>
+            <Button size="small" type="submit" isLoading={loading}>
+              {t("actions.save")}
+            </Button>
+          </div>
+        </RouteDrawer.Footer>
+      </KeyboundForm>
+    </RouteDrawer.Form>
+  )
 }

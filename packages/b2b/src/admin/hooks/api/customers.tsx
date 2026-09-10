@@ -6,6 +6,7 @@ export type AdminCustomerEmployee = {
   id: string
   spending_limit: number | null
   is_admin: boolean
+  is_active: boolean
   customer_id: string
   company_id: string
   company: {

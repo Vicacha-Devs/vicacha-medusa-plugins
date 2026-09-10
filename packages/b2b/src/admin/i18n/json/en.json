@@ -4,7 +4,9 @@
     "removed": "Removed",
     "modified": "Modified",
     "error": "Error",
-    "noRecords": "No records"
+    "noRecords": "No records",
+    "yes": "Yes",
+    "no": "No"
   },
   "actions": {
     "continue": "Continue",
@@ -93,28 +95,49 @@
     "label": "Companies",
     "notFound": "Company not found",
     "form": {
-      "name": "Company Name",
-      "phone": "Company Phone",
-      "email": "Company Email",
-      "address": "Company Address",
-      "city": "Company City",
-      "state": "Company State",
-      "zip": "Company Zip",
-      "country": "Company Country",
+      "name": "Name",
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address",
+      "city": "City",
+      "state": "State",
+      "zip": "Zip",
+      "country": "Country",
       "currency": "Currency",
-      "logoUrl": "Company Logo URL",
+      "logoUrl": "Logo URL",
       "selectCountry": "Select a country",
       "selectCurrency": "Select a currency",
       "createTitle": "Create Company",
-      "editTitle": "Edit Company"
+      "editTitle": "Edit Company",
+      "tabs": {
+        "details": "Details",
+        "admin": "Admin"
+      },
+      "spendingSection": "Spending",
+      "spendingLimitResetFrequency": "Spending Limit Reset Frequency",
+      "spendingLimitResetAt": "Last Reset Date",
+      "selectFrequency": "Select a frequency",
+      "resetFrequency": {
+        "never": "Never",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "yearly": "Yearly"
+      }
     },
     "detail": {
+      "tabs": {
+        "details": "Details",
+        "admin": "Admin"
+      },
       "phone": "Phone",
       "email": "Email",
       "address": "Address",
       "city": "City",
       "state": "State",
       "currency": "Currency",
+      "spendingLimitResetFrequency": "Reset Frequency",
+      "spendingLimitResetAt": "Last Reset",
       "customerGroup": "Customer Group",
       "approvalSettings": "Approval Settings",
       "requiresAdmin": "Requires admin approval",
@@ -142,7 +165,8 @@
       "addToGroupError": "Failed to add company to customer group",
       "removeFromGroupError": "Failed to remove company from customer group",
       "approvalSettingsUpdated": "Company approval settings updated successfully",
-      "approvalSettingsError": "Failed to update company approval settings"
+      "approvalSettingsError": "Failed to update company approval settings",
+      "created": "Company {{name}} created successfully"
     },
     "approvalSettings": {
       "title": "Company Approval Settings",
@@ -162,13 +186,17 @@
       "addedSuccess": "Company added to customer group successfully",
       "removedSuccess": "Company removed from customer group successfully",
       "addError": "Failed to add company to customer group",
-      "removeError": "Failed to remove company from customer group"
+      "removeError": "Failed to remove company from customer group",
+      "title": "Customer Group",
+      "selectPlaceholder": "Select a customer group"
     }
   },
   "employees": {
     "title": "Employees",
     "label": "Employees",
     "admin": "Admin",
+    "active": "Active",
+    "inactive": "Inactive",
     "noRecords": "This company doesn't have any employees.",
     "form": {
       "details": "Details",
@@ -187,7 +215,7 @@
       "company": "Company"
     },
     "drawers": {
-      "addTitle": "Add Company Customer",
+      "addTitle": "Add Company Employee",
       "editTitle": "Edit Employee"
     },
     "table": {

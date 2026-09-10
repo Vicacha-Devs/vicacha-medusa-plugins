@@ -1,11 +1,5 @@
 import { FetchError } from "@medusajs/js-sdk";
 import {
-  AdminCompaniesResponse,
-  AdminCompanyResponse,
-  AdminCreateCompany,
-  AdminUpdateCompany,
-} from "../../../types";
-import {
   QueryKey,
   useMutation,
   UseMutationOptions,
@@ -13,8 +7,14 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from "@tanstack/react-query";
-import { queryKeysFactory } from "../../lib/query-key-factory";
-import { sdk } from "../../lib/client";
+import { queryKeysFactory, sdk } from "@vicacha-devs/medusa-shared-admin/admin";
+import {
+  AdminCompaniesResponse,
+  AdminCompanyResponse,
+  AdminCreateCompany,
+  AdminUpdateCompany,
+} from "../../../types";
+
 
 export const companyQueryKey = queryKeysFactory("company");
 
@@ -67,31 +67,60 @@ export const useCompany = (
   });
 };
 
+type CreateCompanyInput = AdminCreateCompany & {
+  group_id?: string;
+  requires_admin_approval?: boolean;
+  requires_sales_manager_approval?: boolean;
+};
+
 export const useCreateCompany = (
-  options?: UseMutationOptions<
-    AdminCompanyResponse,
-    FetchError,
-    AdminCreateCompany
-  >
+  options?: UseMutationOptions<AdminCompanyResponse, FetchError, CreateCompanyInput>
 ) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (company: AdminCreateCompany) =>
-      sdk.client.fetch<AdminCompanyResponse>("/admin/b2b/companies", {
+    mutationFn: async ({ group_id, requires_admin_approval, requires_sales_manager_approval, ...company }: CreateCompanyInput) => {
+      const result = await sdk.client.fetch<AdminCompanyResponse>("/admin/b2b/companies", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: company,
-      }),
+      });
+
+      const created = (result as any).companies?.[0] ?? (result as any).company;
+      const companyId: string | undefined = created?.id;
+
+      if (companyId) {
+        const postCreation: Promise<any>[] = [];
+
+        if (group_id) {
+          postCreation.push(
+            sdk.client.fetch(`/admin/b2b/companies/${companyId}/customer-group`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: { group_id },
+            })
+          );
+        }
+
+        const approvalSettingsId: string | undefined = created?.approval_settings?.id;
+        if (approvalSettingsId && (requires_admin_approval || requires_sales_manager_approval)) {
+          postCreation.push(
+            sdk.client.fetch(`/admin/b2b/companies/${companyId}/approval-settings`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: { id: approvalSettingsId, requires_admin_approval, requires_sales_manager_approval },
+            })
+          );
+        }
+
+        await Promise.all(postCreation);
+      }
+
+      return result;
+    },
     onSuccess: (data: any, variables: any, context: any) => {
-      queryClient.invalidateQueries({
-        queryKey: companyQueryKey.lists(),
-      });
-      queryClient.invalidateQueries({
-        queryKey: companyQueryKey.detail(data.id),
-      });
+      queryClient.invalidateQueries({ queryKey: companyQueryKey.lists() });
+      queryClient.invalidateQueries({ queryKey: companyQueryKey.detail(data?.company?.id) });
       options?.onSuccess?.(data, variables, context);
     },
     ...options,

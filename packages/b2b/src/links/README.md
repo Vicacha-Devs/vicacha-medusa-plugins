@@ -23,7 +23,7 @@ Files are named `<left-entity>-<right-entity>.ts`, matching the order of argumen
 | File | `isList` | `deleteCascade` | Notes |
 | --- | --- | --- | --- |
 | `employee-customer.ts` | — | — | 1:1 |
-| `company-customer-group.ts` | — | — | 1:1 |
+| `company-customer-group.ts` | ✓ (company) | — | N:1 — many companies per group, one group per company |
 | `company-carts.ts` | ✓ | — | 1:N |
 | `order-company.ts` | — | — | 1:1 |
 | `company-approval-setting.ts` | — | — | 1:1 |

@@ -1,11 +1,5 @@
 import { FetchError } from "@medusajs/js-sdk";
 import {
-  AdminCreateEmployee,
-  AdminEmployeeResponse,
-  AdminEmployeesResponse,
-  AdminUpdateEmployee,
-} from "../../../types";
-import {
   QueryKey,
   useMutation,
   UseMutationOptions,
@@ -13,8 +7,13 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from "@tanstack/react-query";
-import { sdk } from "../../lib/client";
-import { queryKeysFactory } from "../../lib/query-key-factory";
+import { queryKeysFactory, sdk } from "@vicacha-devs/medusa-shared-admin/admin";
+import {
+  AdminCreateEmployee,
+  AdminEmployeeResponse,
+  AdminEmployeesResponse,
+  AdminUpdateEmployee,
+} from "../../../types";
 
 export const employeeQueryKey = queryKeysFactory("employee");
 
@@ -28,21 +27,37 @@ export const useEmployees = (
     QueryKey
   >
 ) => {
-  const filterQuery = new URLSearchParams(query).toString();
-
-  const fetchEmployees = async () =>
-    sdk.client.fetch<AdminEmployeesResponse>(
-      `/admin/b2b/companies/${companyId}/employees${
-        filterQuery ? `?${filterQuery}` : ""
-      }`,
-      {
-        method: "GET",
-      }
-    );
+  const { fields: _fields, ...safeQuery } = (query ?? {}) as any
 
   return useQuery({
-    queryKey: employeeQueryKey.list(companyId),
-    queryFn: fetchEmployees,
+    queryKey: employeeQueryKey.list({ companyId, ...safeQuery }),
+    queryFn: () =>
+      sdk.client.fetch<AdminEmployeesResponse>(
+        `/admin/b2b/companies/${companyId}/employees`,
+        { method: "GET", query: safeQuery }
+      ),
+    ...options,
+  });
+};
+
+export const useEmployee = (
+  companyId: string,
+  employeeId: string,
+  options?: UseQueryOptions<
+    AdminEmployeeResponse,
+    FetchError,
+    AdminEmployeeResponse,
+    QueryKey
+  >
+) => {
+  return useQuery({
+    queryKey: employeeQueryKey.detail(employeeId),
+    queryFn: () =>
+      sdk.client.fetch<AdminEmployeeResponse>(
+        `/admin/b2b/companies/${companyId}/employees/${employeeId}`,
+        { method: "GET" }
+      ),
+    enabled: !!companyId && !!employeeId,
     ...options,
   });
 };
@@ -71,7 +86,7 @@ export const useCreateEmployee = (
       ),
     onSuccess: (data: any, variables: any, context: any) => {
       queryClient.invalidateQueries({
-        queryKey: employeeQueryKey.list(companyId),
+        queryKey: employeeQueryKey.lists(),
       });
       options?.onSuccess?.(data, variables, context);
     },
@@ -107,7 +122,7 @@ export const useUpdateEmployee = (
         queryKey: employeeQueryKey.detail(employeeId),
       });
       queryClient.invalidateQueries({
-        queryKey: employeeQueryKey.list(companyId),
+        queryKey: employeeQueryKey.lists(),
       });
       options?.onSuccess?.(data, variables, context);
     },
@@ -131,7 +146,7 @@ export const useDeleteEmployee = (
       ),
     onSuccess: (data: any, variables: any, context: any) => {
       queryClient.invalidateQueries({
-        queryKey: employeeQueryKey.list(companyId),
+        queryKey: employeeQueryKey.lists(),
       });
       options?.onSuccess?.(data, variables, context);
     },

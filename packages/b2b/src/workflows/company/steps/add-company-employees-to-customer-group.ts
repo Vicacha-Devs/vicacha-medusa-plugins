@@ -43,19 +43,23 @@ export const addCompanyEmployeesToCustomerGroupStep = createStep(
         customer_group_id: customer_group!.id,
       }));
 
-    await customerModuleService.addCustomerToGroup(customerGroupCustomers);
+    if (customerGroupCustomers.length > 0) {
+      await customerModuleService.addCustomerToGroup(customerGroupCustomers);
+    }
 
     return new StepResponse(customer_group, {
       customer_ids: customerGroupCustomers.map(
         ({ customer_id }) => customer_id
       ),
-      group_id: customer_group!.id,
+      group_id: customer_group?.id ?? null,
     });
   },
   async (
-    input: { customer_ids: string[]; group_id: string },
+    input: { customer_ids: string[]; group_id: string | null } | null,
     { container }
   ) => {
+    if (!input?.group_id || !input.customer_ids?.length) return;
+
     const customerModuleService = container.resolve<ICustomerModuleService>(
       Modules.CUSTOMER
     );
@@ -63,7 +67,7 @@ export const addCompanyEmployeesToCustomerGroupStep = createStep(
     await customerModuleService.removeCustomerFromGroup(
       input.customer_ids.map((id) => ({
         customer_id: id,
-        customer_group_id: input.group_id,
+        customer_group_id: input.group_id as string,
       }))
     );
   }

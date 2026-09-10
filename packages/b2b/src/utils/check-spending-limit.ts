@@ -1,6 +1,6 @@
 import { HttpTypes } from "@medusajs/framework/types";
 import {
-  ModuleCompanySpendingLimitResetFrequency,
+  ESpendingLimitResetFrequency,
   QueryCompany,
   QueryEmployee,
 } from "@b2b/types";
@@ -17,21 +17,21 @@ export function getSpendWindow(company: QueryCompany): {
   const resetFrequency = company.spending_limit_reset_frequency;
 
   switch (resetFrequency) {
-    case ModuleCompanySpendingLimitResetFrequency.NEVER:
+    case ESpendingLimitResetFrequency.NEVER:
       return { start: new Date(0), end: now }; // Never resets
-    case ModuleCompanySpendingLimitResetFrequency.DAILY:
+    case ESpendingLimitResetFrequency.DAILY:
       return { start: new Date(now.setHours(0, 0, 0, 0)), end: now }; // Window is the current day up to now
-    case ModuleCompanySpendingLimitResetFrequency.WEEKLY:
+    case ESpendingLimitResetFrequency.WEEKLY:
       const startOfWeek = new Date(now);
       startOfWeek.setDate(now.getDate() - now.getDay());
       startOfWeek.setHours(0, 0, 0, 0);
       return { start: startOfWeek, end: now }; // Window is the current week up to now, starting on Sunday
-    case ModuleCompanySpendingLimitResetFrequency.MONTHLY:
+    case ESpendingLimitResetFrequency.MONTHLY:
       return {
         start: new Date(now.getFullYear(), now.getMonth(), 1),
         end: now,
       }; // Window is the current month up to now
-    case ModuleCompanySpendingLimitResetFrequency.YEARLY:
+    case ESpendingLimitResetFrequency.YEARLY:
       return { start: new Date(now.getFullYear(), 0, 1), end: now }; // Window is the current year up to now
     default:
       return { start: new Date(0), end: now }; // Default to never resetting

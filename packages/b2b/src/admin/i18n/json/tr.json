@@ -4,7 +4,9 @@
     "removed": "Kaldırıldı",
     "modified": "Değiştirildi",
     "error": "Hata",
-    "noRecords": "Kayıt yok"
+    "noRecords": "Kayıt yok",
+    "yes": "Evet",
+    "no": "Hayır"
   },
   "actions": {
     "continue": "Devam et",
@@ -91,28 +93,49 @@
     "label": "Şirketler",
     "notFound": "Şirket bulunamadı",
     "form": {
-      "name": "Şirket Adı",
-      "phone": "Şirket Telefonu",
-      "email": "Şirket E-postası",
-      "address": "Şirket Adresi",
-      "city": "Şirket Şehri",
-      "state": "Şirket Eyaleti",
-      "zip": "Şirket Posta Kodu",
-      "country": "Şirket Ülkesi",
+      "name": "Ad",
+      "phone": "Telefon",
+      "email": "E-posta",
+      "address": "Adres",
+      "city": "Şehir",
+      "state": "Eyalet",
+      "zip": "Posta Kodu",
+      "country": "Ülke",
       "currency": "Para Birimi",
-      "logoUrl": "Şirket Logo URL'si",
+      "logoUrl": "Logo URL'si",
       "selectCountry": "Bir ülke seçin",
       "selectCurrency": "Bir para birimi seçin",
       "createTitle": "Şirket Oluştur",
-      "editTitle": "Şirketi Düzenle"
+      "editTitle": "Şirketi Düzenle",
+      "tabs": {
+        "details": "Details",
+        "admin": "Admin"
+      },
+      "spendingSection": "Spending",
+      "spendingLimitResetFrequency": "Harcama Limiti Sıfırlama Sıklığı",
+      "spendingLimitResetAt": "Son Sıfırlama Tarihi",
+      "selectFrequency": "Sıklık seçin",
+      "resetFrequency": {
+        "never": "Never",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "yearly": "Yearly"
+      }
     },
     "detail": {
+      "tabs": {
+        "details": "Detaylar",
+        "admin": "Admin"
+      },
       "phone": "Telefon",
       "email": "E-posta",
       "address": "Adres",
       "city": "Şehir",
       "state": "Eyalet",
       "currency": "Para Birimi",
+      "spendingLimitResetFrequency": "Sıfırlama Sıklığı",
+      "spendingLimitResetAt": "Son Sıfırlama",
       "customerGroup": "Müşteri Grubu",
       "approvalSettings": "Onay Ayarları",
       "requiresAdmin": "Yönetici onayı gerektirir",
@@ -140,7 +163,8 @@
       "addToGroupError": "Failed to add company to customer group",
       "removeFromGroupError": "Failed to remove company from customer group",
       "approvalSettingsUpdated": "Company approval settings updated successfully",
-      "approvalSettingsError": "Failed to update company approval settings"
+      "approvalSettingsError": "Failed to update company approval settings",
+      "created": "Company {{name}} created successfully"
     },
     "approvalSettings": {
       "title": "Company Approval Settings",
@@ -160,13 +184,17 @@
       "addedSuccess": "Company added to customer group successfully",
       "removedSuccess": "Company removed from customer group successfully",
       "addError": "Failed to add company to customer group",
-      "removeError": "Failed to remove company from customer group"
+      "removeError": "Failed to remove company from customer group",
+      "title": "Customer Group",
+      "selectPlaceholder": "Select a customer group"
     }
   },
   "employees": {
     "title": "Çalışanlar",
     "label": "Çalışanlar",
     "admin": "Yönetici",
+    "active": "Aktif",
+    "inactive": "Pasif",
     "noRecords": "Bu şirketin hiç çalışanı yok.",
     "form": {
       "details": "Ayrıntılar",

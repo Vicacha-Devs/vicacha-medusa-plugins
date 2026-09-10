@@ -4,7 +4,9 @@
     "removed": "Eliminado",
     "modified": "Modificado",
     "error": "Error",
-    "noRecords": "No hay registros"
+    "noRecords": "No hay registros",
+    "yes": "Sí",
+    "no": "No"
   },
   "actions": {
     "continue": "Continuar",
@@ -91,28 +93,49 @@
     "label": "Empresas",
     "notFound": "Empresa no encontrada",
     "form": {
-      "name": "Nombre de la empresa",
-      "phone": "Teléfono de la empresa",
-      "email": "Correo electrónico de la empresa",
-      "address": "Dirección de la empresa",
-      "city": "Ciudad de la empresa",
-      "state": "Estado/Provincia de la empresa",
-      "zip": "Código postal de la empresa",
-      "country": "País de la empresa",
+      "name": "Nombre",
+      "phone": "Teléfono",
+      "email": "Correo electrónico",
+      "address": "Dirección",
+      "city": "Ciudad",
+      "state": "Estado/Provincia",
+      "zip": "Código postal",
+      "country": "País",
       "currency": "Moneda",
-      "logoUrl": "URL del logotipo de la empresa",
+      "logoUrl": "URL del logotipo",
       "selectCountry": "Selecciona un país",
       "selectCurrency": "Selecciona una moneda",
       "createTitle": "Crear empresa",
-      "editTitle": "Editar empresa"
+      "editTitle": "Editar empresa",
+      "tabs": {
+        "details": "Details",
+        "admin": "Admin"
+      },
+      "spendingSection": "Spending",
+      "spendingLimitResetFrequency": "Frecuencia de reinicio del límite",
+      "spendingLimitResetAt": "Fecha del último reinicio",
+      "selectFrequency": "Selecciona una frecuencia",
+      "resetFrequency": {
+        "never": "Never",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "yearly": "Yearly"
+      }
     },
     "detail": {
+      "tabs": {
+        "details": "Detalles",
+        "admin": "Admin"
+      },
       "phone": "Teléfono",
       "email": "Correo electrónico",
       "address": "Dirección",
       "city": "Ciudad",
       "state": "Estado/Provincia",
       "currency": "Moneda",
+      "spendingLimitResetFrequency": "Frecuencia de reinicio",
+      "spendingLimitResetAt": "Último reinicio",
       "customerGroup": "Grupo de clientes",
       "approvalSettings": "Configuración de aprobación",
       "requiresAdmin": "Requiere aprobación del administrador",
@@ -140,7 +163,8 @@
       "addToGroupError": "No se pudo agregar la empresa al grupo de clientes",
       "removeFromGroupError": "No se pudo eliminar la empresa del grupo de clientes",
       "approvalSettingsUpdated": "La configuración de aprobación de la empresa se actualizó correctamente",
-      "approvalSettingsError": "No se pudo actualizar la configuración de aprobación de la empresa"
+      "approvalSettingsError": "No se pudo actualizar la configuración de aprobación de la empresa",
+      "created": "Company {{name}} created successfully"
     },
     "approvalSettings": {
       "title": "Configuración de aprobación de la empresa",
@@ -160,13 +184,17 @@
       "addedSuccess": "La empresa se agregó correctamente al grupo de clientes",
       "removedSuccess": "La empresa se eliminó correctamente del grupo de clientes",
       "addError": "No se pudo agregar la empresa al grupo de clientes",
-      "removeError": "No se pudo eliminar la empresa del grupo de clientes"
+      "removeError": "No se pudo eliminar la empresa del grupo de clientes",
+      "title": "Customer Group",
+      "selectPlaceholder": "Select a customer group"
     }
   },
   "employees": {
     "title": "Empleados",
     "label": "Empleados",
     "admin": "Administrador",
+    "active": "Activo",
+    "inactive": "Inactivo",
     "noRecords": "Esta empresa no tiene empleados.",
     "form": {
       "details": "Detalles",

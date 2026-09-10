@@ -2,9 +2,12 @@ import { ICustomerModuleService } from "@medusajs/framework/types";
 import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils";
 import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk";
 
-export const addEmployeeToCustomerGroupStep = createStep(
+type AddEmployeeInput = { employee_id: string }
+type AddEmployeeCompensate = { customer_id: string | undefined; group_id: string | undefined }
+
+export const addEmployeeToCustomerGroupStep = createStep<AddEmployeeInput, unknown, AddEmployeeCompensate>(
   "add-employee-to-customer-group",
-  async (input: { employee_id: string }, { container }) => {
+  async (input: AddEmployeeInput, { container }) => {
     const query = container.resolve(ContainerRegistrationKeys.QUERY);
 
     const {
@@ -13,7 +16,7 @@ export const addEmployeeToCustomerGroupStep = createStep(
       {
         entity: "employee",
         filters: { id: input.employee_id },
-        fields: ["id", "customer.*", "company.*"],
+        fields: ["id", "customer.id", "company.id"],
       },
       { throwIfKeyNotFound: true }
     );
@@ -55,10 +58,10 @@ export const addEmployeeToCustomerGroupStep = createStep(
     });
   },
   async (
-    input: { customer_id: string | undefined; group_id: string | undefined },
+    input: AddEmployeeCompensate | undefined,
     { container }
   ) => {
-    if (!input.customer_id || !input.group_id) {
+    if (!input?.customer_id || !input?.group_id) {
       return;
     }
 

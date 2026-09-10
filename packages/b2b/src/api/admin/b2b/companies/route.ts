@@ -30,15 +30,34 @@ export const GET = async (
     ];
   }
 
+  const listFields = Array.from(new Set([
+    ...fields,
+    "employees.id",
+    "customer_group.id",
+    "customer_group.name",
+    "approval_settings.*",
+  ]))
+
   const { data: companies, metadata } = await query.graph({
     entity: "companies",
-    fields,
+    fields: listFields,
     filters,
     pagination,
   });
 
+  const companiesWithCount = companies.map((company: any) => {
+    const { employees, customer_group, ...rest } = company
+    const group = Array.isArray(customer_group) ? customer_group[0] : customer_group
+
+    return {
+      ...rest,
+      employees_count: Array.isArray(employees) ? employees.length : 0,
+      customer_group: group ? { id: group.id, name: group.name } : null,
+    }
+  });
+
   res.json({
-    companies,
+    companies: companiesWithCount,
     count: metadata!.count,
     offset: metadata!.skip,
     limit: metadata!.take,

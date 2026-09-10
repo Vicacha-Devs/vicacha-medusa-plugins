@@ -13,20 +13,41 @@ export const GET = async (
   const { id } = req.params;
   const query = req.scope.resolve(ContainerRegistrationKeys.QUERY);
 
-  const {
-    data: [{ employees }],
-    metadata,
-  } = await query.graph(
-    {
-      entity: "company",
-      fields: [...req.queryConfig.fields, "employees.*"],
-      filters: {
-        id,
-        ...req.filterableFields,
-      },
-    },
-    { throwIfKeyNotFound: true }
-  );
+  const employeeFields = [
+    "id",
+    "spending_limit",
+    "is_admin",
+    "is_active",
+    "company_id",
+    "customer.id",
+    "customer.first_name",
+    "customer.last_name",
+    "customer.email",
+    "customer.phone",
+    "company.currency_code",
+  ]
+
+  const rawPagination = req.queryConfig.pagination as any
+  const rawOrder = rawPagination.order
+  const cleanOrder = rawOrder
+    ? Object.fromEntries(Object.entries(rawOrder).filter(([k]) => k && k !== "undefined"))
+    : undefined
+
+  const pagination: any = { skip: rawPagination.skip, take: rawPagination.take }
+  if (cleanOrder && Object.keys(cleanOrder).length > 0) pagination.order = cleanOrder
+
+  const filters: Record<string, any> = { company_id: id }
+  const rawIsAdmin = (req.query as any).is_admin
+  const rawIsActive = (req.query as any).is_active
+  if (rawIsAdmin !== undefined) filters.is_admin = rawIsAdmin === "true"
+  if (rawIsActive !== undefined) filters.is_active = rawIsActive === "true"
+
+  const { data: employees, metadata } = await query.graph({
+    entity: "employee",
+    fields: employeeFields,
+    filters,
+    pagination,
+  });
 
   res.json({
     employees,

@@ -4,6 +4,7 @@ import {
   createSelectParams,
 } from "@medusajs/medusa/api/utils/validators";
 import { z } from "@medusajs/framework/zod";
+import { ESpendingLimitResetFrequency } from "@b2b/types";
 
 /* Company Validators */
 export type AdminGetCompanyParamsType = z.infer<typeof AdminGetCompanyParams>;
@@ -40,6 +41,7 @@ export const AdminCreateCompany = z
     zip: z.string().optional(),
     country: z.string().optional(),
     logo_url: z.string().optional(),
+    spending_limit_reset_frequency: z.enum(ESpendingLimitResetFrequency).optional(),
   })
   .strict();
 
@@ -49,13 +51,15 @@ export const AdminUpdateCompany = z
     name: z.string().optional(),
     email: z.string().optional(),
     currency_code: z.string().optional(),
-    phone: z.string().optional(),
-    address: z.string().optional(),
-    city: z.string().optional(),
-    state: z.string().optional(),
-    zip: z.string().optional(),
-    country: z.string().optional(),
+    phone: z.string().optional().nullable(),
+    address: z.string().optional().nullable(),
+    city: z.string().optional().nullable(),
+    state: z.string().optional().nullable(),
+    zip: z.string().optional().nullable(),
+    country: z.string().optional().nullable(),
     logo_url: z.string().optional().nullable(),
+    spending_limit_reset_frequency: z.nativeEnum(ESpendingLimitResetFrequency).optional(),
+    spending_limit_reset_at: z.string().datetime().optional().nullable(),
   })
   .strict();
 
@@ -81,7 +85,11 @@ export const AdminRemoveCompanyFromCustomerGroup = z.object({
 /* Employee Validators */
 
 export type AdminGetEmployeeParamsType = z.infer<typeof AdminGetEmployeeParams>;
-export const AdminGetEmployeeParams = createSelectParams();
+export const AdminGetEmployeeParams = createFindParams({ limit: 20, offset: 0 }).extend({
+  q: z.string().optional(),
+  is_admin: z.string().optional(),
+  is_active: z.string().optional(),
+});
 
 export type AdminCreateEmployeeType = z.infer<typeof AdminCreateEmployee>;
 export const AdminCreateEmployee = z

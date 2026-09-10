@@ -4,7 +4,9 @@
     "removed": "تمت الإزالة",
     "modified": "تم التعديل",
     "error": "خطأ",
-    "noRecords": "لا توجد سجلات"
+    "noRecords": "لا توجد سجلات",
+    "yes": "نعم",
+    "no": "لا"
   },
   "actions": {
     "continue": "متابعة",
@@ -91,28 +93,49 @@
     "label": "الشركات",
     "notFound": "لم يتم العثور على الشركة",
     "form": {
-      "name": "اسم الشركة",
-      "phone": "هاتف الشركة",
-      "email": "البريد الإلكتروني للشركة",
-      "address": "عنوان الشركة",
-      "city": "مدينة الشركة",
-      "state": "ولاية/منطقة الشركة",
-      "zip": "الرمز البريدي للشركة",
-      "country": "بلد الشركة",
+      "name": "الاسم",
+      "phone": "الهاتف",
+      "email": "البريد الإلكتروني",
+      "address": "العنوان",
+      "city": "المدينة",
+      "state": "الولاية/المنطقة",
+      "zip": "الرمز البريدي",
+      "country": "البلد",
       "currency": "العملة",
-      "logoUrl": "رابط شعار الشركة",
+      "logoUrl": "رابط الشعار",
       "selectCountry": "اختر بلدًا",
       "selectCurrency": "اختر عملة",
       "createTitle": "إنشاء شركة",
-      "editTitle": "تعديل الشركة"
+      "editTitle": "تعديل الشركة",
+      "tabs": {
+        "details": "Details",
+        "admin": "Admin"
+      },
+      "spendingSection": "Spending",
+      "spendingLimitResetFrequency": "تكرار إعادة ضبط الحد",
+      "spendingLimitResetAt": "تاريخ آخر إعادة ضبط",
+      "selectFrequency": "اختر تكراراً",
+      "resetFrequency": {
+        "never": "Never",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "yearly": "Yearly"
+      }
     },
     "detail": {
+      "tabs": {
+        "details": "التفاصيل",
+        "admin": "إدارة"
+      },
       "phone": "الهاتف",
       "email": "البريد الإلكتروني",
       "address": "العنوان",
       "city": "المدينة",
       "state": "الولاية/المنطقة",
       "currency": "العملة",
+      "spendingLimitResetFrequency": "تكرار إعادة الضبط",
+      "spendingLimitResetAt": "آخر إعادة ضبط",
       "customerGroup": "مجموعة العملاء",
       "approvalSettings": "إعدادات الموافقة",
       "requiresAdmin": "يتطلب موافقة المسؤول",
@@ -140,7 +163,8 @@
       "addToGroupError": "Failed to add company to customer group",
       "removeFromGroupError": "Failed to remove company from customer group",
       "approvalSettingsUpdated": "Company approval settings updated successfully",
-      "approvalSettingsError": "Failed to update company approval settings"
+      "approvalSettingsError": "Failed to update company approval settings",
+      "created": "Company {{name}} created successfully"
     },
     "approvalSettings": {
       "title": "Company Approval Settings",
@@ -160,13 +184,17 @@
       "addedSuccess": "Company added to customer group successfully",
       "removedSuccess": "Company removed from customer group successfully",
       "addError": "Failed to add company to customer group",
-      "removeError": "Failed to remove company from customer group"
+      "removeError": "Failed to remove company from customer group",
+      "title": "Customer Group",
+      "selectPlaceholder": "Select a customer group"
     }
   },
   "employees": {
     "title": "الموظفون",
     "label": "الموظفون",
     "admin": "مسؤول",
+    "active": "نشط",
+    "inactive": "غير نشط",
     "noRecords": "ليس لدى هذه الشركة أي موظفين.",
     "form": {
       "details": "التفاصيل",

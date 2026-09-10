@@ -25,7 +25,7 @@ const B2BOverview = () => {
     fields: "*employees",
   });
 
-  const { data: quotesData, isPending: quotesPending } = useQuotes();
+  const { data: quotesData, isPending: quotesPending } = useQuotes({});
 
   const { data: approvalsData, isPending: approvalsPending } =
     useApprovals();
