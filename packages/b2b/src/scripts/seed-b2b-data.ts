@@ -1,8 +1,10 @@
 import { MedusaContainer } from "@medusajs/framework";
+import { linkSalesChannelsToStockLocationWorkflow } from "@medusajs/medusa/core-flows";
 import {
   ContainerRegistrationKeys,
   MedusaError,
   ModuleRegistrationName,
+  Modules,
 } from "@medusajs/framework/utils";
 
 export default async function seed_b2b_data({
@@ -163,6 +165,24 @@ export default async function seed_b2b_data({
   logger.info(
     `B2B sales channel: ${b2bSalesChannel.id}`
   );
+
+  // ---------------------------------------------------------------------------
+  // Link sales channels to stock location
+  // ---------------------------------------------------------------------------
+
+  logger.info("Linking B2B/B2C sales channels to stock location...");
+
+  const stockLocationService = container.resolve(Modules.STOCK_LOCATION) as any;
+  const [stockLocation] = await stockLocationService.listStockLocations({}, { take: 1 });
+
+  if (stockLocation) {
+    await linkSalesChannelsToStockLocationWorkflow(container).run({
+      input: { id: stockLocation.id, add: [b2bSalesChannel.id, b2cSalesChannel.id] },
+    });
+    logger.info(`Linked B2B and B2C channels to stock location ${stockLocation.id} (${stockLocation.name})`);
+  } else {
+    logger.warn("No stock location found — skipping sales channel linkage. Create a stock location first.");
+  }
 
   logger.info("Finished creating B2B/B2C data.");
 }
