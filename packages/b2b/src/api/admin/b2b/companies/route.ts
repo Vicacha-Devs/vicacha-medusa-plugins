@@ -14,12 +14,16 @@ export const GET = async (
 
   const { fields, pagination } = req.queryConfig;
 
-  const { q, ...filterableFields } = req.filterableFields as Record<
+  const { q, customer_group_id, ...filterableFields } = req.filterableFields as Record<
     string,
     any
   >;
 
   const filters: Record<string, any> = { ...filterableFields };
+
+  if (customer_group_id) {
+    filters.customer_group = { id: customer_group_id };
+  }
 
   if (q) {
     filters.$or = [

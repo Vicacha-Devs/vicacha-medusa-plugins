@@ -17,6 +17,7 @@ export const AdminGetCompanyParams = createFindParams({
     id: z
       .union([z.string(), z.array(z.string()), createOperatorMap()])
       .optional(),
+    customer_group_id: z.string().optional(),
     created_at: createOperatorMap().optional(),
     updated_at: createOperatorMap().optional(),
   })
