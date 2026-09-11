@@ -1,8 +1,8 @@
 import { defineWidgetConfig } from "@medusajs/admin-sdk"
 import { Badge, Container, Heading } from "@medusajs/ui"
+import { getStylizedAmount, SectionRow } from "@vicacha-devs/medusa-shared-admin/admin"
 import { useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
-import { SectionRow } from "@vicacha-devs/medusa-shared-admin/admin"
 
 import { useCustomerEmployee } from "../hooks/api"
 
@@ -20,10 +20,7 @@ const CustomerEmployeeWidget = () => {
   const spendingLimitValue =
     employee.spending_limit === 0 || employee.spending_limit == null
       ? t("quotes.detail.unlimited")
-      : new Intl.NumberFormat(undefined, {
-          style: "currency",
-          currency: currencyCode,
-        }).format(employee.spending_limit / 100)
+      : getStylizedAmount(employee.spending_limit, currencyCode)
 
   return (
     <Container className="divide-y p-0">
