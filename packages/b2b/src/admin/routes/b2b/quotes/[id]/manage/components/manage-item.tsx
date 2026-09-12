@@ -7,7 +7,8 @@ import {
   XMark,
 } from "@medusajs/icons"
 import { Badge, CurrencyInput, Hint, IconButton, Input, Label, Text, toast } from "@medusajs/ui"
-import { useMemo, useRef, useState } from "react"
+import debounce from "lodash/debounce"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import {
   ActionMenu,
@@ -19,7 +20,6 @@ import {
 import {
   useAddItemsToQuote,
   useRemoveQuoteItem,
-  useUpdateAddedQuoteItem,
   useUpdateQuoteItem,
 } from "../../../../../../hooks/api"
 
@@ -28,17 +28,39 @@ type ManageItemProps = {
   item: AdminOrderPreview["items"][0]
   currencyCode: string
   orderId: string
+  onItemChange: (changes: { quantity?: number; unit_price?: number }) => void
 }
 
-export const ManageItem = ({ originalItem, item, currencyCode, orderId }: ManageItemProps) => {
+export const ManageItem = ({ originalItem, item, currencyCode, orderId, onItemChange }: ManageItemProps) => {
   const { t } = useTranslation()
   const [showPriceForm, setShowPriceForm] = useState(false)
-  const priceRef = useRef<number>(item.unit_price)
+  const [localQty, setLocalQty] = useState(item.quantity)
+  const [localPrice, setLocalPrice] = useState(item.unit_price)
+  const prevServerValuesRef = useRef({ quantity: item.quantity, unit_price: item.unit_price })
 
   const { mutateAsync: addItems } = useAddItemsToQuote(orderId)
-  const { mutateAsync: updateAddedItem } = useUpdateAddedQuoteItem(orderId)
   const { mutateAsync: updateOriginalItem } = useUpdateQuoteItem(orderId)
   const { mutateAsync: undoAction } = useRemoveQuoteItem(orderId)
+
+  const debouncedPriceNotify = useCallback(
+    debounce((price: number) => onItemChange({ unit_price: price }), 400),
+    []
+  )
+
+  useEffect(() => {
+    return () => debouncedPriceNotify.cancel()
+  }, [debouncedPriceNotify])
+
+  // Sync local state when server values change (e.g. after undo/remove)
+  useEffect(() => {
+    const prev = prevServerValuesRef.current
+    if (prev.quantity !== item.quantity || prev.unit_price !== item.unit_price) {
+      prevServerValuesRef.current = { quantity: item.quantity, unit_price: item.unit_price }
+      setLocalQty(item.quantity)
+      setLocalPrice(item.unit_price)
+      onItemChange({ quantity: item.quantity, unit_price: item.unit_price })
+    }
+  }, [item.quantity, item.unit_price])
 
   const addItemAction = useMemo(
     () => item.actions?.find((a) => a.action === "ITEM_ADD"),
@@ -53,21 +75,7 @@ export const ManageItem = ({ originalItem, item, currencyCode, orderId }: Manage
   const isItemUpdated = !!updateItemAction
   const isItemRemoved = !!updateItemAction && item.quantity === item.detail.fulfilled_quantity
 
-  const onUpdate = async ({ quantity, unit_price }: { quantity?: number; unit_price?: number }) => {
-    if (typeof quantity === "number" && quantity <= item.detail.fulfilled_quantity) {
-      toast.error(t("orders.edits.validation.quantityLowerThanFulfillment"))
-      return
-    }
-    try {
-      if (addItemAction) {
-        await updateAddedItem({ quantity, unit_price, actionId: addItemAction.id })
-      } else {
-        await updateOriginalItem({ quantity, unit_price, itemId: item.id })
-      }
-    } catch (e: any) {
-      toast.error(e.message)
-    }
-  }
+  const localItemTotal = localQty * localPrice
 
   const onRemove = async () => {
     try {
@@ -97,6 +105,20 @@ export const ManageItem = ({ originalItem, item, currencyCode, orderId }: Manage
     } catch (e: any) {
       toast.error(e.message)
     }
+  }
+
+  const handleQtyChange = (qty: number) => {
+    if (qty <= item.detail.fulfilled_quantity) {
+      toast.error(t("orders.edits.validation.quantityLowerThanFulfillment"))
+      return
+    }
+    setLocalQty(qty)
+    onItemChange({ quantity: qty })
+  }
+
+  const handlePriceChange = (price: number) => {
+    setLocalPrice(price) // immediate — updates the per-item AmountCell
+    debouncedPriceNotify(price)
   }
 
   return (
@@ -143,15 +165,14 @@ export const ManageItem = ({ originalItem, item, currencyCode, orderId }: Manage
         <div className="flex flex-1 justify-between">
           <div className="flex flex-grow items-center gap-2">
             <Input
-              key={`${item.id}-${item.quantity}`}
               className="bg-ui-bg-base txt-small w-[67px] rounded-lg [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
               type="number"
               disabled={item.detail.fulfilled_quantity === item.quantity}
               min={item.detail.fulfilled_quantity}
-              defaultValue={item.quantity}
-              onBlur={(e) => {
-                const quantity = e.target.value === "" ? null : Number(e.target.value)
-                if (quantity) onUpdate({ quantity })
+              value={localQty}
+              onChange={(e) => {
+                const qty = e.target.value === "" ? localQty : Number(e.target.value)
+                handleQtyChange(qty)
               }}
             />
             <Text className="txt-small text-ui-fg-subtle">{t("fields.qty")}</Text>
@@ -160,7 +181,7 @@ export const ManageItem = ({ originalItem, item, currencyCode, orderId }: Manage
           <div className="text-ui-fg-subtle txt-small mr-2 flex flex-shrink-0">
             <AmountCell
               currencyCode={currencyCode}
-              amount={item.total}
+              amount={localItemTotal}
               originalAmount={originalItem?.total}
             />
           </div>
@@ -211,17 +232,16 @@ export const ManageItem = ({ originalItem, item, currencyCode, orderId }: Manage
           <div className="flex items-center gap-1">
             <div className="flex-grow">
               <CurrencyInput
+                key={`price-${item.id}-${item.unit_price}`}
                 symbol={(currencySymbolMap as Record<string, string>)[currencyCode] ?? currencyCode}
                 code={currencyCode}
                 defaultValue={item.unit_price}
                 type="numeric"
                 min={0}
                 onChange={(e) => {
-                  priceRef.current = parseFloat(e.target.value)
-                }}
-                onBlur={() => {
-                  if (!isNaN(priceRef.current)) {
-                    onUpdate({ unit_price: priceRef.current, quantity: item.quantity })
+                  const price = parseFloat(e.target.value.replace(/,/g, ""))
+                  if (!isNaN(price) && price > 0) {
+                    handlePriceChange(price)
                   }
                 }}
                 className="bg-ui-bg-field-component hover:bg-ui-bg-field-component-hover"

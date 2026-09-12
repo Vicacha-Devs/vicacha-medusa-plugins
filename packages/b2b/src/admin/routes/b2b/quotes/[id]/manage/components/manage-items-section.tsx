@@ -16,11 +16,13 @@ import { ManageItemsTable } from "./manage-items-table.tsx";
 type ManageItemsSectionProps = {
   order: AdminOrder;
   preview: AdminOrderPreview;
+  onItemChange: (itemId: string, changes: { quantity?: number; unit_price?: number }) => void;
 };
 
 export const ManageItemsSection = ({
   order,
   preview,
+  onItemChange,
 }: ManageItemsSectionProps) => {
   const { t } = useTranslation();
   const { setIsOpen } = useStackedModal();
@@ -126,6 +128,7 @@ export const ManageItemsSection = ({
             item={item}
             orderId={order.id}
             currencyCode={order.currency_code}
+            onItemChange={(changes) => onItemChange(item.id, changes)}
           />
         ))}
 

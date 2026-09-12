@@ -15,7 +15,7 @@ import {
   StoreQuoteResponse,
   StoreQuotesResponse,
 } from "../../../types";
-import { queryKeysFactory, sdk } from "@vicacha-devs/medusa-shared-admin/admin";
+import { ordersQueryKeys, queryKeysFactory, sdk } from "@vicacha-devs/medusa-shared-admin/admin";
 
 
 export const orderPreviewQueryKey = queryKeysFactory("custom_orders");
@@ -89,9 +89,8 @@ export const useAddItemsToQuote = (
     mutationFn: (payload: HttpTypes.AdminAddOrderEditItems) =>
       sdk.admin.orderEdit.addItems(id, payload),
     onSuccess: (data: any, variables: any, context: any) => {
-      queryClient.invalidateQueries({
-        queryKey: orderPreviewQueryKey.detail(id),
-      });
+      queryClient.invalidateQueries({ queryKey: orderPreviewQueryKey.detail(id) });
+      queryClient.invalidateQueries({ queryKey: ordersQueryKeys.preview(id) });
       options?.onSuccess?.(data, variables, context);
     },
   });
@@ -116,9 +115,8 @@ export const useUpdateQuoteItem = (
       return sdk.admin.orderEdit.updateOriginalItem(id, itemId, payload);
     },
     onSuccess: (data: any, variables: any, context: any) => {
-      queryClient.invalidateQueries({
-        queryKey: orderPreviewQueryKey.detail(id),
-      });
+      queryClient.invalidateQueries({ queryKey: orderPreviewQueryKey.detail(id) });
+      queryClient.invalidateQueries({ queryKey: ordersQueryKeys.preview(id) });
       options?.onSuccess?.(data, variables, context);
     },
   });
@@ -139,9 +137,8 @@ export const useRemoveQuoteItem = (
     mutationFn: (actionId: string) =>
       sdk.admin.orderEdit.removeAddedItem(id, actionId),
     onSuccess: (data: any, variables: any, context: any) => {
-      queryClient.invalidateQueries({
-        queryKey: orderPreviewQueryKey.detail(id),
-      });
+      queryClient.invalidateQueries({ queryKey: orderPreviewQueryKey.detail(id) });
+      queryClient.invalidateQueries({ queryKey: ordersQueryKeys.preview(id) });
       options?.onSuccess?.(data, variables, context);
     },
   });
@@ -166,9 +163,8 @@ export const useUpdateAddedQuoteItem = (
       return sdk.admin.orderEdit.updateAddedItem(id, actionId, payload);
     },
     onSuccess: (data: any, variables: any, context: any) => {
-      queryClient.invalidateQueries({
-        queryKey: orderPreviewQueryKey.detail(id),
-      });
+      queryClient.invalidateQueries({ queryKey: orderPreviewQueryKey.detail(id) });
+      queryClient.invalidateQueries({ queryKey: ordersQueryKeys.preview(id) });
       options?.onSuccess?.(data, variables, context);
     },
   });
@@ -188,15 +184,10 @@ export const useConfirmQuote = (
     ...options,
     mutationFn: () => sdk.admin.orderEdit.request(id),
     onSuccess: (data: any, variables: any, context: any) => {
-      queryClient.invalidateQueries({
-        queryKey: orderPreviewQueryKey.details(),
-      });
-      queryClient.invalidateQueries({
-        queryKey: quoteQueryKey.detail(id),
-      });
-      queryClient.invalidateQueries({
-        queryKey: quoteQueryKey.lists(),
-      });
+      queryClient.invalidateQueries({ queryKey: orderPreviewQueryKey.details() });
+      queryClient.invalidateQueries({ queryKey: ordersQueryKeys.details() });
+      queryClient.invalidateQueries({ queryKey: quoteQueryKey.details() });
+      queryClient.invalidateQueries({ queryKey: quoteQueryKey.lists() });
       options?.onSuccess?.(data, variables, context);
     },
   });
