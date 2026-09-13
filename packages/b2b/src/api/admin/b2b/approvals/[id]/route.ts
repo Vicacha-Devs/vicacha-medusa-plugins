@@ -3,10 +3,10 @@ import {
   MedusaResponse,
 } from "@medusajs/framework";
 import { updateApprovalsWorkflow } from "@b2b/workflows/approval/workflows";
-import { AdminUpdateApproval } from "@b2b/types/approval/http";
+import { AdminUpdateApprovalType } from "../validators";
 
 export const POST = async (
-  req: AuthenticatedMedusaRequest<AdminUpdateApproval>,
+  req: AuthenticatedMedusaRequest<AdminUpdateApprovalType>,
   res: MedusaResponse
 ) => {
   const { user_id } = req.auth_context.app_metadata as {
@@ -14,11 +14,12 @@ export const POST = async (
   };
 
   const { id: approvalId } = req.params;
-  const { status } = req.validatedBody;
+  const { status, reason } = req.validatedBody;
 
   const { result: approval, errors } = await updateApprovalsWorkflow.run({
     input: {
       status,
+      reason,
       handled_by: user_id,
       id: approvalId,
     },

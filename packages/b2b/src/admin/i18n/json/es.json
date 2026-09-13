@@ -21,7 +21,9 @@
     "create": "Crear",
     "send": "Enviar",
     "addItems": "Agregar artículos",
-    "duplicate": "Duplicar"
+    "duplicate": "Duplicar",
+    "approve": "Aprobar",
+    "reject": "Rechazar"
   },
   "fields": {
     "id": "ID",
@@ -333,6 +335,10 @@
     "label": "Aprobaciones",
     "table": {
       "updatedAt": "Actualizado el",
+      "type": "Tipo",
+      "handledBy": "Gestionado por",
+      "handledAt": "Fecha de gestión",
+      "reason": "Motivo",
       "actions": "Acciones",
       "noRecordsTitle": "No se encontraron aprobaciones",
       "noRecordsMessage": "Actualmente no hay aprobaciones."
@@ -350,11 +356,22 @@
       },
       "reject": {
         "title": "¿Seguro que deseas rechazar este carrito?",
-        "description": "Esta acción no se puede deshacer."
+        "description": "Esta acción no se puede deshacer.",
+        "reasonPlaceholder": "Ingresa el motivo del rechazo..."
       }
+    },
+    "types": {
+      "admin": "Administrador",
+      "salesManager": "Gerente de ventas"
     },
     "items": {
       "itemTotal": "Total del artículo:"
+    },
+    "toasts": {
+      "approved": "Carrito aprobado correctamente",
+      "rejected": "Carrito rechazado correctamente",
+      "approveError": "Error al aprobar el carrito",
+      "rejectError": "Error al rechazar el carrito"
     }
   },
   "deletePrompt": {

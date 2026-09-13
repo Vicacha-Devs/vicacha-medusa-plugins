@@ -335,9 +335,17 @@
     "label": "Approvals",
     "table": {
       "updatedAt": "Updated at",
+      "type": "Type",
+      "handledBy": "Handled By",
+      "handledAt": "Handled At",
+      "reason": "Reason",
       "actions": "Actions",
       "noRecordsTitle": "No approvals found",
       "noRecordsMessage": "There are currently no approvals."
+    },
+    "types": {
+      "admin": "Admin",
+      "salesManager": "Sales Manager"
     },
     "filters": {
       "status": "Status",
@@ -352,11 +360,18 @@
       },
       "reject": {
         "title": "Are you sure you want to reject this cart?",
-        "description": "This action cannot be undone."
+        "description": "This action cannot be undone.",
+        "reasonPlaceholder": "Enter a reason for rejection..."
       }
     },
     "items": {
       "itemTotal": "Item total:"
+    },
+    "toasts": {
+      "approved": "Cart approved successfully",
+      "rejected": "Cart rejected successfully",
+      "approveError": "Failed to approve cart",
+      "rejectError": "Failed to reject cart"
     }
   },
   "deletePrompt": {

@@ -8,10 +8,10 @@ const StatusColors: Record<string, "red" | "purple" | "green"> = {
 };
 
 export default function ApprovalStatusBadge({ status }: { status: string }) {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
   
-    const titles: Record<string, string> = {
-    accepted: t("approvals.filters.approved"),
+  const titles: Record<string, string> = {
+    approved: t("approvals.filters.approved"),
     pending: t("approvals.filters.pending"),
     rejected: t("approvals.filters.rejected")
   };

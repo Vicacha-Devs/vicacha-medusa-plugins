@@ -40,7 +40,9 @@ export type ModuleApproval = {
   type: ApprovalType;
   status: ApprovalStatusType;
   created_by: string;
-  handled_by: string;
+  handled_by: string | null;
+  handled_at: string | null;
+  reason: string | null;
 };
 
 export type ModuleCreateApproval = {
@@ -53,6 +55,8 @@ export type ModuleUpdateApproval = {
   id: string;
   status: ApprovalStatusType;
   handled_by: string;
+  handled_at?: string;
+  reason?: string | null;
 };
 
 /* Entity: Approval Status */

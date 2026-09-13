@@ -26,4 +26,5 @@ export const StoreGetApprovals = createFindParams()
 export type StoreUpdateApprovalType = z.infer<typeof StoreUpdateApproval>;
 export const StoreUpdateApproval = z.object({
   status: z.string(),
+  reason: z.string().nullable().optional(),
 });

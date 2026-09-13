@@ -21,7 +21,9 @@
     "create": "Oluştur",
     "send": "Gönder",
     "addItems": "Öğe Ekle",
-    "duplicate": "Çoğalt"
+    "duplicate": "Çoğalt",
+    "approve": "Onayla",
+    "reject": "Reddet"
   },
   "fields": {
     "id": "ID",
@@ -333,9 +335,17 @@
     "label": "Onaylar",
     "table": {
       "updatedAt": "Updated at",
+      "type": "Tür",
+      "handledBy": "İşleyen",
+      "handledAt": "İşlem Tarihi",
+      "reason": "Sebep",
       "actions": "İşlemler",
       "noRecordsTitle": "Onay bulunamadı",
       "noRecordsMessage": "Şu anda hiç onay yok."
+    },
+    "types": {
+      "admin": "Yönetici",
+      "salesManager": "Satış Müdürü"
     },
     "filters": {
       "status": "Durum",
@@ -350,11 +360,18 @@
       },
       "reject": {
         "title": "Are you sure you want to reject this cart?",
-        "description": "Bu işlem geri alınamaz."
+        "description": "Bu işlem geri alınamaz.",
+        "reasonPlaceholder": "Reddetme nedenini girin..."
       }
     },
     "items": {
       "itemTotal": "Öğe toplamı:"
+    },
+    "toasts": {
+      "approved": "Sepet başarıyla onaylandı",
+      "rejected": "Sepet başarıyla reddedildi",
+      "approveError": "Sepet onaylanamadı",
+      "rejectError": "Sepet reddedilemedi"
     }
   },
   "deletePrompt": {

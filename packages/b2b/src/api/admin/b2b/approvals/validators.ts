@@ -19,4 +19,5 @@ export const AdminGetApprovals = createFindParams()
 export type AdminUpdateApprovalType = z.infer<typeof AdminUpdateApproval>;
 export const AdminUpdateApproval = z.object({
   status: z.string(),
+  reason: z.string().nullable().optional(),
 });

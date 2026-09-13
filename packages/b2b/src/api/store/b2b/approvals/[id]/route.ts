@@ -14,11 +14,12 @@ export const POST = async (
   };
 
   const { id: approvalId } = req.params;
-  const { status } = req.validatedBody;
+  const { status, reason } = req.validatedBody;
 
   const { result: approval, errors } = await updateApprovalsWorkflow.run({
     input: {
       status,
+      reason,
       handled_by: customer_id,
       id: approvalId,
     },

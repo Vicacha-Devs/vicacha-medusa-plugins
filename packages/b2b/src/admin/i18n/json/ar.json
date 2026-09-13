@@ -21,7 +21,9 @@
     "create": "إنشاء",
     "send": "إرسال",
     "addItems": "إضافة عناصر",
-    "duplicate": "تكرار"
+    "duplicate": "تكرار",
+    "approve": "موافقة",
+    "reject": "رفض"
   },
   "fields": {
     "id": "ID",
@@ -333,9 +335,17 @@
     "label": "الموافقات",
     "table": {
       "updatedAt": "Updated at",
+      "type": "النوع",
+      "handledBy": "معالج بواسطة",
+      "handledAt": "تاريخ المعالجة",
+      "reason": "السبب",
       "actions": "الإجراءات",
       "noRecordsTitle": "لم يتم العثور على موافقات",
       "noRecordsMessage": "لا توجد موافقات حاليًا."
+    },
+    "types": {
+      "admin": "مسؤول",
+      "salesManager": "مدير المبيعات"
     },
     "filters": {
       "status": "الحالة",
@@ -350,11 +360,18 @@
       },
       "reject": {
         "title": "Are you sure you want to reject this cart?",
-        "description": "لا يمكن التراجع عن هذا الإجراء."
+        "description": "لا يمكن التراجع عن هذا الإجراء.",
+        "reasonPlaceholder": "أدخل سبب الرفض..."
       }
     },
     "items": {
       "itemTotal": "إجمالي العنصر:"
+    },
+    "toasts": {
+      "approved": "تمت الموافقة على عربة التسوق بنجاح",
+      "rejected": "تم رفض عربة التسوق بنجاح",
+      "approveError": "فشل في الموافقة على عربة التسوق",
+      "rejectError": "فشل في رفض عربة التسوق"
     }
   },
   "deletePrompt": {

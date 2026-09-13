@@ -13,7 +13,7 @@ export const updateApprovalStep = createStep(
   async (
     input: ModuleUpdateApproval,
     { container }
-  ): Promise<StepResponse<ModuleApproval, ModuleUpdateApproval>> => {
+  ): Promise<StepResponse<ModuleApproval, ModuleUpdateApproval[]>> => {
     const query = container.resolve(ContainerRegistrationKeys.QUERY);
     const approvalModule =
       container.resolve<IApprovalModuleService>(APPROVAL_MODULE);
@@ -28,45 +28,58 @@ export const updateApprovalStep = createStep(
       },
     });
 
+    const rollbackData: ModuleUpdateApproval[] = [
+      {
+        id: approval.id,
+        status: approval.status as unknown as ApprovalStatusType,
+        handled_by: approval.handled_by,
+      } as ModuleUpdateApproval,
+    ];
+
     if (input.status === ApprovalStatusType.REJECTED) {
       const { data: approvalsToReject } = await query.graph({
         entity: "approval",
         fields: ["*"],
         filters: {
           cart_id: approval.cart_id,
-          id: {
-            $ne: approval.id,
-          },
+          id: { $ne: approval.id },
         },
       });
 
-      const updateData = approvalsToReject.map((approval) => ({
-        id: approval.id,
-        status: ApprovalStatusType.REJECTED,
-        handled_by: input.handled_by,
-      }));
+      const rejectedAt = new Date().toISOString();
 
-      await approvalModule.updateApprovals(updateData);
+      for (const sibling of approvalsToReject) {
+        rollbackData.push({
+          id: sibling.id,
+          status: sibling.status as unknown as ApprovalStatusType,
+          handled_by: sibling.handled_by,
+          handled_at: sibling.handled_at,
+        } as ModuleUpdateApproval);
+      }
+
+      await approvalModule.updateApprovals(
+        approvalsToReject.map((a) => ({
+          id: a.id,
+          status: ApprovalStatusType.REJECTED,
+          handled_by: input.handled_by,
+          handled_at: rejectedAt,
+        }))
+      );
     }
 
-    const previousData = {
-      id: approval.id,
-      status: approval.status as unknown as ApprovalStatusType,
-      handled_by: approval.handled_by,
-    } as ModuleUpdateApproval;
+    const [updatedApproval] = await approvalModule.updateApprovals([{
+      ...input,
+      handled_at: new Date().toISOString(),
+    }]);
 
-    const [updatedApproval] = await approvalModule.updateApprovals([input]);
-
-    return new StepResponse(updatedApproval, previousData);
+    return new StepResponse(updatedApproval, rollbackData);
   },
-  async (previousData: ModuleUpdateApproval, { container }) => {
+  async (rollbackData: ModuleUpdateApproval[] | undefined, { container }) => {
+    if (!rollbackData) return;
+
     const approvalModule =
       container.resolve<IApprovalModuleService>(APPROVAL_MODULE);
 
-    const updateData = Array.isArray(previousData)
-      ? previousData
-      : [previousData];
-
-    await approvalModule.updateApprovals(updateData);
+    await approvalModule.updateApprovals(rollbackData);
   }
 );

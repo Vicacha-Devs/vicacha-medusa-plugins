@@ -25,12 +25,12 @@ export type AdminApprovalsResponse = {
 export type AdminCartWithApprovals = HttpTypes.StoreCart & {
   company: QueryCompany;
   approval_status: QueryApprovalStatus;
-  approval_requests: QueryApproval[];
+  approvals: QueryApproval[];
 };
 
 export type AdminUpdateApproval = {
   status: ApprovalStatusType;
-  handled_by: string;
+  reason?: string | null;
 };
 
 export type AdminApprovalStatus = QueryApprovalStatus;
@@ -52,5 +52,5 @@ export type StoreCreateApproval = {
 
 export type StoreUpdateApproval = {
   status: ApprovalStatusType;
-  handled_by: string;
+  reason?: string | null;
 };
