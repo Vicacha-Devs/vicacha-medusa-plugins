@@ -11,6 +11,7 @@ export const Quote = model
     draft_order_id: model.text(),
     order_change_id: model.text().nullable(),
     cart_id: model.text(),
+    expires_at: model.dateTime().nullable(),
     messages: model.hasMany(() => Message, { mappedBy: "quote" }),
   })
   .cascades({
@@ -43,5 +44,15 @@ export const Quote = model
       on: ["cart_id"],
       unique: true,
       where: "deleted_at IS NULL",
+    },
+    {
+      name: "IDX_quote_created_at",
+      on: ["created_at"],
+      where: "deleted_at IS NULL",
+    },
+    {
+      name: "IDX_quote_expires_at",
+      on: ["expires_at"],
+      where: "deleted_at IS NULL AND expires_at IS NOT NULL",
     },
   ]);

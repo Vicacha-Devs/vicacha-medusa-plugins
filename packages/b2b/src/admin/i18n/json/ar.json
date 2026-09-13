@@ -251,7 +251,8 @@
       "customer_rejected": "مرفوض من العميل",
       "merchant_rejected": "مرفوض من التاجر",
       "pending_merchant": "بانتظار التاجر",
-      "pending_customer": "بانتظار العميل"
+      "pending_customer": "بانتظار العميل",
+      "expired": "منتهي الصلاحية"
     },
     "detail": {
       "acceptedMessage": "Quote accepted by customer. Order is ready for processing.",

@@ -195,15 +195,16 @@ export const useConfirmQuote = (
 
 export const useSendQuote = (
   id: string,
-  options?: UseMutationOptions<AdminQuoteResponse, FetchError, void>
+  options?: UseMutationOptions<AdminQuoteResponse, FetchError, { expires_at?: string | null }>
 ) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     ...options,
-    mutationFn: () =>
+    mutationFn: (body: { expires_at?: string | null } = {}) =>
       sdk.client.fetch<AdminQuoteResponse>(`/admin/b2b/quotes/${id}/send`, {
         method: "POST",
+        body,
       }),
     onSuccess: (data: any, variables: any, context: any) => {
       queryClient.invalidateQueries({

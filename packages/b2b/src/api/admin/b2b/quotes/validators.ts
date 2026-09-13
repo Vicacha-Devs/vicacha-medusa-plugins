@@ -29,7 +29,11 @@ export const AdminGetQuoteParams = createFindParams({
   .strict();
 
 export type AdminSendQuoteType = z.infer<typeof AdminSendQuote>;
-export const AdminSendQuote = z.object({}).strict();
+export const AdminSendQuote = z
+  .object({
+    expires_at: z.iso.datetime().nullish(),
+  })
+  .strict();
 
 export type AdminRejectQuoteType = z.infer<typeof AdminRejectQuote>;
 export const AdminRejectQuote = z.object({}).strict();

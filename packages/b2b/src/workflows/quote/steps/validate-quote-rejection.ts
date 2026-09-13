@@ -5,10 +5,12 @@ import { QueryQuote } from "@b2b/types";
 export const validateQuoteRejectionStep = createStep(
   "validate-quote-rejection",
   async function ({ quote }: { quote: QueryQuote }) {
-    if (["accepted"].includes(quote.status)) {
+    if (["accepted", "expired"].includes(quote.status)) {
       throw new MedusaError(
         MedusaError.Types.INVALID_DATA,
-        `Quote is already accepted by customer`
+        quote.status === "expired"
+          ? "Cannot reject an expired quote"
+          : "Quote is already accepted by customer"
       );
     }
   }

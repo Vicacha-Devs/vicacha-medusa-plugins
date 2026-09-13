@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { EllipsisHorizontal, PencilSquare, XCircle } from "@medusajs/icons"
 import { toast, usePrompt } from "@medusajs/ui"
 import { ActionMenu } from "@vicacha-devs/medusa-shared-admin/admin"
@@ -7,6 +8,7 @@ import { useNavigate } from "react-router-dom"
 import { QueryQuote } from "../../../../../types"
 import { EQuoteStatus } from "../../../../../types"
 import { useRejectQuote, useSendQuote } from "../../../../hooks/api"
+import { SendQuoteDrawer } from "./send-quote-drawer"
 
 const MANAGEABLE_STATUSES = [
   EQuoteStatus.PendingMerchant,
@@ -18,6 +20,7 @@ export const QuoteActionsMenu = ({ quote }: { quote: QueryQuote }) => {
   const { t } = useTranslation()
   const prompt = usePrompt()
   const navigate = useNavigate()
+  const [sendDrawerOpen, setSendDrawerOpen] = useState(false)
 
   const { mutateAsync: sendQuote, isPending: isSending } = useSendQuote(quote.id)
   const { mutateAsync: rejectQuote, isPending: isRejecting } = useRejectQuote(quote.id)
@@ -34,19 +37,18 @@ export const QuoteActionsMenu = ({ quote }: { quote: QueryQuote }) => {
   ].includes(quote.status as EQuoteStatus)
   const canManage = MANAGEABLE_STATUSES.includes(quote.status as unknown as EQuoteStatus)
 
-  const handleSend = async () => {
-    const confirmed = await prompt({
-      title: t("quotes.prompts.send.title"),
-      description: t("quotes.prompts.send.description"),
-      confirmText: t("actions.send"),
-      cancelText: t("actions.cancel"),
-    })
-    if (!confirmed) return
+  const handleSendConfirm = async (expiresAt: string | null) => {
     try {
-      await sendQuote(undefined, {
-        onSuccess: () => toast.success(t("quotes.toasts.sent")),
-        onError: (err) => toast.error(err.message),
-      })
+      await sendQuote(
+        { expires_at: expiresAt },
+        {
+          onSuccess: () => {
+            setSendDrawerOpen(false)
+            toast.success(t("quotes.toasts.sent"))
+          },
+          onError: (err) => toast.error(err.message),
+        }
+      )
     } catch {}
   }
 
@@ -77,7 +79,7 @@ export const QuoteActionsMenu = ({ quote }: { quote: QueryQuote }) => {
   if (canSend) {
     primaryActions.push({
       label: t("quotes.detail.sendQuote"),
-      onClick: handleSend,
+      onClick: () => setSendDrawerOpen(true),
       disabled: isSending,
       icon: <EllipsisHorizontal />,
     })
@@ -99,5 +101,15 @@ export const QuoteActionsMenu = ({ quote }: { quote: QueryQuote }) => {
 
   if (!groups.length) return null
 
-  return <ActionMenu groups={groups} />
+  return (
+    <>
+      <ActionMenu groups={groups} />
+      <SendQuoteDrawer
+        open={sendDrawerOpen}
+        onClose={() => setSendDrawerOpen(false)}
+        onConfirm={handleSendConfirm}
+        isPending={isSending}
+      />
+    </>
+  )
 }

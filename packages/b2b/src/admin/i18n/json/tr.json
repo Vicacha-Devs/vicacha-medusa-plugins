@@ -251,7 +251,8 @@
       "customer_rejected": "Müşteri Tarafından Reddedildi",
       "merchant_rejected": "Satıcı Tarafından Reddedildi",
       "pending_merchant": "Satıcı Bekleniyor",
-      "pending_customer": "Müşteri Bekleniyor"
+      "pending_customer": "Müşteri Bekleniyor",
+      "expired": "Süresi Doldu"
     },
     "detail": {
       "acceptedMessage": "Quote accepted by customer. Order is ready for processing.",

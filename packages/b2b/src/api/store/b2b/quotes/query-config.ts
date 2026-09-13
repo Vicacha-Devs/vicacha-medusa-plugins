@@ -1,6 +1,7 @@
 export const quoteFields = [
   "id",
   "status",
+  "expires_at",
   "*customer",
   "*customer.employee",
   "*customer.employee.company",

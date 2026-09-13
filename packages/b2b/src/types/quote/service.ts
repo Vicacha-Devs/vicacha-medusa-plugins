@@ -16,6 +16,7 @@ export interface ModuleQuoteFilters extends BaseFilterable<ModuleQuoteFilters> {
   q?: string;
   id?: string | string[];
   status?: string | string[];
+  expires_at?: string | { $lte?: string; $gte?: string; $lt?: string; $gt?: string };
 }
 
 /**

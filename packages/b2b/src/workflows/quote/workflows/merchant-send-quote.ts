@@ -11,7 +11,7 @@ import { updateQuotesWorkflow } from "./update-quote";
 */
 export const merchantSendQuoteWorkflow = createWorkflow(
   "merchant-send-quote",
-  function (input: { quote_id: string }) {
+  function (input: { quote_id: string; expires_at?: string | null }) {
     useRemoteQueryStep({
       entry_point: "quote",
       fields: ["id"],
@@ -25,6 +25,7 @@ export const merchantSendQuoteWorkflow = createWorkflow(
         {
           id: input.quote_id,
           status: "pending_customer",
+          expires_at: input.expires_at,
         },
       ],
     });

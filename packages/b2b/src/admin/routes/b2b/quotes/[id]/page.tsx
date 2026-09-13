@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { LayoutComposer } from "@medusajs/dashboard/components"
 import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared"
 import { detailPageDefaultEntries, OrderSummarySection, TwoColumnPageSkeleton, useOrderPreview } from "@vicacha-devs/medusa-shared-admin/admin"
@@ -12,6 +13,7 @@ import { QuoteMessagesSection } from "./components/quote-messages-section"
 import { QuoteCustomerSection } from "./components/quote-customer-section"
 import { QuoteOrderSection } from "./components/quote-order-section"
 import { QuoteCompanySection } from "./components/quote-company-section"
+import { SendQuoteDrawer } from "../components/send-quote-drawer"
 
 const CUSTOMER_FIELDS =
   "*customer,*customer.employee,*customer.employee.company"
@@ -21,6 +23,7 @@ const QuoteDetail = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const prompt = usePrompt()
+  const [sendDrawerOpen, setSendDrawerOpen] = useState(false)
 
   const { quote, isPending, isError, error } = useQuote(id!, {
     fields: CUSTOMER_FIELDS,
@@ -74,19 +77,18 @@ const QuoteDetail = () => {
   ].includes(quote.status as EQuoteStatus)
   const isAccepted = quote.status === EQuoteStatus.Accepted
 
-  const handleSend = async () => {
-    const confirmed = await prompt({
-      title: t("quotes.prompts.send.title"),
-      description: t("quotes.prompts.send.description"),
-      confirmText: t("actions.send"),
-      cancelText: t("actions.cancel"),
-    })
-    if (!confirmed) return
+  const handleSendConfirm = async (expiresAt: string | null) => {
     try {
-      await sendQuote(undefined, {
-        onSuccess: () => toast.success(t("quotes.toasts.sent")),
-        onError: (err) => toast.error(err.message),
-      })
+      await sendQuote(
+        { expires_at: expiresAt },
+        {
+          onSuccess: () => {
+            setSendDrawerOpen(false)
+            toast.success(t("quotes.toasts.sent"))
+          },
+          onError: (err) => toast.error(err.message),
+        }
+      )
     } catch {}
   }
 
@@ -130,7 +132,7 @@ const QuoteDetail = () => {
             </Button>
           )}
           {canSend && (
-            <Button size="small" isLoading={isSending} onClick={handleSend}>
+            <Button size="small" isLoading={isSending} onClick={() => setSendDrawerOpen(true)}>
               {t("quotes.detail.sendQuote")}
             </Button>
           )}
@@ -179,6 +181,13 @@ const QuoteDetail = () => {
             </>
           ),
         }}
+      />
+
+      <SendQuoteDrawer
+        open={sendDrawerOpen}
+        onClose={() => setSendDrawerOpen(false)}
+        onConfirm={handleSendConfirm}
+        isPending={isSending}
       />
     </div>
   )

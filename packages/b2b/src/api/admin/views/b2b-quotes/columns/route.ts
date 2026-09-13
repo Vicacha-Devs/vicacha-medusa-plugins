@@ -91,6 +91,18 @@ export const GET = async (_req: MedusaRequest, res: MedusaResponse) => {
         default_order: 70,
         filter: { enabled: false },
       },
+      {
+        id: "expires_at",
+        field: "expires_at",
+        name: "Expires At",
+        data_type: "date",
+        render_mode: "date",
+        sortable: true,
+        hideable: true,
+        default_visible: true,
+        default_order: 80,
+        filter: { enabled: false },
+      },
     ],
   }
 

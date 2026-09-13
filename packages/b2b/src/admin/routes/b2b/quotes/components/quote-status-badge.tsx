@@ -7,6 +7,7 @@ const statusColors: Record<string, "red" | "purple" | "green" | "grey"> = {
   accepted: "green",
   customer_rejected: "red",
   merchant_rejected: "red",
+  expired: "grey",
 }
 
 export default function QuoteStatusBadge({ status }: { status: string }) {
@@ -18,6 +19,7 @@ export default function QuoteStatusBadge({ status }: { status: string }) {
     accepted: t("quotes.status.accepted"),
     customer_rejected: t("quotes.status.customer_rejected"),
     merchant_rejected: t("quotes.status.merchant_rejected"),
+    expired: t("quotes.status.expired"),
   }
 
   return (

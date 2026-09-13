@@ -7,6 +7,7 @@ export type ModuleQuote = {
   order_change_id: string;
   cart_id: string;
   customer_id: string;
+  expires_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -21,6 +22,7 @@ export type ModuleCreateQuote = {
 export type ModuleUpdateQuote = {
   id: string;
   status?: string;
+  expires_at?: string | null;
 };
 
 /* Entity: Message */

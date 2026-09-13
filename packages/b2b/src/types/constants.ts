@@ -4,6 +4,7 @@ export const QUOTE_STATUS = [
     "accepted",
     "customer_rejected",
     "merchant_rejected",
+    "expired",
 ] as const
 
 export const SPENDING_LIMIT_RESET_FREQUENCY = [

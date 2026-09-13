@@ -4,6 +4,7 @@ export enum EQuoteStatus {
   Accepted = "accepted",
   CustomerRejected = "customer_rejected",
   MerchantRejected = "merchant_rejected",
+  Expired = "expired",
 }
 
 export enum ESpendingLimitResetFrequency {

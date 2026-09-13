@@ -15,6 +15,7 @@ export const useQuotesTableFilters = () => {
         { label: t("quotes.status.accepted"), value: EQuoteStatus.Accepted },
         { label: t("quotes.status.customer_rejected"), value: EQuoteStatus.CustomerRejected },
         { label: t("quotes.status.merchant_rejected"), value: EQuoteStatus.MerchantRejected },
+        { label: t("quotes.status.expired"), value: EQuoteStatus.Expired },
       ],
     },
     {

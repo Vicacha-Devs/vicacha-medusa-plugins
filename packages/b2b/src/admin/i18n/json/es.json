@@ -251,7 +251,8 @@
       "customer_rejected": "Rechazada por el cliente",
       "merchant_rejected": "Rechazada por el comerciante",
       "pending_merchant": "Pendiente del comerciante",
-      "pending_customer": "Pendiente del cliente"
+      "pending_customer": "Pendiente del cliente",
+      "expired": "Expirada"
     },
     "detail": {
       "acceptedMessage": "La cotización fue aceptada por el cliente. El pedido está listo para procesarse.",

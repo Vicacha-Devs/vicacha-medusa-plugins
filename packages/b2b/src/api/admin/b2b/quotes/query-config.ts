@@ -13,6 +13,7 @@ export const listQuoteFields = [
   "order_change_id",
   "cart_id",
   "draft_order_id",
+  "expires_at",
   "created_at",
 ];
 
