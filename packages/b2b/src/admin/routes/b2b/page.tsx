@@ -4,6 +4,7 @@ import {
   CheckCircle,
   DocumentText,
   Tag,
+  Users,
 } from "@medusajs/icons";
 import {
   Container,
@@ -12,46 +13,38 @@ import {
   Text,
 } from "@medusajs/ui";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import {
   useCompanies,
   useQuotes,
   useApprovals,
 } from "../../hooks/api";
+import { EQuoteStatus } from "../../../types";
+import { ApprovalStatusType } from "../../../types";
 
 const B2BOverview = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
-  const { data: companiesData, isPending: companiesPending } = useCompanies({
-    fields: "*employees",
+  const { data: companiesData, isPending: companiesPending } = useCompanies();
+
+  const { count: pendingQuotesCount = 0, isPending: quotesPending } = useQuotes({
+    status: [EQuoteStatus.PendingMerchant, EQuoteStatus.PendingCustomer],
   });
 
-  const { data: quotesData, isPending: quotesPending } = useQuotes({});
-
-  const { data: approvalsData, isPending: approvalsPending } =
-    useApprovals();
+  const { data: approvalsData, isPending: approvalsPending } = useApprovals({
+    status: ApprovalStatusType.PENDING,
+  });
 
   const companies = companiesData?.companies ?? [];
-  const quotes = quotesData?.quotes ?? [];
-  const approvals = approvalsData?.approvals ?? [];
-
-  const isLoading =
-    companiesPending || quotesPending || approvalsPending;
+  const isLoading = companiesPending || quotesPending || approvalsPending;
 
   const employeesCount = companies.reduce(
-    (total, company) => total + (company.employees?.length ?? 0),
+    (total: number, company: any) => total + (company.employees_count ?? 0),
     0
   );
 
-  const pendingQuotes = quotes.filter(
-    (quote) =>
-      quote.status === "pending" ||
-      quote.status === "requested"
-  ).length;
-
-  const pendingApprovals = approvals.filter(
-    (approval) =>
-      approval.status === "pending"
-  ).length;
+  const pendingApprovalsCount = approvalsData?.count ?? 0;
 
   return (
     <div className="flex flex-col gap-y-4">
@@ -65,38 +58,39 @@ const B2BOverview = () => {
         </Text>
       </div>
 
-      {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
         <StatCard
           title={t("overview.stats.companies")}
           value={companies.length}
           icon={<BuildingStorefront />}
           loading={isLoading}
+          onClick={() => navigate("/b2b/companies")}
         />
 
         <StatCard
           title={t("overview.stats.employees")}
           value={employeesCount}
-          icon={<BuildingStorefront />}
+          icon={<Users />}
           loading={isLoading}
         />
 
         <StatCard
           title={t("overview.stats.pendingQuotes")}
-          value={pendingQuotes}
+          value={pendingQuotesCount}
           icon={<DocumentText />}
           loading={isLoading}
+          onClick={() => navigate("/b2b/quotes")}
         />
 
         <StatCard
           title={t("overview.stats.pendingApprovals")}
-          value={pendingApprovals}
+          value={pendingApprovalsCount}
           icon={<CheckCircle />}
           loading={isLoading}
+          onClick={() => navigate("/b2b/approvals")}
         />
       </div>
 
-      {/* Navigation */}
       <Container className="p-0 overflow-hidden">
         <div className="px-6 py-5 border-b border-ui-border-base">
           <Heading level="h2">{t("overview.commerce.title")}</Heading>
@@ -111,28 +105,32 @@ const B2BOverview = () => {
             icon={<BuildingStorefront />}
             title={t("overview.nav.companies.title")}
             description={t("overview.nav.companies.description")}
-            href="/app/b2b/companies"
+            onClick={() => navigate("/b2b/companies")}
+            position="top-left"
           />
 
           <NavigationCard
             icon={<DocumentText />}
             title={t("overview.nav.quotes.title")}
             description={t("overview.nav.quotes.description")}
-            href="/app/b2b/quotes"
+            onClick={() => navigate("/b2b/quotes")}
+            position="top-right"
           />
 
           <NavigationCard
             icon={<CheckCircle />}
             title={t("overview.nav.approvals.title")}
             description={t("overview.nav.approvals.description")}
-            href="/app/b2b/approvals"
+            onClick={() => navigate("/b2b/approvals")}
+            position="bottom-left"
           />
 
           <NavigationCard
             icon={<Tag />}
             title={t("overview.nav.pricing.title")}
             description={t("overview.nav.pricing.description")}
-            href="/app/b2b/pricing"
+            onClick={() => navigate("/b2b/pricing")}
+            position="bottom-right"
           />
         </div>
       </Container>
@@ -145,6 +143,7 @@ type StatCardProps = {
   value: number;
   icon: React.ReactNode;
   loading?: boolean;
+  onClick?: () => void;
 };
 
 const StatCard = ({
@@ -152,9 +151,16 @@ const StatCard = ({
   value,
   icon,
   loading = false,
+  onClick,
 }: StatCardProps) => {
   return (
-    <Container className="p-0">
+    <Container
+      className={[
+        "p-0",
+        onClick ? "cursor-pointer hover:bg-ui-bg-subtle-hover transition-colors" : "",
+      ].join(" ")}
+      onClick={onClick}
+    >
       <div className="p-5">
         <div className="flex items-center justify-between">
           <Text className="text-ui-fg-subtle">{title}</Text>
@@ -176,29 +182,40 @@ const StatCard = ({
   );
 };
 
+type Position = "top-left" | "top-right" | "bottom-left" | "bottom-right";
+
 type NavigationCardProps = {
   icon: React.ReactNode;
   title: string;
   description: string;
-  href: string;
+  onClick: () => void;
+  position: Position;
 };
 
 const NavigationCard = ({
   icon,
   title,
   description,
-  href,
+  onClick,
+  position,
 }: NavigationCardProps) => {
+  const isBottom = position === "bottom-left" || position === "bottom-right";
+  const isLeft = position === "top-left" || position === "bottom-left";
+
   return (
     <button
       type="button"
-      className="text-left p-6 border-b border-ui-border-base md:[&:nth-child(odd)]:border-r hover:bg-ui-bg-subtle-hover transition-colors"
-      onClick={() => {
-        window.location.href = href;
-      }}
+      className={[
+        "text-left p-6 hover:bg-ui-bg-subtle-hover transition-colors",
+        !isBottom ? "border-b border-ui-border-base" : "",
+        isLeft ? "md:border-r md:border-ui-border-base" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+      onClick={onClick}
     >
       <div className="flex items-start gap-x-3">
-        <div className="flex items-center justify-center w-8 h-8 rounded-md bg-ui-bg-subtle">
+        <div className="flex items-center justify-center w-8 h-8 rounded-md bg-ui-bg-subtle shrink-0">
           {icon}
         </div>
 
@@ -215,20 +232,18 @@ const NavigationCard = ({
 };
 
 const Breadcrumb = () => {
-  const { t } = useTranslation()
-
-  return t("overview.title")
-}
+  const { t } = useTranslation();
+  return t("overview.title");
+};
 
 export const config = defineRouteConfig({
-  label: "Overview (B2B)",
+  label: "overview.title",
+  translationNs: "b2b",
   icon: BuildingStorefront,
 });
 
-
 export const handle = {
   breadcrumb: () => <Breadcrumb />,
-}
-
+};
 
 export default B2BOverview;
