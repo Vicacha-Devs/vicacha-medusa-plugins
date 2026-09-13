@@ -1,6 +1,7 @@
 import {
   beginOrderEditOrderWorkflow,
-  createOrdersWorkflow,
+  createCartWorkflow,
+  createOrderWorkflow,
 } from "@medusajs/core-flows"
 import { MedusaContainer } from "@medusajs/framework"
 import { ContainerRegistrationKeys, Modules, OrderStatus } from "@medusajs/framework/utils"
@@ -43,7 +44,7 @@ async function createDraftOrderWithChange(
     country_code: "co",
   }
 
-  const { result: draftOrder } = await createOrdersWorkflow(container).run({
+  const { result: draftOrder } = await createOrderWorkflow(container).run({
     input: {
       is_draft_order: true,
       status: OrderStatus.DRAFT,
@@ -87,6 +88,7 @@ export default async function seedB2bTestData({
   const salesChannelService = container.resolve(Modules.SALES_CHANNEL)
   const approvalService = container.resolve(APPROVAL_MODULE) as any
   const quoteService = container.resolve(QUOTE_MODULE) as any
+  const cartService = container.resolve(Modules.CART) as any
 
   // ── Admin user ──────────────────────────────────────────────────────────
   // Fetch a real user so server-side message enrichment resolves their name.
@@ -195,27 +197,154 @@ export default async function seedB2bTestData({
   }
   logger.info("Created 4 employees (2 per company)")
 
+  // ── Approval Settings ───────────────────────────────────────────────────
+  // Acme: requires both admin + sales_manager approval
+  // Globex: requires admin approval only
+
+  logger.info("Creating approval settings...")
+
+  await approvalService.createApprovalSettings([
+    { company_id: cos[0].id, requires_admin_approval: true,  requires_sales_manager_approval: true  },
+    { company_id: cos[1].id, requires_admin_approval: true,  requires_sales_manager_approval: false },
+  ])
+  logger.info("Created approval settings: Acme (admin + SM), Globex (admin only)")
+
+  // ── Approval carts ──────────────────────────────────────────────────────
+  // Real carts are needed so cart.company.* relations show in the admin UI.
+  // The cartCreated hook creates the company-cart remote link when metadata.company_id is set.
+
+  logger.info("Creating approval test carts...")
+
+  const apprAddress = { first_name: "Approval", last_name: "Test", country_code: "co" }
+
+  const createApprovalCart = async (
+    customer: typeof customers[0],
+    companyId: string,
+    items: ItemInput[]
+  ) => {
+    const { result } = await createCartWorkflow(container).run({
+      input: {
+        ...(regionId && { region_id: regionId }),
+        ...(b2bChannelId && { sales_channel_id: b2bChannelId }),
+        currency_code: currency,
+        customer_id: customer.id,
+        email: customer.email,
+        billing_address: apprAddress,
+        shipping_address: apprAddress,
+        metadata: { company_id: companyId },
+      } as any,
+    })
+
+    await cartService.addLineItems([{
+      cart_id: result.id,
+      items: items.map((i) => ({
+        title: i.title,
+        quantity: i.quantity,
+        unit_price: i.unit_price,
+      })),
+    }])
+
+    return result
+  }
+
+  // 5 carts — one per approval scenario
+  const [aCart1, aCart2, aCart3, gCart1, gCart2] = await Promise.all([
+    createApprovalCart(customers[0], cos[0].id, [ // Acme / Ana — both pending
+      { title: "Bogotá → Ciudad de México · Clase Económica", quantity: 3, unit_price: 1_100_000 },
+      { title: "Hotel Camino Real CDMX · 2 noches",           quantity: 3, unit_price: 450_000  },
+    ]),
+    createApprovalCart(customers[1], cos[0].id, [ // Acme / Carlos — admin approved, SM pending
+      { title: "Bogotá → Lima · Clase Ejecutiva",             quantity: 2, unit_price: 3_200_000 },
+    ]),
+    createApprovalCart(customers[0], cos[0].id, [ // Acme / Ana — fully approved
+      { title: "Bogotá → Buenos Aires · Clase Económica",     quantity: 5, unit_price: 1_800_000 },
+      { title: "Hotel Sofitel BA · 3 noches",                 quantity: 5, unit_price: 620_000  },
+    ]),
+    createApprovalCart(customers[2], cos[1].id, [ // Globex / María — admin rejected
+      { title: "Medellín → Cartagena · Clase Económica",      quantity: 4, unit_price: 480_000  },
+    ]),
+    createApprovalCart(customers[3], cos[1].id, [ // Globex / Juan — admin pending
+      { title: "Bogotá → San Andrés · Clase Económica",       quantity: 2, unit_price: 950_000  },
+      { title: "Hotel Decameron San Andrés · 4 noches",       quantity: 2, unit_price: 380_000  },
+    ]),
+  ])
+  logger.info("Created 5 approval test carts (company-cart links created by hook)")
+
   // ── Approvals ───────────────────────────────────────────────────────────
 
   logger.info("Creating test approvals...")
 
-  const cartId1 = "cart_test_acme_001"
-  const cartId2 = "cart_test_globex_001"
+  const remoteLink = container.resolve(ContainerRegistrationKeys.LINK)
 
-  await approvalService.createApprovals([
-    { cart_id: cartId1, type: "admin", status: "pending",  created_by: customers[1].id },
-    { cart_id: cartId2, type: "admin", status: "approved", created_by: customers[3].id, handled_by: customers[2].id },
-    { cart_id: cartId2, type: "sales_manager", status: "rejected", created_by: customers[3].id, handled_by: customers[2].id },
+  // Scenario 1 — Both admin + sales_manager PENDING (Acme / Ana)
+  const [appr1Admin, appr1SM] = await approvalService.createApprovals([
+    { cart_id: aCart1.id, type: "admin",         status: "pending", created_by: customers[0].id } as any,
+    { cart_id: aCart1.id, type: "sales_manager", status: "pending", created_by: customers[0].id } as any,
   ])
-  await approvalService.createApprovalStatuses([
-    { cart_id: cartId1, status: "pending" },
-    { cart_id: cartId2, status: "rejected" },
+  const [apprStatus1] = await approvalService.createApprovalStatuses([
+    { cart_id: aCart1.id, status: "pending" },
   ])
-  logger.info("Created 3 approvals and 2 approval statuses")
+
+  // Scenario 2 — Admin APPROVED, sales_manager PENDING (Acme / Carlos)
+  const [appr2Admin, appr2SM] = await approvalService.createApprovals([
+    { cart_id: aCart2.id, type: "admin",         status: "approved", created_by: customers[1].id, handled_by: adminId } as any,
+    { cart_id: aCart2.id, type: "sales_manager", status: "pending",  created_by: customers[1].id } as any,
+  ])
+  const [apprStatus2] = await approvalService.createApprovalStatuses([
+    { cart_id: aCart2.id, status: "pending" },
+  ])
+
+  // Scenario 3 — Both APPROVED (Acme / Ana)
+  const [appr3Admin, appr3SM] = await approvalService.createApprovals([
+    { cart_id: aCart3.id, type: "admin",         status: "approved", created_by: customers[0].id, handled_by: adminId } as any,
+    { cart_id: aCart3.id, type: "sales_manager", status: "approved", created_by: customers[0].id, handled_by: adminId } as any,
+  ])
+  const [apprStatus3] = await approvalService.createApprovalStatuses([
+    { cart_id: aCart3.id, status: "approved" },
+  ])
+
+  // Scenario 4 — Admin REJECTED (Globex / María)
+  const [appr4Admin] = await approvalService.createApprovals([
+    { cart_id: gCart1.id, type: "admin", status: "rejected", created_by: customers[2].id, handled_by: adminId, reason: "Budget exceeded for this period." } as any,
+  ])
+  const [apprStatus4] = await approvalService.createApprovalStatuses([
+    { cart_id: gCart1.id, status: "rejected" },
+  ])
+
+  // Scenario 5 — Admin PENDING (Globex / Juan — admin approval only)
+  const [appr5Admin] = await approvalService.createApprovals([
+    { cart_id: gCart2.id, type: "admin", status: "pending", created_by: customers[3].id } as any,
+  ])
+  const [apprStatus5] = await approvalService.createApprovalStatuses([
+    { cart_id: gCart2.id, status: "pending" },
+  ])
+
+  // Cart ↔ Approval and Cart ↔ ApprovalStatus remote links
+  await remoteLink.create([
+    { [Modules.CART]: { cart_id: aCart1.id }, [APPROVAL_MODULE]: { approval_id: appr1Admin.id } },
+    { [Modules.CART]: { cart_id: aCart1.id }, [APPROVAL_MODULE]: { approval_id: appr1SM.id } },
+    { [Modules.CART]: { cart_id: aCart1.id }, [APPROVAL_MODULE]: { approval_status_id: apprStatus1.id } },
+
+    { [Modules.CART]: { cart_id: aCart2.id }, [APPROVAL_MODULE]: { approval_id: appr2Admin.id } },
+    { [Modules.CART]: { cart_id: aCart2.id }, [APPROVAL_MODULE]: { approval_id: appr2SM.id } },
+    { [Modules.CART]: { cart_id: aCart2.id }, [APPROVAL_MODULE]: { approval_status_id: apprStatus2.id } },
+
+    { [Modules.CART]: { cart_id: aCart3.id }, [APPROVAL_MODULE]: { approval_id: appr3Admin.id } },
+    { [Modules.CART]: { cart_id: aCart3.id }, [APPROVAL_MODULE]: { approval_id: appr3SM.id } },
+    { [Modules.CART]: { cart_id: aCart3.id }, [APPROVAL_MODULE]: { approval_status_id: apprStatus3.id } },
+
+    { [Modules.CART]: { cart_id: gCart1.id }, [APPROVAL_MODULE]: { approval_id: appr4Admin.id } },
+    { [Modules.CART]: { cart_id: gCart1.id }, [APPROVAL_MODULE]: { approval_status_id: apprStatus4.id } },
+
+    { [Modules.CART]: { cart_id: gCart2.id }, [APPROVAL_MODULE]: { approval_id: appr5Admin.id } },
+    { [Modules.CART]: { cart_id: gCart2.id }, [APPROVAL_MODULE]: { approval_status_id: apprStatus5.id } },
+  ])
+
+  logger.info("Created 9 approvals + 5 approval statuses covering all status scenarios")
 
   // ── Draft orders + Quotes ───────────────────────────────────────────────
   // One quote per status so every UI branch can be tested.
-  // All draft orders are real (created via createOrdersWorkflow).
+  // All draft orders are real (created via createOrderWorkflow).
 
   logger.info("Creating draft orders and quotes...")
 
