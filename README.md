@@ -63,5 +63,36 @@ All tasks are orchestrated by Turborepo. Build respects inter-package dependency
 
 - [ ] Create a new skill for making plugins.
 - [ ] When creating a new entry, the admin should refresh itself to show the new entry.
-- [ ] Rename shared to medusa-plugin-shared.
 - [ ] Check i18n in all plugins, clean and update.
+- [ ] Implement the backend updates on models in b2b models.
+- [ ] Translate the page label using `translationNs`.
+- [ ] Extend Media inputs to decide which files the media can receive.
+- [ ] Use CountrySelect in b2b where it is useful.
+
+### B2B
+
+- [ ]  Extend the plugin, maybe by settings or something like that, to address which items(products) can be addressed by the plugin, i.e., to use custom products.
+
+> Note: for instance, add products to quotations, it uses `./src/admin/routes/b2b/quotes/[id]/manage/components/manage-items-table.tsx`.
+
+- [ ] What are the new added model properties for? implement them.
+- [ ] On delete a Company, delete its Approval Settings.
+- [ ] When deleting an Employee, show a Prompt asking whether to delete the Customer or not, delete Customer on yes.
+- [ ] Make a migration for rename the b2b plugin tables to be prefixed `b2b_`.
+- [ ] Squash all migrations to have a single one, keeping migrations is not required since this plugins it not released yet.
+- [ ]  
+
+### Shared Admin
+
+- [ ] The following hooks are not exported yet, export them when required:
+
+```ts
+import { useReservationItems } from "../../../hooks/api/use-reservations"
+import { useReturns } from "../../../hooks/api/use-returns"
+import { useMarkPaymentCollectionAsPaid } from "../../../hooks/api/use-payment-collections"
+import { useExchanges } from "../../../hooks/api/use-exchanges"
+```
+
+### Booking System
+
+- [ ] Setup the plugin forking the existing one.
