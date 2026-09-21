@@ -1,4 +1,5 @@
 import { defineCellRenderer } from "@medusajs/dashboard/lib"
+import { formatCurrency } from "@vicacha-devs/medusa-shared-admin/admin"
 import { Link } from "react-router-dom"
 
 import QuoteStatusBadge from "./quote-status-badge"
@@ -16,10 +17,7 @@ defineCellRenderer("b2b-quote-total", {
     const amount = value as number | null
     if (amount == null) return "-"
     const currencyCode = (row?.draft_order?.currency_code ?? "USD").toUpperCase()
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currencyCode,
-    }).format(amount / 100)
+    return formatCurrency(amount / 100, currencyCode)
   },
 })
 

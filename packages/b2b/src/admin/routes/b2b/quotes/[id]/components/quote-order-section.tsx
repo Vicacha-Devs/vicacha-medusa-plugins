@@ -1,7 +1,7 @@
-import { Badge, Container, Heading } from "@medusajs/ui"
-import { SectionRow } from "@vicacha-devs/medusa-shared-admin/admin"
-import { Link } from "react-router-dom"
 import { ArrowUpRightOnBox } from "@medusajs/icons"
+import { Badge, Container, Heading } from "@medusajs/ui"
+import { SectionRow, formatCurrency } from "@vicacha-devs/medusa-shared-admin/admin"
+import { Link } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 
 import { QueryQuote } from "../../../../../../types"
@@ -67,10 +67,10 @@ export const QuoteOrderSection = ({ quote }: QuoteOrderSectionProps) => {
             title={t("fields.total")}
             value={
               draftOrder.total != null && draftOrder.currency_code
-                ? new Intl.NumberFormat(undefined, {
-                    style: "currency",
-                    currency: draftOrder.currency_code,
-                  }).format(draftOrder.total / 100)
+                ? formatCurrency(
+                  draftOrder.total / 100,
+                  draftOrder.currency_code
+                )
                 : "—"
             }
           />

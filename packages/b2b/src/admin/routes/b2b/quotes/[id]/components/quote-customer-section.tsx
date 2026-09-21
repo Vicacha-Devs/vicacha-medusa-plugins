@@ -1,7 +1,7 @@
-import { Container, Heading } from "@medusajs/ui"
-import { SectionRow } from "@vicacha-devs/medusa-shared-admin/admin"
-import { Link } from "react-router-dom"
 import { ArrowUpRightOnBox } from "@medusajs/icons"
+import { Container, Heading } from "@medusajs/ui"
+import { SectionRow, formatCurrency } from "@vicacha-devs/medusa-shared-admin/admin"
+import { Link } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 
 import { QueryQuote } from "../../../../../../types"
@@ -54,10 +54,10 @@ export const QuoteCustomerSection = ({ quote }: QuoteCustomerSectionProps) => {
               value={
                 q.customer.employee.spending_limit === 0
                   ? t("quotes.detail.unlimited")
-                  : new Intl.NumberFormat(undefined, {
-                      style: "currency",
-                      currency: q.customer.employee.company?.currency_code ?? "USD",
-                    }).format(q.customer.employee.spending_limit / 100)
+                  : formatCurrency(
+                    q.customer.employee.spending_limit / 100,
+                    q.customer.employee.company?.currency_code ?? "USD"
+                  )
               }
             />
           )}
