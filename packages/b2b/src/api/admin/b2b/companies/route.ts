@@ -34,8 +34,11 @@ export const GET = async (
     ];
   }
 
+  // employees_count and customer_group are virtual/computed — strip them before
+  // passing to query.graph, which only accepts real entity and relation fields.
+  const VIRTUAL_FIELDS = new Set(["employees_count", "customer_group"])
   const listFields = Array.from(new Set([
-    ...fields,
+    ...fields.filter((f) => !VIRTUAL_FIELDS.has(f)),
     "employees.id",
     "customer_group.id",
     "customer_group.name",

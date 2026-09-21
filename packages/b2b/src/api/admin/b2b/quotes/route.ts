@@ -25,11 +25,11 @@ export const GET = async (
     ];
   }
 
-  // Strip the "customer" alias sent by ConfigurableDataTable (it's a cross-module
-  // link, not a same-module relation — "*customer" doesn't work here). Always
-  // include the explicit customer sub-fields and the FK scalar so the renderer
-  // always has data.
-  const baseFields = fields.filter((f) => f !== "customer" && f !== "*customer")
+  // Strip virtual/computed fields and cross-module aliases sent by ConfigurableDataTable,
+  // messages_count is computed from messages.length; customer is a cross-module link
+  // that needs explicit sub-field expansion instead.
+  const VIRTUAL_FIELDS = new Set(["messages_count", "customer", "*customer"])
+  const baseFields = fields.filter((f) => !VIRTUAL_FIELDS.has(f))
   const listFields = Array.from(new Set([
     "id",
     "customer_id",
