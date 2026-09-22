@@ -1,7 +1,6 @@
-import { LayoutComposer } from "@medusajs/dashboard/components"
+import { JsonViewSection, LayoutComposer } from "@medusajs/dashboard/components"
 import { ReactNode } from "react"
-import { JsonViewSection, MetadataSection, RequiredPermissionsSection } from "../common"
-
+import { MetadataSection, RequiredPermissionsSection } from "../common"
 
 export type DetailPageDefaultsOptions = {
   /** Render the metadata section. @default true */

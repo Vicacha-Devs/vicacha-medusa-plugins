@@ -1,6 +1,5 @@
 import { AdminOrder, AdminOrderLineItem, AdminPayment, AdminPaymentCollection } from "@medusajs/framework/types"
 
-
 export const getPaymentsFromOrder = (order: AdminOrder) => {
   return order.payment_collections
     .map((collection: AdminPaymentCollection) => collection.payments)

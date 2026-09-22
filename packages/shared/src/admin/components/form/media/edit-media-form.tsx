@@ -20,6 +20,7 @@ import {
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { KeyboundForm, RouteFocusModal, useRouteModal } from "@medusajs/dashboard/components"
 import { ThumbnailBadge } from "@medusajs/icons"
 import { Button, Checkbox, clx, CommandBar, toast, Tooltip } from "@medusajs/ui"
 import { Fragment, useCallback, useState } from "react"
@@ -28,11 +29,9 @@ import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 import { z } from "zod"
 
-import { RouteFocusModal, useRouteModal } from "../../modals"
-import { KeyboundForm } from "../../utilities/keybound-form"
 import { sdk } from "../../../lib/client"
-import { UploadMediaFormItem } from "./upload-media-form-item"
 import { MediaSchema } from "../constants"
+import { UploadMediaFormItem } from "./upload-media-form-item"
 
 const EditMediaSchema = z.object({ media: z.array(MediaSchema) })
 type EditMediaSchemaType = z.infer<typeof EditMediaSchema>

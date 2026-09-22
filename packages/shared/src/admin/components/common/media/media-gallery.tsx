@@ -1,3 +1,4 @@
+import { RouteFocusModal } from "@medusajs/dashboard/components"
 import {
   ArrowDownTray,
   ThumbnailBadge,
@@ -9,7 +10,6 @@ import { Button, IconButton, Text, Tooltip, clx, usePrompt } from "@medusajs/ui"
 import { useCallback, useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Link, useLocation } from "react-router-dom"
-import { RouteFocusModal } from "../../modals"
 
 type MediaGalleryProps = {
   images: { id: string; url: string }[]

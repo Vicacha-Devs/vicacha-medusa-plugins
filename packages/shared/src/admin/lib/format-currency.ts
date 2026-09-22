@@ -1,10 +1,4 @@
-export const formatCurrency = (amount: number, currency: string) => {
-  return new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency,
-    signDisplay: "auto",
-  }).format(amount)
-}
+import { formatCurrency } from "@medusajs/dashboard/lib"
 
 export const safeFormatCurrency = (amount: number | null | undefined, currencyCode: string | null | undefined) => {
   if (amount == null || !currencyCode) return "-"

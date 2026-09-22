@@ -1,3 +1,4 @@
+import { Form } from "@medusajs/dashboard/components"
 import { useCallback } from "react"
 import { UseFormReturn } from "react-hook-form"
 import { useTranslation } from "react-i18next"
@@ -6,7 +7,6 @@ import { z } from "zod"
 import { FileType, FileUpload, RejectedFile } from "../../common"
 import { formatFileSize } from "../../../lib"
 import { MediaSchema } from "../constants"
-import { Form } from "../form"
 import { MediaSectionFormValues } from "./create-media-section"
 
 type Media = z.infer<typeof MediaSchema>

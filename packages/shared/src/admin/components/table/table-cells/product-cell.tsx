@@ -1,8 +1,8 @@
+import { Thumbnail } from "@medusajs/dashboard/components";
 import { HttpTypes } from "@medusajs/framework/types";
 import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
 
-import { Thumbnail } from "../../common";
 
 type ProductCellProps = {
   product: HttpTypes.AdminProduct;

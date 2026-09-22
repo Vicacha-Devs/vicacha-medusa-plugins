@@ -1,11 +1,12 @@
-import { CheckCircleSolid, SquareTwoStack } from "@medusajs/icons"
+import { getStylizedAmount } from "@medusajs/dashboard/lib"
 import { AdminOrder, AdminPaymentCollection } from "@medusajs/framework/types"
+import { CheckCircleSolid, SquareTwoStack } from "@medusajs/icons"
 import { Button, Tooltip } from "@medusajs/ui"
 import copy from "copy-to-clipboard"
 import React, { useState } from "react"
 import { useTranslation } from "react-i18next"
 
-import { getStylizedAmount, MEDUSA_STOREFRONT_URL } from "../../lib"
+import { MEDUSA_STOREFRONT_URL } from "../../lib"
 
 type CopyPaymentLinkProps = {
   paymentCollection: AdminPaymentCollection

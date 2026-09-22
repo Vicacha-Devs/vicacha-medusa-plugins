@@ -1,8 +1,8 @@
+import { formatCurrency } from "@medusajs/dashboard/lib";
 import { clx } from "@medusajs/ui";
 import type { JSX } from "react";
 
 import { PlaceholderCell } from "./placeholder-cell";
-import { formatCurrency } from "../../../lib";
 
 type AmountCellProps = {
   currencyCode: string;

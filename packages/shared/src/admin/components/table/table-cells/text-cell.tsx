@@ -1,8 +1,8 @@
+import { ConditionalTooltip } from "@medusajs/dashboard/components";
 import { clx } from "@medusajs/ui";
 import type { JSX } from "react";
 
 import { PlaceholderCell } from "./placeholder-cell";
-import { ConditionalTooltip } from "../../common";
 
 type CellProps = {
   text?: string | number;

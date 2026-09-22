@@ -1,9 +1,9 @@
+import { useDate } from "@medusajs/dashboard/hooks";
 import { Tooltip } from "@medusajs/ui";
 import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
 
 import { PlaceholderCell } from "./placeholder-cell";
-import { useDate } from "../../../hooks";
 
 type DateCellProps = {
   date?: Date | string | null;

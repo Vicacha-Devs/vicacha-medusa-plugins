@@ -1,9 +1,9 @@
+import { ordersQueryKeys } from "@medusajs/dashboard/hooks"
 import { AdminCreatePaymentCollection, AdminDeletePaymentCollectionResponse, AdminMarkPaymentCollectionAsPaid, AdminPaymentCollectionResponse } from "@medusajs/framework/types"
 import { FetchError } from "@medusajs/js-sdk"
 import { useMutation, UseMutationOptions } from "@tanstack/react-query"
 
 import { queryClient, queryKeysFactory, sdk } from "../../lib"
-import { ordersQueryKeys } from "./use-order-preview"
 
 
 const PAYMENT_COLLECTION_QUERY_KEY = "payment-collection" as const

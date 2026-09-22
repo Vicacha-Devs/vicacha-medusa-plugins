@@ -1,3 +1,4 @@
+import { ActionMenu } from "@medusajs/dashboard/components"
 import { PencilSquare, ThumbnailBadge } from "@medusajs/icons"
 import {
   Button,
@@ -13,7 +14,6 @@ import {
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
-import { ActionMenu } from "../action-menu"
 
 type MediaImage = {
   id: string

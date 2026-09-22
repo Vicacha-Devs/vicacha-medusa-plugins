@@ -2,6 +2,9 @@ import { ReactNode, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 
+import { ActionMenu, DisplayId, Thumbnail } from "@medusajs/dashboard/components"
+import { useDate, useOrderPreview } from "@medusajs/dashboard/hooks"
+import { formatCurrency, getLocaleAmount, getStylizedAmount } from "@medusajs/dashboard/lib"
 import { 
   AdminClaim,
   AdminExchange,
@@ -41,27 +44,20 @@ import {
   usePrompt,
 } from "@medusajs/ui"
 
-import { useClaims, useDate } from "../../../hooks"
-import { 
-  formatCurrency,
+import { useClaims } from "../../../hooks"
+import {
   formatPercentage,
-  getLocaleAmount,
   getLoyaltyPlugin,
   getReservationsLimitCount,
   getReturnableQuantity,
-  getStylizedAmount,
   getTotalCaptured,
   getTotalCreditLines,
   isAmountLessThenRoundingError
 } from "../../../lib"
-import { ActionMenu } from "../action-menu"
 import { CopyPaymentLink } from "../copy-payment-link"
-import DisplayId from "../display-id"
-import { Thumbnail } from "../thumbnail"
 import ShippingInfoPopover from "./shipping-info-popover"
 import ReturnInfoPopover from "./return-info-popover"
 import { useReservationItems } from "../../../hooks/api/use-reservations"
-import { useOrderPreview } from "../../../hooks/api/use-order-preview"
 import { useReturns } from "../../../hooks/api/use-returns"
 import { useMarkPaymentCollectionAsPaid } from "../../../hooks/api/use-payment-collections"
 import { useExchanges } from "../../../hooks/api/use-exchanges"

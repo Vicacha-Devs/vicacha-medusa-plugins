@@ -1,4 +1,4 @@
-import { RouteFocusModal } from "../../modals"
+import { RouteFocusModal } from "@medusajs/dashboard/components"
 import { MediaView, MediaViewProps } from "./media-view"
 
 type MediaProps = MediaViewProps & {

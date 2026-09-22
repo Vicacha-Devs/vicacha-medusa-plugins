@@ -18,6 +18,7 @@ import {
   useSortable,
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
+import { ActionMenu } from "@medusajs/dashboard/components"
 import {
   DotsSix,
   StackPerspective,
@@ -32,7 +33,6 @@ import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
 import { formatFileSize } from "../../../lib"
-import { ActionMenu } from "../../common"
 import { MediaSchema } from "../constants"
 import { UploadMediaFormItem } from "./upload-media-form-item"
 

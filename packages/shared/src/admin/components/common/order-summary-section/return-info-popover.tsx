@@ -1,10 +1,9 @@
+import { useDate } from "@medusajs/dashboard/hooks"
 import { InformationCircleSolid } from "@medusajs/icons"
 import { Badge, Popover, Text } from "@medusajs/ui"
 import { AdminReturn } from "@medusajs/framework/types"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
-
-import { useDate } from "../../../hooks"
 
 type ReturnInfoPopoverProps = {
   orderReturn: AdminReturn
