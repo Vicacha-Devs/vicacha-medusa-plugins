@@ -1,6 +1,5 @@
-import { defineCellRenderer } from "@medusajs/dashboard/lib"
+import { defineCellRenderer, getLocaleAmount } from "@medusajs/dashboard/lib"
 import { Badge } from "@medusajs/ui"
-import { getLocaleAmount } from "@vicacha-devs/medusa-shared-admin/admin"
 
 defineCellRenderer("b2b-employee-name", {
   render: (value) => {

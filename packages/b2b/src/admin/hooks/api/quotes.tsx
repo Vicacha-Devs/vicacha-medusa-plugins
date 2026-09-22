@@ -8,6 +8,8 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from "@tanstack/react-query";
+import { ordersQueryKeys } from "@medusajs/dashboard/hooks";
+import { queryKeysFactory, sdk } from "@vicacha-devs/medusa-shared-admin/admin";
 import {
   AdminCreateQuoteMessage,
   AdminQuoteResponse,
@@ -15,8 +17,6 @@ import {
   StoreQuoteResponse,
   StoreQuotesResponse,
 } from "../../../types";
-import { ordersQueryKeys, queryKeysFactory, sdk } from "@vicacha-devs/medusa-shared-admin/admin";
-
 
 export const orderPreviewQueryKey = queryKeysFactory("custom_orders");
 export const quoteQueryKey = queryKeysFactory("quote");

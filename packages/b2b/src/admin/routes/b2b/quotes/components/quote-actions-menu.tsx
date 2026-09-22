@@ -1,7 +1,7 @@
-import { useState } from "react"
+import { ActionMenu } from "@medusajs/dashboard/components"
 import { EllipsisHorizontal, PencilSquare, XCircle } from "@medusajs/icons"
 import { toast, usePrompt } from "@medusajs/ui"
-import { ActionMenu } from "@vicacha-devs/medusa-shared-admin/admin"
+import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
 

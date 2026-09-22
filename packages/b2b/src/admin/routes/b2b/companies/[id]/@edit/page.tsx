@@ -1,7 +1,7 @@
+import { RouteDrawer, useRouteModal } from "@medusajs/dashboard/components"
 import { Heading, toast } from "@medusajs/ui"
 import { useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
-import { RouteDrawer, useRouteModal } from "@vicacha-devs/medusa-shared-admin/admin"
 
 import { useCompany, useUpdateCompany } from "../../../../../hooks/api"
 import { AdminUpdateCompany } from "../../../../../../types"

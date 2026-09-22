@@ -1,6 +1,7 @@
+import { SectionRow } from "@medusajs/dashboard/components"
+import { formatCurrency } from "@medusajs/dashboard/lib"
 import { ArrowUpRightOnBox } from "@medusajs/icons"
 import { Container, Heading } from "@medusajs/ui"
-import { SectionRow, formatCurrency } from "@vicacha-devs/medusa-shared-admin/admin"
 import { Link } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 

@@ -1,5 +1,5 @@
+import { ActionMenu } from "@medusajs/dashboard/components"
 import { Link, LockClosedSolid, PencilSquare, Trash } from "@medusajs/icons"
-import { ActionMenu } from "@vicacha-devs/medusa-shared-admin/admin"
 import { useTranslation } from "react-i18next"
 
 import { QueryCompany } from "../../../../../types"

@@ -1,8 +1,9 @@
+import { RouteDrawer, useRouteModal } from "@medusajs/dashboard/components"
 import { Button, Hint, Table, toast } from "@medusajs/ui"
+import { sdk } from "@vicacha-devs/medusa-shared-admin/admin"
 import { useQuery } from "@tanstack/react-query"
 import { useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
-import { RouteDrawer, useRouteModal, sdk } from "@vicacha-devs/medusa-shared-admin/admin"
 
 import {
   useAddCompanyToCustomerGroup,

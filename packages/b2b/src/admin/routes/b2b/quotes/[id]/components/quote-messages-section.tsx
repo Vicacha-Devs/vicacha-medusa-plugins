@@ -1,14 +1,14 @@
-import { AdminOrderPreview } from "@medusajs/framework/types"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Badge, Container, Heading, IconButton, Select, toast } from "@medusajs/ui"
+import { Form } from "@medusajs/dashboard/components"
+import { AdminOrderPreview } from "@medusajs/framework/types"
 import { Buildings, PaperPlane, Tag, User } from "@medusajs/icons"
+import { Badge, Container, Heading, IconButton, Select, toast } from "@medusajs/ui"
 import { useEffect, useMemo, useRef } from "react"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { Link, useParams } from "react-router-dom"
 import { z } from "zod"
 
-import { Form } from "@vicacha-devs/medusa-shared-admin/admin"
 import { QueryQuote, QueryQuoteMessage } from "../../../../../../types"
 import { useCreateQuoteMessage } from "../../../../../hooks/api/quotes"
 

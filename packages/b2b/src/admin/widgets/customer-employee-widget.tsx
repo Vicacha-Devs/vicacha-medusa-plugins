@@ -1,6 +1,7 @@
 import { defineWidgetConfig } from "@medusajs/admin-sdk"
+import { SectionRow } from "@medusajs/dashboard/components"
+import { getStylizedAmount } from "@medusajs/dashboard/lib"
 import { Badge, Container, Heading } from "@medusajs/ui"
-import { getStylizedAmount, SectionRow } from "@vicacha-devs/medusa-shared-admin/admin"
 import { useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 

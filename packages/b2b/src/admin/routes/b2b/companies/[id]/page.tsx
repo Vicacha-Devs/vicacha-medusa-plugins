@@ -1,8 +1,9 @@
 import { LayoutComposer } from "@medusajs/dashboard/components"
 import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared"
 import { detailPageDefaultEntries, TwoColumnPageSkeleton } from "@vicacha-devs/medusa-shared-admin/admin"
-import { Outlet, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
+
 import { useCompany } from "../../../../hooks/api"
 import { CompanyGeneralSection } from "./components/company-general-section"
 import { CompanyEmployeesSection } from "./components/company-employees-section"

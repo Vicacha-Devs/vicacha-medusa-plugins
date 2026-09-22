@@ -1,6 +1,6 @@
+import { ActionMenu } from "@medusajs/dashboard/components"
 import { PencilSquare, Trash } from "@medusajs/icons"
 import { toast, usePrompt } from "@medusajs/ui"
-import { ActionMenu } from "@vicacha-devs/medusa-shared-admin/admin"
 import { useTranslation } from "react-i18next"
 
 import { QueryEmployee } from "../../../../../../../types"

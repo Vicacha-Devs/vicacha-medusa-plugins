@@ -1,5 +1,6 @@
+import { RouteDrawer, useRouteModal } from "@medusajs/dashboard/components"
 import { Heading, toast } from "@medusajs/ui"
-import { RouteDrawer, useCreateCustomer, useRouteModal } from "@vicacha-devs/medusa-shared-admin/admin"
+import { useCreateCustomer } from "@vicacha-devs/medusa-shared-admin/admin"
 import { useTranslation } from "react-i18next"
 import { useParams } from "react-router-dom"
 

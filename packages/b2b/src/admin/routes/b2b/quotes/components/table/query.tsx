@@ -1,4 +1,4 @@
-import { useQueryParams } from "@vicacha-devs/medusa-shared-admin/admin"
+import { useQueryParams } from "@medusajs/dashboard/hooks"
 
 export const useQuotesTableQuery = ({
   pageSize = 50,

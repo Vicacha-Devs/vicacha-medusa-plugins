@@ -1,6 +1,6 @@
+import { ActionMenu } from "@medusajs/dashboard/components";
 import { Check, XMark } from "@medusajs/icons";
 import { Button, Drawer, Label, Textarea, toast, usePrompt } from "@medusajs/ui";
-import { ActionMenu } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 

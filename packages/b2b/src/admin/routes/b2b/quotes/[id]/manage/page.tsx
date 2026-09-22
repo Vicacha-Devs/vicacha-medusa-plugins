@@ -1,6 +1,6 @@
-import { useParams } from "react-router-dom"
+import { RouteFocusModal } from "@medusajs/dashboard/components"
 import { Alert, Skeleton } from "@medusajs/ui"
-import { RouteFocusModal } from "@vicacha-devs/medusa-shared-admin/admin"
+import { useParams } from "react-router-dom"
 
 import { useQuote } from "../../../../../hooks/api"
 import { ManageQuoteForm } from "./components/manage-quote-form"

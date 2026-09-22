@@ -1,5 +1,6 @@
+import { ProductHeader } from "@medusajs/dashboard/components";
 import { createColumnHelper } from "@tanstack/react-table";
-import { ProductCell, ProductHeader } from "@vicacha-devs/medusa-shared-admin/admin";
+import { ProductCell } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 

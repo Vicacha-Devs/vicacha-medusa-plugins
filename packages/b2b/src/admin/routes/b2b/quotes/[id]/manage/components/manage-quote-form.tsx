@@ -2,11 +2,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AdminOrder } from "@medusajs/framework/types";
 import { Button, Heading, Skeleton, toast } from "@medusajs/ui";
 import {
-  safeFormatCurrency,
   RouteFocusModal,
-  useOrderPreview,
   useRouteModal
-} from "@vicacha-devs/medusa-shared-admin/admin";
+} from "@medusajs/dashboard/components";
+import { useOrderPreview } from "@medusajs/dashboard/hooks";
+import { safeFormatCurrency } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";

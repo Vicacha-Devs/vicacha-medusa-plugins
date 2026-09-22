@@ -1,3 +1,7 @@
+import {
+  ActionMenu,
+  Thumbnail,
+} from "@medusajs/dashboard/components";
 import { AdminOrder, AdminOrderPreview } from "@medusajs/framework/types"
 import {
   ArrowUturnLeft,
@@ -7,15 +11,10 @@ import {
   XMark,
 } from "@medusajs/icons"
 import { Badge, CurrencyInput, Hint, IconButton, Input, Label, Text, toast } from "@medusajs/ui"
+import { AmountCell, currencySymbolMap } from "@vicacha-devs/medusa-shared-admin/admin"
 import debounce from "lodash/debounce"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
-import {
-  ActionMenu,
-  AmountCell,
-  currencySymbolMap,
-  Thumbnail,
-} from "@vicacha-devs/medusa-shared-admin/admin"
 
 import {
   useAddItemsToQuote,

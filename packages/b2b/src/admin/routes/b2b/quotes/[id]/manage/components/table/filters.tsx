@@ -1,4 +1,4 @@
-import { useDataTableDateFilters } from "@vicacha-devs/medusa-shared-admin/admin"
+import { useDataTableDateFilters } from "@medusajs/dashboard/hooks"
 import { useMemo } from "react"
 
 export const useManageItemsTableFilters = () => {

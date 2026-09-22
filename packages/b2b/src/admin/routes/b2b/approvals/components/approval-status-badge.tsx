@@ -18,7 +18,7 @@ export default function ApprovalStatusBadge({ status }: { status: string }) {
 
   return(
     <DataTableStatusCell color={StatusColors[status]}>
-        {titles[status]}
+      {titles[status]}
     </DataTableStatusCell>
   )
 }

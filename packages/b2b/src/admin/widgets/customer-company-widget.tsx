@@ -1,7 +1,8 @@
 import { defineWidgetConfig } from "@medusajs/admin-sdk"
+import { SectionRow, Thumbnail } from "@medusajs/dashboard/components"
 import { ArrowUpRightOnBox } from "@medusajs/icons"
 import { Container, Heading } from "@medusajs/ui"
-import { SectionRow, Thumbnail } from "@vicacha-devs/medusa-shared-admin/admin"
+
 import { useParams } from "react-router-dom"
 import { Link } from "react-router-dom"
 import { useTranslation } from "react-i18next"

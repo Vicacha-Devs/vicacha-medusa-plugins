@@ -1,6 +1,6 @@
+import { ActionMenu, SectionRow } from "@medusajs/dashboard/components"
 import { Link as LinkIcon } from "@medusajs/icons"
 import { Container, Heading } from "@medusajs/ui"
-import { ActionMenu, SectionRow } from "@vicacha-devs/medusa-shared-admin/admin"
 import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 

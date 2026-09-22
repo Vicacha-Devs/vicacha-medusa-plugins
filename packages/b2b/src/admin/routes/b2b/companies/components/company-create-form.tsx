@@ -1,15 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Hint, Input, ProgressStatus, ProgressTabs, Select } from "@medusajs/ui"
-import { useQuery } from "@tanstack/react-query"
 import {
-  CoolSwitch,
-  currencies,
   Form,
   KeyboundForm,
   RouteFocusModal,
-  sdk,
-  useRegions,
-} from "@vicacha-devs/medusa-shared-admin/admin"
+} from "@medusajs/dashboard/components"
+import { useRegions } from "@medusajs/dashboard/hooks"
+import { currencies } from "@medusajs/dashboard/lib"
+import { Button, Hint, Input, ProgressStatus, ProgressTabs, Select } from "@medusajs/ui"
+import { useQuery } from "@tanstack/react-query"
+import { CoolSwitch, sdk } from "@vicacha-devs/medusa-shared-admin/admin"
 import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"

@@ -1,5 +1,5 @@
 import { Container, Heading } from "@medusajs/ui"
-import { SectionRow } from "@vicacha-devs/medusa-shared-admin/admin"
+import { SectionRow } from "@medusajs/dashboard/components"
 import { Link } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 

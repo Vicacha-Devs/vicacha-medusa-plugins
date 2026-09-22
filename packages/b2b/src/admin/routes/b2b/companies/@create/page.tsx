@@ -1,5 +1,5 @@
 import { toast } from "@medusajs/ui"
-import { RouteFocusModal, useRouteModal } from "@vicacha-devs/medusa-shared-admin/admin"
+import { RouteFocusModal, useRouteModal } from "@medusajs/dashboard/components"
 import { useTranslation } from "react-i18next"
 
 import { useCreateCompany } from "../../../../hooks/api"

@@ -1,14 +1,14 @@
 import {
+  StackedFocusModal,
+  useStackedModal,
+} from "@medusajs/dashboard/components";
+import {
   AdminOrder,
   AdminOrderPreview,
 } from "@medusajs/framework/types";
 import { Button, Container, Heading, Input, toast } from "@medusajs/ui";
 import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  StackedFocusModal,
-  useStackedModal,
-} from "@vicacha-devs/medusa-shared-admin/admin";
 import { useAddItemsToQuote } from "../../../../../../hooks/api";
 import { ManageItem } from "./manage-item.tsx";
 import { ManageItemsTable } from "./manage-items-table.tsx";

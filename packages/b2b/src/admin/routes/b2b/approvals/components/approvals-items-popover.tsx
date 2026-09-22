@@ -1,6 +1,6 @@
+import { formatCurrency } from "@medusajs/dashboard/lib";
 import { MagnifyingGlass } from "@medusajs/icons";
 import { Popover, Table, Text } from "@medusajs/ui";
-import { formatCurrency } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useTranslation } from "react-i18next";
 
 const ItemsPopover = ({

@@ -1,3 +1,4 @@
+import { useVariants } from "@medusajs/dashboard/hooks";
 import {
   DataTable,
   DataTablePaginationState,
@@ -6,7 +7,6 @@ import {
   createDataTableColumnHelper,
   useDataTable,
 } from "@medusajs/ui";
-import { useVariants } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 

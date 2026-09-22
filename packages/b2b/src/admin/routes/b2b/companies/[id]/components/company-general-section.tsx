@@ -1,6 +1,7 @@
 import { Badge, Container, Heading } from "@medusajs/ui"
-import { SectionRow, Thumbnail } from "@vicacha-devs/medusa-shared-admin/admin"
+import { SectionRow, Thumbnail } from "@medusajs/dashboard/components"
 import { useTranslation } from "react-i18next"
+
 import { QueryCompany } from "../../../../../../types"
 import { CompanyActionsMenu } from "../../components/company-actions-menu"
 

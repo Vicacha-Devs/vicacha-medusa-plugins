@@ -53,5 +53,4 @@ export const handle = {
   breadcrumb: () => <Breadcrumb />,
 }
 
-
 export default Approvals;

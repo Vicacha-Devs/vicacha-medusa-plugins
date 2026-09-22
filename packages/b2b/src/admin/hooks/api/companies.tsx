@@ -15,7 +15,6 @@ import {
   AdminUpdateCompany,
 } from "../../../types";
 
-
 export const companyQueryKey = queryKeysFactory("company");
 
 export const useCompanies = (

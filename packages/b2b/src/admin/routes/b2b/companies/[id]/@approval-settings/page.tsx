@@ -1,5 +1,6 @@
 import { Button, toast } from "@medusajs/ui"
-import { CoolSwitch, RouteDrawer, useRouteModal } from "@vicacha-devs/medusa-shared-admin/admin"
+import { RouteDrawer, useRouteModal } from "@medusajs/dashboard/components"
+import { CoolSwitch } from "@vicacha-devs/medusa-shared-admin/admin"
 import { useState } from "react"
 import { useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"

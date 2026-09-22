@@ -1,6 +1,6 @@
+import { ActionMenu, SectionRow } from "@medusajs/dashboard/components"
 import { LockClosedSolid } from "@medusajs/icons"
 import { Badge, Container, Heading } from "@medusajs/ui"
-import { ActionMenu, SectionRow } from "@vicacha-devs/medusa-shared-admin/admin"
 import { useTranslation } from "react-i18next"
 
 import { QueryCompany } from "../../../../../../types"

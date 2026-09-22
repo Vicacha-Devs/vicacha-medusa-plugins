@@ -1,5 +1,4 @@
-import { defineCellRenderer } from "@medusajs/dashboard/lib"
-import { formatCurrency } from "@vicacha-devs/medusa-shared-admin/admin"
+import { defineCellRenderer, formatCurrency } from "@medusajs/dashboard/lib"
 import { Link } from "react-router-dom"
 
 import QuoteStatusBadge from "./quote-status-badge"

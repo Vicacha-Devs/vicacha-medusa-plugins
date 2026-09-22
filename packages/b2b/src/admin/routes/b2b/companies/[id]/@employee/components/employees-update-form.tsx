@@ -1,12 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Container, CurrencyInput, Table, Text } from "@medusajs/ui"
 import {
-  CoolSwitch,
-  currencySymbolMap,
   Form,
   KeyboundForm,
   RouteDrawer,
-} from "@vicacha-devs/medusa-shared-admin/admin"
+} from "@medusajs/dashboard/components"
+import { CoolSwitch, currencySymbolMap } from "@vicacha-devs/medusa-shared-admin/admin"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"

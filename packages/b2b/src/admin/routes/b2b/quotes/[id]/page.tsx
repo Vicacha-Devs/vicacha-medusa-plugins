@@ -1,8 +1,9 @@
-import { useState } from "react"
 import { LayoutComposer } from "@medusajs/dashboard/components"
 import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared"
-import { detailPageDefaultEntries, OrderSummarySection, TwoColumnPageSkeleton, useOrderPreview } from "@vicacha-devs/medusa-shared-admin/admin"
 import { Button, Text, toast, usePrompt } from "@medusajs/ui"
+import { useOrderPreview } from "@medusajs/dashboard/hooks"
+import { detailPageDefaultEntries, OrderSummarySection, TwoColumnPageSkeleton } from "@vicacha-devs/medusa-shared-admin/admin"
+import { useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 

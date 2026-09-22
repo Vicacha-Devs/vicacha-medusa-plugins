@@ -1,6 +1,7 @@
+import { SectionRow } from "@medusajs/dashboard/components"
+import { formatCurrency } from "@medusajs/dashboard/lib"
 import { ArrowUpRightOnBox } from "@medusajs/icons"
 import { Badge, Container, Heading } from "@medusajs/ui"
-import { SectionRow, formatCurrency } from "@vicacha-devs/medusa-shared-admin/admin"
 import { Link } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 
@@ -69,8 +70,7 @@ export const QuoteOrderSection = ({ quote }: QuoteOrderSectionProps) => {
               draftOrder.total != null && draftOrder.currency_code
                 ? formatCurrency(
                   draftOrder.total / 100,
-                  draftOrder.currency_code
-                )
+                  draftOrder.currency_code)
                 : "—"
             }
           />
