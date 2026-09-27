@@ -2,6 +2,7 @@ import {
   ActionMenu,
   Thumbnail,
 } from "@medusajs/dashboard/components";
+import { getCurrencySymbol } from "@medusajs/dashboard/lib";
 import { AdminOrder, AdminOrderPreview } from "@medusajs/framework/types"
 import {
   ArrowUturnLeft,
@@ -11,7 +12,7 @@ import {
   XMark,
 } from "@medusajs/icons"
 import { Badge, CurrencyInput, Hint, IconButton, Input, Label, Text, toast } from "@medusajs/ui"
-import { AmountCell, currencySymbolMap } from "@vicacha-devs/medusa-shared-admin/admin"
+import { AmountCell } from "@vicacha-devs/medusa-shared-admin/admin"
 import debounce from "lodash/debounce"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -232,7 +233,7 @@ export const ManageItem = ({ originalItem, item, currencyCode, orderId, onItemCh
             <div className="flex-grow">
               <CurrencyInput
                 key={`price-${item.id}-${item.unit_price}`}
-                symbol={(currencySymbolMap as Record<string, string>)[currencyCode] ?? currencyCode}
+                symbol={getCurrencySymbol(currencyCode) ?? currencyCode}
                 code={currencyCode}
                 defaultValue={item.unit_price}
                 type="numeric"

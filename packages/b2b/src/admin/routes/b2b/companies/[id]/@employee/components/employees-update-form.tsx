@@ -1,11 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Container, CurrencyInput, Table, Text } from "@medusajs/ui"
 import {
   Form,
   KeyboundForm,
   RouteDrawer,
 } from "@medusajs/dashboard/components"
-import { CoolSwitch, currencySymbolMap } from "@vicacha-devs/medusa-shared-admin/admin"
+import { Button, Container, CurrencyInput, Table, Text } from "@medusajs/ui"
+import { getCurrencySymbol } from "@medusajs/dashboard/lib"
+import { CoolSwitch } from "@vicacha-devs/medusa-shared-admin/admin"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
@@ -43,7 +44,7 @@ export function EmployeesUpdateForm({
     },
   })
 
-  const currencyKey = (company.currency_code || "USD") as keyof typeof currencySymbolMap
+  const currencyKey = company.currency_code || "USD"
 
   return (
     <RouteDrawer.Form form={form}>
@@ -110,7 +111,7 @@ export function EmployeesUpdateForm({
                   <Form.Label optional>{t("fields.spendingLimit")}</Form.Label>
                   <Form.Control>
                     <CurrencyInput
-                      symbol={currencySymbolMap[currencyKey]}
+                      symbol={getCurrencySymbol(currencyKey)}
                       code={company.currency_code || "USD"}
                       placeholder="1000"
                       value={field.value ?? ""}

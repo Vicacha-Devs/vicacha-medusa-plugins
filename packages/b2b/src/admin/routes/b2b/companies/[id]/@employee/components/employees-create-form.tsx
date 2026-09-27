@@ -4,8 +4,9 @@ import {
   KeyboundForm,
   RouteDrawer,
 } from "@medusajs/dashboard/components"
+import { getCurrencySymbol } from "@medusajs/dashboard/lib"
 import { Button, CurrencyInput, Input, Text } from "@medusajs/ui"
-import { CoolSwitch, currencySymbolMap } from "@vicacha-devs/medusa-shared-admin/admin"
+import { CoolSwitch } from "@vicacha-devs/medusa-shared-admin/admin"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
@@ -49,7 +50,7 @@ export function EmployeesCreateForm({
     },
   })
 
-  const currencyKey = (company.currency_code || "USD") as keyof typeof currencySymbolMap
+  const currencyKey = company.currency_code || "USD"
 
   return (
     <RouteDrawer.Form form={form}>
@@ -134,7 +135,7 @@ export function EmployeesCreateForm({
                   </Form.Label>
                   <Form.Control>
                     <CurrencyInput
-                      symbol={currencySymbolMap[currencyKey]}
+                      symbol={getCurrencySymbol(currencyKey)}
                       code={company.currency_code || "USD"}
                       placeholder="1000"
                       value={field.value ?? ""}

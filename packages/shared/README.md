@@ -37,17 +37,9 @@ Shared admin UI components, hooks, and utilities used across Vicacha Devs Medusa
 
 | Export | Description |
 |---|---|
-| `useDate` | Returns `getFullDate` and `getRelativeDate` helpers locale-aware via `react-i18next` |
 | `useDataTable` | Wires up `@tanstack/react-table` state (sorting, pagination) for `DataTable` |
 | `useDocumentDirection` | Reads the document's `dir` attribute (`ltr`/`rtl`) |
 | `useQueryParams` | Reads and writes URL search params as typed values |
-
-### Utilities (`/admin`)
-
-| Export | Description |
-|---|---|
-| `formatAmount` | Formats a numeric amount as a locale-aware currency string via `Intl.NumberFormat` |
-| `currencySymbolMap` | Maps ISO 4217 currency codes to their display symbols |
 
 ## Installation
 
