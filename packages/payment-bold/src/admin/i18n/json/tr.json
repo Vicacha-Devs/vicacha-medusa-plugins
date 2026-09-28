@@ -1,0 +1,39 @@
+{
+  "bold": {
+    "admin": {
+      "widget": {
+        "title": "Bold Kolombiya Ödeme Terminali",
+        "description": "Sipariş için yüz yüze ve uzaktan ödeme yönetimi",
+        "processing": "İşleniyor",
+        "approved": "Onaylandı",
+        "rejected": "Reddedildi",
+        "link_btn": "Ödeme Bağlantısı",
+        "qr_btn": "QR Bre-B",
+        "terminal_btn": "POS Terminali",
+        "generated_link": "Oluşturulan Ödeme Bağlantısı:",
+        "scan_instruction": "Herhangi bir Kolombiya bankacılık uygulamasıyla tarayın",
+        "terminal_placeholder": "POS Terminal Kimliği (Örn: SMART-1234)",
+        "send_to_terminal": "Terminale Gönder",
+        "refresh": "Yenile",
+        "status": {
+          "approved_msg": "Ödeme onaylandı ve başarıyla kaydedildi!",
+          "rejected_msg": "Ödeme reddedildi veya iptal edildi.",
+          "waiting_link": "Müşterinin bağlantıda ödemeyi tamamlaması bekleniyor...",
+          "waiting_qr": "QR taraması ve banka onayı bekleniyor...",
+          "waiting_terminal": "Ödeme isteği terminale gönderildi. Kartı okutun veya takın."
+        },
+        "toast": {
+          "payment_approved": "Ödeme Onaylandı",
+          "payment_approved_desc": "Ödeme Bold tarafından başarıyla işlendi.",
+          "payment_rejected": "Ödeme Reddedildi",
+          "payment_rejected_desc": "İşlem onaylanmadı.",
+          "link_generated": "Ödeme Bağlantısı Oluşturuldu",
+          "qr_generated": "QR Kodu Oluşturuldu",
+          "terminal_sent": "Terminale Gönderildi",
+          "copied": "Pano kopyalandı",
+          "error": "Hata"
+        }
+      }
+    }
+  }
+}

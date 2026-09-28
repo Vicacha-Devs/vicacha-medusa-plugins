@@ -1,0 +1,39 @@
+{
+  "bold": {
+    "admin": {
+      "widget": {
+        "title": "Bold Colombia Payment Terminal",
+        "description": "In-person and remote payment management for Order",
+        "processing": "Processing",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "link_btn": "Payment Link",
+        "qr_btn": "QR Bre-B",
+        "terminal_btn": "POS Data-phone",
+        "generated_link": "Generated Payment Link:",
+        "scan_instruction": "Scan with any Colombian banking app",
+        "terminal_placeholder": "Data-phone Terminal ID (e.g., SMART-1234)",
+        "send_to_terminal": "Send to Terminal",
+        "refresh": "Refresh",
+        "status": {
+          "approved_msg": "Payment approved and successfully recorded!",
+          "rejected_msg": "Payment was rejected or cancelled.",
+          "waiting_link": "Waiting for customer to complete payment at URL...",
+          "waiting_qr": "Waiting for QR scan and bank confirmation...",
+          "waiting_terminal": "Payment request sent to terminal. Tap or insert card."
+        },
+        "toast": {
+          "payment_approved": "Payment Approved",
+          "payment_approved_desc": "Payment was successfully processed by Bold.",
+          "payment_rejected": "Payment Rejected",
+          "payment_rejected_desc": "Transaction was not approved.",
+          "link_generated": "Payment Link Generated",
+          "qr_generated": "QR Code Generated",
+          "terminal_sent": "Sent to Terminal",
+          "copied": "Copied to clipboard",
+          "error": "Error"
+        }
+      }
+    }
+  }
+}

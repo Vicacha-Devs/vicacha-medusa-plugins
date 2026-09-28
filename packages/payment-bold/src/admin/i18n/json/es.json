@@ -1,0 +1,39 @@
+{
+  "bold": {
+    "admin": {
+      "widget": {
+        "title": "Terminal de Pago Bold Colombia",
+        "description": "Gestión de cobro presencial y remoto para el Pedido",
+        "processing": "Procesando",
+        "approved": "Aprobado",
+        "rejected": "Rechazado",
+        "link_btn": "Link de Pago",
+        "qr_btn": "QR Bre-B",
+        "terminal_btn": "Datáfono POS",
+        "generated_link": "Enlace de pago generado:",
+        "scan_instruction": "Escanee con cualquier app bancaria de Colombia",
+        "terminal_placeholder": "ID de Datáfono (Ej: SMART-1234)",
+        "send_to_terminal": "Enviar a Datáfono",
+        "refresh": "Actualizar",
+        "status": {
+          "approved_msg": "¡Pago aprobado y registrado exitosamente!",
+          "rejected_msg": "El pago fue rechazado o cancelado.",
+          "waiting_link": "Esperando que el cliente complete el pago en la URL...",
+          "waiting_qr": "Esperando escaneo y confirmación bancaria del QR...",
+          "waiting_terminal": "Cobro enviado al datáfono. Pasa o desliza la tarjeta."
+        },
+        "toast": {
+          "payment_approved": "Pago Aprobado",
+          "payment_approved_desc": "El pago fue procesado correctamente por Bold.",
+          "payment_rejected": "Pago Rechazado",
+          "payment_rejected_desc": "La transacción no fue aprobada.",
+          "link_generated": "Link Generado",
+          "qr_generated": "Código QR Generado",
+          "terminal_sent": "Enviado a Datáfono",
+          "copied": "Copiado al portapapeles",
+          "error": "Error"
+        }
+      }
+    }
+  }
+}

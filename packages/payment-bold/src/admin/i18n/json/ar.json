@@ -1,0 +1,39 @@
+{
+  "bold": {
+    "admin": {
+      "widget": {
+        "title": "جهاز دفع بولد كولومبيا",
+        "description": "إدارة الدفع الحضوري وعن بُعد للطلب",
+        "processing": "جاري المعالجة",
+        "approved": "تمت الموافقة",
+        "rejected": "مرفوض",
+        "link_btn": "رابط الدفع",
+        "qr_btn": "QR Bre-B",
+        "terminal_btn": "جهاز نقاط البيع (POS)",
+        "generated_link": "رابط الدفع المنشأ:",
+        "scan_instruction": "مسح باستعمال أي تطبيق مصرفي كولومبي",
+        "terminal_placeholder": "معرف جهاز POS (مثال: SMART-1234)",
+        "send_to_terminal": "إرسال إلى الجهاز",
+        "refresh": "تحديث",
+        "status": {
+          "approved_msg": "تمت الموافقة على الدفع وتسجيله بنجاح!",
+          "rejected_msg": "تم رفض الدفع أو إلغاؤه.",
+          "waiting_link": "في انتظار إكمال العميل للدفع عبر الرابط...",
+          "waiting_qr": "في انتظار مسح رمز QR وتأكيد البنك...",
+          "waiting_terminal": "تم إرسال طلب الدفع إلى الجهاز. يرجى تمرير أو إدخال البطاقة."
+        },
+        "toast": {
+          "payment_approved": "تمت الموافقة على الدفع",
+          "payment_approved_desc": "تمت معالجة الدفع بنجاح بواسطة Bold.",
+          "payment_rejected": "تم رفض الدفع",
+          "payment_rejected_desc": "لم يتم قبول المعاملة.",
+          "link_generated": "تم إنشاء رابط الدفع",
+          "qr_generated": "تم إنشاء رمز QR",
+          "terminal_sent": "تم الإرسال إلى الجهاز",
+          "copied": "تم النسخ إلى الحافظة",
+          "error": "خطأ"
+        }
+      }
+    }
+  }
+}
