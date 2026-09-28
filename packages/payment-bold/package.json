@@ -1,0 +1,118 @@
+{
+  "name": "@vicacha-devs/medusa-payment-bold",
+  "version": "0.0.1",
+  "description": "Comprehensive Bold Colombia payment integration for Medusa v2 supporting Button, Links, Online API (Cards, PSE, Nequi, QR), and Smart POS Terminals.",
+  "author": "Vicacha Devs",
+  "license": "MIT",
+  "files": [
+    ".medusa/server",
+    "src",
+    "README.md",
+    "LICENSE",
+    "tsconfig.json"
+  ],
+  "exports": {
+  ".": "./.medusa/server/src/index.js",
+    "./package.json": "./package.json",
+    "./sdk": {
+      "import": "./.medusa/server/src/sdk/index.mjs",
+      "require": "./.medusa/server/src/sdk/index.js",
+      "default": "./.medusa/server/src/sdk/index.js"
+    },
+    "./lib": {
+      "import": "./.medusa/server/src/lib/index.mjs",
+      "require": "./.medusa/server/src/lib/index.js",
+      "default": "./.medusa/server/src/lib/index.js"
+    },
+    "./types": {
+      "import": "./.medusa/server/src/types/index.mjs",
+      "require": "./.medusa/server/src/types/index.js",
+      "default": "./.medusa/server/src/types/index.js"
+    },
+    "./admin/hooks": {
+      "import": "./.medusa/server/src/admin/hooks/index.mjs",
+      "require": "./.medusa/server/src/admin/hooks/index.js",
+      "default": "./.medusa/server/src/admin/hooks/index.js"
+    },
+    "./admin/widgets": {
+      "import": "./.medusa/server/src/admin/widgets/index.mjs",
+      "require": "./.medusa/server/src/admin/widgets/index.js",
+      "default": "./.medusa/server/src/admin/widgets/index.js"
+    },
+    "./admin": {
+      "import": "./.medusa/server/src/admin/index.mjs",
+      "require": "./.medusa/server/src/admin/index.js",
+      "default": "./.medusa/server/src/admin/index.js"
+    },
+    "./workflows": "./.medusa/server/src/workflows/index.js",
+    "./.medusa/server/src/modules/*": "./.medusa/server/src/modules/*/index.js",
+    "./modules/*": "./.medusa/server/src/modules/*/index.js",
+    "./providers/*": "./.medusa/server/src/providers/*/index.js",
+    "./*": "./.medusa/server/src/*.js"
+  },
+  "keywords": [
+    "medusa",
+    "plugin",
+    "medusa-plugin",
+    "medusa-plugin-payment",
+    "medusa-plugin-bold",
+    "medusa-v2",
+    "bold",
+    "pse",
+    "nequi",
+    "bre-b",
+    "dataphone"
+  ],
+  "scripts": {
+    "build": "medusa plugin:build && tsc-alias -p tsconfig.json",
+    "publish:local": "medusa plugin:publish",
+    "dev": "medusa plugin:develop",
+    "lint": "medusa lint",
+    "prepublishOnly": "medusa plugin:build",
+    "test": "pnpm test:unit && pnpm test:integration:modules && pnpm test:integration:http",
+    "test:integration:http": "TEST_TYPE=integration:http NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",
+    "test:integration:modules": "TEST_TYPE=integration:modules NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
+    "test:unit": "TEST_TYPE=unit NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
+    "clean": "rm -rf .medusa node_modules"
+  },
+  "devDependencies": {
+    "@medusajs/admin-sdk": "2.19.0",
+    "@medusajs/admin-shared": "2.19.0",
+    "@medusajs/cli": "2.19.0",
+    "@medusajs/framework": "2.19.0",
+    "@medusajs/icons": "2.19.0",
+    "@medusajs/medusa": "2.19.0",
+    "@medusajs/test-utils": "2.19.0",
+    "@medusajs/ui": "4.2.1",
+    "@swc/core": "^1.7.28",
+    "@types/node": "^20.0.0",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.2.25",
+    "@vicacha-devs/medusa-shared-admin": "workspace:*",
+    "jiti": "^2.0.0",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "ts-node": "^10.9.2",
+    "tsc-alias": "^1.9.2",
+    "typescript": "^5.6.2",
+    "vite": "^7.3.6"
+  },
+  "peerDependencies": {
+    "@medusajs/admin-sdk": "2.19.0",
+    "@medusajs/cli": "2.19.0",
+    "@medusajs/framework": "2.19.0",
+    "@medusajs/icons": "2.19.0",
+    "@medusajs/medusa": "2.19.0",
+    "@medusajs/test-utils": "2.19.0",
+    "@medusajs/ui": "4.2.1"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "packageManager": "pnpm@11.20.0",
+  "dependencies": {
+    "qrcode": "^1.5.4"
+  }
+}
