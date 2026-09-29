@@ -8,10 +8,15 @@
     "dev": "vite build --watch"
   },
   "exports": {
+    "./package.json": "./package.json",
     "./admin": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/admin.mjs",
+      "types": "./src/admin/index.ts",
+      "import": "./src/admin/index.ts",
       "default": "./dist/admin.mjs"
+    },
+    "./admin/hooks": {
+      "import": "./src/admin/hooks/index.ts",
+      "default": "./dist/admin/hooks/index.js"
     },
     "./admin/*": {
       "import": "./src/admin/*.ts",

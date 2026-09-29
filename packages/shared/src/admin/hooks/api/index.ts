@@ -5,6 +5,7 @@ export * from "./use-exchanges"
 export * from "./use-feature-flag";
 export * from "./use-payment-collections"
 export * from "./use-plugins"
+export * from "./use-payment-providers"
 export * from "./use-product-variants"
 export * from "./use-reservations"
 export * from "./use-returns"
