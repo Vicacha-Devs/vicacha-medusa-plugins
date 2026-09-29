@@ -1,4 +1,4 @@
-import { BoldCheckoutData, BoldCheckoutResult, BoldMutationHookOptions } from "../../types"
+import { BoldCheckoutData, BoldCheckoutResult, BoldMutationHookOptions } from "../types"
 import { useCreateBoldButton } from "./use-create-bold-button"
 import { useCreateBoldLink } from "./use-create-bold-link"
 import { useCreateBoldQr } from "./use-create-bold-qr"
@@ -105,14 +105,24 @@ export const useBoldCheckoutHandler = (options?: BoldMutationHookOptions) => {
 
     // Mode: Terminal
     if (details.boldMode === "terminal") {
-      if (!details.terminalId) {
-        throw new Error("Missing terminalId for POS payment mode")
+      if (!details.terminalModel || !details.terminalSerial) {
+        throw new Error("Missing terminalModel or terminalSerial for POS payment mode")
       }
+
+      const timestamp = Date.now()
+      const rawName = `${client.first_name || ""}_${client.last_name || ""}`
+      const cleanSlug =
+        rawName.toUpperCase().replace(/[^A-Z0-9_]/g, "").slice(0, 20) || "GUEST"
+
+      const reference = `POS_${cleanSlug}_${timestamp}`.slice(0, 60)
 
       const res = await pushTerminal.mutateAsync({
         amount: details.amount,
-        currency_code: currencyCode,
-        terminal_id: details.terminalId,
+        currency: currencyCode,
+        reference,
+        userEmail: email,
+        terminalModel: details.terminalModel,
+        terminalSerial: details.terminalSerial,
         ...(details.paymentCollectionId
           ? { paymentCollectionId: details.paymentCollectionId }
           : {}),
@@ -124,7 +134,8 @@ export const useBoldCheckoutHandler = (options?: BoldMutationHookOptions) => {
       }
     }
 
-    throw new Error("Unsupported bold payment mode")
+    // Explicit fallback to satisfy TypeScript's return path check
+    throw new Error(`Unsupported bold payment mode: ${(details as any)?.boldMode}`)
   }
 
   return {

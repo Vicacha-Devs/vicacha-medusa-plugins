@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient, UseMutationOptions } from "@tanstack/react-query"
 
-import { boldAdminSdk } from "../../sdk/client"
-import { boldQueryKeys } from "../../sdk/query-keys"
-import { BoldButtonPayload, BoldButtonResponse, BoldMutationHookOptions } from "../../types"
+import { boldAdminSdk } from "../sdk/client"
+import { boldQueryKeys } from "../sdk/query-keys"
+import { BoldButtonPayload, BoldButtonResponse, BoldMutationHookOptions } from "../types"
 
 export const useCreateBoldButton = (
   options?: UseMutationOptions<BoldButtonResponse, Error, BoldButtonPayload> &

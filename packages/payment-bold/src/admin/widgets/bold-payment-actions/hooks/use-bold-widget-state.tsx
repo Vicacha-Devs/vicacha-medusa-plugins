@@ -11,7 +11,7 @@ import {
   useCreateBoldQr,
   usePushToBoldTerminal,
   useBoldPaymentStatusStream,
-} from "../../../hooks"
+} from "../../../../hooks"
 
 export const useBoldWidgetState = (order: AdminOrder) => {
   const { t } = useTranslation()
@@ -33,6 +33,9 @@ export const useBoldWidgetState = (order: AdminOrder) => {
   const { mutateAsync: createLink, isPending: isCreatingLink } = useCreateBoldLink()
   const { mutateAsync: createQr, isPending: isCreatingQr } = useCreateBoldQr()
   const { mutateAsync: pushToTerminal, isPending: isPushingToPos } = usePushToBoldTerminal()
+
+  const reference = `ORD_${order.display_id || order.id}_${Date.now()}`.slice(0, 60)
+
 
   // 3. SSE Stream
   useBoldPaymentStatusStream({
@@ -79,9 +82,12 @@ export const useBoldWidgetState = (order: AdminOrder) => {
     try {
       const res = await pushToTerminal({
         amount: order.total,
-        currency_code: order.currency_code,
-        terminal_id: terminalSerial,
+        currency: order.currency_code,
+        terminalModel: terminalModel,
+        terminalSerial: terminalSerial,
         paymentCollectionId,
+        reference,
+        userEmail: order.email || "guest@noemail.local", // TODO: get a better placeholder
       })
       if (res?.session_id) setActiveSessionId(res.session_id)
       toast(t("bold.admin.widget.toast.terminal_sent"), {
@@ -102,7 +108,6 @@ export const useBoldWidgetState = (order: AdminOrder) => {
 
     try {
       if (mode === "link") {
-        const reference = `ORD_${order.display_id || order.id}_${Date.now()}`.slice(0, 60)
         const result = await createLink({
           amount: order.total,
           currency: order.currency_code,

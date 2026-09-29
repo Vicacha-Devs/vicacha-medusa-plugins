@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 import { useQueryClient, QueryKey } from "@tanstack/react-query"
 
-import { boldAdminSdk, BoldApiClient } from "../../sdk/client"
-import { boldQueryKeys } from "../../sdk/query-keys"
-import { BoldPaymentStreamStatus } from "../../types"
+import { boldAdminSdk, BoldApiClient } from "../sdk/client"
+import { boldQueryKeys } from "../sdk/query-keys"
+import { BoldPaymentStreamStatus } from "../types"
 
 export interface UseBoldStatusStreamOptions {
   sessionId?: string | null

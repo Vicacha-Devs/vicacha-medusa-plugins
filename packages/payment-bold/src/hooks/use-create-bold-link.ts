@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient, UseMutationOptions } from "@tanstack/react-query"
 
-import { boldAdminSdk } from "../../sdk/client"
-import { boldQueryKeys } from "../../sdk/query-keys"
-import { BoldLinkPayload, BoldLinkResponse, BoldMutationHookOptions } from "../../types"
+import { boldAdminSdk } from "../sdk/client"
+import { boldQueryKeys } from "../sdk/query-keys"
+import { BoldLinkPayload, BoldLinkResponse, BoldMutationHookOptions } from "../types"
 
 export const useCreateBoldLink = (
   options?: UseMutationOptions<BoldLinkResponse, Error, BoldLinkPayload> &

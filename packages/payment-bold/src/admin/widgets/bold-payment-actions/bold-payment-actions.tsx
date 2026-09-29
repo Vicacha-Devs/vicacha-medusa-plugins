@@ -197,7 +197,7 @@ export const BoldPaymentActionsWidget = ({
 }
 
 export const config = defineWidgetConfig({
-  zone: "order.details.side.after",
+  zone: "order.details.side",
 })
 
 export default BoldPaymentActionsWidget

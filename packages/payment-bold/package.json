@@ -12,43 +12,36 @@
     "tsconfig.json"
   ],
   "exports": {
-  ".": "./.medusa/server/src/index.js",
     "./package.json": "./package.json",
-    "./sdk": {
-      "import": "./.medusa/server/src/sdk/index.mjs",
-      "require": "./.medusa/server/src/sdk/index.js",
-      "default": "./.medusa/server/src/sdk/index.js"
-    },
-    "./lib": {
-      "import": "./.medusa/server/src/lib/index.mjs",
-      "require": "./.medusa/server/src/lib/index.js",
-      "default": "./.medusa/server/src/lib/index.js"
-    },
-    "./types": {
-      "import": "./.medusa/server/src/types/index.mjs",
-      "require": "./.medusa/server/src/types/index.js",
-      "default": "./.medusa/server/src/types/index.js"
-    },
-    "./admin/hooks": {
-      "import": "./.medusa/server/src/admin/hooks/index.mjs",
-      "require": "./.medusa/server/src/admin/hooks/index.js",
-      "default": "./.medusa/server/src/admin/hooks/index.js"
-    },
-    "./admin/widgets": {
-      "import": "./.medusa/server/src/admin/widgets/index.mjs",
-      "require": "./.medusa/server/src/admin/widgets/index.js",
-      "default": "./.medusa/server/src/admin/widgets/index.js"
+    ".": {
+      "import": "./.medusa/server/src/index.js",
+      "require": "./.medusa/server/src/index.js",
+      "default": "./.medusa/server/src/index.js"
     },
     "./admin": {
       "import": "./.medusa/server/src/admin/index.mjs",
       "require": "./.medusa/server/src/admin/index.js",
       "default": "./.medusa/server/src/admin/index.js"
     },
+    "./hooks": {
+      "import": "./src/hooks/index.ts",
+      "default": "./.medusa/server/src/hooks/index.js"
+    },
+    "./sdk": {
+      "import": "./src/sdk/client.ts",
+      "default": "./.medusa/server/src/sdk/client.js"
+    },
+    "./lib": {
+      "import": "./src/lib/index.ts",
+      "default": "./.medusa/server/src/lib/index.js"
+    },
+    "./types": {
+      "import": "./src/types/index.ts",
+      "default": "./.medusa/server/src/types/index.js"
+    },
     "./workflows": "./.medusa/server/src/workflows/index.js",
-    "./.medusa/server/src/modules/*": "./.medusa/server/src/modules/*/index.js",
-    "./modules/*": "./.medusa/server/src/modules/*/index.js",
     "./providers/*": "./.medusa/server/src/providers/*/index.js",
-    "./*": "./.medusa/server/src/*.js"
+    "./modules/*": "./.medusa/server/src/modules/*/index.js"
   },
   "keywords": [
     "medusa",
@@ -85,6 +78,7 @@
     "@medusajs/test-utils": "2.19.0",
     "@medusajs/ui": "4.2.1",
     "@swc/core": "^1.7.28",
+    "@tanstack/react-query": "5.64.2",
     "@types/node": "^20.0.0",
     "@types/qrcode": "^1.5.6",
     "@types/react": "^18.3.2",
@@ -106,7 +100,8 @@
     "@medusajs/icons": "2.19.0",
     "@medusajs/medusa": "2.19.0",
     "@medusajs/test-utils": "2.19.0",
-    "@medusajs/ui": "4.2.1"
+    "@medusajs/ui": "4.2.1",
+    "@tanstack/react-query": "5.64.2"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"

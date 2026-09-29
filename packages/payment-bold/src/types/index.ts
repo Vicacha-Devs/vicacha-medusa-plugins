@@ -205,6 +205,7 @@ export interface BoldWebhookPayload {
 export type PaymentMethodType = typeof BOLD_PAYMENT_METHOD_TYPE[number]
 
 export interface BoldTerminalPayload {
+  paymentCollectionId?: string
   terminalModel: string
   terminalSerial: string
   amount: number
@@ -347,13 +348,6 @@ export interface BoldQrResponse {
   session_id: string
 }
 
-export interface BoldTerminalPayload {
-  amount: number
-  currency_code: string
-  terminal_id: string
-  paymentCollectionId?: string
-}
-
 export interface BoldTerminalResponse {
   session_id: string
 }
@@ -399,6 +393,8 @@ export interface BoldCheckoutDetails {
   expirationMinutes?: number
   imageUrl?: string
   terminalId?: string
+  terminalModel?: string
+  terminalSerial?: string
   paymentCollectionId?: string
 }
 
