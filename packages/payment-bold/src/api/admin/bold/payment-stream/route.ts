@@ -1,10 +1,12 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { Modules, PaymentSessionStatus } from "@medusajs/framework/utils"
 import { IPaymentModuleService, Logger } from "@medusajs/framework/types"
+import { capturePaymentWorkflow } from "@medusajs/medusa/core-flows"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse): Promise<void> {
   const logger: Logger = req.scope.resolve("logger")
   const paymentModule: IPaymentModuleService = req.scope.resolve(Modules.PAYMENT)
+  const remoteQuery = req.scope.resolve("remoteQuery")
 
   const paymentSessionId = (
     req.query.paymentSessionId ||
@@ -36,40 +38,73 @@ export async function GET(req: MedusaRequest, res: MedusaResponse): Promise<void
         if (providerInstance) {
           let isAuthorized = false
 
-          // Strategy 1: Check via getPaymentStatus
           if (typeof providerInstance.getPaymentStatus === "function") {
             const statusRes = await providerInstance.getPaymentStatus({ data: session.data })
+
             if (
               statusRes?.status === PaymentSessionStatus.AUTHORIZED ||
               statusRes?.status === PaymentSessionStatus.CAPTURED
             ) {
               isAuthorized = true
             }
-          } 
-          // Strategy 2: Fallback to getStatus
-          else if (typeof providerInstance.getStatus === "function") {
+          } else if (typeof providerInstance.getStatus === "function") {
             const remoteStatus = await providerInstance.getStatus(session.data)
+
             if (remoteStatus === "captured" || remoteStatus === "authorized") {
               isAuthorized = true
             }
           }
 
           if (isAuthorized) {
-            logger.info(`[Bold Stream] Payment confirmed for session '${session.id}'. Authorizing in Medusa DB...`)
-            await paymentModule.authorizePaymentSession(paymentSessionId, {})
+            logger.info(`[Bold Stream] Confirming payment for session '${session.id}'...`)
+
+            const collectionId = session.payment_collection_id
+
+            if (collectionId) {
+              // Medusa v2 remoteQuery syntax
+              const colData = await remoteQuery({
+                entryPoint: "payment_collection",
+                fields: [
+                  "id",
+                  "status",
+                  "amount",
+                  "payment_sessions.*",
+                  "payments.*",
+                ],
+                variables: { id: collectionId },
+              })
+            }
+
+            // Step A: Authorize the session in Medusa Payment Module
+            const authorizedPayment = await paymentModule.authorizePaymentSession(session.id, {})
+
+            const paymentId =
+              (authorizedPayment as any)?.id ||
+              (authorizedPayment as any)?.payment?.id
+
+            // Step B: Execute capture workflow
+            if (paymentId) {
+              const captureResult = await capturePaymentWorkflow(req.scope).run({
+                input: {
+                  payment_id: paymentId,
+                },
+              })
+              logger.info(`[Bold Stream] Successfully captured payment '${paymentId}' with provider '${session.provider_id}'`)
+            } else {
+              logger.warn(`[Bold Stream] No payment ID returned from authorizePaymentSession for session '${session.id}'`)
+            }
+
             session = await paymentModule.retrievePaymentSession(paymentSessionId)
-            logger.info(`[Bold Stream] Session '${session.id}' authorized successfully. Status: ${session.status}`)
           }
         } else {
           logger.warn(`[Bold Stream] Provider instance for '${session.provider_id}' not found on Payment Module.`)
         }
       }
 
-      // 2. Write event stream payload to client
+      // Write event stream payload to client
       res.write(`data: ${JSON.stringify({ status: session.status, session })}\n\n`)
 
-      // 3. Close SSE stream once session reaches terminal status
-      if (["authorized", "captured", "canceled", "error"].includes(session.status)) {
+      if (["authorized", "captured", "completed", "canceled", "error"].includes(session.status)) {
         logger.info(`[Bold Stream] Stream completed for session '${session.id}' with status '${session.status}'. Closing connection.`)
         clearInterval(intervalId)
         res.end()

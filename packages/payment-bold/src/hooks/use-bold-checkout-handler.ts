@@ -1,3 +1,4 @@
+import { extractSessionId } from "../api/admin/utils/session-helpers"
 import { BoldCheckoutData, BoldCheckoutResult, BoldMutationHookOptions } from "../types"
 import { useCreateBoldButton } from "./use-create-bold-button"
 import { useCreateBoldLink } from "./use-create-bold-link"
@@ -53,7 +54,7 @@ export const useBoldCheckoutHandler = (options?: BoldMutationHookOptions) => {
       return {
         type: "link",
         url: session?.data?.url || session?.data?.payment_url,
-        sessionId: session?.id,
+        sessionId: extractSessionId(session),
       }
     }
 
@@ -82,7 +83,7 @@ export const useBoldCheckoutHandler = (options?: BoldMutationHookOptions) => {
       return {
         type: "button",
         hash: session?.data?.hash,
-        sessionId: session?.id,
+        sessionId: extractSessionId(session),
       }
     }
 
@@ -96,10 +97,12 @@ export const useBoldCheckoutHandler = (options?: BoldMutationHookOptions) => {
           : {}),
       })
 
+      const session = res.paymentSession
+
       return {
         type: "qr",
         qrPayload: res.qr_payload,
-        sessionId: res.session_id,
+        sessionId: extractSessionId(session),
       }
     }
 
@@ -128,9 +131,11 @@ export const useBoldCheckoutHandler = (options?: BoldMutationHookOptions) => {
           : {}),
       })
 
+      const session = res.paymentSession
+
       return {
         type: "terminal",
-        sessionId: res.session_id,
+        sessionId: extractSessionId(session),
       }
     }
 

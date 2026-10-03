@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react"
-import { useQueryClient, QueryKey } from "@tanstack/react-query"
+import { useEffect } from "react"
+import { QueryKey } from "@tanstack/react-query"
 
 import { boldAdminSdk, BoldApiClient } from "../sdk/client"
-import { boldQueryKeys } from "../sdk/query-keys"
-import { BoldPaymentStreamStatus } from "../types"
+import { BoldMutationHookOptions, BoldStatusStreamCallbacks } from "../types"
 
 export interface UseBoldStatusStreamOptions {
   sessionId?: string | null
@@ -22,50 +21,37 @@ export interface UseBoldStatusStreamOptions {
   onError?: (error: any) => void
 }
 
+
+interface UseBoldPaymentStatusStreamProps
+  extends BoldStatusStreamCallbacks,
+    BoldMutationHookOptions {
+  sessionId: string | null
+  enabled?: boolean
+}
+
 export const useBoldPaymentStatusStream = ({
   sessionId,
   enabled = true,
-  client = boldAdminSdk,
-  queryKey = boldQueryKeys.orders(),
+  client,
+  onStatusChange,
   onSuccess,
   onError,
-}: UseBoldStatusStreamOptions) => {
-  const queryClient = useQueryClient()
-  const [status, setStatus] = useState<BoldPaymentStreamStatus | "idle">("idle")
-  const [lastData, setLastData] = useState<any>(null)
+}: UseBoldPaymentStatusStreamProps) => {
+  const sdk = client || boldAdminSdk
 
   useEffect(() => {
     if (!sessionId || !enabled) {
-      setStatus("idle")
       return
     }
 
-    const unsubscribe = client.subscribeToPaymentStatus(sessionId, {
-      onStatusChange: (newStatus: BoldPaymentStreamStatus, data: any) => {
-        setStatus(newStatus)
-        if (data) setLastData(data)
-      },
-      onSuccess: (data: any) => {
-        if (queryKey && queryKey.length > 0) {
-          queryClient.invalidateQueries({ queryKey: queryKey as any })
-        }
-        onSuccess?.(data)
-      },
-      onError: (err: any) => {
-        onError?.(err)
-      },
+    const unsubscribe = sdk.subscribeToPaymentStatus(sessionId, {
+      onStatusChange,
+      onSuccess,
+      onError,
     })
 
     return () => {
       unsubscribe()
     }
-  }, [sessionId, enabled, client, queryKey, queryClient, onSuccess, onError])
-
-  return {
-    status,
-    isPending: status === "pending",
-    isCaptured: status === "captured",
-    isError: status === "error",
-    data: lastData,
-  }
+  }, [sessionId, enabled, sdk])
 }

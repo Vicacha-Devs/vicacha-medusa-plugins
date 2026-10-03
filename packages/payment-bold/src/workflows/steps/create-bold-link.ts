@@ -1,9 +1,12 @@
 import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk"
 import { Modules } from "@medusajs/framework/utils"
 import { IPaymentModuleService } from "@medusajs/framework/types"
+import { createPaymentSessionsWorkflow } from "@medusajs/medusa/core-flows"
+import { EBoldPaymentProvider } from "@payment-bold/types"
 
 export interface CreateBoldLinkStepInput {
   paymentCollectionId?: string
+  paymentSessionId?: string
   amount: number
   currency: string
   email: string
@@ -32,19 +35,20 @@ export const createBoldLinkStep = createStep(
       createdCollection = true
     }
 
-    // 2. Create Payment Session
-    const paymentSession = await paymentModule.createPaymentSession(collectionId, {
-      provider_id: "pp_bold-link_bold",
-      currency_code: input.currency.toLowerCase(),
-      amount: input.amount,
-      data: {
-        reference: input.reference,
-        description: input.description,
-        email: input.email,
-        callbackUrl: input.callbackUrl,
-        vatAmount: input.vatAmount,
-        consumptionTaxAmount: input.consumptionTaxAmount,
-        imageUrl: input.imageUrl,
+    // 2. Create Payment Session using Medusa v2 Core Workflow
+    const { result: paymentSession } = await createPaymentSessionsWorkflow(container).run({
+      input: {
+        payment_collection_id: collectionId,
+        provider_id: EBoldPaymentProvider.LINK,
+        data: {
+          reference: input.reference,
+          description: input.description,
+          email: input.email,
+          callbackUrl: input.callbackUrl,
+          vatAmount: input.vatAmount,
+          consumptionTaxAmount: input.consumptionTaxAmount,
+          imageUrl: input.imageUrl,
+        },
       },
     })
 
@@ -53,7 +57,6 @@ export const createBoldLinkStep = createStep(
       { collectionId: createdCollection ? collectionId : undefined }
     )
   },
-  // Compensation logic: clean up payment collection if workflow fails downstream
   async (compensationData, { container }) => {
     if (compensationData?.collectionId) {
       const paymentModule: IPaymentModuleService = container.resolve(Modules.PAYMENT)

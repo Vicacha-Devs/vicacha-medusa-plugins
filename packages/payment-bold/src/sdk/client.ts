@@ -70,7 +70,7 @@ export class BoldApiClient {
     sessionId: string,
     callbacks: BoldStatusStreamCallbacks
   ): () => void {
-    const url = `${this.baseUrl}${this.prefix}/bold/payment-stream?paymentSessionId=${sessionId}`
+    const url = `${this.baseUrl}${this.prefix}/bold/payment-stream?paymentSessionId=${encodeURIComponent(sessionId)}`
     const eventSource = new EventSource(url)
 
     callbacks.onStatusChange?.("pending", null)
@@ -80,8 +80,8 @@ export class BoldApiClient {
         const data = JSON.parse(event.data)
         const status = (data.status || "").toLowerCase()
 
-        const isSuccess = ["captured", "authorized", "paid"].includes(status)
-        const isFailure = (BOLD_FAILED_STATUSES as readonly string[]).includes(status)
+        const isSuccess = BOLD_SUCCESS_STATUSES.includes(status)
+        const isFailure = BOLD_FAILED_STATUSES.includes(status)
 
         if (isSuccess) {
           callbacks.onStatusChange?.("captured", data)

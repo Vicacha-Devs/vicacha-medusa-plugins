@@ -2,6 +2,7 @@ import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { Modules } from "@medusajs/framework/utils"
 import { IPaymentModuleService, Logger } from "@medusajs/framework/types"
 import { BoldIntegrityService } from "../../../../services/integrity"
+import { BOLD_PAYMENT_PROVIDERS } from "@payment-bold/types/constants"
 
 export async function POST(req: MedusaRequest, res: MedusaResponse): Promise<void> {
   const logger: Logger = req.scope.resolve("logger")
@@ -17,9 +18,25 @@ export async function POST(req: MedusaRequest, res: MedusaResponse): Promise<voi
       req.headers["x-timestamp"]
     ) as string
 
-    // 1. Resolve Bold Provider to access configured key pairs
-    const boldLinkProvider = req.scope.resolve("pp_bold-link_bold") as any
-    const options = boldLinkProvider?.options_ || {}
+    // 1. Resolve Bold configuration from any available provider (provider-agnostic)
+    let options: any = {}
+    for (const providerId of BOLD_PAYMENT_PROVIDERS) {
+      try {
+        const provider = req.scope.resolve(providerId) as any
+        if (provider?.options_) {
+          options = provider.options_
+          logger.debug(`[Bold Webhook] Configuration loaded from provider: ${providerId}`)
+          break
+        }
+      } catch {
+        // Provider not registered, try next one
+        continue
+      }
+    }
+
+    if (!options.buttonSecretKey && !options.integrationSecretKey) {
+      logger.warn("[Bold Webhook] No Bold payment provider configuration found")
+    }
 
     // 2. Order candidate secret keys based on Bold's priority rule
     const possibleSecrets: string[] = [
@@ -83,7 +100,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse): Promise<voi
 
     res.status(200).json({ received: true })
   } catch (error: any) {
-    logger.error(`[Bold Webhook] Exception processing webhook event: ${error.message}`)
-    res.status(500).json({ message: error.message || "Internal server error" })
+    logger.error(`[Bold Webhook Error] ${error.message}`)
+    res.status(500).json({ message: error.message || "Webhook processing failed" })
   }
 }

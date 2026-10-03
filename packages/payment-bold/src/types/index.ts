@@ -305,15 +305,30 @@ export interface BoldLinkPayload {
   paymentCollectionId?: string
 }
 
-export interface BoldLinkResponse {
-  paymentSession?: {
+export interface BoldPaymentSession {
+  id: string
+  currency_code?: string
+  provider_id?: string
+  status?: string
+  amount?: number
+  payment_collection_id?: string
+  payment_collection?: {
     id: string
-    data?: {
-      url?: string
-      payment_url?: string
-      status?: string
-    }
   }
+  data?: {
+    url?: string
+    payment_url?: string
+    status?: string
+    session_id?: string
+    payment_link_id?: string
+    [key: string]: any
+  }
+  [key: string]: any
+}
+
+export interface BoldLinkResponse {
+  paymentSession: BoldPaymentSession
+  [key: string]: any
 }
 
 export interface BoldButtonPayload {
@@ -345,11 +360,11 @@ export interface BoldQrPayload {
 
 export interface BoldQrResponse {
   qr_payload: string
-  session_id: string
+  paymentSession: BoldPaymentSession
 }
 
 export interface BoldTerminalResponse {
-  session_id: string
+  paymentSession: BoldPaymentSession
 }
 
 export type BoldPaymentStreamStatus = "pending" | "captured" | "error"

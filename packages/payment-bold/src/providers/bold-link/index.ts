@@ -27,14 +27,12 @@ import {
 import { Logger } from "@medusajs/medusa"
 import {
   BoldBaseOptions,
-  BoldWebhookPayload,
   CreatePaymentLinkPayload,
   InjectedDependencies,
 } from "@payment-bold/types"
-import { BoldIntegrityService } from "@payment-bold/services/integrity"
+import { EBoldPaymentProvider } from "@payment-bold/types/enums"
 
 import { BoldHttpClient } from "../../services/bold-client"
-import { EBoldPaymentProvider } from "@payment-bold/types/enums"
 
 export class BoldLinkPaymentProviderService extends AbstractPaymentProvider<BoldBaseOptions> {
   static identifier = EBoldPaymentProvider.LINK

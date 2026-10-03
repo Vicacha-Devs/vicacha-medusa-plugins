@@ -1,8 +1,15 @@
 export const BOLD_ENVIRONMENT = ["sandbox" , "production"] as const
 
-export const BOLD_PAYMENT_ACTIONS_SUCCESSFUL = ["PAID", "APPROVED", "SUCCESSFUL"] as const
+export const BOLD_PAYMENT_PROVIDERS = [
+  "pp_bold-link_bold",
+  "pp_bold-online_bold",
+  "pp_bold-button_bold",
+  "pp_bold-terminal_bold",
+]
 
-export const BOLD_PAYMENT_ACTIONS_FAILED = ["REJECTED", "FAILED", "EXPIRED", "CANCELLED"] as const
+export const BOLD_PAYMENT_ACTIONS_SUCCESSFUL = ["PAID", "APPROVED", "SUCCESSFUL", "captured"] as const
+
+export const BOLD_PAYMENT_ACTIONS_FAILED = ["REJECTED", "FAILED", "CANCELLED", "EXPIRED", "error"] as const
 
 export const BOLD_PAYMENT_METHOD_TYPE = ["card" , "pse" , "nequi" , "bancolombia" , "qr"] as const
 
@@ -25,4 +32,4 @@ export const BOLD_FAILED_STATUSES = [
 ] as const
 
 
-export const BOLD_SUCCESS_STATUSES = ["captured", "authorized", "paid"] as const
+export const BOLD_SUCCESS_STATUSES = ["captured", "authorized", "approved", "completed", "paid"] as const
