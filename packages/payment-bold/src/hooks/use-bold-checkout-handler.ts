@@ -1,4 +1,4 @@
-import { extractSessionId } from "../api/admin/utils/session-helpers"
+import { extractSessionId } from "../lib/session-helpers"
 import { BoldCheckoutData, BoldCheckoutResult, BoldMutationHookOptions } from "../types"
 import { useCreateBoldButton } from "./use-create-bold-button"
 import { useCreateBoldLink } from "./use-create-bold-link"
