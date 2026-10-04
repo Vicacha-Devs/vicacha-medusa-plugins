@@ -102,7 +102,7 @@ export const useBoldCheckoutHandler = (options?: BoldMutationHookOptions) => {
       return {
         type: "qr",
         qrPayload: res.qr_payload,
-        sessionId: extractSessionId(session),
+        sessionId: extractSessionId(session) || "",
       }
     }
 
@@ -135,7 +135,7 @@ export const useBoldCheckoutHandler = (options?: BoldMutationHookOptions) => {
 
       return {
         type: "terminal",
-        sessionId: extractSessionId(session),
+        sessionId: extractSessionId(session) || "",
       }
     }
 

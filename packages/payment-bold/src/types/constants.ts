@@ -17,10 +17,10 @@ export const BOLD_PAYMENT_METHOD_TYPE = ["card" , "pse" , "nequi" , "bancolombia
 // export const BOLD_PAYMENT_METHOD_TYPE = ["CARD" , "PSE" , "NEQUI" , "BANCOLOMBIA" , "QR"] as const
 
 export const BOLD_PLUGIN_PROVIDERS = [
-    "bold-online",
-    "bold-link",
-    "bold-button",
-    "bold-terminal",
+  "bold-online",
+  "bold-link",
+  "bold-button",
+  "bold-terminal",
 ] as const
 
 export const BOLD_FAILED_STATUSES = [
