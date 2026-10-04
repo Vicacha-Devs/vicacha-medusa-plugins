@@ -2,7 +2,10 @@
   "bold": {
     "admin": {
       "widget": {
-        "title": "Datáfono Bold Colombia",
+        "title": "Acciones de Pago Bold",
+        "description": "Despachar pago remoto o POS al cliente",
+        "link_btn": "Enlace de Pago",
+        "qr_btn": "Código QR",
         "terminal_btn": "Envío a Datáfono",
         "terminal_placeholder": "Serial del Datáfono (ej. POS_SMART_01)",
         "send_to_terminal": "Enviar a Datáfono POS",

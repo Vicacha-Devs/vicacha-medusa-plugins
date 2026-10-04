@@ -2,7 +2,10 @@
   "bold": {
     "admin": {
       "widget": {
-        "title": "جهاز الدفع بولد كولومبيا",
+        "title": "إجراءات الدفع Bold",
+        "description": "إرسال الدفع عن بعد أو عبر نقاط البيع للعميل",
+        "link_btn": "رابط الدفع",
+        "qr_btn": "رمز QR",
         "terminal_btn": "إرسال للجهاز",
         "terminal_placeholder": "الرقم التسلسلي للجهاز (مثال: POS_SMART_01)",
         "send_to_terminal": "إرسال إلى جهاز POS",

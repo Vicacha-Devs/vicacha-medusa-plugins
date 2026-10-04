@@ -2,7 +2,10 @@
   "bold": {
     "admin": {
       "widget": {
-        "title": "Bold Colombia Payment Terminal",
+        "title": "Bold Payment Actions",
+        "description": "Dispatch remote or POS payment to customer",
+        "link_btn": "Payment Link",
+        "qr_btn": "QR Code",
         "terminal_btn": "Terminal Push",
         "terminal_placeholder": "Data-phone Serial (e.g. POS_SMART_01)",
         "send_to_terminal": "Push to POS Terminal",

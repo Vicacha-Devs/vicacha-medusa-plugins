@@ -1,6 +1,5 @@
-// plugins/packages/payment-bold/src/admin/widgets/bold-refund-actions.tsx
 import { defineWidgetConfig } from "@medusajs/admin-sdk"
-import { Container, Heading, Button, Input, Badge, toast } from "@medusajs/ui"
+import { Container, Heading, Button, CurrencyInput, Badge, toast } from "@medusajs/ui"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 
@@ -8,7 +7,7 @@ import { useBoldRefund } from "../../hooks/use-bold-refund"
 
 const BoldRefundActionsWidget = ({ data: order }: { data: any }) => {
   const { t } = useTranslation()
-  const [refundAmount, setRefundAmount] = useState<string>("")
+  const [refundAmount, setRefundAmount] = useState<number | undefined>(undefined)
   const { mutateAsync: refundPayment, isPending: loading } = useBoldRefund()
 
   const boldPayment = order?.payment_collections
@@ -18,6 +17,12 @@ const BoldRefundActionsWidget = ({ data: order }: { data: any }) => {
   if (!boldPayment) {
     return null
   }
+
+  const currencyCode = (
+    order?.currency_code ||
+    boldPayment?.currency_code ||
+    "COP"
+  ).toUpperCase()
 
   const capturedAmount = boldPayment.amount || 0
   const refundedAmount = boldPayment.refunded_amount || 0
@@ -35,6 +40,7 @@ const BoldRefundActionsWidget = ({ data: order }: { data: any }) => {
         <p className="text-xs text-ui-fg-subtle">
           {t("bold.admin.refund.fully_refunded_desc", {
             amount: capturedAmount.toLocaleString(),
+            currency: currencyCode,
           })}
         </p>
       </Container>
@@ -48,6 +54,7 @@ const BoldRefundActionsWidget = ({ data: order }: { data: any }) => {
       toast.error(t("bold.admin.refund.invalid_amount_title"), {
         description: t("bold.admin.refund.invalid_amount_desc", {
           max: maxRefundable.toLocaleString(),
+          currency: currencyCode,
         }),
       })
       return
@@ -62,10 +69,11 @@ const BoldRefundActionsWidget = ({ data: order }: { data: any }) => {
       toast.success(t("bold.admin.refund.success_title"), {
         description: t("bold.admin.refund.success_desc", {
           amount: numericAmount.toLocaleString(),
+          currency: currencyCode,
         }),
       })
 
-      setRefundAmount("")
+      setRefundAmount(undefined)
       window.location.reload()
     } catch (err: any) {
       toast.error(t("bold.admin.refund.error_title"), {
@@ -74,13 +82,8 @@ const BoldRefundActionsWidget = ({ data: order }: { data: any }) => {
     }
   }
 
-  const currencyCode = (
-    order?.currency_code ||
-    boldPayment?.currency_code
-  ).toUpperCase()
-
   return (
-    <Container className="p-4 rounded-lg border bg-card space-y-3">
+    <Container className="p-4 rounded-lg border bg-card space-y-4">
       <div className="flex items-center justify-between border-b pb-3">
         <Heading level="h2" className="text-base font-semibold">
           {t("bold.admin.refund.title")}
@@ -88,38 +91,43 @@ const BoldRefundActionsWidget = ({ data: order }: { data: any }) => {
         <Badge color="green">{t("bold.admin.refund.captured")}</Badge>
       </div>
 
-      <div className="flex items-center justify-between text-xs text-ui-fg-subtle">
-        <span>
-          {t("bold.admin.refund.captured_total")}:{" "}
-          <strong className="text-ui-fg-base">
+      <div className="flex flex-col gap-y-1.5 text-xs text-ui-fg-subtle">
+        <div className="flex items-center justify-between">
+          <span>{t("bold.admin.refund.captured_total")}:</span>
+          <strong className="text-ui-fg-base font-mono">
             ${capturedAmount.toLocaleString()} {currencyCode}
           </strong>
-        </span>
-        <span>
-          {t("bold.admin.refund.remaining")}:{" "}
-          <strong className="text-ui-fg-base">
+        </div>
+        <div className="flex items-center justify-between">
+          <span>{t("bold.admin.refund.remaining")}:</span>
+          <strong className="text-ui-fg-base font-mono">
             ${maxRefundable.toLocaleString()} {currencyCode}
           </strong>
-        </span>
+        </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        <Input
+      <div className="space-y-3 pt-1">
+        <CurrencyInput
           size="small"
-          type="number"
-          placeholder={t("bold.admin.refund.placeholder", { currency: currencyCode })}
+          symbol="$"
+          code={currencyCode}
           value={refundAmount}
-          onChange={(e) => setRefundAmount(e.target.value)}
+          onValueChange={(val) => setRefundAmount(val ? Number(val) : undefined)}
+          placeholder="0"
           disabled={loading}
         />
-        <Button
-          size="small"
-          variant="secondary"
-          isLoading={loading}
-          onClick={handleRefund}
-        >
-          {t("bold.admin.refund.action")}
-        </Button>
+
+        <div className="flex justify-end">
+          <Button
+            size="small"
+            variant="secondary"
+            isLoading={loading}
+            onClick={handleRefund}
+            disabled={loading || !refundAmount}
+          >
+            {t("bold.admin.refund.action")}
+          </Button>
+        </div>
       </div>
     </Container>
   )

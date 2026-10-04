@@ -2,7 +2,10 @@
   "bold": {
     "admin": {
       "widget": {
-        "title": "Bold Kolombiya Ödeme Terminali",
+        "title": "Bold Ödeme İşlemleri",
+        "description": "Müşteriye uzaktan veya POS ödemesi gönderin",
+        "link_btn": "Ödeme Bağlantısı",
+        "qr_btn": "QR Kodu",
         "terminal_btn": "Terminale Gönder",
         "terminal_placeholder": "POS Seri Numarası (örn. POS_SMART_01)",
         "send_to_terminal": "POS Terminaline Gönder",
