@@ -2,37 +2,66 @@
   "bold": {
     "admin": {
       "widget": {
-        "title": "Terminal de Pago Bold Colombia",
-        "description": "Gestión de cobro presencial y remoto para el Pedido",
-        "processing": "Procesando",
-        "approved": "Aprobado",
-        "rejected": "Rechazado",
-        "link_btn": "Link de Pago",
-        "qr_btn": "QR Bre-B",
-        "terminal_btn": "Datáfono POS",
-        "generated_link": "Enlace de pago generado:",
-        "scan_instruction": "Escanee con cualquier app bancaria de Colombia",
-        "terminal_placeholder": "ID de Datáfono (Ej: SMART-1234)",
-        "send_to_terminal": "Enviar a Datáfono",
-        "refresh": "Actualizar",
-        "status": {
-          "approved_msg": "¡Pago aprobado y registrado exitosamente!",
-          "rejected_msg": "El pago fue rechazado o cancelado.",
-          "waiting_link": "Esperando que el cliente complete el pago en la URL...",
-          "waiting_qr": "Esperando escaneo y confirmación bancaria del QR...",
-          "waiting_terminal": "Cobro enviado al datáfono. Pasa o desliza la tarjeta."
+        "title": "Datáfono Bold Colombia",
+        "terminal_btn": "Envío a Datáfono",
+        "terminal_placeholder": "Serial del Datáfono (ej. POS_SMART_01)",
+        "send_to_terminal": "Enviar a Datáfono POS",
+        "approved": "Pago Aprobado",
+        "copy_link": "Copiar Enlace",
+        "copied": "Copiado",
+        "copied_desc": "¡Enlace de pago copiado al portapapeles!",
+        "already_captured": "Este pedido ya ha sido autorizado y capturado exitosamente mediante Bold.",
+        "paid_and_captured": "Pagado y Capturado"
+      },
+      "terminal_status": {
+        "title": "Estado de Datáfonos Bold",
+        "refresh": "Actualizar Datáfonos",
+        "serial": "Número de Serie",
+        "model": "Modelo",
+        "status": "Estado",
+        "battery": "Batería",
+        "connectivity": "Conectividad",
+        "unknown": "DESCONOCIDO",
+        "na": "N/A"
+      },
+      "audit": {
+        "title": "Auditoría de Pagos Bold",
+        "events_count": "{{count}} Eventos Registrados",
+        "session_init": "Sesión Inicializada",
+        "payment_auth": "Pago Autorizado",
+        "payment_captured": "Pago Capturado y Liquidado",
+        "mode_link": "Enlace de Pago",
+        "mode_terminal": "Envío a Datáfono",
+        "ref": "Ref: {{ref}}",
+        "amount": "Monto: ${{amount}} {{currency}}",
+        "headers": {
+          "event": "Evento",
+          "provider_mode": "Proveedor / Modo",
+          "reference": "Referencia",
+          "amount": "Monto",
+          "status": "Estado",
+          "timestamp": "Fecha y Hora"
         },
-        "toast": {
-          "payment_approved": "Pago Aprobado",
-          "payment_approved_desc": "El pago fue procesado correctamente por Bold.",
-          "payment_rejected": "Pago Rechazado",
-          "payment_rejected_desc": "La transacción no fue aprobada.",
-          "link_generated": "Link Generado",
-          "qr_generated": "Código QR Generado",
-          "terminal_sent": "Enviado a Datáfono",
-          "copied": "Copiado al portapapeles",
-          "error": "Error"
+        "statuses": {
+          "success": "EXITOSO",
+          "pending": "PENDIENTE",
+          "info": "INFO"
         }
+      },
+      "refund": {
+        "title": "Devolución de Pago Bold",
+        "captured": "Capturado",
+        "fully_refunded": "Reembolsado Totalmente",
+        "fully_refunded_desc": "Este pago ha sido reembolsado en su totalidad (${{amount}} COP).",
+        "captured_total": "Total Capturado",
+        "remaining": "Restante Reembolsable",
+        "placeholder": "Monto a Devolver (COP)",
+        "action": "Emitir Devolución",
+        "invalid_amount_title": "Monto Inválido",
+        "invalid_amount_desc": "Por favor ingrese un monto entre 1 y ${{max}} COP.",
+        "success_title": "Devolución Procesada",
+        "success_desc": "La devolución de ${{amount}} COP fue exitosa.",
+        "error_title": "Error en Devolución"
       }
     }
   }

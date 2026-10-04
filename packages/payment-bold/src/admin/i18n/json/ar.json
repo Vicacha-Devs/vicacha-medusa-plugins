@@ -2,37 +2,66 @@
   "bold": {
     "admin": {
       "widget": {
-        "title": "جهاز دفع بولد كولومبيا",
-        "description": "إدارة الدفع الحضوري وعن بُعد للطلب",
-        "processing": "جاري المعالجة",
-        "approved": "تمت الموافقة",
-        "rejected": "مرفوض",
-        "link_btn": "رابط الدفع",
-        "qr_btn": "QR Bre-B",
-        "terminal_btn": "جهاز نقاط البيع (POS)",
-        "generated_link": "رابط الدفع المنشأ:",
-        "scan_instruction": "مسح باستعمال أي تطبيق مصرفي كولومبي",
-        "terminal_placeholder": "معرف جهاز POS (مثال: SMART-1234)",
-        "send_to_terminal": "إرسال إلى الجهاز",
-        "refresh": "تحديث",
-        "status": {
-          "approved_msg": "تمت الموافقة على الدفع وتسجيله بنجاح!",
-          "rejected_msg": "تم رفض الدفع أو إلغاؤه.",
-          "waiting_link": "في انتظار إكمال العميل للدفع عبر الرابط...",
-          "waiting_qr": "في انتظار مسح رمز QR وتأكيد البنك...",
-          "waiting_terminal": "تم إرسال طلب الدفع إلى الجهاز. يرجى تمرير أو إدخال البطاقة."
+        "title": "جهاز الدفع بولد كولومبيا",
+        "terminal_btn": "إرسال للجهاز",
+        "terminal_placeholder": "الرقم التسلسلي للجهاز (مثال: POS_SMART_01)",
+        "send_to_terminal": "إرسال إلى جهاز POS",
+        "approved": "تمت الموافقة على الدفع",
+        "copy_link": "نسخ الرابط",
+        "copied": "تم النسخ",
+        "copied_desc": "تم نسخ رابط الدفع إلى الحافظة!",
+        "already_captured": "تم تصريح واستلام هذا الطلب بنجاح عبر بولد.",
+        "paid_and_captured": "مدفوع ومستلم"
+      },
+      "terminal_status": {
+        "title": "حالة أجهزة نقاط البيع بولد",
+        "refresh": "تحديث الأجهزة",
+        "serial": "الرقم التسلسلي",
+        "model": "طراز الجهاز",
+        "status": "الحالة",
+        "battery": "البطارية",
+        "connectivity": "الاتصال",
+        "unknown": "غير معروف",
+        "na": "غير متاح"
+      },
+      "audit": {
+        "title": "سجل مراجعة مدفوعات بولد",
+        "events_count": "تم تسجيل {{count}} أحداث",
+        "session_init": "بدء الجلسة",
+        "payment_auth": "تم تفويض الدفع",
+        "payment_captured": "تم تحصيل الدفع وتصفيته",
+        "mode_link": "رابط الدفع",
+        "mode_terminal": "إرسال للجهاز",
+        "ref": "مرجع: {{ref}}",
+        "amount": "المبلغ: ${{amount}} {{currency}}",
+        "headers": {
+          "event": "الحدث",
+          "provider_mode": "المزود / الوضع",
+          "reference": "المرجع",
+          "amount": "المبلغ",
+          "status": "الحالة",
+          "timestamp": "الوقت والتاريخ"
         },
-        "toast": {
-          "payment_approved": "تمت الموافقة على الدفع",
-          "payment_approved_desc": "تمت معالجة الدفع بنجاح بواسطة Bold.",
-          "payment_rejected": "تم رفض الدفع",
-          "payment_rejected_desc": "لم يتم قبول المعاملة.",
-          "link_generated": "تم إنشاء رابط الدفع",
-          "qr_generated": "تم إنشاء رمز QR",
-          "terminal_sent": "تم الإرسال إلى الجهاز",
-          "copied": "تم النسخ إلى الحافظة",
-          "error": "خطأ"
+        "statuses": {
+          "success": "ناجح",
+          "pending": "قيد الانتظار",
+          "info": "معلومات"
         }
+      },
+      "refund": {
+        "title": "استرداد مدفوعات بولد",
+        "captured": "تم التحصيل",
+        "fully_refunded": "تم الاسترداد بالكامل",
+        "fully_refunded_desc": "تم استرداد هذا المبلغ بالكامل (${{amount}} COP).",
+        "captured_total": "إجمالي المستلم",
+        "remaining": "المتبقي القابل للاسترداد",
+        "placeholder": "مبلغ الاسترداد (COP)",
+        "action": "إجراء الاسترداد",
+        "invalid_amount_title": "مبلغ غير صالحة",
+        "invalid_amount_desc": "يرجى إدخال مبلغ بين 1 و ${{max}} COP.",
+        "success_title": "تم معالجة الاسترداد",
+        "success_desc": "نجح استرداد مبلغ ${{amount}} COP.",
+        "error_title": "خطأ في الاسترداد"
       }
     }
   }

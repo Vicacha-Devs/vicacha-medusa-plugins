@@ -3,36 +3,65 @@
     "admin": {
       "widget": {
         "title": "Bold Kolombiya Ödeme Terminali",
-        "description": "Sipariş için yüz yüze ve uzaktan ödeme yönetimi",
-        "processing": "İşleniyor",
-        "approved": "Onaylandı",
-        "rejected": "Reddedildi",
-        "link_btn": "Ödeme Bağlantısı",
-        "qr_btn": "QR Bre-B",
-        "terminal_btn": "POS Terminali",
-        "generated_link": "Oluşturulan Ödeme Bağlantısı:",
-        "scan_instruction": "Herhangi bir Kolombiya bankacılık uygulamasıyla tarayın",
-        "terminal_placeholder": "POS Terminal Kimliği (Örn: SMART-1234)",
-        "send_to_terminal": "Terminale Gönder",
-        "refresh": "Yenile",
-        "status": {
-          "approved_msg": "Ödeme onaylandı ve başarıyla kaydedildi!",
-          "rejected_msg": "Ödeme reddedildi veya iptal edildi.",
-          "waiting_link": "Müşterinin bağlantıda ödemeyi tamamlaması bekleniyor...",
-          "waiting_qr": "QR taraması ve banka onayı bekleniyor...",
-          "waiting_terminal": "Ödeme isteği terminale gönderildi. Kartı okutun veya takın."
+        "terminal_btn": "Terminale Gönder",
+        "terminal_placeholder": "POS Seri Numarası (örn. POS_SMART_01)",
+        "send_to_terminal": "POS Terminaline Gönder",
+        "approved": "Ödeme Onaylandı",
+        "copy_link": "Bağlantıyı Kopyala",
+        "copied": "Kopyalandı",
+        "copied_desc": "Ödeme bağlantısı panoya kopyalandı!",
+        "already_captured": "Bu sipariş Bold aracılığıyla başarıyla yetkilendirildi ve tahsil edildi.",
+        "paid_and_captured": "Ödendi ve Tahsil Edildi"
+      },
+      "terminal_status": {
+        "title": "Bold POS Cihaz Durumu",
+        "refresh": "Cihazları Yenile",
+        "serial": "Seri Numarası",
+        "model": "Donanım Modeli",
+        "status": "Durum",
+        "battery": "Pil",
+        "connectivity": "Bağlantı",
+        "unknown": "BİLİNMİYOR",
+        "na": "YOK"
+      },
+      "audit": {
+        "title": "Bold Ödeme Denetim Kaydı",
+        "events_count": "{{count}} Olay Kaydedildi",
+        "session_init": "Oturum Başlatıldı",
+        "payment_auth": "Ödeme Yetkilendirildi",
+        "payment_captured": "Ödeme Tahsil Edildi ve Kapatıldı",
+        "mode_link": "Ödeme Bağlantısı",
+        "mode_terminal": "Terminale Gönder",
+        "ref": "Referans: {{ref}}",
+        "amount": "Tutar: ${{amount}} {{currency}}",
+        "headers": {
+          "event": "Olay",
+          "provider_mode": "Sağlayıcı / Mod",
+          "reference": "Referans",
+          "amount": "Tutar",
+          "status": "Durum",
+          "timestamp": "Tarih/Saat"
         },
-        "toast": {
-          "payment_approved": "Ödeme Onaylandı",
-          "payment_approved_desc": "Ödeme Bold tarafından başarıyla işlendi.",
-          "payment_rejected": "Ödeme Reddedildi",
-          "payment_rejected_desc": "İşlem onaylanmadı.",
-          "link_generated": "Ödeme Bağlantısı Oluşturuldu",
-          "qr_generated": "QR Kodu Oluşturuldu",
-          "terminal_sent": "Terminale Gönderildi",
-          "copied": "Pano kopyalandı",
-          "error": "Hata"
+        "statuses": {
+          "success": "BAŞARILI",
+          "pending": "BEKLEMEDE",
+          "info": "BİLGİ"
         }
+      },
+      "refund": {
+        "title": "Bold Ödeme İadesi",
+        "captured": "Tahsil Edildi",
+        "fully_refunded": "Tamamen İade Edildi",
+        "fully_refunded_desc": "Bu ödeme tamamen iade edilmiştir (${{amount}} COP).",
+        "captured_total": "Toplam Tahsil Edilen",
+        "remaining": "Kalan İade Edilebilir",
+        "placeholder": "İade Tutarı (COP)",
+        "action": "İade Yap",
+        "invalid_amount_title": "Geçersiz Tutar",
+        "invalid_amount_desc": "Lütfen 1 ile ${{max}} COP arasında bir tutar girin.",
+        "success_title": "İade İşlendi",
+        "success_desc": "${{amount}} COP tutarındaki iade başarıyla gerçekleşti.",
+        "error_title": "İade Hatası"
       }
     }
   }

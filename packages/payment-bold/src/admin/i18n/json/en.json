@@ -3,36 +3,65 @@
     "admin": {
       "widget": {
         "title": "Bold Colombia Payment Terminal",
-        "description": "In-person and remote payment management for Order",
-        "processing": "Processing",
-        "approved": "Approved",
-        "rejected": "Rejected",
-        "link_btn": "Payment Link",
-        "qr_btn": "QR Bre-B",
-        "terminal_btn": "POS Data-phone",
-        "generated_link": "Generated Payment Link:",
-        "scan_instruction": "Scan with any Colombian banking app",
-        "terminal_placeholder": "Data-phone Terminal ID (e.g., SMART-1234)",
-        "send_to_terminal": "Send to Terminal",
-        "refresh": "Refresh",
-        "status": {
-          "approved_msg": "Payment approved and successfully recorded!",
-          "rejected_msg": "Payment was rejected or cancelled.",
-          "waiting_link": "Waiting for customer to complete payment at URL...",
-          "waiting_qr": "Waiting for QR scan and bank confirmation...",
-          "waiting_terminal": "Payment request sent to terminal. Tap or insert card."
+        "terminal_btn": "Terminal Push",
+        "terminal_placeholder": "Data-phone Serial (e.g. POS_SMART_01)",
+        "send_to_terminal": "Push to POS Terminal",
+        "approved": "Payment Approved",
+        "copy_link": "Copy Link",
+        "copied": "Copied",
+        "copied_desc": "Payment link copied to clipboard!",
+        "already_captured": "This order has already been successfully authorized and captured via Bold.",
+        "paid_and_captured": "Paid & Captured"
+      },
+      "terminal_status": {
+        "title": "Bold POS Terminal Fleet Health",
+        "refresh": "Refresh Fleet",
+        "serial": "Serial Number",
+        "model": "Hardware Model",
+        "status": "Status",
+        "battery": "Battery",
+        "connectivity": "Connectivity",
+        "unknown": "UNKNOWN",
+        "na": "N/A"
+      },
+      "audit": {
+        "title": "Bold Payment Audit Trail",
+        "events_count": "{{count}} Events Recorded",
+        "session_init": "Session Initialized",
+        "payment_auth": "Payment Authorized",
+        "payment_captured": "Payment Captured & Settled",
+        "mode_link": "Payment Link",
+        "mode_terminal": "Terminal Push",
+        "ref": "Ref: {{ref}}",
+        "amount": "Amount: ${{amount}} {{currency}}",
+        "headers": {
+          "event": "Event",
+          "provider_mode": "Provider / Mode",
+          "reference": "Reference",
+          "amount": "Amount",
+          "status": "Status",
+          "timestamp": "Timestamp"
         },
-        "toast": {
-          "payment_approved": "Payment Approved",
-          "payment_approved_desc": "Payment was successfully processed by Bold.",
-          "payment_rejected": "Payment Rejected",
-          "payment_rejected_desc": "Transaction was not approved.",
-          "link_generated": "Payment Link Generated",
-          "qr_generated": "QR Code Generated",
-          "terminal_sent": "Sent to Terminal",
-          "copied": "Copied to clipboard",
-          "error": "Error"
+        "statuses": {
+          "success": "SUCCESS",
+          "pending": "PENDING",
+          "info": "INFO"
         }
+      },
+      "refund": {
+        "title": "Bold Payment Refund",
+        "captured": "Captured",
+        "fully_refunded": "Fully Refunded",
+        "fully_refunded_desc": "This payment has been fully refunded (${{amount}} COP).",
+        "captured_total": "Captured Total",
+        "remaining": "Remaining Refundable",
+        "placeholder": "Refund Amount (COP)",
+        "action": "Issue Refund",
+        "invalid_amount_title": "Invalid Amount",
+        "invalid_amount_desc": "Please enter an amount between 1 and ${{max}} COP.",
+        "success_title": "Refund Processed",
+        "success_desc": "Refund of ${{amount}} COP was successful.",
+        "error_title": "Refund Error"
       }
     }
   }
