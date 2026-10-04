@@ -3,6 +3,7 @@ import {
   BoldButtonResponse,
   BoldLinkPayload,
   BoldLinkResponse,
+  BoldPaymentMethod,
   BoldQrPayload,
   BoldQrResponse,
   BoldRefundPayload,
@@ -126,6 +127,12 @@ export class BoldApiClient {
     return this.fetch<BoldRefundResponse>("/bold/refund", {
       method: "POST",
       body: JSON.stringify(payload),
+    })
+  }
+
+  async getPaymentMethods(): Promise<Array<BoldPaymentMethod>> {
+    return this.fetch<Array<BoldPaymentMethod>>("/bold/payment-methods", {
+      method: "GET",
     })
   }
 }

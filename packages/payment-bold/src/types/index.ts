@@ -101,7 +101,7 @@ export interface BoldMetadata {
 
 export interface BoldPaymentMethodQR {
   name: "QR"
-  qr_format?: "BOLD_BASE64" | string
+  qr_format?: "BOLD_BASE64" | "PLAIN_BASE64" | "TEXT"
 }
 
 export interface BoldPaymentMethodCard {
@@ -236,6 +236,12 @@ export interface BoldTerminalPayload {
       documentType: string
       documentNumber: string
     }
+  }
+}
+
+export interface BoldPaymentMethodsResponse {
+  payload:{
+    payment_methods: Array<BoldPaymentMethod>
   }
 }
 

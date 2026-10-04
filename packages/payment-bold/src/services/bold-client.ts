@@ -8,6 +8,7 @@ import {
   BoldPaymentAttemptResponse,
   BoldPaymentIntentPayload,
   BoldPaymentMethod,
+  BoldPaymentMethodsResponse,
   BoldRefundApiRequest,
   BoldRefundApiResponse,
   BoldTerminalItem,
@@ -134,7 +135,7 @@ export class BoldHttpClient {
       default:
         return {
           name: "QR",
-          qr_format: payload.qrFormat || "BOLD_BASE64",
+          qr_format: payload.qrFormat || "TEXT",
         }
     }
   }
@@ -206,7 +207,7 @@ export class BoldHttpClient {
   async getTerminals(): Promise<Array<BoldTerminalItem>> {
     const response = await this.request<BoldTerminalsResponse>(
       this.integrationsUrl,
-      "/payments/terminals",
+      "/payments/binded-terminals",
       this.integrationApiKey,
       {
         method: "GET",
@@ -260,6 +261,24 @@ export class BoldHttpClient {
         body: JSON.stringify(body),
       }
     )
+  }
+
+  /**
+   * Queries available payment methods enabled for the merchant.
+   * Key: integrationApiKey
+   * Target: integrationsUrl (/online/payment-methods/v1)
+   */
+  async getAvailablePaymentMethods(): Promise<Array<BoldPaymentMethod>> {
+    const response = await this.request<BoldPaymentMethodsResponse>(
+      this.integrationsUrl,
+      "/online/payment-methods/v1",
+      this.integrationApiKey,
+      {
+        method: "GET",
+      }
+    )
+
+    return response?.payload.payment_methods || []
   }
 
   /**
