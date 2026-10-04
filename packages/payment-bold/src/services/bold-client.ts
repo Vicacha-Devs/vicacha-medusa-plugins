@@ -10,7 +10,9 @@ import {
   BoldPaymentMethod,
   BoldRefundApiRequest,
   BoldRefundApiResponse,
+  BoldTerminalItem,
   BoldTerminalPayload,
+  BoldTerminalsResponse,
   CreatePaymentLinkPayload,
   CreateRefundPayload,
 } from "@payment-bold/types"
@@ -197,7 +199,25 @@ export class BoldHttpClient {
   }
 
   /**
-   * Triggers terminal checkout dispatch to a physical dataphone POS.
+   * Queries available POS payment terminals associated with the account.
+   * Key: integrationApiKey
+   * Target: integrationsUrl (/payments/terminals)
+   */
+  async getTerminals(): Promise<Array<BoldTerminalItem>> {
+    const response = await this.request<BoldTerminalsResponse>(
+      this.integrationsUrl,
+      "/payments/terminals",
+      this.integrationApiKey,
+      {
+        method: "GET",
+      }
+    )
+
+    return response?.payload.available_terminals || []
+  }
+
+  /**
+   * Triggers terminal checkout dispatch to a physical data-phone POS.
    * Key: integrationApiKey
    * Target: integrationsUrl (/payments/app-checkout)
    */

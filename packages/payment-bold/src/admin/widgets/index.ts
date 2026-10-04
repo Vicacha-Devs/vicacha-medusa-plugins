@@ -1,1 +1,1 @@
-export { BoldPaymentActionsWidget } from "./bold-payment-actions/bold-payment-actions"
+export { default as BoldTerminalStatusWidget, config as boldTerminalStatusConfig } from "./bold-terminal-status"

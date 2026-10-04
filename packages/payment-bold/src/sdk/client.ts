@@ -6,6 +6,7 @@ import {
   BoldQrPayload,
   BoldQrResponse,
   BoldStatusStreamCallbacks,
+  BoldTerminalItem,
   BoldTerminalPayload,
   BoldTerminalResponse
 } from "../types"
@@ -108,6 +109,15 @@ export class BoldApiClient {
     return () => {
       eventSource.close()
     }
+  }
+
+  /**
+   * Retrieves active registered POS data-phone / terminals associated with the Bold merchant account.
+   */
+  async getTerminals(): Promise<Array<BoldTerminalItem>> {
+    return this.fetch<Array<BoldTerminalItem>>("/bold/terminals", {
+      method: "GET",
+    })
   }
 }
 

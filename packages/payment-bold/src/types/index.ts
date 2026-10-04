@@ -186,6 +186,21 @@ export interface BoldLinkPaymentStatusResponse {
   transaction_date?: string
 }
 
+export interface BoldTerminalItem {
+  terminal_serial: string
+  terminal_model: string
+  status?: string
+  name?: string
+  [key: string]: any
+}
+
+export interface BoldTerminalsResponse {
+  payload: {
+    available_terminals: BoldTerminalItem[]
+  },
+  errors?: any[]
+}
+
 export interface BoldWebhookPayload {
   event: "sale.successful" | "sale.failed" | "sale.rejected" | "refund.successful"
   data: {
