@@ -7,5 +7,6 @@ export const boldQueryKeys = {
   orders: () => [...boldQueryKeys.all, "orders"] as const,
   order: (id: string) => [...boldQueryKeys.orders(), id] as const,
   qr: () => [...boldQueryKeys.all, "payment-qr"] as const,
+  refund: () => [...boldQueryKeys.all, "refund"] as const,
   terminals: () => ["bold", "terminals"] as const,
 }

@@ -1,5 +1,6 @@
 export * from "./use-bold-checkout-handler"
 export * from "./use-bold-payment-status-stream"
+export * from "./use-bold-refund"
 export * from "./use-bold-terminals"
 export * from "./use-create-bold-button"
 export * from "./use-create-bold-link"

@@ -390,6 +390,17 @@ export interface BoldStatusStreamCallbacks {
   onError?: (error?: any) => void
 }
 
+export interface BoldRefundPayload {
+  payment_id: string
+  amount: number
+  note?: string
+}
+
+export interface BoldRefundResponse {
+  refund: any
+  message?: string
+}
+
 // ==========================================
 // 5. Plugin Hooks
 // ==========================================

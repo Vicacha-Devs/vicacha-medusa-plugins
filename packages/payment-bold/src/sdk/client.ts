@@ -5,6 +5,8 @@ import {
   BoldLinkResponse,
   BoldQrPayload,
   BoldQrResponse,
+  BoldRefundPayload,
+  BoldRefundResponse,
   BoldStatusStreamCallbacks,
   BoldTerminalItem,
   BoldTerminalPayload,
@@ -117,6 +119,13 @@ export class BoldApiClient {
   async getTerminals(): Promise<Array<BoldTerminalItem>> {
     return this.fetch<Array<BoldTerminalItem>>("/bold/terminals", {
       method: "GET",
+    })
+  }
+
+  async refundPayment(payload: BoldRefundPayload): Promise<BoldRefundResponse> {
+    return this.fetch<BoldRefundResponse>("/bold/refund", {
+      method: "POST",
+      body: JSON.stringify(payload),
     })
   }
 }
