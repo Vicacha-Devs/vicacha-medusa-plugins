@@ -1,7 +1,7 @@
 import { AdminOrder } from "@medusajs/framework/types"
 import { toast } from "@medusajs/ui"
 import { usePaymentProviders } from "@vicacha-devs/medusa-shared-admin/admin"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 
 import { EBoldPaymentProvider } from "../../../../types"
@@ -29,31 +29,22 @@ export const useBoldWidgetState = (order: AdminOrder) => {
   const isLinkEnabled = activeBoldProviders.includes(EBoldPaymentProvider.LINK)
   const isQrEnabled = activeBoldProviders.includes(EBoldPaymentProvider.ONLINE)
 
-  // 2. Mutations
-  const { mutateAsync: createLink, isPending: isCreatingLink } = useCreateBoldLink()
-  const { mutateAsync: createQr, isPending: isCreatingQr } = useCreateBoldQr()
-  const { mutateAsync: pushToTerminal, isPending: isPushingToPos } = usePushToBoldTerminal()
+  // 2. Check if THIS specific order is associated with Bold
+  const belongsToBold = useMemo(() => {
+    if (!order.payment_collections?.length) return false
 
-  const reference = `ORD_${order.display_id || order.id}_${Date.now()}`.slice(0, 60)
+    return order.payment_collections.some((collection) => {
+      const sessions = collection.payment_sessions || []
+      const payments = collection.payments || []
 
+      const hasBoldSession = sessions.some((s) => s.provider_id?.includes("bold"))
+      const hasBoldPayment = payments.some((p) => p.provider_id?.includes("bold"))
 
-  // 3. SSE Stream
-  useBoldPaymentStatusStream({
-    sessionId: activeSessionId,
-    enabled: !!activeSessionId,
-    onSuccess: () => {
-      toast(t("bold.admin.widget.toast.payment_approved"), {
-        description: t("bold.admin.widget.status.approved_msg"),
-      })
-    },
-    onError: () => {
-      toast(t("bold.admin.widget.toast.payment_rejected"), {
-        description: t("bold.admin.widget.status.rejected_msg"),
-      })
-    },
-  })
+      return hasBoldSession || hasBoldPayment
+    })
+  }, [order.payment_collections])
 
-  // 4. Status Check
+  // 3. Status Check (Moved up before SSE Stream)
   const paymentCollection = order.payment_collections?.[0]
   const paymentCollectionId = paymentCollection?.id
 
@@ -68,7 +59,32 @@ export const useBoldWidgetState = (order: AdminOrder) => {
 
   const isApproved = deriveStatus()
 
-  // 5. Handlers
+  // 4. SSE Stream
+  useBoldPaymentStatusStream({
+    sessionId: activeSessionId,
+    enabled: !!activeSessionId && !isApproved,
+    onSuccess: () => {
+      setActiveSessionId(null)
+      toast(t("bold.admin.widget.toast.payment_approved"), {
+        description: t("bold.admin.widget.status.approved_msg"),
+      })
+    },
+    onError: () => {
+      setActiveSessionId(null)
+      toast(t("bold.admin.widget.toast.payment_rejected"), {
+        description: t("bold.admin.widget.status.rejected_msg"),
+      })
+    },
+  })
+
+  // 5. Mutations
+  const { mutateAsync: createLink, isPending: isCreatingLink } = useCreateBoldLink()
+  const { mutateAsync: createQr, isPending: isCreatingQr } = useCreateBoldQr()
+  const { mutateAsync: pushToTerminal, isPending: isPushingToPos } = usePushToBoldTerminal()
+
+  const reference = `ORD_${order.display_id || order.id}_${Date.now()}`.slice(0, 60)
+
+  // 6. Handlers
   const handlePushToPos = async () => {
     if (!paymentCollectionId || !terminalSerial) {
       toast(t("bold.admin.widget.toast.error"), {
@@ -89,7 +105,7 @@ export const useBoldWidgetState = (order: AdminOrder) => {
         reference,
         userEmail: order.email || "guest@noemail.local", // TODO: get a better placeholder
       })
-      if (res?.session_id) setActiveSessionId(res.session_id)
+      if (res?.paymentSession?.id) setActiveSessionId(res.paymentSession.id)
       toast(t("bold.admin.widget.toast.terminal_sent"), {
         description: t("bold.admin.widget.status.waiting_terminal"),
       })
@@ -134,7 +150,7 @@ export const useBoldWidgetState = (order: AdminOrder) => {
           paymentCollectionId,
         })
         setPaymentLink(result.qr_payload)
-        if (result.session_id) setActiveSessionId(result.session_id)
+        if (result?.paymentSession?.id) setActiveSessionId(result.paymentSession.id)
         toast(t("bold.admin.widget.toast.qr_generated"), {
           description: t("bold.admin.widget.status.waiting_qr"),
         })
@@ -157,7 +173,7 @@ export const useBoldWidgetState = (order: AdminOrder) => {
       isCreatingLink,
       isCreatingQr,
       isPushingToPos,
-      hasBoldProviders: activeBoldProviders.length > 0,
+      hasBoldProviders: activeBoldProviders.length > 0 && belongsToBold,
     },
     actions: {
       setTerminalSerial,
