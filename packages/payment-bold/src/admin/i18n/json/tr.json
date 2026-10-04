@@ -1,15 +1,32 @@
 {
   "bold": {
     "admin": {
+      "settings": {
+        "title": "Bold Kolombiya Ayarları",
+        "subtitle": "Aktif ödeme sağlayıcılarını, POS terminal filosunu ve mevcut ödeme yöntemlerini yönetin.",
+        "refresh": "Durumu Yenile",
+        "enabled_providers": "Etkin Sağlayıcılar",
+        "no_providers": "Medusa yapılandırmasında kayıtlı Bold ödeme sağlayıcısı bulunamadı.",
+        "available_methods": "Kullanılabilir Ödeme Yöntemleri",
+        "no_methods": "Ödeme yöntemi döndürülmedi.",
+        "loading": "Yükleniyor...",
+        "unauthorized_short": "API Erişimi Bekliyor (403)",
+        "unauthorized_methods_desc": "Lütfen Bold Üye İşyeri Portalınızda Çevrimiçi Ödemeler (API de Pagos en Línea) özelliğinin etkinleştirildiğinden emin olun.",
+        "enable_payments_link": "Çevrimiçi Ödeme API'sini Etkinleştir →",
+        "unauthorized_terminals_title": "POS Terminal Entegrasyon Yetkisi Gerekli (403)",
+        "unauthorized_terminals_desc": "Datáfono POS işlemleri Bold portalınız üzerinden API entegrasyonları için açıkça yetkilendirilmelidir.",
+        "enable_terminals_link": "Terminalleri Yetkilendir →"
+      },
       "widget": {
         "title": "Bold Ödeme İşlemleri",
-        "description": "Müşteriye uzaktan veya POS ödemesi gönderin",
+        "description": "Müşteriye uzaktan ödeme bağlantısı veya POS ödemesi gönderin",
         "link_btn": "Ödeme Bağlantısı",
-        "qr_btn": "QR Kodu",
+        "qr_btn": "QR Kod",
         "terminal_btn": "Terminale Gönder",
-        "terminal_placeholder": "POS Seri Numarası (örn. POS_SMART_01)",
+        "terminal_placeholder": "POS Seri No (ör. POS_SMART_01)",
         "send_to_terminal": "POS Terminaline Gönder",
         "approved": "Ödeme Onaylandı",
+        "processing": "Ödeme İşleniyor",
         "copy_link": "Bağlantıyı Kopyala",
         "copied": "Kopyalandı",
         "copied_desc": "Ödeme bağlantısı panoya kopyalandı!",
@@ -17,15 +34,15 @@
         "paid_and_captured": "Ödendi ve Tahsil Edildi"
       },
       "terminal_status": {
-        "title": "Bold POS Cihaz Durumu",
-        "refresh": "Cihazları Yenile",
+        "title": "Bold POS Terminal Filosu Durumu",
+        "refresh": "Filoyu Yenile",
         "serial": "Seri Numarası",
         "model": "Donanım Modeli",
         "status": "Durum",
         "battery": "Pil",
         "connectivity": "Bağlantı",
         "unknown": "BİLİNMİYOR",
-        "na": "YOK"
+        "na": "N/A"
       },
       "audit": {
         "title": "Bold Ödeme Denetim Kaydı",
@@ -35,7 +52,7 @@
         "payment_captured": "Ödeme Tahsil Edildi ve Kapatıldı",
         "mode_link": "Ödeme Bağlantısı",
         "mode_terminal": "Terminale Gönder",
-        "ref": "Referans: {{ref}}",
+        "ref": "Ref: {{ref}}",
         "amount": "Tutar: ${{amount}} {{currency}}",
         "headers": {
           "event": "Olay",
@@ -43,11 +60,11 @@
           "reference": "Referans",
           "amount": "Tutar",
           "status": "Durum",
-          "timestamp": "Tarih/Saat"
+          "timestamp": "Zaman Damgası"
         },
         "statuses": {
           "success": "BAŞARILI",
-          "pending": "BEKLEMEDE",
+          "pending": "BEKLİYOR",
           "info": "BİLGİ"
         }
       },
@@ -63,7 +80,7 @@
         "invalid_amount_title": "Geçersiz Tutar",
         "invalid_amount_desc": "Lütfen 1 ile ${{max}} COP arasında bir tutar girin.",
         "success_title": "İade İşlendi",
-        "success_desc": "${{amount}} COP tutarındaki iade başarıyla gerçekleşti.",
+        "success_desc": "${{amount}} COP tutarındaki iade başarılı oldu.",
         "error_title": "İade Hatası"
       }
     }

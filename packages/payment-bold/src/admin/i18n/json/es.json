@@ -1,31 +1,48 @@
 {
   "bold": {
     "admin": {
+      "settings": {
+        "title": "Configuración de Bold Colombia",
+        "subtitle": "Gestione proveedores de pago activos, la flota de datáfonos POS y métodos de pago disponibles.",
+        "refresh": "Actualizar Estado",
+        "enabled_providers": "Proveedores Habilitados",
+        "no_providers": "No hay proveedores de pago Bold registrados en la configuración de Medusa.",
+        "available_methods": "Métodos de Pago Disponibles",
+        "no_methods": "No se retornaron métodos de pago.",
+        "loading": "Cargando...",
+        "unauthorized_short": "Acceso a API Pendiente (403)",
+        "unauthorized_methods_desc": "Asegúrese de que la API de Pagos en Línea esté activada en su Portal de Comercios Bold.",
+        "enable_payments_link": "Habilitar API de Pagos en Línea →",
+        "unauthorized_terminals_title": "Autorización de Integración POS Requerida (403)",
+        "unauthorized_terminals_desc": "Las transacciones de datáfono POS deben ser autorizadas explícitamente para integraciones API en su portal de Bold.",
+        "enable_terminals_link": "Autorizar Terminales →"
+      },
       "widget": {
         "title": "Acciones de Pago Bold",
         "description": "Despachar pago remoto o POS al cliente",
         "link_btn": "Enlace de Pago",
         "qr_btn": "Código QR",
         "terminal_btn": "Envío a Datáfono",
-        "terminal_placeholder": "Serial del Datáfono (ej. POS_SMART_01)",
-        "send_to_terminal": "Enviar a Datáfono POS",
+        "terminal_placeholder": "Serial de Datáfono (ej. POS_SMART_01)",
+        "send_to_terminal": "Enviar a Datáfono",
         "approved": "Pago Aprobado",
+        "processing": "Procesando Pago",
         "copy_link": "Copiar Enlace",
         "copied": "Copiado",
         "copied_desc": "¡Enlace de pago copiado al portapapeles!",
-        "already_captured": "Este pedido ya ha sido autorizado y capturado exitosamente mediante Bold.",
+        "already_captured": "Esta orden ya ha sido autorizada y capturada exitosamente con Bold.",
         "paid_and_captured": "Pagado y Capturado"
       },
       "terminal_status": {
-        "title": "Estado de Datáfonos Bold",
-        "refresh": "Actualizar Datáfonos",
+        "title": "Estado de Flota de Datáfonos POS Bold",
+        "refresh": "Actualizar Flota",
         "serial": "Número de Serie",
-        "model": "Modelo",
+        "model": "Modelo de Hardware",
         "status": "Estado",
         "battery": "Batería",
         "connectivity": "Conectividad",
         "unknown": "DESCONOCIDO",
-        "na": "N/A"
+        "na": "N/D"
       },
       "audit": {
         "title": "Auditoría de Pagos Bold",
@@ -43,28 +60,28 @@
           "reference": "Referencia",
           "amount": "Monto",
           "status": "Estado",
-          "timestamp": "Fecha y Hora"
+          "timestamp": "Marca de Tiempo"
         },
         "statuses": {
-          "success": "EXITOSO",
+          "success": "ÉXITO",
           "pending": "PENDIENTE",
           "info": "INFO"
         }
       },
       "refund": {
-        "title": "Devolución de Pago Bold",
+        "title": "Reembolso de Pago Bold",
         "captured": "Capturado",
         "fully_refunded": "Reembolsado Totalmente",
-        "fully_refunded_desc": "Este pago ha sido reembolsado en su totalidad (${{amount}} COP).",
+        "fully_refunded_desc": "Este pago ha sido reembolsado totalmente (${{amount}} COP).",
         "captured_total": "Total Capturado",
         "remaining": "Restante Reembolsable",
-        "placeholder": "Monto a Devolver (COP)",
-        "action": "Emitir Devolución",
+        "placeholder": "Monto a Reembolsar (COP)",
+        "action": "Emitir Reembolso",
         "invalid_amount_title": "Monto Inválido",
         "invalid_amount_desc": "Por favor ingrese un monto entre 1 y ${{max}} COP.",
-        "success_title": "Devolución Procesada",
-        "success_desc": "La devolución de ${{amount}} COP fue exitosa.",
-        "error_title": "Error en Devolución"
+        "success_title": "Reembolso Procesado",
+        "success_desc": "El reembolso de ${{amount}} COP fue exitoso.",
+        "error_title": "Error de Reembolso"
       }
     }
   }

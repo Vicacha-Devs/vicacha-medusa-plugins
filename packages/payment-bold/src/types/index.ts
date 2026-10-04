@@ -1,5 +1,5 @@
 import { Logger } from "@medusajs/medusa"
-import { BOLD_ENVIRONMENT, BOLD_PAYMENT_METHOD_TYPE } from "./constants"
+import { BOLD_ENVIRONMENT, BOLD_PAYMENT_METHOD_QR_FORMAT, BOLD_PAYMENT_METHOD_TYPE } from "./constants"
 import { BoldApiClient } from "@payment-bold/sdk/client"
 
 // export { BOLD_PLUGIN_PROVIDERS } from "./constants"
@@ -10,6 +10,7 @@ export { EBoldPaymentProvider } from "./enums"
 // ==========================================
 
 export type TBoldEnvironment = typeof BOLD_ENVIRONMENT[number]
+export type TBoldPaymentMethodQrFormat = typeof BOLD_PAYMENT_METHOD_QR_FORMAT[number]
 
 export interface BoldBaseOptions {
   // Payment Button Keys (used for Payment Links & Checkout Webhooks)
@@ -101,7 +102,7 @@ export interface BoldMetadata {
 
 export interface BoldPaymentMethodQR {
   name: "QR"
-  qr_format?: "BOLD_BASE64" | "PLAIN_BASE64" | "TEXT"
+  qr_format?: TBoldPaymentMethodQrFormat
 }
 
 export interface BoldPaymentMethodCard {

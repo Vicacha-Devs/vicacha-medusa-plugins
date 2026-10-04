@@ -1,6 +1,6 @@
 import { defineWidgetConfig } from "@medusajs/admin-sdk"
 import { DetailWidgetProps, AdminOrder } from "@medusajs/framework/types"
-import { Container, Heading, StatusBadge, toast, Text } from "@medusajs/ui"
+import { Container, Heading, StatusBadge, toast, Text, Badge } from "@medusajs/ui"
 import { useState, useEffect } from "react"
 import { useTranslation } from "react-i18next"
 
@@ -35,20 +35,25 @@ export const BoldPaymentActionsWidget = ({
   return (
     <Container className="p-4 space-y-4">
       {/* Widget Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-ui-border-base">
-        <div>
-          <Heading level="h2" className="text-sm font-semibold text-ui-fg-base">
+      <div className="flex items-start justify-between gap-x-2 pb-3 border-b border-ui-border-base">
+        <div className="space-y-0.5 min-w-0 flex-1">
+          <Heading level="h2" className="text-sm font-semibold text-ui-fg-base truncate">
             {t("bold.admin.widget.title")}
           </Heading>
-          <Text className="text-xs text-ui-fg-subtle">
+          <Text className="text-xs text-ui-fg-subtle line-clamp-2">
             {t("bold.admin.widget.description")}
           </Text>
         </div>
-        <StatusBadge color={state.isApproved ? "green" : "orange"}>
+
+        <Badge
+          color={state.isApproved ? "green" : "orange"}
+          size="small"
+          className="whitespace-nowrap shrink-0"
+        >
           {state.isApproved
-            ? t("bold.admin.widget.approved").toUpperCase()
-            : t("bold.admin.widget.processing").toUpperCase()}
-        </StatusBadge>
+            ? t("bold.admin.widget.approved")
+            : t("bold.admin.widget.processing")}
+        </Badge>
       </div>
 
       <div className="space-y-4">

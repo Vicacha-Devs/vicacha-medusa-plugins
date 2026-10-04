@@ -1,23 +1,40 @@
 {
   "bold": {
     "admin": {
+      "settings": {
+        "title": "إعدادات Bold كولومبيا",
+        "subtitle": "إدارة مزودي الدفع النشطين، أجهزة POS وطرق الدفع المتاحة.",
+        "refresh": "تحديث الحالة",
+        "enabled_providers": "المزودون المفعّلون",
+        "no_providers": "لا يوجد مزودو دفع Bold مسجلون في إعدادات Medusa.",
+        "available_methods": "طرق الدفع المتاحة",
+        "no_methods": "لم يتم إرجاع أي طرق دفع.",
+        "loading": "جاري التحميل...",
+        "unauthorized_short": "وصول API معلق (403)",
+        "unauthorized_methods_desc": "يرجى التأكد من تفعيل واجهة برمجة تطبيقات المدفوعات عبر الإنترنت في بوابة التجار الخاصة بك في Bold.",
+        "enable_payments_link": "تفعيل API المدفوعات عبر الإنترنت ←",
+        "unauthorized_terminals_title": "تفويض الربط البرمجي لأجهزة POS مطلوب (403)",
+        "unauthorized_terminals_desc": "يجب تفويض معاملات أجهزة POS صراحةً للربط البرمجي عبر بوابة التجار في Bold.",
+        "enable_terminals_link": "تفويض أجهزة POS ←"
+      },
       "widget": {
-        "title": "إجراءات الدفع Bold",
-        "description": "إرسال الدفع عن بعد أو عبر نقاط البيع للعميل",
+        "title": "إجراءات دفع Bold",
+        "description": "إرسال رابط دفع عن بُعد أو دفع عبر جهاز POS للعميل",
         "link_btn": "رابط الدفع",
         "qr_btn": "رمز QR",
         "terminal_btn": "إرسال للجهاز",
         "terminal_placeholder": "الرقم التسلسلي للجهاز (مثال: POS_SMART_01)",
         "send_to_terminal": "إرسال إلى جهاز POS",
         "approved": "تمت الموافقة على الدفع",
+        "processing": "جاري معالجة الدفع",
         "copy_link": "نسخ الرابط",
         "copied": "تم النسخ",
         "copied_desc": "تم نسخ رابط الدفع إلى الحافظة!",
-        "already_captured": "تم تصريح واستلام هذا الطلب بنجاح عبر بولد.",
-        "paid_and_captured": "مدفوع ومستلم"
+        "already_captured": "تمت تفويض وتحصيل هذا الطلب بنجاح عبر Bold.",
+        "paid_and_captured": "مدفوع ومحصل"
       },
       "terminal_status": {
-        "title": "حالة أجهزة نقاط البيع بولد",
+        "title": "حالة أجهزة POS Bold",
         "refresh": "تحديث الأجهزة",
         "serial": "الرقم التسلسلي",
         "model": "طراز الجهاز",
@@ -28,14 +45,14 @@
         "na": "غير متاح"
       },
       "audit": {
-        "title": "سجل مراجعة مدفوعات بولد",
+        "title": "سجل مراجعة مدفوعات Bold",
         "events_count": "تم تسجيل {{count}} أحداث",
-        "session_init": "بدء الجلسة",
+        "session_init": "تم بدء الجلسة",
         "payment_auth": "تم تفويض الدفع",
-        "payment_captured": "تم تحصيل الدفع وتصفيته",
+        "payment_captured": "تم تحصيل الدفع وتسويته",
         "mode_link": "رابط الدفع",
         "mode_terminal": "إرسال للجهاز",
-        "ref": "مرجع: {{ref}}",
+        "ref": "المرجع: {{ref}}",
         "amount": "المبلغ: ${{amount}} {{currency}}",
         "headers": {
           "event": "الحدث",
@@ -43,7 +60,7 @@
           "reference": "المرجع",
           "amount": "المبلغ",
           "status": "الحالة",
-          "timestamp": "الوقت والتاريخ"
+          "timestamp": "الطابع الزمني"
         },
         "statuses": {
           "success": "ناجح",
@@ -52,18 +69,18 @@
         }
       },
       "refund": {
-        "title": "استرداد مدفوعات بولد",
+        "title": "استرداد مدفوعات Bold",
         "captured": "تم التحصيل",
-        "fully_refunded": "تم الاسترداد بالكامل",
+        "fully_refunded": "مسترد بالكامل",
         "fully_refunded_desc": "تم استرداد هذا المبلغ بالكامل (${{amount}} COP).",
-        "captured_total": "إجمالي المستلم",
-        "remaining": "المتبقي القابل للاسترداد",
+        "captured_total": "إجمالي المحصل",
+        "remaining": "المتبقي للاسترداد",
         "placeholder": "مبلغ الاسترداد (COP)",
         "action": "إجراء الاسترداد",
-        "invalid_amount_title": "مبلغ غير صالحة",
+        "invalid_amount_title": "مبلغ غير صحيح",
         "invalid_amount_desc": "يرجى إدخال مبلغ بين 1 و ${{max}} COP.",
-        "success_title": "تم معالجة الاسترداد",
-        "success_desc": "نجح استرداد مبلغ ${{amount}} COP.",
+        "success_title": "تمت معالجة الاسترداد",
+        "success_desc": "تم استرداد ${{amount}} COP بنجاح.",
         "error_title": "خطأ في الاسترداد"
       }
     }

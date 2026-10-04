@@ -16,6 +16,7 @@ import {
   BoldTerminalsResponse,
   CreatePaymentLinkPayload,
   CreateRefundPayload,
+  TBoldPaymentMethodQrFormat,
 } from "@payment-bold/types"
 
 const HTTP_ERROR_MAP: Record<number, string> = {
@@ -135,7 +136,7 @@ export class BoldHttpClient {
       default:
         return {
           name: "QR",
-          qr_format: payload.qrFormat || "TEXT",
+          qr_format: (payload.qrFormat) as unknown as TBoldPaymentMethodQrFormat || "TEXT",
         }
     }
   }
@@ -202,7 +203,7 @@ export class BoldHttpClient {
   /**
    * Queries available POS payment terminals associated with the account.
    * Key: integrationApiKey
-   * Target: integrationsUrl (/payments/terminals)
+   * Target: integrationsUrl (/payments/binded-terminals)
    */
   async getTerminals(): Promise<Array<BoldTerminalItem>> {
     const response = await this.request<BoldTerminalsResponse>(
@@ -266,12 +267,12 @@ export class BoldHttpClient {
   /**
    * Queries available payment methods enabled for the merchant.
    * Key: integrationApiKey
-   * Target: integrationsUrl (/online/payment-methods/v1)
+   * Target: integrationsUrl (/payments/payment-methods)
    */
   async getAvailablePaymentMethods(): Promise<Array<BoldPaymentMethod>> {
     const response = await this.request<BoldPaymentMethodsResponse>(
       this.integrationsUrl,
-      "/online/payment-methods/v1",
+      "/payments/payment-methods",
       this.integrationApiKey,
       {
         method: "GET",

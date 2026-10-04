@@ -1,5 +1,7 @@
 export const BOLD_ENVIRONMENT = ["sandbox" , "production"] as const
 
+export const BOLD_PAYMENT_METHOD_QR_FORMAT = ["BOLD_BASE64", "PLAIN_BASE64", "TEXT"] as const
+
 export const BOLD_PAYMENT_PROVIDERS = [
   "pp_bold-link_bold",
   "pp_bold-online_bold",

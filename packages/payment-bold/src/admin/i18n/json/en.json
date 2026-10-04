@@ -1,6 +1,22 @@
 {
   "bold": {
     "admin": {
+      "settings": {
+        "title": "Bold Colombia Settings",
+        "subtitle": "Manage active payment providers, POS terminal fleet, and available payment methods.",
+        "refresh": "Refresh Status",
+        "enabled_providers": "Enabled Providers",
+        "no_providers": "No Bold payment providers registered in Medusa configuration.",
+        "available_methods": "Available Payment Methods",
+        "no_methods": "No payment methods returned.",
+        "loading": "Loading...",
+        "unauthorized_short": "API Access Pending (403)",
+        "unauthorized_methods_desc": "Please ensure Online Payments (API de Pagos en Línea) is activated in your Bold Merchant Portal.",
+        "enable_payments_link": "Enable Online Payments API →",
+        "unauthorized_terminals_title": "POS Terminal Integration Authorization Required (403)",
+        "unauthorized_terminals_desc": "Datáfono POS transactions must be explicitly authorized for API Integrations in your Bold merchant portal.",
+        "enable_terminals_link": "Authorize Terminals →"
+      },
       "widget": {
         "title": "Bold Payment Actions",
         "description": "Dispatch remote or POS payment to customer",
@@ -10,6 +26,7 @@
         "terminal_placeholder": "Data-phone Serial (e.g. POS_SMART_01)",
         "send_to_terminal": "Push to POS Terminal",
         "approved": "Payment Approved",
+        "processing": "Processing Payment",
         "copy_link": "Copy Link",
         "copied": "Copied",
         "copied_desc": "Payment link copied to clipboard!",

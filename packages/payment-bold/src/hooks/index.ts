@@ -1,4 +1,5 @@
 export * from "./use-bold-checkout-handler"
+export * from "./use-bold-payment-methods"
 export * from "./use-bold-payment-status-stream"
 export * from "./use-bold-refund"
 export * from "./use-bold-terminals"

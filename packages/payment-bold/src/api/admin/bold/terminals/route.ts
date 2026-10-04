@@ -19,8 +19,7 @@ export const GET = async (
     )
 
     return res.status(500).json({
-      message: "Failed to retrieve terminal fleet status from Bold API",
-      error: err.message,
+      message: err.message || "Failed to retrieve terminal fleet status from Bold API",
     })
   }
 }

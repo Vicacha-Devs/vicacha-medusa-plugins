@@ -1,7 +1,7 @@
 import { AuthenticatedMedusaRequest, MedusaResponse } from "@medusajs/framework"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { getBoldPaymentMethodsWorkflow } from "@payment-bold/workflows/get-bold-payment-methods"
 
-import { getBoldPaymentMethodsWorkflow } from "../../../../workflows/get-bold-payment-methods"
 
 export const GET = async (
   req: AuthenticatedMedusaRequest,
