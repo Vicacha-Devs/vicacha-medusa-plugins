@@ -1,6 +1,6 @@
 import { AdminCreateCustomer, AdminCustomer } from "@medusajs/framework/types"
 import { FetchError } from "@medusajs/js-sdk"
-import { useMutation, UseMutationOptions } from "@tanstack/react-query"
+import { useMutation, UseMutationOptions, UseMutationResult } from "@tanstack/react-query"
 
 import { queryClient, queryKeysFactory, sdk } from "../../lib"
 
@@ -16,7 +16,7 @@ export const useCreateCustomer = (
     FetchError,
     AdminCreateCustomer
   >
-) => {
+): UseMutationResult<{ customer: AdminCustomer }, FetchError, AdminCreateCustomer> => {
   return useMutation({
     mutationFn: (payload) => sdk.admin.customer.create(payload),
     onSuccess: (data, variables, context) => {

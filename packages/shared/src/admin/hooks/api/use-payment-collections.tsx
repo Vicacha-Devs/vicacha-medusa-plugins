@@ -1,7 +1,7 @@
 import { ordersQueryKeys } from "@medusajs/dashboard/hooks"
 import { AdminCreatePaymentCollection, AdminDeletePaymentCollectionResponse, AdminMarkPaymentCollectionAsPaid, AdminPaymentCollectionResponse } from "@medusajs/framework/types"
 import { FetchError } from "@medusajs/js-sdk"
-import { useMutation, UseMutationOptions } from "@tanstack/react-query"
+import { useMutation, UseMutationOptions, UseMutationResult } from "@tanstack/react-query"
 
 import { queryClient, queryKeysFactory, sdk } from "../../lib"
 
@@ -18,7 +18,7 @@ export const useCreatePaymentCollection = (
     FetchError,
     AdminCreatePaymentCollection
   >
-) => {
+): UseMutationResult<AdminPaymentCollectionResponse, FetchError, AdminCreatePaymentCollection> => {
   return useMutation({
     mutationFn: (payload) => sdk.admin.paymentCollection.create(payload),
     onSuccess: (data, variables, context) => {
@@ -48,7 +48,7 @@ export const useMarkPaymentCollectionAsPaid = (
     FetchError,
     AdminMarkPaymentCollectionAsPaid
   >
-) => {
+): UseMutationResult<AdminPaymentCollectionResponse, FetchError, AdminMarkPaymentCollectionAsPaid> => {
   return useMutation({
     mutationFn: (payload) =>
       sdk.admin.paymentCollection.markAsPaid(paymentCollectionId, payload),
@@ -81,7 +81,7 @@ export const useDeletePaymentCollection = (
     >,
     "mutationFn"
   >
-) => {
+): UseMutationResult<AdminDeletePaymentCollectionResponse, FetchError, string> => {
   return useMutation({
     mutationFn: (id: string) => sdk.admin.paymentCollection.delete(id),
     onSuccess: (data, variables, context) => {

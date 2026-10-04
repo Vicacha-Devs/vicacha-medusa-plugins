@@ -1,7 +1,13 @@
 import { useRegions } from "@medusajs/dashboard/hooks"
 import { useMemo } from "react"
 
-export function usePaymentProviders(currencyCode?: string) {
+interface UsePaymentProvidersResult {
+  providers: any[]
+  isLoading: boolean
+  isError: boolean
+}
+
+export function usePaymentProviders(currencyCode?: string): UsePaymentProvidersResult {
   const { regions, isLoading, isError } = useRegions({
     fields: "+payment_providers.*",
   })
