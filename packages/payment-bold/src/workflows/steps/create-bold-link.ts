@@ -39,7 +39,7 @@ export const createBoldLinkStep = createStep(
     const { result: paymentSession } = await createPaymentSessionsWorkflow(container).run({
       input: {
         payment_collection_id: collectionId,
-        provider_id: EBoldPaymentProvider.LINK,
+        provider_id: `pp_${EBoldPaymentProvider.LINK}_bold`,
         data: {
           reference: input.reference,
           description: input.description,
