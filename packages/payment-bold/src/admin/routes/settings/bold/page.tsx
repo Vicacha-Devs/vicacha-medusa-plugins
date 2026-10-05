@@ -1,198 +1,257 @@
-import { defineRouteConfig } from "@medusajs/admin-sdk"
+import { defineRouteConfig } from "@medusajs/admin-sdk";
+import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared";
+import { LayoutComposer } from "@medusajs/dashboard/components";
+import { Heading, Text, Button } from "@medusajs/ui";
+import { usePaymentProviders } from "@vicacha-devs/medusa-shared-admin/admin";
+import { useTranslation } from "react-i18next";
+
+import { useBoldIntegrationApiPaymentMethods, useBoldPaymentLinkPaymentMethods, useBoldTerminals } from "../../../../hooks";
+import { isUnauthorizedError, getActiveBoldProviders } from "../../../../lib";
+import { EBoldPaymentProvider } from "../../../../types";
 import {
-  Container,
-  Heading,
-  Badge,
-  StatusBadge,
-  Text,
-  Alert,
-  Button,
-} from "@medusajs/ui"
-import { useTranslation } from "react-i18next"
-import { usePaymentProviders } from "@vicacha-devs/medusa-shared-admin/admin"
-
-import { EBoldPaymentProvider } from "../../../../types"
-import { isUnauthorizedError, getActiveBoldProviders } from "../../../../lib"
-import { useBoldPaymentMethods, useBoldTerminals } from "../../../../hooks"
-import { BoldFavIcon } from "../../../components/icons/bold-fav"
-import BoldTerminalStatusWidget from "../../../components/bold-terminal-status"
-
-const ProviderCard = ({
-  title,
-  providerId,
-  isEnabled,
-}: {
-  title: string
-  providerId: string
-  isEnabled: boolean
-}) => (
-  <div className="p-3 border border-ui-border-base bg-ui-bg-base rounded-md space-y-2">
-    <div className="flex items-center justify-between">
-      <Text className="text-xs font-semibold text-ui-fg-base">{title}</Text>
-      <StatusBadge color={isEnabled ? "green" : "grey"} />
-    </div>
-    <Text className="text-[10px] font-mono text-ui-fg-subtle truncate">{providerId}</Text>
-  </div>
-)
+  Section,
+  ProviderCard,
+  MethodItem,
+  BoldTerminalStatusWidget,
+} from "../../../components";
+import { BoldFavIcon } from "../../../components/icons/bold-fav";
 
 export const BoldSettingsPage = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
-  // 1. Fetch Registered Medusa Payment Providers
-  const { providers = [], isLoading: isLoadingProviders } = usePaymentProviders()
-  const activeBoldProviders = getActiveBoldProviders(providers)
+  // 1. Payment Providers
+  const { providers = [], isLoading: isLoadingProviders } =
+    usePaymentProviders();
+  const activeBoldProviders = getActiveBoldProviders(providers);
 
-  // 2. Query Live Terminals and Payment Methods from Bold API
-  const { refetch: refetchTerminals } = useBoldTerminals()
-
+  // 2. Integration API Payment Methods
   const {
-    data: paymentMethodsData,
-    isLoading: isLoadingMethods,
-    error: methodsError,
-    refetch: refetchMethods,
-  } = useBoldPaymentMethods()
+    data: integrationMethodsData,
+    isLoading: isLoadingIntegration,
+    error: integrationError,
+    refetch: refetchIntegration,
+  } = useBoldIntegrationApiPaymentMethods();
+  const integrationMethods = Array.isArray(integrationMethodsData)
+    ? integrationMethodsData
+    : integrationMethodsData || [];
 
-  const paymentMethods = Array.isArray(paymentMethodsData)
-    ? paymentMethodsData
-    : paymentMethodsData || []
+  // 3. Payment Link Methods
+  const {
+    data: linkMethods,
+    isLoading: isLoadingLink,
+    error: paymentLinkError,
+    refetch: refetchLink
+  } = useBoldPaymentLinkPaymentMethods()
 
-  const isMethodsUnauthorized = isUnauthorizedError(methodsError)
+  // 4. Terminals
+  const { refetch: refetchTerminals } = useBoldTerminals();
 
   const handleRefresh = () => {
-    refetchTerminals()
-    refetchMethods()
-  }
+    refetchTerminals();
+    refetchIntegration();
+    refetchLink();
+  };
 
   return (
-    <Container className="p-6 space-y-6 max-w-6xl">
+    <div className="flex flex-col gap-y-4 h-full">
       {/* Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-ui-border-base">
-        <div>
-          <Heading level="h1" className="text-xl font-semibold text-ui-fg-base">
-            {t("bold.admin.settings.title", { defaultValue: "Bold Colombia Settings" })}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-ui-border-base">
+        <div className="flex-1">
+          <Heading level="h1" className="text-lg font-semibold">
+            {t("bold.admin.settings.title", {
+              defaultValue: "Bold Colombia Settings",
+            })}
           </Heading>
-          <Text className="text-xs text-ui-fg-subtle">
+          <Text className="text-xs text-ui-fg-subtle mt-1">
             {t("bold.admin.settings.subtitle", {
-              defaultValue:
-                "Manage active payment providers, POS terminal fleet, and available payment methods.",
+              defaultValue: "Manage payment providers and methods.",
             })}
           </Text>
         </div>
-
         <Button size="small" variant="secondary" onClick={handleRefresh}>
-          {t("bold.admin.settings.refresh", { defaultValue: "Refresh Status" })}
+          {t("bold.admin.settings.refresh", { defaultValue: "Refresh" })}
         </Button>
       </div>
 
-      {/* Top Grid: Enabled Providers & Available Methods */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Enabled Providers */}
-        <div className="lg:col-span-2 border border-ui-border-base rounded-lg p-5 bg-ui-bg-subtle/30 space-y-4">
-          <Heading level="h2" className="text-base font-semibold text-ui-fg-base">
-            {t("bold.admin.settings.enabled_providers", { defaultValue: "Enabled Providers" })}
-          </Heading>
-
-          {isLoadingProviders ? (
-            <Text className="text-xs text-ui-fg-subtle">
-              {t("bold.admin.settings.loading", { defaultValue: "Loading providers..." })}
-            </Text>
-          ) : activeBoldProviders.length === 0 ? (
-            <Text className="text-xs text-ui-fg-subtle">
-              {t("bold.admin.settings.no_providers", {
-                defaultValue: "No Bold payment providers registered in Medusa configuration.",
-              })}
-            </Text>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-              <ProviderCard
-                title="Payment Link"
-                providerId={EBoldPaymentProvider.LINK}
-                isEnabled={activeBoldProviders.includes(EBoldPaymentProvider.LINK)}
-              />
-              <ProviderCard
-                title="QR Code / Online"
-                providerId={EBoldPaymentProvider.ONLINE}
-                isEnabled={activeBoldProviders.includes(EBoldPaymentProvider.ONLINE)}
-              />
-              <ProviderCard
-                title="Data-phone Terminal"
-                providerId={EBoldPaymentProvider.TERMINAL}
-                isEnabled={activeBoldProviders.includes(EBoldPaymentProvider.TERMINAL)}
-              />
-              <ProviderCard
-                title="Bold Button"
-                providerId={EBoldPaymentProvider.BUTTON || "pp_bold-button"}
-                isEnabled={activeBoldProviders.includes(
-                  EBoldPaymentProvider.BUTTON || ("pp_bold-button" as any)
-                )}
-              />
-            </div>
-          )}
-        </div>
-
-        {/* Available Payment Methods (Inlined Callout inside card) */}
-        <div className="border border-ui-border-base rounded-lg p-5 bg-ui-bg-subtle/30 space-y-4">
-          <Heading level="h2" className="text-base font-semibold text-ui-fg-base">
-            {t("bold.admin.settings.available_methods", { defaultValue: "Available Payment Methods" })}
-          </Heading>
-
-          {isLoadingMethods ? (
-            <Text className="text-xs text-ui-fg-subtle">
-              {t("bold.admin.settings.loading", { defaultValue: "Querying Bold API..." })}
-            </Text>
-          ) : isMethodsUnauthorized ? (
-            <div className="p-3 bg-ui-bg-base border border-ui-border-base rounded-md space-y-2">
-              <div className="flex items-center gap-x-1.5 text-xs font-semibold text-ui-fg-error">
-                <span>{t("bold.admin.settings.unauthorized_short", { defaultValue: "API Access Pending (403)" })}</span>
-              </div>
-              <Text className="text-[11px] text-ui-fg-subtle leading-normal">
-                {t("bold.admin.settings.unauthorized_methods_desc", {
-                  defaultValue:
-                    "Please ensure Online Payments (API de Pagos en Línea) is activated in your Bold Merchant Portal.",
+      {/* Content */}
+      <LayoutComposer
+        widgetsZonePrefix="travel_flights_list.list"
+        preferredLayoutId={CORE_LAYOUT_IDS.TWO_COLUMN}
+        sections={{
+          main: (
+            <>
+              {/* Providers */}
+              <Section
+                title={t("bold.admin.settings.enabled_providers", {
+                  defaultValue: "Enabled Providers",
                 })}
-              </Text>
-              <a
-                href="https://developers.bold.co/pagos-en-linea/api-de-pagos-en-linea/activacion"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[11px] font-medium text-ui-fg-interactive hover:underline block pt-0.5"
+                description={t("bold.admin.settings.enabled_providers_description", {
+                  defaultValue: "Active payment provider types",
+                })}
               >
-                {t("bold.admin.settings.enable_payments_link", {
-                  defaultValue: "Enable Online Payments API →",
+                {isLoadingProviders ? (
+                  <div className="p-4">
+                    <Text className="text-xs text-ui-fg-subtle">
+                      {t("bold.admin.settings.loading", { defaultValue: "Loading..." })}
+                    </Text>
+                  </div>
+                ) : activeBoldProviders.length === 0 ? (
+                  <div className="p-4">
+                    <Text className="text-xs text-ui-fg-subtle">
+                      {t("bold.admin.settings.no_providers_configured", {
+                        defaultValue: "No providers configured",
+                      })}
+                    </Text>
+                  </div>
+                ) : (
+                  <div className="p-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {[
+                      EBoldPaymentProvider.LINK,
+                      EBoldPaymentProvider.ONLINE,
+                      EBoldPaymentProvider.TERMINAL,
+                      EBoldPaymentProvider.BUTTON,
+                    ].map((provider) => {
+                      const providerKey = provider.replace("bold-", "");
+                      return (
+                        <ProviderCard
+                          key={provider}
+                          title={t(`bold.admin.settings.provider_${providerKey}`, {
+                            defaultValue: providerKey,
+                          })}
+                          providerId={provider}
+                          isEnabled={activeBoldProviders.includes(provider)}
+                        />
+                      );
+                    })}
+                  </div>
+                )}
+              </Section>
+              {/* Terminals */}
+              <BoldTerminalStatusWidget />
+            </>
+          ),
+          side: (
+            <>
+              {/* Integration API Methods */}
+              <Section
+                title={t("bold.admin.settings.integration_methods", {
+                  defaultValue: "Integration API Methods",
                 })}
-              </a>
-            </div>
-          ) : paymentMethods.length === 0 ? (
-            <Text className="text-xs text-ui-fg-subtle">
-              {t("bold.admin.settings.no_methods", { defaultValue: "No payment methods returned." })}
-            </Text>
-          ) : (
-            <div className="space-y-2">
-              {paymentMethods.map((method: any, idx: number) => (
-                <div
-                  key={idx}
-                  className="flex items-center justify-between p-2.5 rounded-md bg-ui-bg-base border border-ui-border-base text-xs"
-                >
-                  <span className="font-medium text-ui-fg-base">{method.name}</span>
-                  <Badge color={method.status === "ENABLED" ? "green" : "grey"} size="small">
-                    {method.status}
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
+                description={t("bold.admin.settings.integration_methods_description", {
+                  defaultValue: "POS and terminal payment methods",
+                })}
+              >
+                {isLoadingIntegration ? (
+                  <div className="p-4">
+                    <Text className="text-xs text-ui-fg-subtle">
+                      {t("bold.admin.settings.loading", { defaultValue: "Loading..." })}
+                    </Text>
+                  </div>
+                ) : isUnauthorizedError(integrationError) ? (
+                  <div className="p-4 bg-ui-bg-error/10 border border-ui-border-error rounded text-xs">
+                    <Text className="text-ui-fg-error font-medium">
+                      {t("bold.admin.settings.unauthorized_short", { defaultValue: "API Access Pending (403)" })}
+                    </Text>
+                    <Text className="text-ui-fg-subtle mt-1">
+                      {t("bold.admin.settings.unauthorized_methods_desc", {
+                        defaultValue:
+                          "Please ensure Online Payments (API de Pagos en Línea) is activated in your Bold Merchant Portal.",
+                      })}
+                    </Text>
+                    <a
+                      href="https://developers.bold.co/pagos-en-linea/api-de-pagos-en-linea/activacion"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] font-medium text-ui-fg-interactive hover:underline block pt-0.5"
+                    >
+                      {t("bold.admin.settings.enable_payments_link", {
+                        defaultValue: "Enable Online Payments API →",
+                      })}
+                    </a>
+                  </div>
+                ) : integrationMethods.length === 0 ? (
+                  <div className="p-4">
+                    <Text className="text-xs text-ui-fg-subtle">
+                      {t("bold.admin.settings.no_methods_available", {
+                        defaultValue: "No methods available",
+                      })}
+                    </Text>
+                  </div>
+                ) : (
+                  <div>
+                    {integrationMethods.map((m: any, i: number) => (
+                      <MethodItem key={i} name={m.name} status={m.status} />
+                    ))}
+                  </div>
+                )}
+              </Section>
 
-      {/* Terminal Fleet Widget Section */}
-      <BoldTerminalStatusWidget />
-    </Container>
-  )
-}
+              {/* Payment Link Methods */}
+              <Section
+                title={t("bold.admin.settings.payment_link_methods", {
+                  defaultValue: "Payment Link Methods",
+                })}
+                description={t("bold.admin.settings.payment_link_methods_description", {
+                  defaultValue: "Online payment methods (QR, Cards, PSE, Nequi)",
+                })}
+              >
+                {isLoadingLink ? (
+                  <div className="p-4">
+                    <Text className="text-xs text-ui-fg-subtle">
+                      {t("bold.admin.settings.loading", { defaultValue: "Loading..." })}
+                    </Text>
+                  </div>
+                ) : isUnauthorizedError(paymentLinkError) ? (
+                  <div className="p-4 bg-ui-bg-error/10 border border-ui-border-error rounded text-xs">
+                    <Text className="text-ui-fg-error font-medium">
+                      {t("bold.admin.settings.unauthorized_short", { defaultValue: "API Access Pending (403)" })}
+                    </Text>
+                    <Text className="text-ui-fg-subtle mt-1">
+                      {t("bold.admin.settings.unauthorized_methods_desc", {
+                        defaultValue:
+                          "Please ensure Online Payments (API de Pagos en Línea) is activated in your Bold Merchant Portal.",
+                      })}
+                    </Text>
+                    <a
+                      href="https://developers.bold.co/pagos-en-linea/api-de-pagos-en-linea/activacion"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] font-medium text-ui-fg-interactive hover:underline block pt-0.5"
+                    >
+                      {t("bold.admin.settings.enable_payments_link", {
+                        defaultValue: "Enable Online Payments API →",
+                      })}
+                    </a>
+                  </div>
+                ) : linkMethods?.online_methods?.length ? (
+                  <div>
+                    {linkMethods.online_methods.map((m: string, i: number) => (
+                      <MethodItem
+                        key={i}
+                        name={m}
+                        status={t("bold.admin.settings.method_status_available", {
+                          defaultValue: "Available",
+                        })}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-4">
+                    <Text className="text-xs text-ui-fg-subtle">
+                      {t("bold.admin.settings.no_methods_available", {
+                        defaultValue: "No methods available",
+                      })}
+                    </Text>
+                  </div>
+                )}
+              </Section>
+            </>
+          ),
+        }}
+      />
+    </div>
+  );
+};
 
-export const config = defineRouteConfig({
-  label: "Bold",
-  icon: BoldFavIcon,
-})
-
-export default BoldSettingsPage
+export const config = defineRouteConfig({ label: "Bold", icon: BoldFavIcon });
+export default BoldSettingsPage;
