@@ -61,6 +61,7 @@ All tasks are orchestrated by Turborepo. Build respects inter-package dependency
 
 > Note: We already copied `useFeatureFlag`  (see the [request](https://github.com/medusajs/medusa/discussions/16500)).
 
+- [ ] Optimize all locales in source and where they are used.
 - [ ] Create a new skill for making plugins.
 - [ ] When creating a new entry, the admin should refresh itself to show the new entry.
 - [ ] Check i18n in all plugins, clean and update.
@@ -92,6 +93,15 @@ import { useReturns } from "../../../hooks/api/use-returns"
 import { useMarkPaymentCollectionAsPaid } from "../../../hooks/api/use-payment-collections"
 import { useExchanges } from "../../../hooks/api/use-exchanges"
 ```
+
+### Payment Bold
+
+- Get the default Store currency and load it before the defaultCurrency option.
+- Make the widgets enable/disabled either in config or admin/settings.
+- Test all widgets.
+- Settings panel with notifications, etc.
+  - Right now we cannot test terminal cause it is not activated yet. Has to be done from [APP](https://developers.bold.co/api-integrations/integration#4-habilitar-terminales-para-api-integrations).
+- Update the Terminal Status values in [BoldTerminalStatusWidget](./packages/payment-bold/src/admin/components/bold-terminal-status.tsx), line 135, and [BoldTerminalItem](./packages/payment-bold/src/types/index.ts), line 193.
 
 ### Booking System
 
