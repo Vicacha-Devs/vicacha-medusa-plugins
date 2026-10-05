@@ -3,6 +3,7 @@ import { Modules } from "@medusajs/framework/utils"
 import { IPaymentModuleService } from "@medusajs/framework/types"
 import { createPaymentSessionsWorkflow } from "@medusajs/medusa/core-flows"
 import { EBoldPaymentProvider } from "@payment-bold/types"
+import { EMedusaFormatBoldPaymentProvider } from "@payment-bold/types/enums"
 
 export interface CreateBoldLinkStepInput {
   paymentCollectionId?: string
@@ -39,7 +40,7 @@ export const createBoldLinkStep = createStep(
     const { result: paymentSession } = await createPaymentSessionsWorkflow(container).run({
       input: {
         payment_collection_id: collectionId,
-        provider_id: `pp_${EBoldPaymentProvider.LINK}_bold`,
+        provider_id: EMedusaFormatBoldPaymentProvider.LINK,
         data: {
           reference: input.reference,
           description: input.description,
