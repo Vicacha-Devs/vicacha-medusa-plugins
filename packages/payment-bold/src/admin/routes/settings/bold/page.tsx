@@ -6,7 +6,7 @@ import { usePaymentProviders } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useTranslation } from "react-i18next";
 
 import { useBoldIntegrationApiPaymentMethods, useBoldPaymentLinkPaymentMethods, useBoldTerminals } from "../../../../hooks";
-import { isUnauthorizedError, getActiveBoldProviders } from "../../../../lib";
+import { getActiveBoldProviders } from "../../../../lib";
 import { EBoldPaymentProvider } from "../../../../types";
 import {
   Section,
@@ -28,7 +28,6 @@ export const BoldSettingsPage = () => {
   const {
     data: integrationMethodsData,
     isLoading: isLoadingIntegration,
-    error: integrationError,
     refetch: refetchIntegration,
   } = useBoldIntegrationApiPaymentMethods();
   const integrationMethods = Array.isArray(integrationMethodsData)
@@ -39,7 +38,6 @@ export const BoldSettingsPage = () => {
   const {
     data: linkMethods,
     isLoading: isLoadingLink,
-    error: paymentLinkError,
     refetch: refetchLink
   } = useBoldPaymentLinkPaymentMethods()
 
@@ -132,60 +130,6 @@ export const BoldSettingsPage = () => {
           ),
           side: (
             <>
-              {/* Integration API Methods */}
-              <Section
-                title={t("bold.admin.settings.integration_methods", {
-                  defaultValue: "Integration API Methods",
-                })}
-                description={t("bold.admin.settings.integration_methods_description", {
-                  defaultValue: "POS and terminal payment methods",
-                })}
-              >
-                {isLoadingIntegration ? (
-                  <div className="p-4">
-                    <Text className="text-xs text-ui-fg-subtle">
-                      {t("bold.admin.settings.loading", { defaultValue: "Loading..." })}
-                    </Text>
-                  </div>
-                ) : isUnauthorizedError(integrationError) ? (
-                  <div className="p-4 bg-ui-bg-error/10 border border-ui-border-error rounded text-xs">
-                    <Text className="text-ui-fg-error font-medium">
-                      {t("bold.admin.settings.unauthorized_short", { defaultValue: "API Access Pending (403)" })}
-                    </Text>
-                    <Text className="text-ui-fg-subtle mt-1">
-                      {t("bold.admin.settings.unauthorized_methods_desc", {
-                        defaultValue:
-                          "Please ensure Online Payments (API de Pagos en Línea) is activated in your Bold Merchant Portal.",
-                      })}
-                    </Text>
-                    <a
-                      href="https://developers.bold.co/pagos-en-linea/api-de-pagos-en-linea/activacion"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[11px] font-medium text-ui-fg-interactive hover:underline block pt-0.5"
-                    >
-                      {t("bold.admin.settings.enable_payments_link", {
-                        defaultValue: "Enable Online Payments API →",
-                      })}
-                    </a>
-                  </div>
-                ) : integrationMethods.length === 0 ? (
-                  <div className="p-4">
-                    <Text className="text-xs text-ui-fg-subtle">
-                      {t("bold.admin.settings.no_methods_available", {
-                        defaultValue: "No methods available",
-                      })}
-                    </Text>
-                  </div>
-                ) : (
-                  <div>
-                    {integrationMethods.map((m: any, i: number) => (
-                      <MethodItem key={i} name={m.name} status={m.status} />
-                    ))}
-                  </div>
-                )}
-              </Section>
-
               {/* Payment Link Methods */}
               <Section
                 title={t("bold.admin.settings.payment_link_methods", {
@@ -201,34 +145,12 @@ export const BoldSettingsPage = () => {
                       {t("bold.admin.settings.loading", { defaultValue: "Loading..." })}
                     </Text>
                   </div>
-                ) : isUnauthorizedError(paymentLinkError) ? (
-                  <div className="p-4 bg-ui-bg-error/10 border border-ui-border-error rounded text-xs">
-                    <Text className="text-ui-fg-error font-medium">
-                      {t("bold.admin.settings.unauthorized_short", { defaultValue: "API Access Pending (403)" })}
-                    </Text>
-                    <Text className="text-ui-fg-subtle mt-1">
-                      {t("bold.admin.settings.unauthorized_methods_desc", {
-                        defaultValue:
-                          "Please ensure Online Payments (API de Pagos en Línea) is activated in your Bold Merchant Portal.",
-                      })}
-                    </Text>
-                    <a
-                      href="https://developers.bold.co/pagos-en-linea/api-de-pagos-en-linea/activacion"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[11px] font-medium text-ui-fg-interactive hover:underline block pt-0.5"
-                    >
-                      {t("bold.admin.settings.enable_payments_link", {
-                        defaultValue: "Enable Online Payments API →",
-                      })}
-                    </a>
-                  </div>
-                ) : linkMethods?.online_methods?.length ? (
+                ) : linkMethods && Object.keys(linkMethods).length > 0 ? (
                   <div>
-                    {linkMethods.online_methods.map((m: string, i: number) => (
+                    {Object.entries(linkMethods).map(([method]: [string, any], i: number) => (
                       <MethodItem
                         key={i}
-                        name={m}
+                        name={method}
                         status={t("bold.admin.settings.method_status_available", {
                           defaultValue: "Available",
                         })}
@@ -242,6 +164,39 @@ export const BoldSettingsPage = () => {
                         defaultValue: "No methods available",
                       })}
                     </Text>
+                  </div>
+                )}
+              </Section>
+
+
+              {/* Integration API Methods */}
+              <Section
+                title={t("bold.admin.settings.integration_methods", {
+                  defaultValue: "Integration API Methods",
+                })}
+                description={t("bold.admin.settings.integration_methods_description", {
+                  defaultValue: "POS and terminal payment methods",
+                })}
+              >
+                {isLoadingIntegration ? (
+                  <div className="p-4">
+                    <Text className="text-xs text-ui-fg-subtle">
+                      {t("bold.admin.settings.loading", { defaultValue: "Loading..." })}
+                    </Text>
+                  </div>
+                ) : integrationMethods.length === 0 ? (
+                  <div className="p-4">
+                    <Text className="text-xs text-ui-fg-subtle">
+                      {t("bold.admin.settings.no_methods_available", {
+                        defaultValue: "No methods available",
+                      })}
+                    </Text>
+                  </div>
+                ) : (
+                  <div>
+                    {integrationMethods.map((m: any, i: number) => (
+                      <MethodItem key={i} name={m.name} status={m.enabled ? "Enabled" : "Disabled"} />
+                    ))}
                   </div>
                 )}
               </Section>

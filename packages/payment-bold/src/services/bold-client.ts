@@ -71,16 +71,16 @@ export class BoldHttpClient {
     }
 
     this.logger?.debug(`[BoldHttpClient] Requesting ${options.method || "GET"} ${url}`)
-
+    
     try {
       const response = await fetch(url, { ...options, headers })
       const data = await response.json().catch(() => ({}))
-
+      
       if (!response.ok) {
         this.logger?.error(`[BoldHttpClient] API Error on ${endpoint}`, data)
-
+        
         const errorType = HTTP_ERROR_MAP[response.status] || MedusaError.Types.UNEXPECTED_STATE
-
+        
         throw new MedusaError(
           errorType,
           data?.message || `Bold API request failed with status ${response.status}`
@@ -280,26 +280,27 @@ export class BoldHttpClient {
       {
         method: "GET",
       }
-    )
+    )    
 
-    return response?.payload.payment_methods || []
+    return response?.payment_methods || []
   }
 
   /**
    * Queries available payment methods for Payment Link API.
    * The Payment Link API supports: QR, Cards, PSE, Nequi, Bancolombia Button
    * Key: integrationApiKey
-   * Target: integrationsUrl (/online/link/v1/payment-methods)
+   * Target: integrationsUrl (/online/link/v1/payment_methods)
    */
   async getAvailablePaymentLinkPaymentMethods(): Promise<BoldPaymentLinkPaymentMethodLimits> {
     const response = await this.request<BoldPaymentLinkPaymentLimitsResponse>(
       this.integrationsUrl,
-      "/online/link/v1/payment-methods",
+      "/online/link/v1/payment_methods",
       this.integrationApiKey,
       {
         method: "GET",
       }
     )
+    
     return response?.payload.payment_methods || { }
   }
 

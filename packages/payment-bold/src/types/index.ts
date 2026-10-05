@@ -255,9 +255,8 @@ export interface BoldIntegrationApiPaymentMethodsPayload {
   payment_methods: Array<BoldIntegrationAPIPaymentMethod>
 }
 
-export interface BoldIntegrationApiPaymentMethodsResponse {
-  payload: BoldIntegrationApiPaymentMethodsPayload
-  errors: any[] // or string[] / BoldApiError[] depending on error structure
+export interface BoldIntegrationApiPaymentMethodsResponse extends BoldIntegrationApiPaymentMethodsPayload {
+  errors: any[]
 }
 
 export interface BoldPaymentMethodLimits {

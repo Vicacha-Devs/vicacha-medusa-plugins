@@ -1,8 +1,9 @@
+import { useMemo } from "react"
 import { Container, Heading, Badge, Table, Button, Alert } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
 
 import { useBoldTerminals } from "../../hooks"
-import { isUnauthorizedError } from "../../lib"
+import { isUnauthorizedError } from "../../lib/error-utils"
 
 const BoldTerminalStatusWidget = () => {
   const { t } = useTranslation()
@@ -10,11 +11,27 @@ const BoldTerminalStatusWidget = () => {
     data: terminals = [],
     isLoading,
     isRefetching,
-    error,
     refetch,
+    error,
   } = useBoldTerminals()
 
-  const isUnauthorized = isUnauthorizedError(error)
+  // Memoized error flags and visibility conditions
+  const { isUnauthorized, showEmptyOrNotFoundError } = useMemo(() => {
+    const err = error as any
+    const isAuth = isUnauthorizedError(error)
+    const is404 =
+      Boolean(err) &&
+      (err?.status === 404 ||
+        err?.statusCode === 404 ||
+        err?.response?.status === 404 ||
+        err?.message?.toLowerCase().includes("not found") ||
+        err?.message?.toLowerCase().includes("404"))
+
+    return {
+      isUnauthorized: isAuth,
+      showEmptyOrNotFoundError: isAuth || is404 || terminals.length === 0,
+    }
+  }, [error, terminals.length])
 
   return (
     <Container className="p-4 rounded-lg border bg-card space-y-3 mb-4">
@@ -36,97 +53,109 @@ const BoldTerminalStatusWidget = () => {
         </Button>
       </div>
 
-      {isUnauthorized && (
-        <Alert variant="warning" className="p-3 text-xs">
+      {showEmptyOrNotFoundError ? (
+        <Alert
+          variant={isUnauthorized ? "error" : "warning"}
+          className="p-3 text-xs"
+        >
           <div className="flex items-start justify-between w-full gap-x-3">
             <div className="space-y-1 min-w-0 flex-1">
               <span className="font-semibold text-ui-fg-base block leading-tight">
-                {t("bold.admin.settings.unauthorized_terminals_title", {
-                  defaultValue: "POS Terminal Integration Authorization Required (403)",
-                })}
+                {isUnauthorized
+                  ? t("bold.admin.settings.unauthorized_terminals_title", {
+                      defaultValue: "POS Terminal Integration Authorization Required (403)",
+                    })
+                  : t("bold.admin.terminal_status.no_terminals_title", {
+                      defaultValue: "No POS Terminals Configured (404)",
+                    })}
               </span>
               <p className="text-ui-fg-subtle text-xs leading-normal">
-                {t("bold.admin.settings.unauthorized_terminals_desc", {
-                  defaultValue:
-                    "Datáfono POS transactions must be explicitly authorized for API Integrations in your Bold merchant portal.",
-                })}
+                {isUnauthorized
+                  ? t("bold.admin.settings.unauthorized_terminals_desc", {
+                      defaultValue:
+                        "Datáfono POS transactions must be explicitly authorized for API Integrations in your Bold merchant portal.",
+                    })
+                  : t("bold.admin.terminal_status.no_terminals_desc", {
+                      defaultValue:
+                        "No POS terminals are currently registered or bound to your Bold account. To bind datáfonos, please review the setup instructions.",
+                    })}
               </p>
             </div>
             <a
               href="https://developers.bold.co/api-integrations/integration#4-habilitar-terminales-para-api-integrations"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-ui-fg-interactive hover:underline shrink-0 whitespace-nowrap pt-0.5"
+              className="text-[11px] font-medium text-ui-fg-interactive hover:underline shrink-0 whitespace-nowrap pt-0.5"
             >
-              {t("bold.admin.settings.enable_terminals_link", {
-                defaultValue: "Authorize Terminals →",
+              {t("bold.admin.terminal_status.setup_terminals_link", {
+                defaultValue: "Setup Terminals →",
               })}
             </a>
           </div>
         </Alert>
-      )}
-
-      <Table>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>
-              {t("bold.admin.terminal_status.serial", {
-                defaultValue: "Serial Number",
-              })}
-            </Table.HeaderCell>
-            <Table.HeaderCell>
-              {t("bold.admin.terminal_status.model", {
-                defaultValue: "Hardware Model",
-              })}
-            </Table.HeaderCell>
-            <Table.HeaderCell>
-              {t("bold.admin.terminal_status.status", {
-                defaultValue: "Status",
-              })}
-            </Table.HeaderCell>
-            <Table.HeaderCell>
-              {t("bold.admin.terminal_status.battery", {
-                defaultValue: "Battery",
-              })}
-            </Table.HeaderCell>
-            <Table.HeaderCell>
-              {t("bold.admin.terminal_status.connectivity", {
-                defaultValue: "Connectivity",
-              })}
-            </Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {terminals.map((item: any) => (
-            <Table.Row key={item.terminal_serial || item.id}>
-              <Table.Cell className="font-mono text-xs font-semibold">
-                {item.terminal_serial || item.id}
-              </Table.Cell>
-              <Table.Cell>{item.terminal_model || item.model || "Smart POS"}</Table.Cell>
-              <Table.Cell>
-                <Badge
-                  color={
-                    item.status === "ONLINE"
-                      ? "green"
-                      : item.status === "BUSY"
-                      ? "orange"
-                      : "grey"
-                  }
-                >
-                  {item.status ||
-                    t("bold.admin.terminal_status.unknown", {
-                      defaultValue: "OFFLINE",
-                    })}
-                </Badge>
-              </Table.Cell>
-              <Table.Cell>{item.battery || "N/A"}</Table.Cell>
-              <Table.Cell className="text-xs text-ui-fg-subtle">
-                {item.signal || "N/A"}
-              </Table.Cell>
+      ) : (
+        <Table>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell>
+                {t("bold.admin.terminal_status.serial", {
+                  defaultValue: "Serial Number",
+                })}
+              </Table.HeaderCell>
+              <Table.HeaderCell>
+                {t("bold.admin.terminal_status.model", {
+                  defaultValue: "Hardware Model",
+                })}
+              </Table.HeaderCell>
+              <Table.HeaderCell>
+                {t("bold.admin.terminal_status.status", {
+                  defaultValue: "Status",
+                })}
+              </Table.HeaderCell>
+              <Table.HeaderCell>
+                {t("bold.admin.terminal_status.battery", {
+                  defaultValue: "Battery",
+                })}
+              </Table.HeaderCell>
+              <Table.HeaderCell>
+                {t("bold.admin.terminal_status.connectivity", {
+                  defaultValue: "Connectivity",
+                })}
+              </Table.HeaderCell>
             </Table.Row>
-          ))}
-        </Table.Body>
-      </Table>
+          </Table.Header>
+          <Table.Body>
+            {terminals.map((item: any) => (
+              <Table.Row key={item.terminal_serial || item.id}>
+                <Table.Cell className="font-mono text-xs font-semibold">
+                  {item.terminal_serial || item.id}
+                </Table.Cell>
+                <Table.Cell>{item.terminal_model || item.model || "Smart POS"}</Table.Cell>
+                <Table.Cell>
+                  <Badge
+                    color={
+                      item.status === "ONLINE"
+                        ? "green"
+                        : item.status === "BUSY"
+                        ? "orange"
+                        : "grey"
+                    }
+                  >
+                    {item.status ||
+                      t("bold.admin.terminal_status.unknown", {
+                        defaultValue: "OFFLINE",
+                      })}
+                  </Badge>
+                </Table.Cell>
+                <Table.Cell>{item.battery || "N/A"}</Table.Cell>
+                <Table.Cell className="text-xs text-ui-fg-subtle">
+                  {item.signal || "N/A"}
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table>
+      )}
     </Container>
   )
 }

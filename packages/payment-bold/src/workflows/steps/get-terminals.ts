@@ -1,23 +1,17 @@
 import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
-import { BoldHttpClient } from "../../services/bold-client"
-import { BoldBaseOptions } from "@payment-bold/types"
-
-export interface GetTerminalsStepInput {
-  options?: any
-}
+import { getProviderOptionsFromContainer } from "@payment-bold/lib/get-provider-options"
+import { BoldHttpClient } from "@payment-bold/services/bold-client"
 
 export const getTerminalsStep = createStep(
   "get-terminals-step",
-  async (_: GetTerminalsStepInput, { container }) => {
+  async (_, { container }) => {
     const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
     
     // Resolve options from container or fallback
-    const boldOptions = container.resolve<BoldBaseOptions>("boldPaymentOptions", {
-      allowUnregistered: true,
-    }) || {}
+    const boldProviderOptions = getProviderOptionsFromContainer(container)
 
-    const client = new BoldHttpClient(boldOptions, logger)
+    const client = new BoldHttpClient(boldProviderOptions, logger)
     const terminals = await client.getTerminals()
 
     return new StepResponse(terminals)
