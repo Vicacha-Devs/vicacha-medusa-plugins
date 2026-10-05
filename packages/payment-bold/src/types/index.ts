@@ -246,6 +246,47 @@ export interface BoldPaymentMethodsResponse {
   }
 }
 
+export interface BoldIntegrationAPIPaymentMethod {
+  name: string
+  enabled: boolean
+}
+
+export interface BoldIntegrationApiPaymentMethodsPayload {
+  payment_methods: Array<BoldIntegrationAPIPaymentMethod>
+}
+
+export interface BoldIntegrationApiPaymentMethodsResponse {
+  payload: BoldIntegrationApiPaymentMethodsPayload
+  errors: any[] // or string[] / BoldApiError[] depending on error structure
+}
+
+export interface BoldPaymentMethodLimits {
+  min: number
+  max: number
+}
+
+export type BoldPaymentLinkPaymentMethodKey =
+  | "CREDIT_CARD"
+  | "PSE"
+  | "BOTON_BANCOLOMBIA"
+  | "NEQUI"
+  | (string & {}) // Fallback for future online channels
+
+export interface BoldPaymentLinkPaymentMethodsMap {
+  [key: string]: BoldPaymentMethodLimits
+}
+
+export type BoldPaymentLinkPaymentMethodLimits = Record<BoldPaymentLinkPaymentMethodKey, BoldPaymentMethodLimits>
+
+export interface BoldPaymentLinkPaymentLimitsPayload {
+  payment_methods: BoldPaymentLinkPaymentMethodLimits
+}
+
+export interface BoldPaymentLinkPaymentLimitsResponse {
+  payload: BoldPaymentLinkPaymentLimitsPayload
+  errors: any[]
+}
+
 export interface BoldPaymentIntentPayload {
   reference: string
   amount: number

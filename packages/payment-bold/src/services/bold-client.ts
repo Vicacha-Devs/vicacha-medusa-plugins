@@ -4,11 +4,14 @@ import {
   BankItem,
   BoldBaseOptions,
   BoldCreatePaymentLinkResponse,
+  BoldIntegrationAPIPaymentMethod,
+  BoldIntegrationApiPaymentMethodsResponse,
   BoldLinkPaymentStatusResponse,
   BoldPaymentAttemptResponse,
   BoldPaymentIntentPayload,
+  BoldPaymentLinkPaymentLimitsResponse,
+  BoldPaymentLinkPaymentMethodLimits,
   BoldPaymentMethod,
-  BoldPaymentMethodsResponse,
   BoldRefundApiRequest,
   BoldRefundApiResponse,
   BoldTerminalItem,
@@ -265,12 +268,12 @@ export class BoldHttpClient {
   }
 
   /**
-   * Queries available payment methods enabled for the merchant.
+   * Queries available payment methods enabled for the merchant (Integration API).
    * Key: integrationApiKey
    * Target: integrationsUrl (/payments/payment-methods)
    */
-  async getAvailablePaymentMethods(): Promise<Array<BoldPaymentMethod>> {
-    const response = await this.request<BoldPaymentMethodsResponse>(
+  async getAvailableIntegrationApiPaymentMethods(): Promise<Array<BoldIntegrationAPIPaymentMethod>> {
+    const response = await this.request<BoldIntegrationApiPaymentMethodsResponse>(
       this.integrationsUrl,
       "/payments/payment-methods",
       this.integrationApiKey,
@@ -280,6 +283,24 @@ export class BoldHttpClient {
     )
 
     return response?.payload.payment_methods || []
+  }
+
+  /**
+   * Queries available payment methods for Payment Link API.
+   * The Payment Link API supports: QR, Cards, PSE, Nequi, Bancolombia Button
+   * Key: integrationApiKey
+   * Target: integrationsUrl (/online/link/v1/payment-methods)
+   */
+  async getAvailablePaymentLinkPaymentMethods(): Promise<BoldPaymentLinkPaymentMethodLimits> {
+    const response = await this.request<BoldPaymentLinkPaymentLimitsResponse>(
+      this.integrationsUrl,
+      "/online/link/v1/payment-methods",
+      this.integrationApiKey,
+      {
+        method: "GET",
+      }
+    )
+    return response?.payload.payment_methods || { }
   }
 
   /**

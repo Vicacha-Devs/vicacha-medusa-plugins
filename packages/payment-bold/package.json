@@ -108,6 +108,7 @@
   },
   "packageManager": "pnpm@11.20.0",
   "dependencies": {
+    "@medusajs/dashboard": "2.21.0",
     "qrcode": "^1.5.4"
   }
 }

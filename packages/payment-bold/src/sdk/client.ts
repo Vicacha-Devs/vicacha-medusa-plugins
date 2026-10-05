@@ -1,8 +1,10 @@
 import {
   BoldButtonPayload,
   BoldButtonResponse,
+  BoldIntegrationAPIPaymentMethod,
   BoldLinkPayload,
   BoldLinkResponse,
+  BoldPaymentLinkPaymentMethodLimits,
   BoldPaymentMethod,
   BoldQrPayload,
   BoldQrResponse,
@@ -130,8 +132,14 @@ export class BoldApiClient {
     })
   }
 
-  async getPaymentMethods(): Promise<Array<BoldPaymentMethod>> {
-    return this.fetch<Array<BoldPaymentMethod>>("/bold/payment-methods", {
+  async getPaymentMethods(): Promise<Array<BoldIntegrationAPIPaymentMethod>> {
+    return this.fetch<Array<BoldIntegrationAPIPaymentMethod>>("/bold/payment-methods", {
+      method: "GET",
+    })
+  }
+
+  async getPaymentLinkPaymentMethods(): Promise<BoldPaymentLinkPaymentMethodLimits> {
+    return this.fetch<BoldPaymentLinkPaymentMethodLimits>("/bold/payment-link-methods", {
       method: "GET",
     })
   }
