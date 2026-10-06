@@ -13,24 +13,25 @@
   ],
   "exports": {
     "./package.json": "./package.json",
-    "./workflows": "./.medusa/server/src/workflows/index.js",
-    "./.medusa/server/src/modules/*": "./.medusa/server/src/modules/*/index.js",
-    "./modules/*": "./.medusa/server/src/modules/*/index.js",
-    "./providers/*": "./.medusa/server/src/providers/*/index.js",
-    "./*": "./.medusa/server/src/*.js",
     "./admin": {
       "import": "./.medusa/server/src/admin/index.mjs",
       "require": "./.medusa/server/src/admin/index.js",
       "default": "./.medusa/server/src/admin/index.js"
-    }
+    },
+    "./workflows": "./.medusa/server/src/workflows/index.js",
+    "./.medusa/server/src/modules/*": "./.medusa/server/src/modules/*/index.js",
+    "./modules/*": "./.medusa/server/src/modules/*/index.js",
+    "./providers/*": "./.medusa/server/src/providers/*/index.js",
+    "./*": "./.medusa/server/src/*.js"
   },
   "keywords": [
     "medusa",
     "plugin",
-    "medusa-plugin-b2b",
     "medusa-plugin",
     "medusa-plugin-other",
-    "medusa-v2"
+    "medusa-plugin-b2b",
+    "medusa-v2",
+    "b2b"
   ],
   "scripts": {
     "build": "medusa plugin:build && tsc-alias -p tsconfig.json",
