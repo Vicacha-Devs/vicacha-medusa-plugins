@@ -31,9 +31,9 @@ export const GET = async (
     entity: "approval_status",
     ...req.queryConfig,
     fields: [
+      "*",
       "cart.*",
       "cart.approvals.*",
-      "cart.approval_status.*",
       "cart.company.approval_settings.*",
       "cart.company.*",
       "cart.items.*",
@@ -45,7 +45,11 @@ export const GET = async (
   });
 
   let carts = approvalStatuses
-    .map((approvalStatus) => approvalStatus.cart)
+    .map((approvalStatus) => {
+      const { cart, ...approvalStatusData } = approvalStatus;
+      if (!cart) return null;
+      return { ...cart, approval_status: approvalStatusData };
+    })
     .filter(Boolean);
 
   res.json({
