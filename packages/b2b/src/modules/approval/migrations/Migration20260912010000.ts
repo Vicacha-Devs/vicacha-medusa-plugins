@@ -2,7 +2,6 @@ import { Migration } from "@medusajs/framework/mikro-orm/migrations";
 
 export class Migration20260912010000 extends Migration {
   async up(): Promise<void> {
-    // approval_settings
     this.addSql(
       'create table if not exists "approval_settings" ("id" text not null, "company_id" text not null, "requires_admin_approval" boolean not null default false, "requires_sales_manager_approval" boolean not null default false, "created_at" timestamptz not null default now(), "updated_at" timestamptz not null default now(), "deleted_at" timestamptz null, constraint "approval_settings_pkey" primary key ("id"));'
     );
@@ -13,7 +12,6 @@ export class Migration20260912010000 extends Migration {
       'CREATE UNIQUE INDEX IF NOT EXISTS "IDX_approval_settings_company_id" ON "approval_settings" (company_id) WHERE deleted_at IS NULL;'
     );
 
-    // approval
     this.addSql(
       'create table if not exists "approval" ("id" text not null, "cart_id" text not null, "type" text check ("type" in (\'admin\', \'sales_manager\')) not null, "status" text check ("status" in (\'pending\', \'approved\', \'rejected\')) not null, "created_by" text not null, "handled_by" text null, "handled_at" timestamptz null, "reason" text null, "created_at" timestamptz not null default now(), "updated_at" timestamptz not null default now(), "deleted_at" timestamptz null, constraint "approval_pkey" primary key ("id"));'
     );
@@ -30,7 +28,6 @@ export class Migration20260912010000 extends Migration {
       'CREATE INDEX IF NOT EXISTS "IDX_approval_status" ON "approval" (status) WHERE deleted_at IS NULL;'
     );
 
-    // approval_status
     this.addSql(
       'create table if not exists "approval_status" ("id" text not null, "cart_id" text not null, "status" text check ("status" in (\'pending\', \'approved\', \'rejected\')) not null, "created_at" timestamptz not null default now(), "updated_at" timestamptz not null default now(), "deleted_at" timestamptz null, constraint "approval_status_pkey" primary key ("id"));'
     );
