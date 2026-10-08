@@ -1,5 +1,5 @@
 import { Select } from "@medusajs/ui"
-import { useMemo } from "react"
+import { memo, useState } from "react"
 
 import { COUNTRIES } from "../../data/countries"
 import { useCountries } from "../../hooks/use-countries"
@@ -10,7 +10,25 @@ export type CountrySelectProps = {
   placeholder?: string
 }
 
+const COUNTRY_MAP = new Map(COUNTRIES.map((c) => [c.iso_2, c.display_name]))
+
+const CountryItems = memo(({ items }: { items: typeof COUNTRIES }) => {
+  return (
+    <>
+      {items.map((c) => (
+        <Select.Item key={c.iso_2} value={c.iso_2}>
+          {c.display_name}
+        </Select.Item>
+      ))}
+    </>
+  )
+})
+
+CountryItems.displayName = "CountryItems"
+
 export function CountrySelect({ value, onChange, placeholder }: CountrySelectProps) {
+  const [open, setOpen] = useState(false)
+
   const { countries } = useCountries({
     countries: COUNTRIES,
     limit: COUNTRIES.length,
@@ -18,19 +36,21 @@ export function CountrySelect({ value, onChange, placeholder }: CountrySelectPro
   })
 
   const normalizedValue = value?.toLowerCase() ?? ""
+  const selectedLabel = COUNTRY_MAP.get(normalizedValue)
 
-  const selectedLabel = useMemo(
-    () => COUNTRIES.find((c) => c.iso_2 === normalizedValue)?.display_name,
-    [normalizedValue]
-  )
+  const handleValueChange = (iso2: string) => {
+    const displayName = COUNTRY_MAP.get(iso2)
+    if (displayName) {
+      onChange(iso2, displayName)
+    }
+  }
 
   return (
     <Select
       value={normalizedValue}
-      onValueChange={(iso2) => {
-        const country = COUNTRIES.find((c) => c.iso_2 === iso2)
-        if (country) onChange(iso2, country.display_name)
-      }}
+      open={open}
+      onOpenChange={setOpen}
+      onValueChange={handleValueChange}
     >
       <Select.Trigger>
         <Select.Value placeholder={placeholder}>
@@ -38,11 +58,7 @@ export function CountrySelect({ value, onChange, placeholder }: CountrySelectPro
         </Select.Value>
       </Select.Trigger>
       <Select.Content>
-        {countries.map((c) => (
-          <Select.Item key={c.iso_2} value={c.iso_2}>
-            {c.display_name}
-          </Select.Item>
-        ))}
+        {open ? <CountryItems items={countries} /> : null}
       </Select.Content>
     </Select>
   )

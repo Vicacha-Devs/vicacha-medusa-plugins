@@ -1,6 +1,6 @@
 import { RegionCountryDTO } from "@medusajs/framework/types"
 
-export const COUNTRIES: RegionCountryDTO[] = [
+export const COUNTRIES: Array<RegionCountryDTO> = [
   { id: "af", iso_2: "af", iso_3: "afg", num_code: "004", name: "Afghanistan", display_name: "Afghanistan" },
   { id: "al", iso_2: "al", iso_3: "alb", num_code: "008", name: "Albania", display_name: "Albania" },
   { id: "dz", iso_2: "dz", iso_3: "dza", num_code: "012", name: "Algeria", display_name: "Algeria" },
