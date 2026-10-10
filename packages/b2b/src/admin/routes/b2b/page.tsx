@@ -7,6 +7,8 @@ import {
   Users,
 } from "@medusajs/icons";
 import {
+  Button,
+  clx,
   Container,
   Heading,
   Skeleton,
@@ -14,6 +16,7 @@ import {
 } from "@medusajs/ui";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+
 import {
   useCompanies,
   useQuotes,
@@ -155,10 +158,12 @@ const StatCard = ({
 }: StatCardProps) => {
   return (
     <Container
-      className={[
-        "p-0",
-        onClick ? "cursor-pointer hover:bg-ui-bg-subtle-hover transition-colors" : "",
-      ].join(" ")}
+      className={
+        clx(
+          "p-0",
+          onClick ? "cursor-pointer hover:bg-ui-bg-subtle-hover transition-colors" : "",
+        )
+      }
       onClick={onClick}
     >
       <div className="p-5">
@@ -203,15 +208,15 @@ const NavigationCard = ({
   const isLeft = position === "top-left" || position === "bottom-left";
 
   return (
-    <button
+    <Button
       type="button"
-      className={[
-        "text-left p-6 hover:bg-ui-bg-subtle-hover transition-colors",
-        !isBottom ? "border-b border-ui-border-base" : "",
-        isLeft ? "md:border-r md:border-ui-border-base" : "",
-      ]
-        .filter(Boolean)
-        .join(" ")}
+      className={
+        clx(
+          "text-left p-6 hover:bg-ui-bg-subtle-hover transition-colors",
+          !isBottom ? "border-b border-ui-border-base" : "",
+          isLeft ? "md:border-r md:border-ui-border-base" : "",
+        )
+      }
       onClick={onClick}
     >
       <div className="flex items-start gap-x-3">
@@ -227,7 +232,7 @@ const NavigationCard = ({
           </Text>
         </div>
       </div>
-    </button>
+    </Button>
   );
 };
 
