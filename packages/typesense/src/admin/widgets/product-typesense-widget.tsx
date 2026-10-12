@@ -11,7 +11,7 @@ type ProductWidgetProps = {
 }
 
 const ProductTypesenseWidget: React.FC<ProductWidgetProps> = ({ data }) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const productId = data?.id
   const [indexed, setIndexed] = useState<boolean>(false)
   const [doc, setDoc] = useState<Record<string, any> | null>(null)
@@ -60,12 +60,12 @@ const ProductTypesenseWidget: React.FC<ProductWidgetProps> = ({ data }) => {
         const payload = await res.json()
         setIndexed(Boolean(payload.indexed))
         setDoc(payload.document || null)
-        toast.success(t("typesense.widget.syncSuccess"))
+        toast.success(t("widget.syncSuccess"))
       } else {
-        toast.error(t("typesense.widget.syncFailed"))
+        toast.error(t("widget.syncError"))
       }
     } catch {
-      toast.error(t("typesense.widget.syncFailed"))
+      toast.error(t("widget.syncError"))
     } finally {
       setSyncing(false)
     }
@@ -75,35 +75,40 @@ const ProductTypesenseWidget: React.FC<ProductWidgetProps> = ({ data }) => {
     return null
   }
 
+  const isRtl = (i18n.resolvedLanguage || i18n.language || "").startsWith("ar")
+
   return (
-    <Container className="flex flex-col gap-y-3 px-6 py-4">
+    <Container
+      className="flex flex-col gap-y-3 px-6 py-4"
+      dir={isRtl ? "rtl" : "ltr"}
+    >
       <div className="flex items-center justify-between">
-        <Heading level="h2">{t("typesense.widget.title")}</Heading>
+        <Heading level="h2">{t("widget.title")}</Heading>
         <Badge color={indexed ? "green" : "orange"} size="small">
           {loading
-            ? t("typesense.widget.checking")
+            ? t("widget.checking")
             : indexed
-              ? t("typesense.widget.indexed")
-              : t("typesense.widget.notIndexed")}
+              ? t("widget.indexed")
+              : t("widget.notIndexed")}
         </Badge>
       </div>
 
       {doc && (
         <div className="text-ui-fg-subtle flex flex-col gap-y-1 text-xs">
           <div>
-            <strong>{t("typesense.widget.priceRange")}</strong> {doc.min_price ?? 0} –{" "}
+            <strong>{t("widget.minMaxPrice")}</strong> {doc.min_price ?? 0} –{" "}
             {doc.max_price ?? 0}
           </div>
           <div>
-            <strong>{t("typesense.widget.inStock")}</strong>{" "}
-            {doc.in_stock ? t("typesense.widget.yes") : t("typesense.widget.no")}{" "}
-            {t("typesense.widget.qty", { qty: doc.inventory_quantity ?? 0 })}
+            <strong>{t("widget.inStock")}</strong>{" "}
+            {doc.in_stock ? t("widget.yes") : t("widget.no")} (
+            {t("widget.qty")} {doc.inventory_quantity ?? 0})
           </div>
           <div>
-            <strong>{t("typesense.widget.skus")}</strong>{" "}
+            <strong>{t("widget.skus")}</strong>{" "}
             {Array.isArray(doc.variant_skus) && doc.variant_skus.length > 0
               ? doc.variant_skus.join(", ")
-              : t("typesense.widget.none")}
+              : t("widget.none")}
           </div>
         </div>
       )}
@@ -115,7 +120,7 @@ const ProductTypesenseWidget: React.FC<ProductWidgetProps> = ({ data }) => {
           onClick={() => void handleSyncProduct()}
           isLoading={syncing}
         >
-          {t("typesense.widget.sync")}
+          {t("widget.syncButton")}
         </Button>
         {doc && (
           <Button
@@ -123,9 +128,7 @@ const ProductTypesenseWidget: React.FC<ProductWidgetProps> = ({ data }) => {
             size="small"
             onClick={() => setShowJson((prev) => !prev)}
           >
-            {showJson
-              ? t("typesense.widget.hideJson")
-              : t("typesense.widget.viewJson")}
+            {showJson ? t("widget.hideJson") : t("widget.viewJson")}
           </Button>
         )}
       </div>

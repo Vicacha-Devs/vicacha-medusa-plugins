@@ -62,7 +62,20 @@ medusa-plugin-typesense/
 │   │   ├── store/typesense/                      # Storefront endpoints (products, categories, collections, search, token, chat, analytics)
 │   │   └── admin/typesense/                      # Admin endpoints (health, collections, entities, synonyms, curations, stopwords, playground, analytics, documents)
 │   ├── admin/
-│   │   ├── routes/typesense/page.tsx             # /app/typesense Admin UI Dashboard
+│   │   ├── i18n/
+│   │   │   ├── index.ts                          # react-i18next resource map for Medusa Admin
+│   │   │   └── json/                             # en, es, de, fr, pt, it, nl, pl, tr, ar JSON dictionaries
+│   │   ├── components/typesense/
+│   │   │   ├── types.ts                          # Shared Admin UI types & SUPPORTED_UI_LOCALES
+│   │   │   ├── safe-highlight.tsx                # Safe <mark> highlight JSX renderer
+│   │   │   ├── use-typesense-studio.ts           # Studio state & API hook
+│   │   │   ├── header-bar.tsx                    # Cluster status & language switcher header
+│   │   │   ├── overview-tab.tsx                  # Collections & sync jobs tab
+│   │   │   ├── entities-tab.tsx                  # Custom entity registration & embedder config tab
+│   │   │   ├── merchandising-tab.tsx             # Synonyms, Curations & Stopwords tab
+│   │   │   ├── playground-tab.tsx                # AI Search Playground tab
+│   │   │   └── analytics-tab.tsx                 # Search Analytics & No-Hit Query tab
+│   │   ├── routes/typesense/page.tsx             # /app/typesense Admin UI Dashboard page
 │   │   └── widgets/product-typesense-widget.tsx  # product.details.side.after widget
 │   └── __tests__/
 │       ├── register-ts-resolver.mjs              # Node native test runner TypeScript hook

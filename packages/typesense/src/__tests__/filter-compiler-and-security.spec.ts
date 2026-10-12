@@ -119,4 +119,44 @@ describe("Filter Compiler, Security Controls & Zod Validation", () => {
     })
     assert.equal(validCustomEntity.success, true)
   })
+
+  it("verifies all 10 Admin UI i18n JSON locale dictionaries have identical keys and non-empty strings", async () => {
+    const fs = await import("node:fs")
+    const path = await import("node:path")
+    const jsonDir = path.resolve(process.cwd(), "src/admin/i18n/json")
+    const locales = ["en", "es", "de", "fr", "pt", "it", "nl", "pl", "tr", "ar"]
+
+    function collectLeafKeys(obj: Record<string, any>, prefix = ""): string[] {
+      const keys: string[] = []
+      for (const [k, v] of Object.entries(obj)) {
+        const nextKey = prefix ? `${prefix}.${k}` : k
+        if (v && typeof v === "object" && !Array.isArray(v)) {
+          keys.push(...collectLeafKeys(v, nextKey))
+        } else {
+          assert.equal(typeof v, "string", `Expected string at ${nextKey}`)
+          assert.ok(v.trim().length > 0, `Empty translation at ${nextKey}`)
+          keys.push(nextKey)
+        }
+      }
+      return keys.sort()
+    }
+
+    const enData = JSON.parse(
+      fs.readFileSync(path.join(jsonDir, "en.json"), "utf8")
+    )
+    const expectedKeys = collectLeafKeys(enData)
+    assert.ok(expectedKeys.length > 80)
+
+    for (const loc of locales) {
+      const data = JSON.parse(
+        fs.readFileSync(path.join(jsonDir, `${loc}.json`), "utf8")
+      )
+      const locKeys = collectLeafKeys(data)
+      assert.deepEqual(
+        locKeys,
+        expectedKeys,
+        `Key mismatch in ${loc}.json`
+      )
+    }
+  })
 })

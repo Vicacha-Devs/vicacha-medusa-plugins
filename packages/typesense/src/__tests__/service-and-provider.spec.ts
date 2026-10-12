@@ -1,6 +1,5 @@
 import { describe, it } from "node:test"
 import assert from "node:assert/strict"
-import { MedusaError } from "@medusajs/framework/utils"
 import { TypesenseModuleService } from "../modules/typesense/service"
 import { TypesenseSearchProviderService } from "../providers/typesense/service"
 import {
@@ -67,10 +66,7 @@ function createInMemoryMockTypesenseClient() {
         retrieve: async () => {
           const c = collections.get(name)
           if (!c) {
-            throw new MedusaError(
-              MedusaError.Types.NOT_FOUND,
-              `Collection ${name} not found`
-            )
+            throw new Error(`Collection ${name} not found`)
           }
           return {
             ...c.schema,
@@ -87,9 +83,7 @@ function createInMemoryMockTypesenseClient() {
             return {
               retrieve: async () => {
                 const doc = coll.documents.get(docId)
-                if (!doc) {
-                  throw new MedusaError(MedusaError.Types.NOT_FOUND, "Not found")
-                }
+                if (!doc) throw new Error("Not found")
                 return doc
               },
               delete: async () => {
@@ -197,12 +191,7 @@ function createInMemoryMockTypesenseClient() {
         return {
           retrieve: async () => {
             const target = aliases.get(aliasName)
-            if (!target) {
-              throw new MedusaError(
-                MedusaError.Types.NOT_FOUND,
-                "Alias not found"
-              )
-            }
+            if (!target) throw new Error("Alias not found")
             return { name: aliasName, collection_name: target }
           },
         }

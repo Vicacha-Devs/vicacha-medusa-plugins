@@ -1,27 +1,9 @@
 {
-  "name": "@vicacha-devs/medusa-plugin-typesense",
-  "version": "0.0.1",
+  "name": "medusa-plugin-typesense",
+  "version": "1.0.0",
   "description": "Full-featured Typesense search, vector/hybrid AI search, merchandising (synonyms, curations, stopwords), custom entity indexing, and InstantSearch plugin for Medusa v2",
-  "author": "Vicacha Devs",
+  "author": "Jose Luis",
   "license": "MIT",
-  "files": [
-    ".medusa/server",
-    "medusa-config.js"
-  ],
-  "exports": {
-    "./package.json": "./package.json",
-    "./workflows": "./.medusa/server/src/workflows/index.js",
-    "./.medusa/server/src/modules/*": "./.medusa/server/src/modules/*/index.js",
-    "./modules/*": "./.medusa/server/src/modules/*/index.js",
-    "./providers/typesense": "./.medusa/server/src/providers/typesense/index.js",
-    "./indexes": "./.medusa/server/src/indexes/index.js",
-    "./admin": {
-      "import": "./.medusa/server/src/admin/index.mjs",
-      "require": "./.medusa/server/src/admin/index.js",
-      "default": "./.medusa/server/src/admin/index.js"
-    },
-    ".": "./.medusa/server/src/index.js"
-  },
   "keywords": [
     "medusa",
     "medusa-v2",
@@ -40,11 +22,26 @@
     "instantsearch",
     "ecommerce"
   ],
+  "exports": {
+    "./package.json": "./package.json",
+    "./workflows": "./.medusa/server/src/workflows/index.js",
+    "./modules/*": "./.medusa/server/src/modules/*/index.js",
+    "./providers/typesense": "./.medusa/server/src/providers/typesense/index.js",
+    "./indexes": "./.medusa/server/src/indexes/index.js",
+    "./admin": {
+      "import": "./.medusa/server/src/admin/index.mjs",
+      "require": "./.medusa/server/src/admin/index.js",
+      "default": "./.medusa/server/src/admin/index.js"
+    },
+    ".": "./.medusa/server/src/index.js"
+  },
+  "files": [
+    ".medusa/server",
+    "medusa-config.js"
+  ],
   "scripts": {
     "build": "medusa plugin:build",
     "dev": "medusa plugin:develop",
-    "lint": "medusa lint",
-    "prepublishOnly": "medusa plugin:build",
     "typecheck": "tsc --noEmit",
     "test": "node --import ./src/__tests__/register-ts-resolver.mjs --test src/__tests__/*.spec.ts"
   },
@@ -74,9 +71,5 @@
     "@medusajs/ui": "^4.0.0",
     "react": "^18.2.0 || ^19.0.0",
     "react-dom": "^18.2.0 || ^19.0.0"
-  },
-  "engines": {
-    "node": "^20.19.0 || >=22.12.0"
-  },
-  "packageManager": "pnpm@11.20.0"
+  }
 }
