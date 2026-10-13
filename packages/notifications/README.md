@@ -1,64 +1,108 @@
-<p align="center">
-  <a href="https://www.medusajs.com">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/59018053/229103275-b5e482bb-4601-46e6-8142-244f531cebdb.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/59018053/229103726-e5b529a3-9b3f-4970-8a1f-c6af37f087bf.svg">
-    <img alt="Medusa logo" src="https://user-images.githubusercontent.com/59018053/229103726-e5b529a3-9b3f-4970-8a1f-c6af37f087bf.svg">
-    </picture>
-  </a>
-</p>
-<h1 align="center">
-  Medusa Plugin Starter
-</h1>
+# `medusa-plugin-notifications`
 
-<h4 align="center">
-  <a href="https://docs.medusajs.com">Documentation</a> |
-  <a href="https://www.medusajs.com">Website</a>
-</h4>
+Unified **Multi-Channel Notification Studio, Visual Block & Raw Template Builder, DB Event Orchestrator, TCPA/10DLC Consent Ledger, Abandoned Cart Recovery, and Multi-Driver Transport Provider Suite** for **Medusa v2 (`>= 2.21.0`)**.
 
-<p align="center">
-  Building blocks for digital commerce
-</p>
-<p align="center">
-  <a href="https://github.com/medusajs/medusa/blob/master/CONTRIBUTING.md">
-    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat" alt="PRs welcome!" />
-  </a>
-    <a href="https://www.producthunt.com/posts/medusa"><img src="https://img.shields.io/badge/Product%20Hunt-%231%20Product%20of%20the%20Day-%23DA552E" alt="Product Hunt"></a>
-  <a href="https://discord.gg/xpCwq3Kfn8">
-    <img src="https://img.shields.io/badge/chat-on%20discord-7289DA.svg" alt="Discord Chat" />
-  </a>
-  <a href="https://twitter.com/intent/follow?screen_name=medusajs">
-    <img src="https://img.shields.io/twitter/follow/medusajs.svg?label=Follow%20@medusajs" alt="Follow @medusajs" />
-  </a>
-</p>
+---
 
-## Compatibility
+## Highlights
 
-This starter is compatible with versions >= 2.4.0 of `@medusajs/medusa`. 
+- **Dual Architecture**:
+  1. **Standalone Notification Studio Module (`notificationsModuleService`)**: Visual Block Tree Builder (`mpn_template_block`), Raw HTML/Text/JSON templates (`mpn_template`), DB-driven Event-to-Template Mappings (`mpn_event_mapping`), Redacted Delivery Ledger (`mpn_delivery_log`), TCPA/10DLC Consent Ledger (`mpn_consent_record`), Customer Group Broadcasts (`mpn_broadcast_campaign`), and Dummy OTP Sandbox (`mpn_sandbox_message`).
+  2. **6 Built-In Medusa `Modules.NOTIFICATION` Providers**:
+     - `mpn-email`: Multi-profile (1..5) Nodemailer SMTP + HTTP Email Relay with PDF attachment support.
+     - `mpn-whatsapp`: **Multi-Driver WhatsApp Adapter** supporting **Official Meta Cloud API** (approved WABA templates + interactive buttons + session text) AND **Self-Hosted Gateways** (**OpenWA / `@open-wa/wa-automate`**, **WAHA**, and **Evolution API v2**) for free-form rich text, interactive buttons, and PDF invoice attachments.
+     - `mpn-telegram`: **Telegram Bot API Provider** supporting both **Merchant Supergroup / Forum Topic Alerts** (`-100...` or `@channel` with `message_thread_id` + Admin verification gate) and **Customer Direct Messages** (`chat_id` linked via `/start` bot webhook, `InlineKeyboardMarkup` buttons, and `sendDocument` PDF uploads) with 30 msg/s global & 1 msg/s per-chat rate limiting.
+     - `mpn-sms`: **Multi-Driver SMS Provider** supporting **Twilio** (SMS/MMS + Messaging Service SID + `20xxx` validation error classification), **Signal House**, **MSG91 Flow**, **SMSAPI**, and **Generic HTTP Webhook**, with accurate GSM-7 / UCS-2 segment calculation.
+     - `mpn-slack`: Slack Block Kit JSON webhook provider.
+     - `mpn-dummy-sandbox`: Captures OTP verification codes and test notifications across all channels in Medusa Admin without carrier cost.
+- **Zero-Hard-Dependency Sibling Integration (`medusa-documents-plugin`)**: Automatically attaches generated PDF Invoices, Packing Slips, or Credit Notes to Email, WhatsApp/OpenWA, and Telegram notifications when an Event Mapping enables `attach_document_types`.
 
-## Getting Started
+---
 
-Visit the [Quickstart Guide](https://docs.medusajs.com/learn/installation) to set up a server.
+## Medusa Configuration (`medusa-config.ts`)
 
-Visit the [Plugins documentation](https://docs.medusajs.com/learn/fundamentals/plugins) to learn more about plugins and how to create them.
+```ts
+import { defineConfig } from "@medusajs/framework/utils"
 
-Visit the [Docs](https://docs.medusajs.com/learn/installation#get-started) to learn more about our system requirements.
+export default defineConfig({
+  plugins: [
+    {
+      resolve: "medusa-plugin-notifications",
+      options: {
+        defaultLocale: "en",
+        storeName: "My Medusa Store",
+        storeUrl: "https://store.example.com",
+        enableCartRecovery: true,
+        cartAbandonmentThresholdMinutes: 60,
+      },
+    },
+  ],
+  modules: [
+    {
+      resolve: "medusa-plugin-notifications/modules/notifications",
+      options: {
+        defaultLocale: "en",
+        storeName: "My Medusa Store",
+        storeUrl: "https://store.example.com",
+      },
+    },
+    {
+      resolve: "@medusajs/medusa/notification",
+      options: {
+        providers: [
+          {
+            resolve: "medusa-plugin-notifications/providers/email-smtp",
+            id: "mpn-email",
+            options: { channels: ["email"] },
+          },
+          {
+            resolve: "medusa-plugin-notifications/providers/whatsapp",
+            id: "mpn-whatsapp",
+            options: {
+              channels: ["whatsapp"],
+              driver: "openwa", // "meta-cloud" | "openwa" | "waha" | "evolution"
+              gatewayUrl: process.env.OPENWA_BASE_URL,
+            },
+          },
+          {
+            resolve: "medusa-plugin-notifications/providers/telegram",
+            id: "mpn-telegram",
+            options: {
+              channels: ["telegram"],
+              botToken: process.env.TELEGRAM_BOT_TOKEN,
+            },
+          },
+          {
+            resolve: "medusa-plugin-notifications/providers/sms",
+            id: "mpn-sms",
+            options: {
+              channels: ["sms"],
+              driver: "twilio", // "twilio" | "signalhouse" | "msg91" | "smsapi" | "webhook"
+            },
+          },
+          {
+            resolve: "medusa-plugin-notifications/providers/slack",
+            id: "mpn-slack",
+            options: { channels: ["slack"] },
+          },
+          {
+            resolve: "medusa-plugin-notifications/providers/dummy-sandbox",
+            id: "mpn-dummy-sandbox",
+            options: { channels: ["dummy"] },
+          },
+        ],
+      },
+    },
+  ],
+})
+```
 
-## What is Medusa
+---
 
-Medusa is a set of commerce modules and tools that allow you to build rich, reliable, and performant commerce applications without reinventing core commerce logic. The modules can be customized and used to build advanced ecommerce stores, marketplaces, or any product that needs foundational commerce primitives. All modules are open-source and freely available on npm.
+## Development & Verification
 
-Learn more about [Medusa’s architecture](https://docs.medusajs.com/learn/introduction/architecture) and [commerce modules](https://docs.medusajs.com/learn/fundamentals/modules/commerce-modules) in the Docs.
-
-## Community & Contributions
-
-The community and core team are available in [GitHub Discussions](https://github.com/medusajs/medusa/discussions), where you can ask for support, discuss roadmap, and share ideas.
-
-Join our [Discord server](https://discord.com/invite/medusajs) to meet other community members.
-
-## Other channels
-
-- [GitHub Issues](https://github.com/medusajs/medusa/issues)
-- [Twitter](https://twitter.com/medusajs)
-- [LinkedIn](https://www.linkedin.com/company/medusajs)
-- [Medusa Blog](https://medusajs.com/blog/)
+```bash
+npm test
+npm run typecheck
+npm run build
+```

@@ -333,72 +333,6 @@ importers:
         version: 7.3.6(@types/node@20.0.0)(jiti@2.0.0)(yaml@2.9.0)
 
   packages/documents:
-    devDependencies:
-      '@medusajs/admin-sdk':
-        specifier: 2.19.0
-        version: 2.19.0
-      '@medusajs/cli':
-        specifier: 2.19.0
-        version: 2.19.0(@types/node@20.0.0)(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
-      '@medusajs/eslint-plugin':
-        specifier: 2.19.0
-        version: 2.19.0(eslint@9.39.4(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.6.2)
-      '@medusajs/framework':
-        specifier: 2.19.0
-        version: 2.19.0(@medusajs/cli@2.19.0(@types/node@20.0.0)(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1))(@types/node@20.0.0)(debug@4.4.3(supports-color@8.1.1))(ioredis@5.11.1(supports-color@8.1.1))(supports-color@8.1.1)(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(yaml@2.9.0))(zod@4.2.0)
-      '@medusajs/icons':
-        specifier: 2.19.0
-        version: 2.19.0(react@18.3.1)
-      '@medusajs/medusa':
-        specifier: 2.19.0
-        version: 2.19.0(2e2ed9fb39c27c35ead1b31981be1880)
-      '@medusajs/test-utils':
-        specifier: 2.19.0
-        version: 2.19.0(@medusajs/core-flows@2.19.0(@medusajs/framework@2.19.0(@medusajs/cli@2.19.0(@types/node@20.0.0)(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1))(@types/node@20.0.0)(debug@4.4.3(supports-color@8.1.1))(ioredis@5.11.1(supports-color@8.1.1))(supports-color@8.1.1)(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(yaml@2.9.0))(zod@4.2.0)))(@medusajs/framework@2.19.0(@medusajs/cli@2.19.0(@types/node@20.0.0)(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1))(@types/node@20.0.0)(debug@4.4.3(supports-color@8.1.1))(ioredis@5.11.1(supports-color@8.1.1))(supports-color@8.1.1)(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(yaml@2.9.0))(zod@4.2.0))(@medusajs/medusa@2.19.0)(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
-      '@medusajs/ui':
-        specifier: 4.2.1
-        version: 4.2.1(@types/react-dom@18.2.25)(@types/react@18.3.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.2)
-      '@swc/core':
-        specifier: ^1.7.28
-        version: 1.7.28(@swc/helpers@0.5.23)
-      '@types/node':
-        specifier: ^20.0.0
-        version: 20.0.0
-      '@types/react':
-        specifier: ^18.3.2
-        version: 18.3.2
-      '@types/react-dom':
-        specifier: ^18.2.25
-        version: 18.2.25
-      eslint:
-        specifier: ^9.0.0
-        version: 9.39.4(jiti@2.7.0)(supports-color@8.1.1)
-      jiti:
-        specifier: ^2.0.0
-        version: 2.7.0
-      prop-types:
-        specifier: ^15.8.1
-        version: 15.8.1
-      react:
-        specifier: ^18.2.0
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.3.1(react@18.3.1)
-      ts-node:
-        specifier: ^10.9.2
-        version: 10.9.2(@swc/core@1.7.28(@swc/helpers@0.5.23))(@types/node@20.0.0)(typescript@5.6.2)
-      typescript:
-        specifier: ^5.6.2
-        version: 5.6.2
-      vite:
-        specifier: ^7.3.6
-        version: 7.3.6(@types/node@20.0.0)(jiti@2.7.0)(yaml@2.9.0)
-      yalc:
-        specifier: ^1.0.0-pre.53
-        version: 1.0.0-pre.53
-
-  packages/documents-bu:
     dependencies:
       '@react-pdf/renderer':
         specifier: ^4.1.6
@@ -479,6 +413,72 @@ importers:
       vitest:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@20.0.0)(jsdom@29.1.1(@noble/hashes@1.8.0))(supports-color@8.1.1)
+      yalc:
+        specifier: ^1.0.0-pre.53
+        version: 1.0.0-pre.53
+
+  packages/notifications:
+    devDependencies:
+      '@medusajs/admin-sdk':
+        specifier: 2.19.0
+        version: 2.19.0
+      '@medusajs/cli':
+        specifier: 2.19.0
+        version: 2.19.0(@types/node@20.0.0)(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
+      '@medusajs/eslint-plugin':
+        specifier: 2.19.0
+        version: 2.19.0(eslint@9.39.4(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.6.2)
+      '@medusajs/framework':
+        specifier: 2.19.0
+        version: 2.19.0(@medusajs/cli@2.19.0(@types/node@20.0.0)(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1))(@types/node@20.0.0)(debug@4.4.3(supports-color@8.1.1))(ioredis@5.11.1(supports-color@8.1.1))(supports-color@8.1.1)(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(yaml@2.9.0))(zod@4.2.0)
+      '@medusajs/icons':
+        specifier: 2.19.0
+        version: 2.19.0(react@18.3.1)
+      '@medusajs/medusa':
+        specifier: 2.19.0
+        version: 2.19.0(2e2ed9fb39c27c35ead1b31981be1880)
+      '@medusajs/test-utils':
+        specifier: 2.19.0
+        version: 2.19.0(@medusajs/core-flows@2.19.0(@medusajs/framework@2.19.0(@medusajs/cli@2.19.0(@types/node@20.0.0)(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1))(@types/node@20.0.0)(debug@4.4.3(supports-color@8.1.1))(ioredis@5.11.1(supports-color@8.1.1))(supports-color@8.1.1)(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(yaml@2.9.0))(zod@4.2.0)))(@medusajs/framework@2.19.0(@medusajs/cli@2.19.0(@types/node@20.0.0)(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1))(@types/node@20.0.0)(debug@4.4.3(supports-color@8.1.1))(ioredis@5.11.1(supports-color@8.1.1))(supports-color@8.1.1)(vite@7.3.6(@types/node@20.0.0)(jiti@2.7.0)(yaml@2.9.0))(zod@4.2.0))(@medusajs/medusa@2.19.0)(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
+      '@medusajs/ui':
+        specifier: 4.2.1
+        version: 4.2.1(@types/react-dom@18.2.25)(@types/react@18.3.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.2)
+      '@swc/core':
+        specifier: ^1.7.28
+        version: 1.7.28(@swc/helpers@0.5.23)
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.0.0
+      '@types/react':
+        specifier: ^18.3.2
+        version: 18.3.2
+      '@types/react-dom':
+        specifier: ^18.2.25
+        version: 18.2.25
+      eslint:
+        specifier: ^9.0.0
+        version: 9.39.4(jiti@2.7.0)(supports-color@8.1.1)
+      jiti:
+        specifier: ^2.0.0
+        version: 2.7.0
+      prop-types:
+        specifier: ^15.8.1
+        version: 15.8.1
+      react:
+        specifier: ^18.2.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.3.1(react@18.3.1)
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@swc/core@1.7.28(@swc/helpers@0.5.23))(@types/node@20.0.0)(typescript@5.6.2)
+      typescript:
+        specifier: ^5.6.2
+        version: 5.6.2
+      vite:
+        specifier: ^7.3.6
+        version: 7.3.6(@types/node@20.0.0)(jiti@2.7.0)(yaml@2.9.0)
       yalc:
         specifier: ^1.0.0-pre.53
         version: 1.0.0-pre.53
@@ -14304,7 +14304,7 @@ snapshots:
 
   '@oclif/config@1.18.2(supports-color@8.1.1)':
     dependencies:
-      '@oclif/errors': 1.3.5
+      '@oclif/errors': 1.3.6
       '@oclif/parser': 3.8.17
       debug: 4.4.3(supports-color@8.1.1)
       globby: 11.1.0
