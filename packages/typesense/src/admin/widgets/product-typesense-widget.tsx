@@ -1,7 +1,9 @@
 import { defineWidgetConfig } from "@medusajs/admin-sdk"
-import { Badge, Button, Container, Heading, toast } from "@medusajs/ui"
-import React, { useCallback, useEffect, useState } from "react"
+import { Badge, Button, Container, Heading } from "@medusajs/ui"
+import React from "react"
 import { useTranslation } from "react-i18next"
+
+import { useProductTypesenseWidgetState } from "../../hooks"
 
 type ProductWidgetProps = {
   data?: {
@@ -13,63 +15,17 @@ type ProductWidgetProps = {
 const ProductTypesenseWidget: React.FC<ProductWidgetProps> = ({ data }) => {
   const { t, i18n } = useTranslation()
   const productId = data?.id
-  const [indexed, setIndexed] = useState<boolean>(false)
-  const [doc, setDoc] = useState<Record<string, any> | null>(null)
-  const [loading, setLoading] = useState<boolean>(false)
-  const [syncing, setSyncing] = useState<boolean>(false)
-  const [showJson, setShowJson] = useState<boolean>(false)
-
-  const inspectProductDocument = useCallback(async () => {
-    if (!productId) return
-    setLoading(true)
-    try {
-      const res = await fetch(
-        `/admin/typesense/documents/products/${encodeURIComponent(productId)}`,
-        {
-          credentials: "include",
-        }
-      )
-      if (res.ok) {
-        const payload = await res.json()
-        setIndexed(Boolean(payload.indexed))
-        setDoc(payload.document || null)
-      }
-    } catch {
-      // Ignore error if Typesense is offline
-    } finally {
-      setLoading(false)
-    }
-  }, [productId])
-
-  useEffect(() => {
-    void inspectProductDocument()
-  }, [inspectProductDocument])
-
-  const handleSyncProduct = async () => {
-    if (!productId) return
-    setSyncing(true)
-    try {
-      const res = await fetch(
-        `/admin/typesense/documents/products/${encodeURIComponent(productId)}`,
-        {
-          method: "POST",
-          credentials: "include",
-        }
-      )
-      if (res.ok) {
-        const payload = await res.json()
-        setIndexed(Boolean(payload.indexed))
-        setDoc(payload.document || null)
-        toast.success(t("widget.syncSuccess"))
-      } else {
-        toast.error(t("widget.syncError"))
-      }
-    } catch {
-      toast.error(t("widget.syncError"))
-    } finally {
-      setSyncing(false)
-    }
-  }
+  const {
+    indexed,
+    doc,
+    loading,
+    syncing,
+    showJson,
+    setShowJson,
+    handleSyncProduct,
+  } = useProductTypesenseWidgetState({
+    productId,
+  })
 
   if (!productId) {
     return null

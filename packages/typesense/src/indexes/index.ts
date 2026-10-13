@@ -23,18 +23,7 @@ import {
   transformCustomEntityToDocument,
   transformProductToDocument,
 } from "../modules/typesense/utils/transformers"
-
-export interface SearchIndexFactoryOptions<TDoc = Record<string, any>> {
-  name?: string
-  entity?: string
-  provider?: string
-  batchSize?: number
-  graphFields?: string[]
-  events?: string[]
-  settings?: SearchTypes.SearchIndexSettings
-  transform?: (record: Record<string, any>) => TDoc | null | Promise<TDoc | null>
-  fields?: SearchTypes.SearchIndexFieldsInput
-}
+import type { SearchIndexFactoryOptions } from "../types"
 
 function createGraphSeedGenerator(params: {
   entity: string

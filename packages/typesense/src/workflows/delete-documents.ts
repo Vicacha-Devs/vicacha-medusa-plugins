@@ -4,18 +4,15 @@ import {
   StepResponse,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { TYPESENSE_MODULE } from "../modules/typesense/types"
-import type TypesenseModuleService from "../modules/typesense/service"
 
-export interface DeleteTypesenseDocumentsInput {
-  entity: string
-  ids: string[]
-  locale?: string
-  triggeredBy?: string
-}
+import type TypesenseModuleService from "../modules/typesense/service"
+import {
+  TYPESENSE_MODULE,
+  type DeleteTypesenseDocumentsInput,
+} from "../types"
 
 export const deleteTypesenseDocumentsStep = createStep(
-  "typesense-delete-documents-step",
+  "delete-typesense-documents",
   async (input: DeleteTypesenseDocumentsInput, { container }) => {
     const typesenseService = container.resolve(
       TYPESENSE_MODULE

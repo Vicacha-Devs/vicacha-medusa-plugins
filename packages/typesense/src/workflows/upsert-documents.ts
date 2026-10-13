@@ -5,19 +5,16 @@ import {
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
-import { TYPESENSE_MODULE } from "../modules/typesense/types"
+import {
+  TYPESENSE_MODULE,
+  type UpsertTypesenseDocumentsInput,
+} from "../types"
 import type TypesenseModuleService from "../modules/typesense/service"
 
-export interface UpsertTypesenseDocumentsInput {
-  entity: string
-  ids?: string[]
-  records?: Record<string, any>[]
-  locale?: string
-  triggeredBy?: string
-}
+export type { UpsertTypesenseDocumentsInput } from "../types"
 
 export const upsertTypesenseDocumentsStep = createStep(
-  "typesense-upsert-documents-step",
+  "upsert-typesense-documents",
   async (input: UpsertTypesenseDocumentsInput, { container }) => {
     const typesenseService = container.resolve(
       TYPESENSE_MODULE

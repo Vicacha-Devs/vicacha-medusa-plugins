@@ -5,32 +5,16 @@ import {
   Modules,
 } from "@medusajs/framework/utils"
 import Typesense from "typesense"
-import type { TypesenseNodeConfig } from "../../modules/typesense/types"
+import type {
+  TypesenseNodeConfig,
+  TypesenseSearchProviderOptions,
+} from "../../types"
 import {
   compileFilterObjectToTypesense,
   escapeTypesenseFilterValue,
 } from "../../modules/typesense/utils/filter-compiler"
 
 export const TYPESENSE_PROVIDER_IDENTIFIER = "typesense"
-
-export interface TypesenseSearchProviderOptions {
-  nodes?: TypesenseNodeConfig[]
-  nearestNode?: TypesenseNodeConfig
-  host?: string
-  apiKey?: string
-  connectionTimeoutSeconds?: number
-  numRetries?: number
-  retryIntervalSeconds?: number
-  config?: {
-    nodes?: TypesenseNodeConfig[]
-    nearestNode?: TypesenseNodeConfig
-    host?: string
-    apiKey?: string
-    connectionTimeoutSeconds?: number
-    numRetries?: number
-    retryIntervalSeconds?: number
-  }
-}
 
 type ProviderDependencies = {
   logger?: Logger

@@ -5,34 +5,16 @@ import {
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
-import { TYPESENSE_MODULE } from "../modules/typesense/types"
+
 import type TypesenseModuleService from "../modules/typesense/service"
-
-export interface SyncEntitiesWorkflowInput {
-  /** Single entity or array of entities ('products', 'categories', 'collections', or custom entities). If omitted, syncs all enabled entities. */
-  entities?: string[]
-  /** Specific record IDs to sync incrementally. If omitted, performs a full zero-downtime reindex. */
-  ids?: string[]
-  /** Specific locale override. If omitted, syncs all configured locales. */
-  locale?: string
-  /** Force full zero-downtime reindex even if IDs are not passed (default: true when ids omitted) */
-  fullReindex?: boolean
-  /** Actor or trigger source ('admin', 'cli', 'job', 'event') */
-  triggeredBy?: string
-}
-
-export interface SyncEntitySummary {
-  entity: string
-  locale: string
-  aliasName: string
-  collectionName: string
-  documentsProcessed: number
-  documentsFailed: number
-  durationMs: number
-}
+import {
+  TYPESENSE_MODULE,
+  type SyncEntitiesWorkflowInput,
+  type SyncEntitySummary,
+} from "../types"
 
 export const syncEntitiesStep = createStep(
-  "typesense-sync-entities-step",
+  "sync-entities",
   async (input: SyncEntitiesWorkflowInput, { container }) => {
     const typesenseService = container.resolve(
       TYPESENSE_MODULE
