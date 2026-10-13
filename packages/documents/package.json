@@ -1,72 +1,124 @@
 {
-  "name": "documents",
-  "version": "0.0.1",
-  "description": "A starter for Medusa plugins.",
-  "author": "Medusa (https://medusajs.com)",
+  "name": "medusa-plugin-documents",
+  "version": "1.0.0",
+  "description": "Comprehensive commercial documents plugin for Medusa v2: Invoices, Packing Slips, Credit Notes & POS Receipts with Dual PDF Engine (@react-pdf/renderer + Handlebars/pdfmake), per-region settings, 10-locale i18n (including RTL Arabic & Turkish), localized Admin UI, optional B2B context, and optional Docuseal e-signatures.",
+  "author": "Jose Luis",
   "license": "MIT",
+  "types": "./src/index.ts",
   "files": [
-    ".medusa/server"
+    ".medusa/server",
+    "src",
+    "src/modules/documents/migrations/*.js",
+    "src/modules/documents/migrations/.snapshot-*.json",
+    "README.md",
+    "tsconfig.json"
   ],
   "exports": {
     "./package.json": "./package.json",
-    "./workflows": "./.medusa/server/src/workflows/index.js",
-    "./.medusa/server/src/modules/*": "./.medusa/server/src/modules/*/index.js",
-    "./modules/*": "./.medusa/server/src/modules/*/index.js",
-    "./providers/*": "./.medusa/server/src/providers/*/index.js",
-    "./*": "./.medusa/server/src/*.js",
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./.medusa/server/src/index.js",
+      "require": "./.medusa/server/src/index.js",
+      "default": "./.medusa/server/src/index.js"
+    },
     "./admin": {
       "import": "./.medusa/server/src/admin/index.mjs",
       "require": "./.medusa/server/src/admin/index.js",
       "default": "./.medusa/server/src/admin/index.js"
-    }
+    },
+    "./hooks": {
+      "types": "./src/hooks/index.ts",
+      "import": "./src/hooks/index.ts",
+      "default": "./.medusa/server/src/hooks/index.js"
+    },
+    "./sdk": {
+      "types": "./src/sdk/index.ts",
+      "import": "./src/sdk/index.ts",
+      "default": "./.medusa/server/src/sdk/index.js"
+    },
+    "./types": {
+      "types": "./src/types/index.ts",
+      "import": "./src/types/index.ts",
+      "default": "./.medusa/server/src/types/index.js"
+    },
+    "./workflows": {
+      "types": "./src/workflows/index.ts",
+      "import": "./.medusa/server/src/workflows/index.js",
+      "default": "./.medusa/server/src/workflows/index.js"
+    },
+    "./.medusa/server/src/modules/*": "./.medusa/server/src/modules/*/index.js",
+    "./modules/*": "./.medusa/server/src/modules/*/index.js",
+    "./providers/*": "./.medusa/server/src/providers/*/index.js",
+    "./*": "./.medusa/server/src/*.js"
   },
   "keywords": [
     "medusa",
-    "plugin",
-    "medusa-plugin-other",
+    "medusa-v2",
     "medusa-plugin",
-    "medusa-v2"
+    "medusa-plugin-documents",
+    "documents",
+    "invoice",
+    "packing-slip",
+    "credit-note",
+    "receipt",
+    "pos",
+    "pdf",
+    "react-pdf",
+    "pdfmake",
+    "handlebars",
+    "docuseal",
+    "b2b"
   ],
-  "scripts": {
-    "build": "medusa plugin:build",
-    "dev": "medusa plugin:develop",
-    "lint": "medusa lint",
-    "prepublishOnly": "medusa plugin:build"
-  },
   "devDependencies": {
-    "@medusajs/admin-sdk": "2.19.0",
-    "@medusajs/cli": "2.19.0",
-    "@medusajs/eslint-plugin": "2.19.0",
-    "@medusajs/framework": "2.19.0",
-    "@medusajs/icons": "2.19.0",
-    "@medusajs/medusa": "2.19.0",
-    "@medusajs/test-utils": "2.19.0",
-    "@medusajs/ui": "4.2.1",
+    "@medusajs/admin-sdk": "2.13.1",
+    "@medusajs/cli": "2.13.1",
+    "@medusajs/framework": "2.13.1",
+    "@medusajs/icons": "2.13.1",
+    "@medusajs/medusa": "2.13.1",
+    "@medusajs/test-utils": "2.13.1",
+    "@medusajs/ui": "4.1.1",
     "@swc/core": "^1.7.28",
+    "@types/jsdom": "^28.0.1",
     "@types/node": "^20.0.0",
+    "@types/pdfmake": "^0.2.11",
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.2.25",
-    "eslint": "^9.0.0",
-    "jiti": "^2.0.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.2",
-    "vite": "^7.3.6",
+    "vite": "^5.2.11",
+    "vitest": "^2.1.8",
     "yalc": "^1.0.0-pre.53"
   },
   "peerDependencies": {
-    "@medusajs/admin-sdk": "2.19.0",
-    "@medusajs/cli": "2.19.0",
-    "@medusajs/framework": "2.19.0",
-    "@medusajs/icons": "2.19.0",
-    "@medusajs/medusa": "2.19.0",
-    "@medusajs/test-utils": "2.19.0",
-    "@medusajs/ui": "4.2.1"
+    "@medusajs/admin-sdk": "2.13.1",
+    "@medusajs/cli": "2.13.1",
+    "@medusajs/framework": "2.13.1",
+    "@medusajs/icons": "2.13.1",
+    "@medusajs/medusa": "2.13.1",
+    "@medusajs/test-utils": "2.13.1",
+    "@medusajs/ui": "4.1.1"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "engines": {
-    "node": "^20.19.0 || >=22.12.0"
+    "node": ">=20"
   },
-  "packageManager": "pnpm@11.20.0"
+  "dependencies": {
+    "@react-pdf/renderer": "^4.1.6",
+    "handlebars": "^4.7.9",
+    "html-to-pdfmake": "^2.5.33",
+    "jsdom": "^29.0.1",
+    "pdfmake": "^0.2.18",
+    "zod": "^3.23.8"
+  },
+  "scripts": {
+    "build": "medusa plugin:build",
+    "dev": "medusa plugin:develop",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import ./src/__tests__/register-ts-resolver.mjs --test src/__tests__/documents.spec.ts"
+  }
 }
