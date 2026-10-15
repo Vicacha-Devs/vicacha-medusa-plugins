@@ -1,7 +1,8 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+
 import type NotificationsModuleService from "../../../../../modules/notifications/service"
 import { NOTIFICATIONS_MODULE } from "../../../../../modules/notifications/types"
-import { UpsertEventMappingSchema } from "../../../../middlewares"
+import { UpsertEventMappingSchema } from "../../../../validators"
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   const id = req.params.id

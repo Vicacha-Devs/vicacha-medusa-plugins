@@ -1,5 +1,5 @@
 {
-  "name": "medusa-plugin-notifications",
+  "name": "@vicacha-devs/medusa-plugin-notifications",
   "version": "0.0.1",
   "description": "Unified multi-channel notification studio, visual block & raw template builder, DB event mapping orchestrator, TCPA/10DLC consent ledger, abandoned cart recovery, customer group broadcasts, and multi-driver providers (Email/SMTP, WhatsApp Cloud API + OpenWA/WAHA/Evolution, Telegram Merchant Topics + Customer Bot, SMS Twilio/SignalHouse/MSG91/SMSAPI, Slack Block Kit, and Dummy OTP Sandbox) for Medusa v2.",
   "author": "Vicacha Devs",

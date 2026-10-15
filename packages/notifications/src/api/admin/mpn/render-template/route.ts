@@ -1,8 +1,9 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+
 import type NotificationsModuleService from "../../../../modules/notifications/service"
 import { NOTIFICATIONS_MODULE } from "../../../../modules/notifications/types"
 import { hydrateEntityContextData } from "../../../../workflows"
-import { RenderTemplatePreviewSchema } from "../../../middlewares"
+import { RenderTemplatePreviewSchema } from "../../../validators"
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   const parsed = RenderTemplatePreviewSchema.safeParse(req.body || {})

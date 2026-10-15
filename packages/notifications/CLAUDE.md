@@ -65,7 +65,8 @@ medusa-plugin-notifications/
 │   │   ├── abandoned-cart-recovery.ts                  # Every 15m cart recovery with consent & 24h cooldown
 │   │   └── log-retention-and-broadcasts.ts             # Hourly log retention & scheduled broadcasts
 │   ├── api/
-│   │   ├── middlewares.ts                              # Zod validation schemas & rawBody webhook config
+│   │   ├── validators.ts                               # Zod validation schemas & inferred request types
+│   │   ├── middlewares.ts                              # rawBody webhook config & verifyStoreCustomerSession helper
 │   │   ├── admin/mpn/                                  # Admin REST routes (templates, render-template, mappings, channels, logs, sandbox, broadcasts, send)
 │   │   └── store/mpn/                                  # Storefront REST routes (consent, webhooks/[provider])
 │   ├── admin/

@@ -1,11 +1,10 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+
 import type NotificationsModuleService from "../../../../modules/notifications/service"
 import { NOTIFICATIONS_MODULE } from "../../../../modules/notifications/types"
 import { maskRecipientPii } from "../../../../modules/notifications/utils/security"
-import {
-  StoreConsentSchema,
-  verifyStoreCustomerSession,
-} from "../../../middlewares"
+import { verifyStoreCustomerSession } from "../../../middlewares"
+import { StoreConsentSchema } from "../../../validators"
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   const parsed = StoreConsentSchema.safeParse(req.body || {})

@@ -9,7 +9,9 @@ import {
   Table,
   Text,
 } from "@medusajs/ui"
+import React from "react"
 import { useTranslation } from "react-i18next"
+
 import { useOrderNotificationsWidgetState } from "../../hooks"
 
 const OrderNotificationsActivityWidget = ({ data }: { data?: any }) => {

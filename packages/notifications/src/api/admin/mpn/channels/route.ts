@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+
 import type NotificationsModuleService from "../../../../modules/notifications/service"
 import {
   NOTIFICATION_CHANNELS,
@@ -7,7 +8,7 @@ import {
   WHATSAPP_DRIVERS,
 } from "../../../../modules/notifications/types"
 import { isValidTelegramRecipient } from "../../../../modules/notifications/utils/security"
-import { UpdateChannelConfigSchema } from "../../../middlewares"
+import { UpdateChannelConfigSchema } from "../../../validators"
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   const mpnService = req.scope.resolve(

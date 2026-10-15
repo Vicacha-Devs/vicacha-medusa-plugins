@@ -1,5 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { Modules } from "@medusajs/framework/utils"
+
 import { resolveOrderDocumentAttachments } from "../../../../modules/notifications/integrations/documents-and-b2b-resolver"
 import type NotificationsModuleService from "../../../../modules/notifications/service"
 import {
@@ -10,7 +11,7 @@ import {
   executeEventNotificationsDispatch,
   hydrateEntityContextData,
 } from "../../../../workflows"
-import { ManualSendSchema } from "../../../middlewares"
+import { ManualSendSchema } from "../../../validators"
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   const parsed = ManualSendSchema.safeParse(req.body || {})

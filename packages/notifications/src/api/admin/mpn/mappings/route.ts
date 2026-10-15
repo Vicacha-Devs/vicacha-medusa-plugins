@@ -1,11 +1,12 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+
 import type NotificationsModuleService from "../../../../modules/notifications/service"
 import {
   NOTIFICATIONS_MODULE,
   RECIPIENT_RULES,
   SUPPORTED_EVENTS,
 } from "../../../../modules/notifications/types"
-import { UpsertEventMappingSchema } from "../../../middlewares"
+import { UpsertEventMappingSchema } from "../../../validators"
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   const mpnService = req.scope.resolve(

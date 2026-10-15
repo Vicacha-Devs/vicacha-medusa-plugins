@@ -1,7 +1,8 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+
 import type NotificationsModuleService from "../../../../../modules/notifications/service"
 import { NOTIFICATIONS_MODULE } from "../../../../../modules/notifications/types"
-import { UpdateTemplateSchema } from "../../../../middlewares"
+import { UpdateTemplateSchema } from "../../../../validators"
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   const mpnService = req.scope.resolve(
