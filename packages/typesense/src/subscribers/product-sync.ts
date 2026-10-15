@@ -1,5 +1,6 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+
 import { TYPESENSE_MODULE } from "../modules/typesense/types"
 import type TypesenseModuleService from "../modules/typesense/service"
 import { upsertTypesenseDocumentsWorkflow } from "../workflows/upsert-documents"
@@ -18,7 +19,7 @@ export default async function productTypesenseSyncSubscriber({
     return
   }
 
-  if (!typesenseService || !typesenseService.isAutoIndexEnabled()) {
+  if (!typesenseService || !(await typesenseService.isAutoIndexEnabled())) {
     return
   }
 

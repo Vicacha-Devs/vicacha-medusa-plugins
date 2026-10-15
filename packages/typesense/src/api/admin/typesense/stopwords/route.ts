@@ -1,7 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { TYPESENSE_MODULE } from "../../../../modules/typesense/types"
 import type TypesenseModuleService from "../../../../modules/typesense/service"
-import { AdminStopwordSetSchema } from "../../../middlewares"
+import { AdminStopwordSetSchema } from "../../../validators"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const typesenseService = req.scope.resolve(

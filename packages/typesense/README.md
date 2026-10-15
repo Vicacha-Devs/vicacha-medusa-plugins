@@ -741,7 +741,7 @@ const health = await typesenseService.checkHealth()
 
 - **Admin Key Isolation**: `apiKey` never leaves the server. Storefront clients using InstantSearch receive short-lived HMAC-signed Scoped Search Keys (`GET /store/typesense/token`) capped at `86400s` (`24h`) with embedded `filter_by` constraints.
 - **Filter Injection Prevention**: `compileTypesenseFilter()` in `src/modules/typesense/utils/filter-compiler.ts` validates all user-supplied filter field names against the entity schema's allowlist, escapes all string values inside backticks (`` `...` ``), and wraps mandatory storefront constraints (`status:=published && sales_channel_ids:=[...]`) in outer parentheses so user `$or` clauses cannot bypass tenant or visibility boundaries.
-- **Strict Input Validation**: Every `/store/typesense/*` and `/admin/typesense/*` route is protected by Zod validation schemas in `src/api/middlewares.ts`.
+- **Strict Input Validation**: Every `/store/typesense/*` and `/admin/typesense/*` route is protected by Zod validation schemas in `src/api/validators.ts`.
 - **Safe Highlighting in Admin UI**: Search result `<mark>` highlights are tokenized into safe React JSX nodes without `dangerouslySetInnerHTML`.
 
 ---

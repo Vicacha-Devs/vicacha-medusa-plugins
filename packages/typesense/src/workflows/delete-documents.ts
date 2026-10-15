@@ -19,7 +19,7 @@ export const deleteTypesenseDocumentsStep = createStep(
     ) as TypesenseModuleService
 
     const def = await typesenseService.getEntityDefinition(input.entity)
-    const pluginOpts = typesenseService.getPluginOptions()
+    const pluginOpts = await typesenseService.getPluginOptions()
     const locales = input.locale
       ? [input.locale]
       : def.locales && def.locales.length > 0

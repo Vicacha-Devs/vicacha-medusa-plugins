@@ -1,4 +1,5 @@
 import type { MedusaContainer } from "@medusajs/framework/types"
+
 import { TYPESENSE_MODULE } from "../modules/typesense/types"
 import type TypesenseModuleService from "../modules/typesense/service"
 import { syncEntitiesToTypesenseWorkflow } from "../workflows/sync-entities"
@@ -15,7 +16,7 @@ export default async function typesenseNightlyReconcileJob(
     return
   }
 
-  if (!typesenseService || !typesenseService.isAutoIndexEnabled()) {
+  if (!typesenseService || !(await typesenseService.isAutoIndexEnabled())) {
     return
   }
 

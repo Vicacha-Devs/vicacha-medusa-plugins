@@ -4,8 +4,8 @@ import type TypesenseModuleService from "../../../../modules/typesense/service"
 import {
   normalizeStringArrayParam,
   resolveStorefrontSalesChannelIds,
-  StoreScopedTokenQuerySchema,
 } from "../../../middlewares"
+import { StoreScopedTokenQuerySchema } from "../../../validators"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const parsed = StoreScopedTokenQuerySchema.safeParse(req.query || {})

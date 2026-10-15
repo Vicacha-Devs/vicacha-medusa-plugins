@@ -52,7 +52,7 @@ export const upsertTypesenseDocumentsStep = createStep(
       }
     }
 
-    const pluginOpts = typesenseService.getPluginOptions()
+    const pluginOpts = await typesenseService.getPluginOptions()
     const locales = input.locale
       ? [input.locale]
       : def.locales && def.locales.length > 0

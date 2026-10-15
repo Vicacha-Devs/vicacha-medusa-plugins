@@ -13,7 +13,7 @@ import {
   AdminSynonymSchema,
   AdminUpsertEntityConfigSchema,
   StoreSearchParamsSchema,
-} from "../api/middlewares"
+} from "../api/validators"
 
 describe("Filter Compiler, Security Controls & Zod Validation", () => {
   it("escapes literal filter values and rejects malicious field names", () => {

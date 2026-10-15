@@ -280,7 +280,7 @@ describe("TypesenseModuleService & TypesenseSearchProviderService", () => {
     )
 
     const mockClient = createInMemoryMockTypesenseClient()
-    service.setClient(mockClient)
+    await service.setClient(mockClient)
 
     // 1. Initial zero-downtime reindex of products
     const firstReindex = await service.reindexEntityZeroDowntime({

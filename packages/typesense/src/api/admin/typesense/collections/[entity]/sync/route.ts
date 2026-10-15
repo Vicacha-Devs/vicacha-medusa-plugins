@@ -1,6 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { syncEntitiesToTypesenseWorkflow } from "../../../../../../workflows/sync-entities"
-import { AdminSyncEntitySchema } from "../../../../../middlewares"
+import { AdminSyncEntitySchema } from "../../../../../validators"
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const entity = String(req.params.entity || "").trim()

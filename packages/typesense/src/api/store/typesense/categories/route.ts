@@ -4,8 +4,8 @@ import type TypesenseModuleService from "../../../../modules/typesense/service"
 import {
   hydrateHitDocumentsWithMedusaGraph,
   normalizeStringArrayParam,
-  StoreSearchParamsSchema,
 } from "../../../middlewares"
+import { StoreSearchParamsSchema } from "../../../validators"
 
 async function handleStoreCategoriesSearch(
   req: MedusaRequest,

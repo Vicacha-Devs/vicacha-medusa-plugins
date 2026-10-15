@@ -35,7 +35,7 @@ export const syncEntitiesStep = createStep(
             .filter((d) => d.enabled !== false)
             .map((d) => d.entity)
 
-    const pluginOpts = typesenseService.getPluginOptions()
+    const pluginOpts = await typesenseService.getPluginOptions()
     const summaries: SyncEntitySummary[] = []
 
     for (const entity of targetEntities) {

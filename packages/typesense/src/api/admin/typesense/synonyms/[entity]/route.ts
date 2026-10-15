@@ -1,7 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { TYPESENSE_MODULE } from "../../../../../modules/typesense/types"
 import type TypesenseModuleService from "../../../../../modules/typesense/service"
-import { AdminSynonymSchema } from "../../../../middlewares"
+import { AdminSynonymSchema } from "../../../../validators"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const entity = String(req.params.entity || "products").trim()

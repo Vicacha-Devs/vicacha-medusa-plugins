@@ -174,14 +174,14 @@ export class TypesenseModuleService extends MedusaService({
   /**
    * Injects a custom or mock Typesense client instance (useful for testing or custom transports).
    */
-  public setClient(client: any): void {
+  public async setClient(client: any): Promise<void> {
     this.client_ = client
   }
 
   /**
    * Returns the configured Typesense Client instance.
    */
-  public getClient(): any {
+  protected getClient(): any {
     if (this.client_) {
       return this.client_
     }
@@ -203,13 +203,13 @@ export class TypesenseModuleService extends MedusaService({
     return this.client_
   }
 
-  public getPluginOptions(): Omit<
+  public async getPluginOptions(): Promise<Omit<
     TypesensePluginOptions,
     "apiKey" | "searchOnlyApiKey"
   > & {
     hasApiKey: boolean
     hasSearchOnlyApiKey: boolean
-  } {
+  }> {
     const { apiKey, searchOnlyApiKey, ...rest } = this.options_
     return {
       ...rest,
@@ -218,11 +218,11 @@ export class TypesenseModuleService extends MedusaService({
     }
   }
 
-  public isAutoIndexEnabled(): boolean {
+  public async isAutoIndexEnabled(): Promise<boolean> {
     return this.options_.autoIndex !== false
   }
 
-  public getAliasName(entity: string, locale?: string): string {
+  protected getAliasName(entity: string, locale?: string): string {
     const safeEntity = String(entity || "products")
       .trim()
       .toLowerCase()
@@ -246,7 +246,7 @@ export class TypesenseModuleService extends MedusaService({
     return `${prefix}_${safeEntity}`
   }
 
-  public getNewPhysicalCollectionName(
+  protected getNewPhysicalCollectionName(
     entity: string,
     locale?: string
   ): string {

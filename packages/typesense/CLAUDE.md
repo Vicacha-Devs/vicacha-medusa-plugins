@@ -58,7 +58,8 @@ medusa-plugin-typesense/
 │   ├── jobs/
 │   │   └── typesense-nightly-reconcile.ts        # Nightly catalog reconciliation cron job
 │   ├── api/
-│   │   ├── middlewares.ts                        # Zod schemas, storefront sales-channel scoping, graph hydration
+│   │   ├── validators.ts                         # Zod request validation schemas & inferred types
+│   │   ├── middlewares.ts                        # Storefront sales-channel scoping, graph hydration & security headers
 │   │   ├── store/typesense/                      # Storefront endpoints (products, categories, collections, search, token, chat, analytics)
 │   │   └── admin/typesense/                      # Admin endpoints (health, collections, entities, synonyms, curations, stopwords, playground, analytics, documents)
 │   ├── admin/

@@ -5,8 +5,8 @@ import {
   hydrateHitDocumentsWithMedusaGraph,
   normalizeStringArrayParam,
   resolveStorefrontSalesChannelIds,
-  StoreSearchParamsSchema,
 } from "../../../middlewares"
+import { StoreSearchParamsSchema } from "../../../validators"
 
 async function handleStoreProductsSearch(
   req: MedusaRequest,

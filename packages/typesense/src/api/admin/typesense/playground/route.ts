@@ -1,7 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { TYPESENSE_MODULE } from "../../../../modules/typesense/types"
 import type TypesenseModuleService from "../../../../modules/typesense/service"
-import { AdminPlaygroundSearchSchema } from "../../../middlewares"
+import { AdminPlaygroundSearchSchema } from "../../../validators"
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const parsed = AdminPlaygroundSearchSchema.safeParse(req.body || {})

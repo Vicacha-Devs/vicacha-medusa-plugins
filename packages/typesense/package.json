@@ -1,5 +1,5 @@
 {
-  "name": "medusa-plugin-typesense",
+  "name": "@vicacha-devs/medusa-plugin-typesense",
   "version": "0.0.1",
   "description": "Full-featured Typesense search, vector/hybrid AI search, merchandising (synonyms, curations, stopwords), custom entity indexing, and InstantSearch plugin for Medusa v2",
   "author": "Vicacha Devs",

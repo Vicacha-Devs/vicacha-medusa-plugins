@@ -4,9 +4,11 @@ import type TypesenseModuleService from "../../../../modules/typesense/service"
 import {
   normalizeStringArrayParam,
   resolveStorefrontSalesChannelIds,
+} from "../../../middlewares"
+import {
   StoreFederatedSearchSchema,
   StoreSearchParamsSchema,
-} from "../../../middlewares"
+} from "../../../validators"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const parsed = StoreSearchParamsSchema.safeParse(req.query || {})

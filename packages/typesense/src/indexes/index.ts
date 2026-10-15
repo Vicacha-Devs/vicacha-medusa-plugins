@@ -1,6 +1,6 @@
 import "@medusajs/framework/modules-sdk"
 import type { Event, SearchTypes } from "@medusajs/framework/types"
-import { defineSearchIndex, search } from "@medusajs/framework/utils"
+import { defineSearchIndex, search, type SearchFieldsSchema } from "@medusajs/framework/utils"
 
 if (typeof (globalThis as any).MedusaModule === "undefined") {
   ;(globalThis as any).MedusaModule = {
@@ -166,7 +166,7 @@ function createGraphEventConsumer(params: {
   }
 }
 
-export const defaultProductSearchFields = search.define({
+export const defaultProductSearchFields: SearchFieldsSchema<SearchTypes.SearchSchema> = search.define({
   title: search.text().searchable({ weight: 10 }).sortable(),
   subtitle: search.text().searchable({ weight: 7 }),
   description: search.text().searchable({ weight: 3 }),
@@ -233,7 +233,7 @@ export function defineProductSearchIndex(
   })
 }
 
-export const defaultCategorySearchFields = search.define({
+export const defaultCategorySearchFields: SearchFieldsSchema<SearchTypes.SearchSchema> = search.define({
   name: search.text().searchable({ weight: 10 }).sortable(),
   description: search.text().searchable({ weight: 4 }),
   handle: search.keyword().searchable({ weight: 7 }).filterable().sortable(),
@@ -281,7 +281,7 @@ export function defineCategorySearchIndex(
   })
 }
 
-export const defaultCollectionSearchFields = search.define({
+export const defaultCollectionSearchFields: SearchFieldsSchema<SearchTypes.SearchSchema> = search.define({
   title: search.text().searchable({ weight: 10 }).sortable(),
   handle: search.keyword().searchable({ weight: 7 }).filterable().sortable(),
   product_count: search.integer().filterable().sortable().facetable(),
@@ -322,7 +322,7 @@ export function defineCollectionSearchIndex(
   })
 }
 
-export const defaultCustomEntitySearchFields = search.define({
+export const defaultCustomEntitySearchFields: SearchFieldsSchema<SearchTypes.SearchSchema> = search.define({
   title: search.text().searchable({ weight: 10 }).sortable(),
   name: search.text().searchable({ weight: 10 }).sortable(),
   description: search.text().searchable({ weight: 4 }),

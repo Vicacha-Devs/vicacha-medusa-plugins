@@ -9,7 +9,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
   try {
     const overview = await typesenseService.getClusterOverview()
-    const options = typesenseService.getPluginOptions()
+    const options = await typesenseService.getPluginOptions()
     return res.status(200).json({
       ...overview,
       options: {
