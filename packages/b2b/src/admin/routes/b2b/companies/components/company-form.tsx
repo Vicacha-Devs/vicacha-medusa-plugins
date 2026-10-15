@@ -6,32 +6,14 @@ import { Button, Input, Select, Tabs } from "@medusajs/ui"
 import { useMemo } from "react"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
-import { z } from "zod"
 
 import { AdminCreateCompany, AdminUpdateCompany } from "../../../../../types"
 import { ESpendingLimitResetFrequency } from "../../../../../types/enums"
+import { CompanyFormValues, makeCompanyFormSchema } from "./validators"
 
 const ALL_CURRENCIES = Object.values(currencies).sort((a, b) =>
   a.name.localeCompare(b.name)
 )
-
-const makeSchema = (t: (key: string) => string) =>
-  z.object({
-    name: z.string().min(1, t("companies.form.name")),
-    email: z.email(),
-    currency_code: z.string().min(1, t("companies.form.currency")),
-    phone: z.string().optional().or(z.literal("")),
-    address: z.string().optional().or(z.literal("")),
-    city: z.string().optional().or(z.literal("")),
-    state: z.string().optional().or(z.literal("")),
-    zip: z.string().optional().or(z.literal("")),
-    country: z.string().optional().or(z.literal("")),
-    logo_url: z.string().optional().or(z.literal("")),
-    spending_limit_reset_frequency: z.nativeEnum(ESpendingLimitResetFrequency).optional(),
-    spending_limit_reset_at: z.string().optional().or(z.literal("")),
-  })
-
-type FormValues = z.infer<ReturnType<typeof makeSchema>>
 
 interface CreateFormProps {
   mode: "create"
@@ -64,7 +46,7 @@ type CompanyFormProps = CreateFormProps | UpdateFormProps
 
 export function CompanyForm({ company, onSubmit, loading }: CompanyFormProps) {
   const { t } = useTranslation()
-  const schema = useMemo(() => makeSchema(t), [t])
+  const schema = useMemo(() => makeCompanyFormSchema(t), [t])
 
   const { regions, isPending: regionsLoading } = useRegions({})
 
@@ -88,7 +70,7 @@ export function CompanyForm({ company, onSubmit, loading }: CompanyFormProps) {
       .sort((a: any, b: any) => a.display_name.localeCompare(b.display_name))
   }, [regions])
 
-  const form = useForm<FormValues>({
+  const form = useForm<CompanyFormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       name: company?.name ?? "",

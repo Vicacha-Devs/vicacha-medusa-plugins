@@ -12,10 +12,12 @@ import { CoolSwitch, sdk } from "@vicacha-devs/medusa-shared-admin/admin"
 import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
-import { z } from "zod"
 
 import { ESpendingLimitResetFrequency } from "../../../../../types"
-
+import {
+  type CompanyCreateFormValues,
+  makeCompanyCreateFormSchema,
+} from "./validators"
 
 const ALL_CURRENCIES = Object.values(currencies).sort((a, b) =>
   a.name.localeCompare(b.name)
@@ -28,28 +30,6 @@ const RESET_FREQUENCIES = [
   ESpendingLimitResetFrequency.MONTHLY,
   ESpendingLimitResetFrequency.YEARLY,
 ]
-
-const makeSchema = (t: (key: string) => string) =>
-  z.object({
-    name: z.string().min(1, t("companies.form.name")),
-    email: z.email(),
-    currency_code: z.string().min(1, t("companies.form.currency")),
-    phone: z.string().optional().or(z.literal("")),
-    address: z.string().optional().or(z.literal("")),
-    city: z.string().optional().or(z.literal("")),
-    state: z.string().optional().or(z.literal("")),
-    zip: z.string().optional().or(z.literal("")),
-    country: z.string().optional().or(z.literal("")),
-    logo_url: z.string().optional().or(z.literal("")),
-    spending_limit_reset_frequency: z
-      .enum(ESpendingLimitResetFrequency)
-      .optional(),
-    customer_group_id: z.string().optional().or(z.literal("")),
-    requires_admin_approval: z.boolean(),
-    requires_sales_manager_approval: z.boolean(),
-  })
-
-export type CompanyCreateFormValues = z.infer<ReturnType<typeof makeSchema>>
 
 enum Tab {
   DETAILS = "details",
@@ -65,7 +45,7 @@ interface CompanyCreateFormProps {
 
 export function CompanyCreateForm({ onSubmit, loading }: CompanyCreateFormProps) {
   const { t } = useTranslation()
-  const schema = useMemo(() => makeSchema(t), [t])
+  const schema = useMemo(() => makeCompanyCreateFormSchema(t), [t])
 
   const [tab, setTab] = useState<Tab>(Tab.DETAILS)
   const [tabState, setTabState] = useState<TabState>({

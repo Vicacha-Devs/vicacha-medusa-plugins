@@ -9,17 +9,12 @@ import { getCurrencySymbol } from "@medusajs/dashboard/lib"
 import { CoolSwitch } from "@vicacha-devs/medusa-shared-admin/admin"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
-import { z } from "zod"
 
 import { AdminUpdateEmployee, QueryCompany, QueryEmployee } from "../../../../../../../types"
-
-const makeSchema = () =>
-  z.object({
-    spending_limit: z.string().optional(),
-    is_admin: z.boolean(),
-  })
-
-type UpdateEmployeeFormValues = z.infer<ReturnType<typeof makeSchema>>
+import {
+  makeEmployeeUpdateFormSchema,
+  UpdateEmployeeFormValues,
+} from "./validators"
 
 export function EmployeesUpdateForm({
   company,
@@ -37,7 +32,7 @@ export function EmployeesUpdateForm({
   const { t } = useTranslation()
 
   const form = useForm<UpdateEmployeeFormValues>({
-    resolver: zodResolver(makeSchema()),
+    resolver: zodResolver(makeEmployeeUpdateFormSchema()),
     defaultValues: {
       spending_limit: employee?.spending_limit?.toString() ?? "0",
       is_admin: employee?.is_admin ?? false,

@@ -9,21 +9,12 @@ import { Button, CurrencyInput, Input, Text } from "@medusajs/ui"
 import { CoolSwitch } from "@vicacha-devs/medusa-shared-admin/admin"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
-import { z } from "zod"
 
 import { AdminCreateEmployee, QueryCompany } from "../../../../../../../types"
-
-const makeSchema = () =>
-  z.object({
-    first_name: z.string().optional().or(z.literal("")),
-    last_name: z.string().optional().or(z.literal("")),
-    email: z.email(),
-    phone: z.string().optional().or(z.literal("")),
-    spending_limit: z.string().optional(),
-    is_admin: z.boolean(),
-  })
-
-type CreateEmployeeFormValues = z.infer<ReturnType<typeof makeSchema>>
+import {
+  CreateEmployeeFormValues,
+  makeEmployeeCreateFormSchema,
+} from "./validators"
 
 export function EmployeesCreateForm({
   handleSubmit,
@@ -39,7 +30,7 @@ export function EmployeesCreateForm({
   const { t } = useTranslation()
 
   const form = useForm<CreateEmployeeFormValues>({
-    resolver: zodResolver(makeSchema()),
+    resolver: zodResolver(makeEmployeeCreateFormSchema()),
     defaultValues: {
       first_name: "",
       last_name: "",

@@ -10,7 +10,6 @@ import { safeFormatCurrency } from "@vicacha-devs/medusa-shared-admin/admin";
 import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { z } from "zod";
 
 import {
   useConfirmQuote,
@@ -18,10 +17,10 @@ import {
   useUpdateQuoteItem,
 } from "../../../../../../hooks/api";
 import { ManageItemsSection } from "./manage-items-section.tsx";
-
-export const ManageQuoteFormSchema = z.object({});
-
-export type ManageQuoteFormSchemaType = z.infer<typeof ManageQuoteFormSchema>;
+import {
+  ManageQuoteFormSchema,
+  type ManageQuoteFormSchemaType,
+} from "./validators";
 
 type ReturnCreateFormProps = {
   order: AdminOrder;

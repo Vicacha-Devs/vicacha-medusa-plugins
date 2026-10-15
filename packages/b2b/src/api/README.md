@@ -4,15 +4,20 @@ File-based REST routes under two namespaces, following Medusa's `src/api/<surfac
 
 ```
 api/
+├── validators.ts           top-level barrel re-exporting all admin & store Zod schemas
 ├── middlewares.ts          global middleware registration
 ├── middlewares/
 │   └── ensure-role.ts      role guard middleware
 ├── admin/
+│   ├── validators.ts       barrel re-exporting all admin B2B Zod schemas
+│   ├── middlewares.ts      admin middleware registration
 │   └── b2b/
-│       ├── companies/      CRUD + employees + approval-settings + customer-group
-│       ├── quotes/         list, detail, send, reject, messages
-│       └── approvals/      list, approve/reject
+│       ├── companies/      CRUD + employees + approval-settings + customer-group (with validators.ts)
+│       ├── quotes/         list, detail, send, reject, messages (with validators.ts)
+│       └── approvals/      list, approve/reject (with validators.ts)
 └── store/
+    ├── validators.ts       barrel re-exporting all store B2B Zod schemas
+    ├── middlewares.ts      store middleware registration
     └── b2b/
         ├── companies/      CRUD + employees + approval-settings
         ├── quotes/         list, create (RFQ), detail, preview, accept, reject, messages

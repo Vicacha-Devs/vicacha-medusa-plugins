@@ -7,17 +7,10 @@ import { useEffect, useMemo, useRef } from "react"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { Link, useParams } from "react-router-dom"
-import { z } from "zod"
 
 import { QueryQuote, QueryQuoteMessage } from "../../../../../../types"
 import { useCreateQuoteMessage } from "../../../../../hooks/api/quotes"
-
-const MessageSchema = z.object({
-  text: z.string().min(1),
-  item_id: z.string().nullish(),
-})
-
-type MessageFormData = z.infer<typeof MessageSchema>
+import { MessageFormData, MessageSchema } from "./validators"
 
 interface QuoteMessagesSectionProps {
   quote: QueryQuote

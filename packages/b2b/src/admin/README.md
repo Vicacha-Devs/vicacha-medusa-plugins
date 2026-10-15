@@ -5,6 +5,7 @@ Medusa Admin extension — pages, shared components, and data-fetching hooks for
 ```sh
 admin/
 ├── tsconfig.json         TypeScript config (moduleResolution: bundler, noEmit: true)
+├── validators.ts         Barrel re-exporting all Admin UI form Zod schemas
 ├── i18n/                 react-i18next setup and translation files
 ├── lib/
 │   ├── client.ts         Medusa JS SDK client singleton
