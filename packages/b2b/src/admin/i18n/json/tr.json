@@ -110,19 +110,19 @@
       "createTitle": "Şirket Oluştur",
       "editTitle": "Şirketi Düzenle",
       "tabs": {
-        "details": "Details",
-        "admin": "Admin"
+        "details": "Detaylar",
+        "admin": "Yönetici"
       },
-      "spendingSection": "Spending",
+      "spendingSection": "Harcama",
       "spendingLimitResetFrequency": "Harcama Limiti Sıfırlama Sıklığı",
       "spendingLimitResetAt": "Son Sıfırlama Tarihi",
       "selectFrequency": "Sıklık seçin",
       "resetFrequency": {
-        "never": "Never",
-        "daily": "Daily",
-        "weekly": "Weekly",
-        "monthly": "Monthly",
-        "yearly": "Yearly"
+        "never": "Asla",
+        "daily": "Günlük",
+        "weekly": "Haftalık",
+        "monthly": "Aylık",
+        "yearly": "Yıllık"
       }
     },
     "detail": {
@@ -157,38 +157,38 @@
       "noRecordsMessage": "Şu anda hiç şirket yok. Başlamak için bir tane oluşturun."
     },
     "toasts": {
-      "deleted": "Company {{name}} deleted successfully",
-      "updated": "Company {{name}} updated successfully",
-      "updateError": "Failed to update company",
-      "addedToGroup": "Company added to customer group successfully",
-      "removedFromGroup": "Company removed from customer group successfully",
-      "addToGroupError": "Failed to add company to customer group",
-      "removeFromGroupError": "Failed to remove company from customer group",
-      "approvalSettingsUpdated": "Company approval settings updated successfully",
-      "approvalSettingsError": "Failed to update company approval settings",
-      "created": "Company {{name}} created successfully"
+      "deleted": "{{name}} şirketi başarıyla silindi",
+      "updated": "{{name}} şirketi başarıyla güncellendi",
+      "updateError": "Şirket güncellenemedi",
+      "addedToGroup": "Şirket müşteri grubuna başarıyla eklendi",
+      "removedFromGroup": "Şirket müşteri grubundan başarıyla kaldırıldı",
+      "addToGroupError": "Şirket müşteri grubuna eklenemedi",
+      "removeFromGroupError": "Şirket müşteri grubundan kaldırılamadı",
+      "approvalSettingsUpdated": "Şirket onay ayarları başarıyla güncellendi",
+      "approvalSettingsError": "Şirket onay ayarları güncellenemedi",
+      "created": "{{name}} şirketi başarıyla oluşturuldu"
     },
     "approvalSettings": {
-      "title": "Company Approval Settings",
-      "requiresAdmin": "Requires Admin Approval",
-      "requiresAdminDescription": "Require company admin approval for all orders placed by this company.",
-      "requiresSalesManager": "Requires Sales Manager Approval",
-      "requiresSalesManagerDescription": "Require sales manager approval for all orders placed by this company."
+      "title": "Şirket Onay Ayarları",
+      "requiresAdmin": "Yönetici Onayı Gerektirir",
+      "requiresAdminDescription": "Bu şirket tarafından verilen tüm siparişler için şirket yöneticisi onayı isteyin.",
+      "requiresSalesManager": "Satış Müdürü Onayı Gerektirir",
+      "requiresSalesManagerDescription": "Bu şirket tarafından verilen tüm siparişler için satış müdürü onayı isteyin."
     },
     "customerGroup": {
-      "drawerTitle": "Add {{name}} to a Customer Group",
-      "hint": "Adding {{name}} to a customer group will automatically add {{count}} linked employee{{plural}} to the customer group.",
+      "drawerTitle": "{{name}} Şirketini Müşteri Grubuna Ekle",
+      "hint": "{{name}} şirketini bir müşteri grubuna eklemek, bağlı {{count}} çalışanı{{plural}} otomatik olarak müşteri grubuna ekleyecektir.",
       "header": "Müşteri Grubu",
       "actionsHeader": "İşlemler",
-      "noGroups": "No customer groups found",
+      "noGroups": "Müşteri grubu bulunamadı",
       "remove": "Kaldır",
       "add": "Ekle",
-      "addedSuccess": "Company added to customer group successfully",
-      "removedSuccess": "Company removed from customer group successfully",
-      "addError": "Failed to add company to customer group",
-      "removeError": "Failed to remove company from customer group",
-      "title": "Customer Group",
-      "selectPlaceholder": "Select a customer group"
+      "addedSuccess": "Şirket müşteri grubuna başarıyla eklendi",
+      "removedSuccess": "Şirket müşteri grubundan başarıyla kaldırıldı",
+      "addError": "Şirket müşteri grubuna eklenemedi",
+      "removeError": "Şirket müşteri grubundan kaldırılamadı",
+      "title": "Müşteri Grubu",
+      "selectPlaceholder": "Bir müşteri grubu seçin"
     }
   },
   "employees": {
@@ -205,11 +205,11 @@
       "email": "E-posta",
       "phone": "Telefon",
       "permissions": "İzinler",
-      "spendingLimit": "Spending Limit ({{currency}})",
+      "spendingLimit": "Harcama Limiti ({{currency}})",
       "adminAccess": "Yönetici Erişimi",
       "isAdmin": "Yönetici",
       "isAdminDescription": "Yönetici erişimi vermek için etkinleştirin",
-      "isAdminTooltip": "Admins can manage the company's details and employee permissions.",
+      "isAdminTooltip": "Yöneticiler şirketin ayrıntılarını ve çalışan izinlerini yönetebilir.",
       "editCustomerDetails": "Müşteri Ayrıntılarını Düzenle",
       "name": "Ad",
       "company": "Şirket"
@@ -225,11 +225,11 @@
       "actions": "İşlemler"
     },
     "toasts": {
-      "created": "Employee {{firstName}} {{lastName}} created successfully",
-      "updated": "Employee {{email}} updated successfully",
-      "deleted": "Employee deleted successfully",
-      "createCustomerError": "Failed to create customer",
-      "createEmployeeError": "Failed to create employee"
+      "created": "Çalışan {{firstName}} {{lastName}} başarıyla oluşturuldu",
+      "updated": "Çalışan {{email}} başarıyla güncellendi",
+      "deleted": "Çalışan başarıyla silindi",
+      "createCustomerError": "Müşteri oluşturulamadı",
+      "createEmployeeError": "Çalışan oluşturulamadı"
     }
   },
   "quotes": {
@@ -254,8 +254,12 @@
       "pending_customer": "Müşteri Bekleniyor",
       "expired": "Süresi Doldu"
     },
+    "send": {
+      "expiresAt": "Son Geçerlilik Tarihi",
+      "expiresAtHint": "İsteğe bağlı. Müşteri bu tarihten sonra kabul edemez."
+    },
     "detail": {
-      "acceptedMessage": "Quote accepted by customer. Order is ready for processing.",
+      "acceptedMessage": "Teklif müşteri tarafından kabul edildi. Sipariş işleme hazır.",
       "viewOrder": "Siparişi Görüntüle",
       "rejectQuote": "Teklifi Reddet",
       "sendQuote": "Teklifi Gönder",
@@ -300,42 +304,42 @@
       "title": "Mesajlar",
       "empty": "Henüz mesaj yok",
       "placeholder": "Bir mesaj yazın…",
-      "pickItem": "Pick Quote Item",
-      "pickItemHint": "Select a quote item to write a message around",
+      "pickItem": "Teklif Öğesi Seç",
+      "pickItemHint": "Hakkında mesaj yazmak için bir teklif öğesi seçin",
       "selectItem": "Öğe Seç",
       "send": "Gönder",
-      "sentSuccess": "Successfully sent message to customer",
+      "sentSuccess": "Müşteriye mesaj başarıyla gönderildi",
       "adminSender": "Yönetici",
       "customerSender": "Müşteri"
     },
     "manage": {
       "title": "Teklifi Yönet",
-      "priceOverrideHint": "Override the unit price of this product",
+      "priceOverrideHint": "Bu ürünün birim fiyatını geçersiz kıl",
       "updatePrice": "Fiyatı Güncelle",
       "searchPlaceholder": "Ara..."
     },
     "prompts": {
       "send": {
         "title": "Teklif gönderilsin mi?",
-        "description": "You are about to send this quote to the customer. Do you want to continue?"
+        "description": "Bu teklifi müşteriye göndermek üzeresiniz. Devam etmek istiyor musunuz?"
       },
       "reject": {
         "title": "Teklif reddedilsin mi?",
-        "description": "You are about to reject this customer's quote. Do you want to continue?"
+        "description": "Bu müşterinin teklifini reddetmek üzeresiniz. Devam etmek istiyor musunuz?"
       }
     },
     "toasts": {
-      "sent": "Successfully sent quote to customer",
-      "rejected": "Successfully rejected customer's quote",
-      "messageSent": "Successfully sent message to customer",
-      "updated": "Successfully updated quote"
+      "sent": "Teklif müşteriye başarıyla gönderildi",
+      "rejected": "Müşterinin teklifi başarıyla reddedildi",
+      "messageSent": "Müşteriye mesaj başarıyla gönderildi",
+      "updated": "Teklif başarıyla güncellendi"
     }
   },
   "approvals": {
     "title": "Onaylar",
     "label": "Onaylar",
     "table": {
-      "updatedAt": "Updated at",
+      "updatedAt": "Güncellenme tarihi",
       "type": "Tür",
       "handledBy": "İşleyen",
       "handledAt": "İşlem Tarihi",
@@ -356,11 +360,11 @@
     },
     "prompts": {
       "approve": {
-        "title": "Are you sure you want to approve this cart?",
+        "title": "Bu sepeti onaylamak istediğinizden emin misiniz?",
         "description": "Bu işlem geri alınamaz."
       },
       "reject": {
-        "title": "Are you sure you want to reject this cart?",
+        "title": "Bu sepeti reddetmek istediğinizden emin misiniz?",
         "description": "Bu işlem geri alınamaz.",
         "reasonPlaceholder": "Reddetme nedenini girin..."
       }

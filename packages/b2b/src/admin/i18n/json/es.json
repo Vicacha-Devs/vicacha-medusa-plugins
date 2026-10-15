@@ -110,19 +110,19 @@
       "createTitle": "Crear empresa",
       "editTitle": "Editar empresa",
       "tabs": {
-        "details": "Details",
-        "admin": "Admin"
+        "details": "Detalles",
+        "admin": "Administrador"
       },
-      "spendingSection": "Spending",
+      "spendingSection": "Gasto",
       "spendingLimitResetFrequency": "Frecuencia de reinicio del límite",
       "spendingLimitResetAt": "Fecha del último reinicio",
       "selectFrequency": "Selecciona una frecuencia",
       "resetFrequency": {
-        "never": "Never",
-        "daily": "Daily",
-        "weekly": "Weekly",
-        "monthly": "Monthly",
-        "yearly": "Yearly"
+        "never": "Nunca",
+        "daily": "Diariamente",
+        "weekly": "Semanalmente",
+        "monthly": "Mensualmente",
+        "yearly": "Anualmente"
       }
     },
     "detail": {
@@ -166,7 +166,7 @@
       "removeFromGroupError": "No se pudo eliminar la empresa del grupo de clientes",
       "approvalSettingsUpdated": "La configuración de aprobación de la empresa se actualizó correctamente",
       "approvalSettingsError": "No se pudo actualizar la configuración de aprobación de la empresa",
-      "created": "Company {{name}} created successfully"
+      "created": "La empresa {{name}} se creó correctamente"
     },
     "approvalSettings": {
       "title": "Configuración de aprobación de la empresa",
@@ -187,8 +187,8 @@
       "removedSuccess": "La empresa se eliminó correctamente del grupo de clientes",
       "addError": "No se pudo agregar la empresa al grupo de clientes",
       "removeError": "No se pudo eliminar la empresa del grupo de clientes",
-      "title": "Customer Group",
-      "selectPlaceholder": "Select a customer group"
+      "title": "Grupo de clientes",
+      "selectPlaceholder": "Selecciona un grupo de clientes"
     }
   },
   "employees": {
@@ -253,6 +253,10 @@
       "pending_merchant": "Pendiente del comerciante",
       "pending_customer": "Pendiente del cliente",
       "expired": "Expirada"
+    },
+    "send": {
+      "expiresAt": "Fecha de vencimiento",
+      "expiresAtHint": "Opcional. El cliente no podrá aceptar después de esta fecha."
     },
     "detail": {
       "acceptedMessage": "La cotización fue aceptada por el cliente. El pedido está listo para procesarse.",

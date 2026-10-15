@@ -26,8 +26,10 @@ import { EQuoteStatus } from "../../../types";
 import { ApprovalStatusType } from "../../../types";
 
 const B2BOverview = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+
+  const isRtl = (i18n.resolvedLanguage || i18n.language || "").startsWith("ar");
 
   const { data: companiesData, isPending: companiesPending } = useCompanies();
 
@@ -50,7 +52,7 @@ const B2BOverview = () => {
   const pendingApprovalsCount = approvalsData?.count ?? 0;
 
   return (
-    <div className="flex flex-col gap-y-4">
+    <div className="flex flex-col gap-y-4" dir={isRtl ? "rtl" : "ltr"}>
       <div>
         <Heading className="font-sans font-medium h1-core">
           {t("overview.title")}

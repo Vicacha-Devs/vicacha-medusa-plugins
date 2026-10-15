@@ -1,0 +1,388 @@
+{
+  "general": {
+    "new": "Nieuw",
+    "removed": "Verwijderd",
+    "modified": "Gewijzigd",
+    "error": "Fout",
+    "noRecords": "Geen records",
+    "yes": "Ja",
+    "no": "Nee"
+  },
+  "actions": {
+    "continue": "Doorgaan",
+    "cancel": "Annuleren",
+    "save": "Opslaan",
+    "saving": "Opslaan...",
+    "add": "Toevoegen",
+    "edit": "Bewerken",
+    "delete": "Verwijderen",
+    "remove": "Verwijderen",
+    "undo": "Ongedaan maken",
+    "create": "Aanmaken",
+    "send": "Verzenden",
+    "addItems": "Artikelen toevoegen",
+    "duplicate": "Dupliceren",
+    "reject": "Afwijzen",
+    "approve": "Goedkeuren"
+  },
+  "fields": {
+    "id": "ID",
+    "name": "Naam",
+    "email": "E-mail",
+    "phone": "Telefoon",
+    "address": "Adres",
+    "company": "Bedrijf",
+    "status": "Status",
+    "items": "Artikelen",
+    "total": "Totaal",
+    "createdAt": "Aangemaakt op",
+    "updatedAt": "Bijgewerkt op",
+    "search": "Zoeken",
+    "qty": "Aantal",
+    "sku": "SKU",
+    "title": "Titel",
+    "price": "Prijs",
+    "actions": "Acties",
+    "currency": "Valuta",
+    "city": "Stad",
+    "state": "Provincie/Staat",
+    "country": "Land",
+    "spendingLimit": "Bestedingslimiet"
+  },
+  "orders": {
+    "edits": {
+      "currentTotal": "Huidig totaal",
+      "newTotal": "Nieuw totaal",
+      "validation": {
+        "quantityLowerThanFulfillment": "Het aantal kan niet lager zijn dan het reeds geleverde aantal"
+      }
+    }
+  },
+  "overview": {
+    "title": "B2B",
+    "subtitle": "Beheer uw B2B-commerce-activiteiten.",
+    "commerce": {
+      "title": "B2B-commerce",
+      "subtitle": "Beheer bedrijven, offertes, goedkeuringen en B2B-prijzen."
+    },
+    "stats": {
+      "companies": "Bedrijven",
+      "employees": "Medewerkers",
+      "pendingQuotes": "Openstaande offertes",
+      "pendingApprovals": "Openstaande goedkeuringen"
+    },
+    "nav": {
+      "companies": {
+        "title": "Bedrijven",
+        "description": "Beheer B2B-bedrijven, medewerkers en klantgroepen."
+      },
+      "quotes": {
+        "title": "Offertes",
+        "description": "Bekijk en beheer offerteaanvragen."
+      },
+      "approvals": {
+        "title": "Goedkeuringen",
+        "description": "Bekijk winkelwagens die B2B-goedkeuring vereisen."
+      },
+      "pricing": {
+        "title": "Prijzen",
+        "description": "Beheer prijzen voor B2B-verkoopkanalen en klantgroepen."
+      }
+    }
+  },
+  "companies": {
+    "title": "Bedrijven",
+    "label": "Bedrijven",
+    "notFound": "Bedrijf niet gevonden",
+    "form": {
+      "name": "Naam",
+      "phone": "Telefoon",
+      "email": "E-mail",
+      "address": "Adres",
+      "city": "Stad",
+      "state": "Provincie/Staat",
+      "zip": "Postcode",
+      "country": "Land",
+      "currency": "Valuta",
+      "logoUrl": "Logo-URL",
+      "selectCountry": "Selecteer een land",
+      "selectCurrency": "Selecteer een valuta",
+      "createTitle": "Bedrijf aanmaken",
+      "editTitle": "Bedrijf bewerken",
+      "tabs": {
+        "details": "Details",
+        "admin": "Beheerder"
+      },
+      "spendingSection": "Bestedingen",
+      "spendingLimitResetFrequency": "Resetfrequentie bestedingslimiet",
+      "spendingLimitResetAt": "Laatste resetdatum",
+      "selectFrequency": "Selecteer een frequentie",
+      "resetFrequency": {
+        "never": "Nooit",
+        "daily": "Dagelijks",
+        "weekly": "Wekelijks",
+        "monthly": "Maandelijks",
+        "yearly": "Jaarlijks"
+      }
+    },
+    "detail": {
+      "tabs": {
+        "details": "Details",
+        "admin": "Beheerder"
+      },
+      "phone": "Telefoon",
+      "email": "E-mail",
+      "address": "Adres",
+      "city": "Stad",
+      "state": "Provincie/Staat",
+      "currency": "Valuta",
+      "spendingLimitResetFrequency": "Resetfrequentie",
+      "spendingLimitResetAt": "Laatste reset",
+      "customerGroup": "Klantgroep",
+      "approvalSettings": "Goedkeuringsinstellingen",
+      "requiresAdmin": "Vereist goedkeuring van beheerder",
+      "requiresSalesManager": "Vereist goedkeuring van verkoopmanager",
+      "noApprovalRequired": "Geen goedkeuring vereist"
+    },
+    "actions": {
+      "editDetails": "Details bewerken",
+      "manageCustomerGroup": "Klantgroep beheren",
+      "approvalSettings": "Goedkeuringsinstellingen",
+      "delete": "Verwijderen"
+    },
+    "table": {
+      "employees": "Medewerkers",
+      "customerGroup": "Klantgroep",
+      "noRecordsTitle": "Geen bedrijven gevonden",
+      "noRecordsMessage": "Er zijn momenteel geen bedrijven. Maak er een aan om te beginnen."
+    },
+    "toasts": {
+      "deleted": "Bedrijf {{name}} succesvol verwijderd",
+      "updated": "Bedrijf {{name}} succesvol bijgewerkt",
+      "updateError": "Bijwerken van bedrijf mislukt",
+      "addedToGroup": "Bedrijf succesvol toegevoegd aan klantgroep",
+      "removedFromGroup": "Bedrijf succesvol verwijderd uit klantgroep",
+      "addToGroupError": "Toevoegen van bedrijf aan klantgroep mislukt",
+      "removeFromGroupError": "Verwijderen van bedrijf uit klantgroep mislukt",
+      "approvalSettingsUpdated": "Goedkeuringsinstellingen van bedrijf succesvol bijgewerkt",
+      "approvalSettingsError": "Bijwerken van goedkeuringsinstellingen van bedrijf mislukt",
+      "created": "Bedrijf {{name}} succesvol aangemaakt"
+    },
+    "approvalSettings": {
+      "title": "Goedkeuringsinstellingen bedrijf",
+      "requiresAdmin": "Vereist goedkeuring van beheerder",
+      "requiresAdminDescription": "Vereis goedkeuring van de bedrijfsbeheerder voor alle bestellingen die door dit bedrijf worden geplaatst.",
+      "requiresSalesManager": "Vereist goedkeuring van verkoopmanager",
+      "requiresSalesManagerDescription": "Vereis goedkeuring van de verkoopmanager voor alle bestellingen die door dit bedrijf worden geplaatst."
+    },
+    "customerGroup": {
+      "drawerTitle": "{{name}} toevoegen aan een klantgroep",
+      "hint": "Door {{name}} toe te voegen aan een klantgroep worden automatisch {{count}} gekoppelde medewerker{{plural}} toegevoegd aan de klantgroep.",
+      "header": "Klantgroep",
+      "actionsHeader": "Acties",
+      "noGroups": "Geen klantgroepen gevonden",
+      "remove": "Verwijderen",
+      "add": "Toevoegen",
+      "addedSuccess": "Bedrijf succesvol toegevoegd aan klantgroep",
+      "removedSuccess": "Bedrijf succesvol verwijderd uit klantgroep",
+      "addError": "Toevoegen van bedrijf aan klantgroep mislukt",
+      "removeError": "Verwijderen van bedrijf uit klantgroep mislukt",
+      "title": "Klantgroep",
+      "selectPlaceholder": "Selecteer een klantgroep"
+    }
+  },
+  "employees": {
+    "title": "Medewerkers",
+    "label": "Medewerkers",
+    "admin": "Beheerder",
+    "active": "Actief",
+    "inactive": "Inactief",
+    "noRecords": "Dit bedrijf heeft geen medewerkers.",
+    "form": {
+      "details": "Details",
+      "firstName": "Voornaam",
+      "lastName": "Achternaam",
+      "email": "E-mail",
+      "phone": "Telefoon",
+      "permissions": "Rechten",
+      "spendingLimit": "Bestedingslimiet ({{currency}})",
+      "adminAccess": "Beheerderstoegang",
+      "isAdmin": "Is beheerder",
+      "isAdminDescription": "Schakel in om beheerderstoegang te verlenen",
+      "isAdminTooltip": "Beheerders kunnen de bedrijfsgegevens en medewerkersrechten beheren.",
+      "editCustomerDetails": "Klantgegevens bewerken",
+      "name": "Naam",
+      "company": "Bedrijf"
+    },
+    "drawers": {
+      "addTitle": "Bedrijfsmedewerker toevoegen",
+      "editTitle": "Medewerker bewerken"
+    },
+    "table": {
+      "name": "Naam",
+      "email": "E-mail",
+      "spendingLimit": "Bestedingslimiet",
+      "actions": "Acties"
+    },
+    "toasts": {
+      "created": "Medewerker {{firstName}} {{lastName}} succesvol aangemaakt",
+      "updated": "Medewerker {{email}} succesvol bijgewerkt",
+      "deleted": "Medewerker succesvol verwijderd",
+      "createCustomerError": "Aanmaken van klant mislukt",
+      "createEmployeeError": "Aanmaken van medewerker mislukt"
+    }
+  },
+  "quotes": {
+    "title": "Offertes",
+    "label": "Offertes",
+    "table": {
+      "noRecordsTitle": "Geen offertes gevonden",
+      "noRecordsMessage": "Er zijn momenteel geen offertes. Maak er een aan vanuit de webshop.",
+      "customer": "Klant",
+      "draftOrder": "Conceptbestelling",
+      "messages": "Berichten"
+    },
+    "filters": {
+      "customerId": "Klant-ID",
+      "draftOrderId": "Conceptbestelling-ID"
+    },
+    "status": {
+      "accepted": "Geaccepteerd",
+      "customer_rejected": "Afgewezen door klant",
+      "merchant_rejected": "Afgewezen door verkoper",
+      "pending_merchant": "Wacht op verkoper",
+      "pending_customer": "Wacht op klant",
+      "expired": "Verlopen"
+    },
+    "send": {
+      "expiresAt": "Vervaldatum",
+      "expiresAtHint": "Optioneel. De klant kan na deze datum niet meer accepteren."
+    },
+    "detail": {
+      "acceptedMessage": "Offerte geaccepteerd door klant. Bestelling is klaar voor verwerking.",
+      "viewOrder": "Bestelling bekijken",
+      "rejectQuote": "Offerte afwijzen",
+      "sendQuote": "Offerte verzenden",
+      "customer": "Klant",
+      "email": "E-mail",
+      "phone": "Telefoon",
+      "spendingLimit": "Bestedingslimiet",
+      "company": "Bedrijf",
+      "name": "Naam",
+      "draftOrder": "Conceptbestelling",
+      "order": "Bestelling",
+      "orderChange": "Bestellingswijziging",
+      "cart": "Winkelwagen",
+      "noCart": "Geen winkelwagen",
+      "noDraftOrder": "Geen conceptbestelling",
+      "noCustomer": "Geen klant",
+      "unlimited": "Onbeperkt"
+    },
+    "orderStatus": {
+      "pending": "In behandeling",
+      "completed": "Voltooid",
+      "cancelled": "Geannuleerd",
+      "requires_action": "Actie vereist",
+      "draft": "Concept",
+      "archived": "Gearchiveerd"
+    },
+    "summary": {
+      "title": "Offerteoverzicht",
+      "manage": "Beheren"
+    },
+    "cost": {
+      "title": "Kostenspecificatie",
+      "discounts": "Kortingen",
+      "shipping": "Verzending"
+    },
+    "total": {
+      "title": "Totaal",
+      "original": "Oorspronkelijk totaal",
+      "quote": "Offertetotaal"
+    },
+    "messages": {
+      "title": "Berichten",
+      "empty": "Nog geen berichten",
+      "placeholder": "Schrijf een bericht…",
+      "pickItem": "Offerte-artikel kiezen",
+      "pickItemHint": "Selecteer een offerte-artikel om een bericht over te schrijven",
+      "selectItem": "Artikel selecteren",
+      "send": "Verzenden",
+      "sentSuccess": "Bericht succesvol verzonden naar klant",
+      "adminSender": "Beheerder",
+      "customerSender": "Klant"
+    },
+    "manage": {
+      "title": "Offerte beheren",
+      "priceOverrideHint": "Overschrijf de eenheidsprijs van dit product",
+      "updatePrice": "Prijs bijwerken",
+      "searchPlaceholder": "Zoeken..."
+    },
+    "prompts": {
+      "send": {
+        "title": "Offerte verzenden?",
+        "description": "U staat op het punt deze offerte naar de klant te verzenden. Wilt u doorgaan?"
+      },
+      "reject": {
+        "title": "Offerte afwijzen?",
+        "description": "U staat op het punt de offerte van deze klant af te wijzen. Wilt u doorgaan?"
+      }
+    },
+    "toasts": {
+      "sent": "Offerte succesvol verzonden naar klant",
+      "rejected": "Offerte van klant succesvol afgewezen",
+      "messageSent": "Bericht succesvol verzonden naar klant",
+      "updated": "Offerte succesvol bijgewerkt"
+    }
+  },
+  "approvals": {
+    "title": "Goedkeuringen",
+    "label": "Goedkeuringen",
+    "table": {
+      "updatedAt": "Bijgewerkt op",
+      "type": "Type",
+      "handledBy": "Behandeld door",
+      "handledAt": "Behandeld op",
+      "reason": "Reden",
+      "actions": "Acties",
+      "noRecordsTitle": "Geen goedkeuringen gevonden",
+      "noRecordsMessage": "Er zijn momenteel geen goedkeuringen."
+    },
+    "types": {
+      "admin": "Beheerder",
+      "salesManager": "Verkoopmanager"
+    },
+    "filters": {
+      "status": "Status",
+      "pending": "In behandeling",
+      "approved": "Goedgekeurd",
+      "rejected": "Afgewezen"
+    },
+    "prompts": {
+      "approve": {
+        "title": "Weet u zeker dat u deze winkelwagen wilt goedkeuren?",
+        "description": "Deze actie kan niet ongedaan worden gemaakt."
+      },
+      "reject": {
+        "title": "Weet u zeker dat u deze winkelwagen wilt afwijzen?",
+        "description": "Deze actie kan niet ongedaan worden gemaakt.",
+        "reasonPlaceholder": "Voer een reden voor afwijzing in..."
+      }
+    },
+    "items": {
+      "itemTotal": "Artikeltotaal:"
+    },
+    "toasts": {
+      "approved": "Winkelwagen succesvol goedgekeurd",
+      "rejected": "Winkelwagen succesvol afgewezen",
+      "approveError": "Goedkeuren van winkelwagen mislukt",
+      "rejectError": "Afwijzen van winkelwagen mislukt"
+    }
+  },
+  "deletePrompt": {
+    "title": "Verwijderen bevestigen",
+    "description": "Weet u zeker dat u dit item wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+    "delete": "Verwijderen",
+    "cancel": "Annuleren"
+  }
+}

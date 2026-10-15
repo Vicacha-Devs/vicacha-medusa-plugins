@@ -1,0 +1,388 @@
+{
+  "general": {
+    "new": "Neu",
+    "removed": "Entfernt",
+    "modified": "Geändert",
+    "error": "Fehler",
+    "noRecords": "Keine Einträge",
+    "yes": "Ja",
+    "no": "Nein"
+  },
+  "actions": {
+    "continue": "Weiter",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "saving": "Wird gespeichert...",
+    "add": "Hinzufügen",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "remove": "Entfernen",
+    "undo": "Rückgängig",
+    "create": "Erstellen",
+    "send": "Senden",
+    "addItems": "Artikel hinzufügen",
+    "duplicate": "Duplizieren",
+    "reject": "Ablehnen",
+    "approve": "Genehmigen"
+  },
+  "fields": {
+    "id": "ID",
+    "name": "Name",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "address": "Adresse",
+    "company": "Unternehmen",
+    "status": "Status",
+    "items": "Artikel",
+    "total": "Gesamt",
+    "createdAt": "Erstellt am",
+    "updatedAt": "Aktualisiert am",
+    "search": "Suchen",
+    "qty": "Menge",
+    "sku": "SKU",
+    "title": "Titel",
+    "price": "Preis",
+    "actions": "Aktionen",
+    "currency": "Währung",
+    "city": "Stadt",
+    "state": "Bundesland",
+    "country": "Land",
+    "spendingLimit": "Ausgabenlimit"
+  },
+  "orders": {
+    "edits": {
+      "currentTotal": "Aktuelle Gesamtsumme",
+      "newTotal": "Neue Gesamtsumme",
+      "validation": {
+        "quantityLowerThanFulfillment": "Die Menge darf nicht kleiner als die bereits gelieferte Menge sein"
+      }
+    }
+  },
+  "overview": {
+    "title": "B2B",
+    "subtitle": "Verwalten Sie Ihre B2B-Commerce-Abläufe.",
+    "commerce": {
+      "title": "B2B-Commerce",
+      "subtitle": "Verwalten Sie Unternehmen, Angebote, Genehmigungen und B2B-Preise."
+    },
+    "stats": {
+      "companies": "Unternehmen",
+      "employees": "Mitarbeiter",
+      "pendingQuotes": "Ausstehende Angebote",
+      "pendingApprovals": "Ausstehende Genehmigungen"
+    },
+    "nav": {
+      "companies": {
+        "title": "Unternehmen",
+        "description": "Verwalten Sie B2B-Unternehmen, Mitarbeiter und Kundengruppen."
+      },
+      "quotes": {
+        "title": "Angebote",
+        "description": "Prüfen und verwalten Sie Angebotsanfragen."
+      },
+      "approvals": {
+        "title": "Genehmigungen",
+        "description": "Prüfen Sie Warenkörbe, die eine B2B-Genehmigung erfordern."
+      },
+      "pricing": {
+        "title": "Preise",
+        "description": "Verwalten Sie Preise für B2B-Vertriebskanäle und Kundengruppen."
+      }
+    }
+  },
+  "companies": {
+    "title": "Unternehmen",
+    "label": "Unternehmen",
+    "notFound": "Unternehmen nicht gefunden",
+    "form": {
+      "name": "Name",
+      "phone": "Telefon",
+      "email": "E-Mail",
+      "address": "Adresse",
+      "city": "Stadt",
+      "state": "Bundesland",
+      "zip": "Postleitzahl",
+      "country": "Land",
+      "currency": "Währung",
+      "logoUrl": "Logo-URL",
+      "selectCountry": "Land auswählen",
+      "selectCurrency": "Währung auswählen",
+      "createTitle": "Unternehmen erstellen",
+      "editTitle": "Unternehmen bearbeiten",
+      "tabs": {
+        "details": "Details",
+        "admin": "Admin"
+      },
+      "spendingSection": "Ausgaben",
+      "spendingLimitResetFrequency": "Rücksetzintervall für Ausgabenlimit",
+      "spendingLimitResetAt": "Letztes Rücksetzdatum",
+      "selectFrequency": "Intervall auswählen",
+      "resetFrequency": {
+        "never": "Nie",
+        "daily": "Täglich",
+        "weekly": "Wöchentlich",
+        "monthly": "Monatlich",
+        "yearly": "Jährlich"
+      }
+    },
+    "detail": {
+      "tabs": {
+        "details": "Details",
+        "admin": "Admin"
+      },
+      "phone": "Telefon",
+      "email": "E-Mail",
+      "address": "Adresse",
+      "city": "Stadt",
+      "state": "Bundesland",
+      "currency": "Währung",
+      "spendingLimitResetFrequency": "Rücksetzintervall",
+      "spendingLimitResetAt": "Letzte Zurücksetzung",
+      "customerGroup": "Kundengruppe",
+      "approvalSettings": "Genehmigungseinstellungen",
+      "requiresAdmin": "Erfordert Admin-Genehmigung",
+      "requiresSalesManager": "Erfordert Genehmigung des Vertriebsleiters",
+      "noApprovalRequired": "Keine Genehmigung erforderlich"
+    },
+    "actions": {
+      "editDetails": "Details bearbeiten",
+      "manageCustomerGroup": "Kundengruppe verwalten",
+      "approvalSettings": "Genehmigungseinstellungen",
+      "delete": "Löschen"
+    },
+    "table": {
+      "employees": "Mitarbeiter",
+      "customerGroup": "Kundengruppe",
+      "noRecordsTitle": "Keine Unternehmen gefunden",
+      "noRecordsMessage": "Derzeit gibt es keine Unternehmen. Erstellen Sie eines, um zu beginnen."
+    },
+    "toasts": {
+      "deleted": "Unternehmen {{name}} erfolgreich gelöscht",
+      "updated": "Unternehmen {{name}} erfolgreich aktualisiert",
+      "updateError": "Unternehmen konnte nicht aktualisiert werden",
+      "addedToGroup": "Unternehmen erfolgreich zur Kundengruppe hinzugefügt",
+      "removedFromGroup": "Unternehmen erfolgreich aus der Kundengruppe entfernt",
+      "addToGroupError": "Unternehmen konnte nicht zur Kundengruppe hinzugefügt werden",
+      "removeFromGroupError": "Unternehmen konnte nicht aus der Kundengruppe entfernt werden",
+      "approvalSettingsUpdated": "Genehmigungseinstellungen des Unternehmens erfolgreich aktualisiert",
+      "approvalSettingsError": "Genehmigungseinstellungen des Unternehmens konnten nicht aktualisiert werden",
+      "created": "Unternehmen {{name}} erfolgreich erstellt"
+    },
+    "approvalSettings": {
+      "title": "Genehmigungseinstellungen des Unternehmens",
+      "requiresAdmin": "Erfordert Admin-Genehmigung",
+      "requiresAdminDescription": "Genehmigung des Unternehmensadministrators für alle Bestellungen dieses Unternehmens anfordern.",
+      "requiresSalesManager": "Erfordert Genehmigung des Vertriebsleiters",
+      "requiresSalesManagerDescription": "Genehmigung des Vertriebsleiters für alle Bestellungen dieses Unternehmens anfordern."
+    },
+    "customerGroup": {
+      "drawerTitle": "{{name}} zu einer Kundengruppe hinzufügen",
+      "hint": "Wenn Sie {{name}} zu einer Kundengruppe hinzufügen, werden automatisch {{count}} verknüpfte Mitarbeiter{{plural}} zur Kundengruppe hinzugefügt.",
+      "header": "Kundengruppe",
+      "actionsHeader": "Aktionen",
+      "noGroups": "Keine Kundengruppen gefunden",
+      "remove": "Entfernen",
+      "add": "Hinzufügen",
+      "addedSuccess": "Unternehmen erfolgreich zur Kundengruppe hinzugefügt",
+      "removedSuccess": "Unternehmen erfolgreich aus der Kundengruppe entfernt",
+      "addError": "Unternehmen konnte nicht zur Kundengruppe hinzugefügt werden",
+      "removeError": "Unternehmen konnte nicht aus der Kundengruppe entfernt werden",
+      "title": "Kundengruppe",
+      "selectPlaceholder": "Kundengruppe auswählen"
+    }
+  },
+  "employees": {
+    "title": "Mitarbeiter",
+    "label": "Mitarbeiter",
+    "admin": "Admin",
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "noRecords": "Dieses Unternehmen hat keine Mitarbeiter.",
+    "form": {
+      "details": "Details",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "permissions": "Berechtigungen",
+      "spendingLimit": "Ausgabenlimit ({{currency}})",
+      "adminAccess": "Admin-Zugriff",
+      "isAdmin": "Ist Admin",
+      "isAdminDescription": "Aktivieren, um Admin-Zugriff zu gewähren",
+      "isAdminTooltip": "Administratoren können die Unternehmensdaten und Mitarbeiterberechtigungen verwalten.",
+      "editCustomerDetails": "Kundendaten bearbeiten",
+      "name": "Name",
+      "company": "Unternehmen"
+    },
+    "drawers": {
+      "addTitle": "Unternehmensmitarbeiter hinzufügen",
+      "editTitle": "Mitarbeiter bearbeiten"
+    },
+    "table": {
+      "name": "Name",
+      "email": "E-Mail",
+      "spendingLimit": "Ausgabenlimit",
+      "actions": "Aktionen"
+    },
+    "toasts": {
+      "created": "Mitarbeiter {{firstName}} {{lastName}} erfolgreich erstellt",
+      "updated": "Mitarbeiter {{email}} erfolgreich aktualisiert",
+      "deleted": "Mitarbeiter erfolgreich gelöscht",
+      "createCustomerError": "Kunde konnte nicht erstellt werden",
+      "createEmployeeError": "Mitarbeiter konnte nicht erstellt werden"
+    }
+  },
+  "quotes": {
+    "title": "Angebote",
+    "label": "Angebote",
+    "table": {
+      "noRecordsTitle": "Keine Angebote gefunden",
+      "noRecordsMessage": "Derzeit gibt es keine Angebote. Erstellen Sie eines im Storefront.",
+      "customer": "Kunde",
+      "draftOrder": "Bestellentwurf",
+      "messages": "Nachrichten"
+    },
+    "filters": {
+      "customerId": "Kunden-ID",
+      "draftOrderId": "Bestellentwurfs-ID"
+    },
+    "status": {
+      "accepted": "Angenommen",
+      "customer_rejected": "Vom Kunden abgelehnt",
+      "merchant_rejected": "Vom Händler abgelehnt",
+      "pending_merchant": "Wartet auf Händler",
+      "pending_customer": "Wartet auf Kunden",
+      "expired": "Abgelaufen"
+    },
+    "send": {
+      "expiresAt": "Ablaufdatum",
+      "expiresAtHint": "Optional. Der Kunde kann nach diesem Datum nicht mehr annehmen."
+    },
+    "detail": {
+      "acceptedMessage": "Angebot vom Kunden angenommen. Bestellung ist bereit zur Bearbeitung.",
+      "viewOrder": "Bestellung anzeigen",
+      "rejectQuote": "Angebot ablehnen",
+      "sendQuote": "Angebot senden",
+      "customer": "Kunde",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "spendingLimit": "Ausgabenlimit",
+      "company": "Unternehmen",
+      "name": "Name",
+      "draftOrder": "Bestellentwurf",
+      "order": "Bestellung",
+      "orderChange": "Bestelländerung",
+      "cart": "Warenkorb",
+      "noCart": "Kein Warenkorb",
+      "noDraftOrder": "Kein Bestellentwurf",
+      "noCustomer": "Kein Kunde",
+      "unlimited": "Unbegrenzt"
+    },
+    "orderStatus": {
+      "pending": "Ausstehend",
+      "completed": "Abgeschlossen",
+      "cancelled": "Storniert",
+      "requires_action": "Handlung erforderlich",
+      "draft": "Entwurf",
+      "archived": "Archiviert"
+    },
+    "summary": {
+      "title": "Angebotsübersicht",
+      "manage": "Verwalten"
+    },
+    "cost": {
+      "title": "Kostenaufstellung",
+      "discounts": "Rabatte",
+      "shipping": "Versand"
+    },
+    "total": {
+      "title": "Gesamt",
+      "original": "Ursprüngliche Gesamtsumme",
+      "quote": "Angebotssumme"
+    },
+    "messages": {
+      "title": "Nachrichten",
+      "empty": "Noch keine Nachrichten",
+      "placeholder": "Nachricht schreiben…",
+      "pickItem": "Angebotsposition auswählen",
+      "pickItemHint": "Wählen Sie eine Angebotsposition aus, um eine Nachricht dazu zu verfassen",
+      "selectItem": "Position auswählen",
+      "send": "Senden",
+      "sentSuccess": "Nachricht erfolgreich an den Kunden gesendet",
+      "adminSender": "Admin",
+      "customerSender": "Kunde"
+    },
+    "manage": {
+      "title": "Angebot verwalten",
+      "priceOverrideHint": "Stückpreis dieses Produkts überschreiben",
+      "updatePrice": "Preis aktualisieren",
+      "searchPlaceholder": "Suchen..."
+    },
+    "prompts": {
+      "send": {
+        "title": "Angebot senden?",
+        "description": "Sie sind dabei, dieses Angebot an den Kunden zu senden. Möchten Sie fortfahren?"
+      },
+      "reject": {
+        "title": "Angebot ablehnen?",
+        "description": "Sie sind dabei, das Angebot dieses Kunden abzulehnen. Möchten Sie fortfahren?"
+      }
+    },
+    "toasts": {
+      "sent": "Angebot erfolgreich an den Kunden gesendet",
+      "rejected": "Angebot des Kunden erfolgreich abgelehnt",
+      "messageSent": "Nachricht erfolgreich an den Kunden gesendet",
+      "updated": "Angebot erfolgreich aktualisiert"
+    }
+  },
+  "approvals": {
+    "title": "Genehmigungen",
+    "label": "Genehmigungen",
+    "table": {
+      "updatedAt": "Aktualisiert am",
+      "type": "Typ",
+      "handledBy": "Bearbeitet von",
+      "handledAt": "Bearbeitet am",
+      "reason": "Grund",
+      "actions": "Aktionen",
+      "noRecordsTitle": "Keine Genehmigungen gefunden",
+      "noRecordsMessage": "Derzeit gibt es keine Genehmigungen."
+    },
+    "types": {
+      "admin": "Admin",
+      "salesManager": "Vertriebsleiter"
+    },
+    "filters": {
+      "status": "Status",
+      "pending": "Ausstehend",
+      "approved": "Genehmigt",
+      "rejected": "Abgelehnt"
+    },
+    "prompts": {
+      "approve": {
+        "title": "Möchten Sie diesen Warenkorb wirklich genehmigen?",
+        "description": "Diese Aktion kann nicht rückgängig gemacht werden."
+      },
+      "reject": {
+        "title": "Möchten Sie diesen Warenkorb wirklich ablehnen?",
+        "description": "Diese Aktion kann nicht rückgängig gemacht werden.",
+        "reasonPlaceholder": "Grund für die Ablehnung eingeben..."
+      }
+    },
+    "items": {
+      "itemTotal": "Positionssumme:"
+    },
+    "toasts": {
+      "approved": "Warenkorb erfolgreich genehmigt",
+      "rejected": "Warenkorb erfolgreich abgelehnt",
+      "approveError": "Warenkorb konnte nicht genehmigt werden",
+      "rejectError": "Warenkorb konnte nicht abgelehnt werden"
+    }
+  },
+  "deletePrompt": {
+    "title": "Löschen bestätigen",
+    "description": "Möchten Sie dieses Element wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "delete": "Löschen",
+    "cancel": "Abbrechen"
+  }
+}

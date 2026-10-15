@@ -1,0 +1,388 @@
+{
+  "general": {
+    "new": "Novo",
+    "removed": "Removido",
+    "modified": "Modificado",
+    "error": "Erro",
+    "noRecords": "Sem registos",
+    "yes": "Sim",
+    "no": "Não"
+  },
+  "actions": {
+    "continue": "Continuar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "saving": "A guardar...",
+    "add": "Adicionar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "remove": "Remover",
+    "undo": "Desfazer",
+    "create": "Criar",
+    "send": "Enviar",
+    "addItems": "Adicionar itens",
+    "duplicate": "Duplicar",
+    "reject": "Rejeitar",
+    "approve": "Aprovar"
+  },
+  "fields": {
+    "id": "ID",
+    "name": "Nome",
+    "email": "E-mail",
+    "phone": "Telefone",
+    "address": "Morada",
+    "company": "Empresa",
+    "status": "Estado",
+    "items": "Itens",
+    "total": "Total",
+    "createdAt": "Criado em",
+    "updatedAt": "Atualizado em",
+    "search": "Pesquisar",
+    "qty": "Qtd",
+    "sku": "SKU",
+    "title": "Título",
+    "price": "Preço",
+    "actions": "Ações",
+    "currency": "Moeda",
+    "city": "Cidade",
+    "state": "Estado/Distrito",
+    "country": "País",
+    "spendingLimit": "Limite de gastos"
+  },
+  "orders": {
+    "edits": {
+      "currentTotal": "Total atual",
+      "newTotal": "Novo total",
+      "validation": {
+        "quantityLowerThanFulfillment": "A quantidade não pode ser inferior à quantidade enviada"
+      }
+    }
+  },
+  "overview": {
+    "title": "B2B",
+    "subtitle": "Gira as suas operações de comércio B2B.",
+    "commerce": {
+      "title": "Comércio B2B",
+      "subtitle": "Gira empresas, cotações, aprovações e preços B2B."
+    },
+    "stats": {
+      "companies": "Empresas",
+      "employees": "Funcionários",
+      "pendingQuotes": "Cotações pendentes",
+      "pendingApprovals": "Aprovações pendentes"
+    },
+    "nav": {
+      "companies": {
+        "title": "Empresas",
+        "description": "Gira empresas B2B, funcionários e grupos de clientes."
+      },
+      "quotes": {
+        "title": "Cotações",
+        "description": "Reveja e gira pedidos de cotação."
+      },
+      "approvals": {
+        "title": "Aprovações",
+        "description": "Reveja carrinhos que requerem aprovação B2B."
+      },
+      "pricing": {
+        "title": "Preços",
+        "description": "Gira preços para canais de vendas B2B e grupos de clientes."
+      }
+    }
+  },
+  "companies": {
+    "title": "Empresas",
+    "label": "Empresas",
+    "notFound": "Empresa não encontrada",
+    "form": {
+      "name": "Nome",
+      "phone": "Telefone",
+      "email": "E-mail",
+      "address": "Morada",
+      "city": "Cidade",
+      "state": "Estado/Distrito",
+      "zip": "Código postal",
+      "country": "País",
+      "currency": "Moeda",
+      "logoUrl": "URL do logótipo",
+      "selectCountry": "Selecione um país",
+      "selectCurrency": "Selecione uma moeda",
+      "createTitle": "Criar empresa",
+      "editTitle": "Editar empresa",
+      "tabs": {
+        "details": "Detalhes",
+        "admin": "Admin"
+      },
+      "spendingSection": "Gastos",
+      "spendingLimitResetFrequency": "Frequência de reposição do limite de gastos",
+      "spendingLimitResetAt": "Data da última reposição",
+      "selectFrequency": "Selecione uma frequência",
+      "resetFrequency": {
+        "never": "Nunca",
+        "daily": "Diariamente",
+        "weekly": "Semanalmente",
+        "monthly": "Mensalmente",
+        "yearly": "Anualmente"
+      }
+    },
+    "detail": {
+      "tabs": {
+        "details": "Detalhes",
+        "admin": "Admin"
+      },
+      "phone": "Telefone",
+      "email": "E-mail",
+      "address": "Morada",
+      "city": "Cidade",
+      "state": "Estado/Distrito",
+      "currency": "Moeda",
+      "spendingLimitResetFrequency": "Frequência de reposição",
+      "spendingLimitResetAt": "Última reposição",
+      "customerGroup": "Grupo de clientes",
+      "approvalSettings": "Definições de aprovação",
+      "requiresAdmin": "Requer aprovação do administrador",
+      "requiresSalesManager": "Requer aprovação do gestor de vendas",
+      "noApprovalRequired": "Não requer aprovação"
+    },
+    "actions": {
+      "editDetails": "Editar detalhes",
+      "manageCustomerGroup": "Gerir grupo de clientes",
+      "approvalSettings": "Definições de aprovação",
+      "delete": "Eliminar"
+    },
+    "table": {
+      "employees": "Funcionários",
+      "customerGroup": "Grupo de clientes",
+      "noRecordsTitle": "Nenhuma empresa encontrada",
+      "noRecordsMessage": "Atualmente não existem empresas. Crie uma para começar."
+    },
+    "toasts": {
+      "deleted": "Empresa {{name}} eliminada com sucesso",
+      "updated": "Empresa {{name}} atualizada com sucesso",
+      "updateError": "Falha ao atualizar a empresa",
+      "addedToGroup": "Empresa adicionada ao grupo de clientes com sucesso",
+      "removedFromGroup": "Empresa removida do grupo de clientes com sucesso",
+      "addToGroupError": "Falha ao adicionar empresa ao grupo de clientes",
+      "removeFromGroupError": "Falha ao remover empresa do grupo de clientes",
+      "approvalSettingsUpdated": "Definições de aprovação da empresa atualizadas com sucesso",
+      "approvalSettingsError": "Falha ao atualizar as definições de aprovação da empresa",
+      "created": "Empresa {{name}} criada com sucesso"
+    },
+    "approvalSettings": {
+      "title": "Definições de aprovação da empresa",
+      "requiresAdmin": "Requer aprovação do administrador",
+      "requiresAdminDescription": "Exigir aprovação do administrador da empresa para todas as encomendas efetuadas por esta empresa.",
+      "requiresSalesManager": "Requer aprovação do gestor de vendas",
+      "requiresSalesManagerDescription": "Exigir aprovação do gestor de vendas para todas as encomendas efetuadas por esta empresa."
+    },
+    "customerGroup": {
+      "drawerTitle": "Adicionar {{name}} a um grupo de clientes",
+      "hint": "Adicionar {{name}} a um grupo de clientes irá adicionar automaticamente {{count}} funcionário{{plural}} associado{{plural}} ao grupo de clientes.",
+      "header": "Grupo de clientes",
+      "actionsHeader": "Ações",
+      "noGroups": "Nenhum grupo de clientes encontrado",
+      "remove": "Remover",
+      "add": "Adicionar",
+      "addedSuccess": "Empresa adicionada ao grupo de clientes com sucesso",
+      "removedSuccess": "Empresa removida do grupo de clientes com sucesso",
+      "addError": "Falha ao adicionar empresa ao grupo de clientes",
+      "removeError": "Falha ao remover empresa do grupo de clientes",
+      "title": "Grupo de clientes",
+      "selectPlaceholder": "Selecione um grupo de clientes"
+    }
+  },
+  "employees": {
+    "title": "Funcionários",
+    "label": "Funcionários",
+    "admin": "Admin",
+    "active": "Ativo",
+    "inactive": "Inativo",
+    "noRecords": "Esta empresa não tem funcionários.",
+    "form": {
+      "details": "Detalhes",
+      "firstName": "Primeiro nome",
+      "lastName": "Apelido",
+      "email": "E-mail",
+      "phone": "Telefone",
+      "permissions": "Permissões",
+      "spendingLimit": "Limite de gastos ({{currency}})",
+      "adminAccess": "Acesso de administrador",
+      "isAdmin": "É administrador",
+      "isAdminDescription": "Ative para conceder acesso de administrador",
+      "isAdminTooltip": "Os administradores podem gerir os detalhes da empresa e as permissões dos funcionários.",
+      "editCustomerDetails": "Editar detalhes do cliente",
+      "name": "Nome",
+      "company": "Empresa"
+    },
+    "drawers": {
+      "addTitle": "Adicionar funcionário da empresa",
+      "editTitle": "Editar funcionário"
+    },
+    "table": {
+      "name": "Nome",
+      "email": "E-mail",
+      "spendingLimit": "Limite de gastos",
+      "actions": "Ações"
+    },
+    "toasts": {
+      "created": "Funcionário {{firstName}} {{lastName}} criado com sucesso",
+      "updated": "Funcionário {{email}} atualizado com sucesso",
+      "deleted": "Funcionário eliminado com sucesso",
+      "createCustomerError": "Falha ao criar cliente",
+      "createEmployeeError": "Falha ao criar funcionário"
+    }
+  },
+  "quotes": {
+    "title": "Cotações",
+    "label": "Cotações",
+    "table": {
+      "noRecordsTitle": "Nenhuma cotação encontrada",
+      "noRecordsMessage": "Atualmente não existem cotações. Crie uma a partir da loja.",
+      "customer": "Cliente",
+      "draftOrder": "Rascunho de encomenda",
+      "messages": "Mensagens"
+    },
+    "filters": {
+      "customerId": "ID do cliente",
+      "draftOrderId": "ID do rascunho de encomenda"
+    },
+    "status": {
+      "accepted": "Aceite",
+      "customer_rejected": "Rejeitada pelo cliente",
+      "merchant_rejected": "Rejeitada pelo comerciante",
+      "pending_merchant": "Pendente do comerciante",
+      "pending_customer": "Pendente do cliente",
+      "expired": "Expirada"
+    },
+    "send": {
+      "expiresAt": "Data de validade",
+      "expiresAtHint": "Opcional. O cliente não pode aceitar após esta data."
+    },
+    "detail": {
+      "acceptedMessage": "Cotação aceite pelo cliente. A encomenda está pronta para processamento.",
+      "viewOrder": "Ver encomenda",
+      "rejectQuote": "Rejeitar cotação",
+      "sendQuote": "Enviar cotação",
+      "customer": "Cliente",
+      "email": "E-mail",
+      "phone": "Telefone",
+      "spendingLimit": "Limite de gastos",
+      "company": "Empresa",
+      "name": "Nome",
+      "draftOrder": "Rascunho de encomenda",
+      "order": "Encomenda",
+      "orderChange": "Alteração de encomenda",
+      "cart": "Carrinho",
+      "noCart": "Sem carrinho",
+      "noDraftOrder": "Sem rascunho de encomenda",
+      "noCustomer": "Sem cliente",
+      "unlimited": "Ilimitado"
+    },
+    "orderStatus": {
+      "pending": "Pendente",
+      "completed": "Concluída",
+      "cancelled": "Cancelada",
+      "requires_action": "Requer ação",
+      "draft": "Rascunho",
+      "archived": "Arquivada"
+    },
+    "summary": {
+      "title": "Resumo da cotação",
+      "manage": "Gerir"
+    },
+    "cost": {
+      "title": "Detalhe de custos",
+      "discounts": "Descontos",
+      "shipping": "Envio"
+    },
+    "total": {
+      "title": "Total",
+      "original": "Total original",
+      "quote": "Total da cotação"
+    },
+    "messages": {
+      "title": "Mensagens",
+      "empty": "Ainda não há mensagens",
+      "placeholder": "Escreva uma mensagem…",
+      "pickItem": "Escolher item da cotação",
+      "pickItemHint": "Selecione um item da cotação para escrever uma mensagem sobre ele",
+      "selectItem": "Selecionar item",
+      "send": "Enviar",
+      "sentSuccess": "Mensagem enviada ao cliente com sucesso",
+      "adminSender": "Admin",
+      "customerSender": "Cliente"
+    },
+    "manage": {
+      "title": "Gerir cotação",
+      "priceOverrideHint": "Substituir o preço unitário deste produto",
+      "updatePrice": "Atualizar preço",
+      "searchPlaceholder": "Pesquisar..."
+    },
+    "prompts": {
+      "send": {
+        "title": "Enviar cotação?",
+        "description": "Está prestes a enviar esta cotação ao cliente. Deseja continuar?"
+      },
+      "reject": {
+        "title": "Rejeitar cotação?",
+        "description": "Está prestes a rejeitar a cotação deste cliente. Deseja continuar?"
+      }
+    },
+    "toasts": {
+      "sent": "Cotação enviada ao cliente com sucesso",
+      "rejected": "Cotação do cliente rejeitada com sucesso",
+      "messageSent": "Mensagem enviada ao cliente com sucesso",
+      "updated": "Cotação atualizada com sucesso"
+    }
+  },
+  "approvals": {
+    "title": "Aprovações",
+    "label": "Aprovações",
+    "table": {
+      "updatedAt": "Atualizado em",
+      "type": "Tipo",
+      "handledBy": "Tratado por",
+      "handledAt": "Tratado em",
+      "reason": "Motivo",
+      "actions": "Ações",
+      "noRecordsTitle": "Nenhuma aprovação encontrada",
+      "noRecordsMessage": "Atualmente não existem aprovações."
+    },
+    "types": {
+      "admin": "Admin",
+      "salesManager": "Gestor de vendas"
+    },
+    "filters": {
+      "status": "Estado",
+      "pending": "Pendente",
+      "approved": "Aprovado",
+      "rejected": "Rejeitado"
+    },
+    "prompts": {
+      "approve": {
+        "title": "Tem a certeza de que pretende aprovar este carrinho?",
+        "description": "Esta ação não pode ser desfeita."
+      },
+      "reject": {
+        "title": "Tem a certeza de que pretende rejeitar este carrinho?",
+        "description": "Esta ação não pode ser desfeita.",
+        "reasonPlaceholder": "Introduza um motivo para a rejeição..."
+      }
+    },
+    "items": {
+      "itemTotal": "Total do item:"
+    },
+    "toasts": {
+      "approved": "Carrinho aprovado com sucesso",
+      "rejected": "Carrinho rejeitado com sucesso",
+      "approveError": "Falha ao aprovar o carrinho",
+      "rejectError": "Falha ao rejeitar o carrinho"
+    }
+  },
+  "deletePrompt": {
+    "title": "Confirmar eliminação",
+    "description": "Tem a certeza de que pretende eliminar este item? Esta ação não pode ser desfeita.",
+    "delete": "Eliminar",
+    "cancel": "Cancelar"
+  }
+}

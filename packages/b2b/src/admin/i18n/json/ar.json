@@ -110,19 +110,19 @@
       "createTitle": "إنشاء شركة",
       "editTitle": "تعديل الشركة",
       "tabs": {
-        "details": "Details",
-        "admin": "Admin"
+        "details": "التفاصيل",
+        "admin": "المسؤول"
       },
-      "spendingSection": "Spending",
+      "spendingSection": "الإنفاق",
       "spendingLimitResetFrequency": "تكرار إعادة ضبط الحد",
       "spendingLimitResetAt": "تاريخ آخر إعادة ضبط",
       "selectFrequency": "اختر تكراراً",
       "resetFrequency": {
-        "never": "Never",
-        "daily": "Daily",
-        "weekly": "Weekly",
-        "monthly": "Monthly",
-        "yearly": "Yearly"
+        "never": "أبداً",
+        "daily": "يومياً",
+        "weekly": "أسبوعياً",
+        "monthly": "شهرياً",
+        "yearly": "سنوياً"
       }
     },
     "detail": {
@@ -157,38 +157,38 @@
       "noRecordsMessage": "لا توجد شركات حاليًا. أنشئ واحدة للبدء."
     },
     "toasts": {
-      "deleted": "Company {{name}} deleted successfully",
-      "updated": "Company {{name}} updated successfully",
-      "updateError": "Failed to update company",
-      "addedToGroup": "Company added to customer group successfully",
-      "removedFromGroup": "Company removed from customer group successfully",
-      "addToGroupError": "Failed to add company to customer group",
-      "removeFromGroupError": "Failed to remove company from customer group",
-      "approvalSettingsUpdated": "Company approval settings updated successfully",
-      "approvalSettingsError": "Failed to update company approval settings",
-      "created": "Company {{name}} created successfully"
+      "deleted": "تم حذف الشركة {{name}} بنجاح",
+      "updated": "تم تحديث الشركة {{name}} بنجاح",
+      "updateError": "فشل في تحديث الشركة",
+      "addedToGroup": "تمت إضافة الشركة إلى مجموعة العملاء بنجاح",
+      "removedFromGroup": "تمت إزالة الشركة من مجموعة العملاء بنجاح",
+      "addToGroupError": "فشل في إضافة الشركة إلى مجموعة العملاء",
+      "removeFromGroupError": "فشل في إزالة الشركة من مجموعة العملاء",
+      "approvalSettingsUpdated": "تم تحديث إعدادات موافقة الشركة بنجاح",
+      "approvalSettingsError": "فشل في تحديث إعدادات موافقة الشركة",
+      "created": "تم إنشاء الشركة {{name}} بنجاح"
     },
     "approvalSettings": {
-      "title": "Company Approval Settings",
-      "requiresAdmin": "Requires Admin Approval",
-      "requiresAdminDescription": "Require company admin approval for all orders placed by this company.",
-      "requiresSalesManager": "Requires Sales Manager Approval",
-      "requiresSalesManagerDescription": "Require sales manager approval for all orders placed by this company."
+      "title": "إعدادات موافقة الشركة",
+      "requiresAdmin": "يتطلب موافقة المسؤول",
+      "requiresAdminDescription": "طلب موافقة مسؤول الشركة لجميع الطلبات المقدمة من هذه الشركة.",
+      "requiresSalesManager": "يتطلب موافقة مدير المبيعات",
+      "requiresSalesManagerDescription": "طلب موافقة مدير المبيعات لجميع الطلبات المقدمة من هذه الشركة."
     },
     "customerGroup": {
-      "drawerTitle": "Add {{name}} to a Customer Group",
-      "hint": "Adding {{name}} to a customer group will automatically add {{count}} linked employee{{plural}} to the customer group.",
+      "drawerTitle": "إضافة {{name}} إلى مجموعة عملاء",
+      "hint": "ستؤدي إضافة {{name}} إلى مجموعة عملاء إلى إضافة {{count}} موظف{{plural}} مرتبط تلقائياً إلى مجموعة العملاء.",
       "header": "مجموعة العملاء",
       "actionsHeader": "الإجراءات",
-      "noGroups": "No customer groups found",
+      "noGroups": "لم يتم العثور على مجموعات عملاء",
       "remove": "إزالة",
       "add": "إضافة",
-      "addedSuccess": "Company added to customer group successfully",
-      "removedSuccess": "Company removed from customer group successfully",
-      "addError": "Failed to add company to customer group",
-      "removeError": "Failed to remove company from customer group",
-      "title": "Customer Group",
-      "selectPlaceholder": "Select a customer group"
+      "addedSuccess": "تمت إضافة الشركة إلى مجموعة العملاء بنجاح",
+      "removedSuccess": "تمت إزالة الشركة من مجموعة العملاء بنجاح",
+      "addError": "فشل في إضافة الشركة إلى مجموعة العملاء",
+      "removeError": "فشل في إزالة الشركة من مجموعة العملاء",
+      "title": "مجموعة العملاء",
+      "selectPlaceholder": "اختر مجموعة عملاء"
     }
   },
   "employees": {
@@ -205,11 +205,11 @@
       "email": "البريد الإلكتروني",
       "phone": "الهاتف",
       "permissions": "الأذونات",
-      "spendingLimit": "Spending Limit ({{currency}})",
+      "spendingLimit": "حد الإنفاق ({{currency}})",
       "adminAccess": "وصول المسؤول",
       "isAdmin": "مسؤول",
       "isAdminDescription": "فعّل لمنح وصول المسؤول",
-      "isAdminTooltip": "Admins can manage the company's details and employee permissions.",
+      "isAdminTooltip": "يمكن للمسؤولين إدارة تفاصيل الشركة وأذونات الموظفين.",
       "editCustomerDetails": "تعديل تفاصيل العميل",
       "name": "الاسم",
       "company": "الشركة"
@@ -225,11 +225,11 @@
       "actions": "الإجراءات"
     },
     "toasts": {
-      "created": "Employee {{firstName}} {{lastName}} created successfully",
-      "updated": "Employee {{email}} updated successfully",
-      "deleted": "Employee deleted successfully",
-      "createCustomerError": "Failed to create customer",
-      "createEmployeeError": "Failed to create employee"
+      "created": "تم إنشاء الموظف {{firstName}} {{lastName}} بنجاح",
+      "updated": "تم تحديث الموظف {{email}} بنجاح",
+      "deleted": "تم حذف الموظف بنجاح",
+      "createCustomerError": "فشل في إنشاء العميل",
+      "createEmployeeError": "فشل في إنشاء الموظف"
     }
   },
   "quotes": {
@@ -254,8 +254,12 @@
       "pending_customer": "بانتظار العميل",
       "expired": "منتهي الصلاحية"
     },
+    "send": {
+      "expiresAt": "تاريخ انتهاء الصلاحية",
+      "expiresAtHint": "اختياري. لا يمكن للعميل القبول بعد هذا التاريخ."
+    },
     "detail": {
-      "acceptedMessage": "Quote accepted by customer. Order is ready for processing.",
+      "acceptedMessage": "تم قبول عرض السعر من قبل العميل. الطلب جاهز للمعالجة.",
       "viewOrder": "عرض الطلب",
       "rejectQuote": "رفض عرض السعر",
       "sendQuote": "إرسال عرض السعر",
@@ -300,42 +304,42 @@
       "title": "الرسائل",
       "empty": "لا توجد رسائل بعد",
       "placeholder": "اكتب رسالة…",
-      "pickItem": "Pick Quote Item",
-      "pickItemHint": "Select a quote item to write a message around",
+      "pickItem": "اختر عنصر عرض السعر",
+      "pickItemHint": "اختر عنصرًا من عرض السعر لكتابة رسالة حوله",
       "selectItem": "اختر عنصرًا",
       "send": "إرسال",
-      "sentSuccess": "Successfully sent message to customer",
+      "sentSuccess": "تم إرسال الرسالة إلى العميل بنجاح",
       "adminSender": "المسؤول",
       "customerSender": "العميل"
     },
     "manage": {
       "title": "إدارة عرض السعر",
-      "priceOverrideHint": "Override the unit price of this product",
+      "priceOverrideHint": "تجاوز سعر الوحدة لهذا المنتج",
       "updatePrice": "تحديث السعر",
       "searchPlaceholder": "بحث..."
     },
     "prompts": {
       "send": {
         "title": "هل تريد إرسال عرض السعر؟",
-        "description": "You are about to send this quote to the customer. Do you want to continue?"
+        "description": "أنت على وشك إرسال عرض السعر هذا إلى العميل. هل تريد المتابعة؟"
       },
       "reject": {
         "title": "هل تريد رفض عرض السعر؟",
-        "description": "You are about to reject this customer's quote. Do you want to continue?"
+        "description": "أنت على وشك رفض عرض سعر هذا العميل. هل تريد المتابعة؟"
       }
     },
     "toasts": {
-      "sent": "Successfully sent quote to customer",
-      "rejected": "Successfully rejected customer's quote",
-      "messageSent": "Successfully sent message to customer",
-      "updated": "Successfully updated quote"
+      "sent": "تم إرسال عرض السعر إلى العميل بنجاح",
+      "rejected": "تم رفض عرض سعر العميل بنجاح",
+      "messageSent": "تم إرسال الرسالة إلى العميل بنجاح",
+      "updated": "تم تحديث عرض السعر بنجاح"
     }
   },
   "approvals": {
     "title": "الموافقات",
     "label": "الموافقات",
     "table": {
-      "updatedAt": "Updated at",
+      "updatedAt": "تاريخ التحديث",
       "type": "النوع",
       "handledBy": "معالج بواسطة",
       "handledAt": "تاريخ المعالجة",
@@ -356,11 +360,11 @@
     },
     "prompts": {
       "approve": {
-        "title": "Are you sure you want to approve this cart?",
+        "title": "هل أنت متأكد من أنك تريد الموافقة على عربة التسوق هذه؟",
         "description": "لا يمكن التراجع عن هذا الإجراء."
       },
       "reject": {
-        "title": "Are you sure you want to reject this cart?",
+        "title": "هل أنت متأكد من أنك تريد رفض عربة التسوق هذه؟",
         "description": "لا يمكن التراجع عن هذا الإجراء.",
         "reasonPlaceholder": "أدخل سبب الرفض..."
       }
