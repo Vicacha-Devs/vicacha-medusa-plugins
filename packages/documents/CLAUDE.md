@@ -37,7 +37,7 @@ src/
 │       ├── i18n/
 │       │   ├── index.ts                      # getTranslations(locale, customOverrides)
 │       │   ├── types.ts                      # DocumentTranslations interface
-│       │   └── locales/                      # en.ts, es.ts, pl.ts, de.ts, fr.ts, pt.ts, it.ts, nl.ts, tr.ts, ar.ts + index.ts (LOCALE_DICTIONARIES)
+│       │   └── locales/all-locales.ts        # en, es, pl, de, fr, pt, it, nl, tr, ar PDF dictionaries
 │       ├── utils/
 │       │   ├── numbering.ts                  # formatDocumentNumber() token engine
 │       │   ├── formatters.ts                 # Currency, date, address, filename & HTML sanitizers
@@ -73,10 +73,11 @@ src/
 │   ├── fulfillment-created.ts                # order.fulfillment_created -> auto_generate_packing_slip
 │   ├── refund-created.ts                     # order.refund_created -> auto_generate_credit_note
 │   └── document-generated-email.ts           # document.generated -> auto_email_* via Modules.NOTIFICATION
-├── utils/
-│   └── bulk-generate-documents.ts            # Batch generation runner (used by the bulk-generate API route; not a scheduled job)
+├── jobs/
+│   └── bulk-generate-documents.ts            # Batch generation runner
 ├── api/
-│   ├── middlewares.ts                        # Zod schemas, rawBody webhook config, assertCustomerOwnsOrder
+│   ├── validators.ts                         # Zod request validation schemas & inferred types
+│   ├── middlewares.ts                        # rawBody webhook config & assertCustomerOwnsOrder helper
 │   ├── admin/documents/                      # Admin REST routes
 │   └── store/documents/[order_id]/           # Storefront REST routes
 ├── admin/

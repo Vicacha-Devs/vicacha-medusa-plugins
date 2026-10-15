@@ -1,5 +1,7 @@
 import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk"
 import { ContainerRegistrationKeys, MedusaError, Modules } from "@medusajs/framework/utils"
+
+import DocumentsModuleService from "../../modules/documents/service"
 import {
   DOCUMENTS_MODULE,
   type FetchOrderContextInput,
@@ -8,9 +10,6 @@ import {
   type OrderLineItemSnapshot,
   type OrderRefundSnapshot,
 } from "../../types"
-import DocumentsModuleService from "../../modules/documents/service"
-
-export type { FetchOrderContextInput } from "../../types"
 
 function normalizeAddress(addr: any): OrderAddressSnapshot | null {
   if (!addr || typeof addr !== "object") return null

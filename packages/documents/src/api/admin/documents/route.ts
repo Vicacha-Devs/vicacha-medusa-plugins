@@ -1,11 +1,12 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+
 import { DOCUMENTS_MODULE } from "../../../modules/documents/types"
 import DocumentsModuleService from "../../../modules/documents/service"
-import { generateDocumentWorkflow } from "../../../workflows/generate-document"
 import {
   GenerateDocumentSchema,
   ListDocumentsQuerySchema,
-} from "../../middlewares"
+} from "../../validators"
+import { generateDocumentWorkflow } from "../../../workflows/generate-document"
 
 /**
  * GET /admin/documents

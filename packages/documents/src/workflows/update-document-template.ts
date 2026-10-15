@@ -4,8 +4,9 @@ import {
   StepResponse,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { DOCUMENTS_MODULE } from "../types"
+
 import DocumentsModuleService from "../modules/documents/service"
+import { DOCUMENTS_MODULE } from "../types"
 
 export type UpdateDocumentTemplateInput = {
   id: string

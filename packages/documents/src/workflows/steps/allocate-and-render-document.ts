@@ -1,5 +1,8 @@
 import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk"
 import { Modules } from "@medusajs/framework/utils"
+
+import DocumentsModuleService from "../../modules/documents/service"
+import { sanitizeFilename } from "../../modules/documents/utils/formatters"
 import {
   DOCUMENTS_MODULE,
   type AllocateAndRenderDocumentInput,
@@ -8,10 +11,6 @@ import {
   type DocumentType,
   type PriorDocumentVersion,
 } from "../../types"
-import DocumentsModuleService from "../../modules/documents/service"
-import { sanitizeFilename } from "../../modules/documents/utils/formatters"
-
-export type { AllocateAndRenderDocumentInput } from "../../types"
 
 export const allocateAndRenderDocumentStep = createStep(
   "allocate-and-render-document",

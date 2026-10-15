@@ -2,9 +2,9 @@ import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 
 import { DOCUMENTS_MODULE } from "../../../../modules/documents/types"
 import DocumentsModuleService from "../../../../modules/documents/service"
-import { UpdateSettingsSchema } from "../../../middlewares"
 import { upsertDocumentSettingsWorkflow } from "../../../../workflows/upsert-document-settings"
 import { deleteRegionSettingsWorkflow } from "../../../../workflows/delete-region-settings"
+import { UpdateSettingsSchema } from "../../../validators"
 
 /**
  * GET /admin/documents/settings?region_id=...

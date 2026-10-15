@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+
 import { DOCUMENTS_MODULE } from "../../../../modules/documents/types"
 import DocumentsModuleService from "../../../../modules/documents/service"
 import {
@@ -6,9 +7,9 @@ import {
   DEFAULT_TEMPLATE_SECTIONS,
   DEFAULT_TEMPLATE_STYLES,
 } from "../../../../modules/documents/renderer/pdfmake/default-templates"
-import { TemplateSchema } from "../../../middlewares"
 import type { DocumentType } from "../../../../types"
 import { createDocumentTemplateWorkflow } from "../../../../workflows/create-document-template"
+import { TemplateSchema } from "../../../validators"
 
 /**
  * GET /admin/documents/templates

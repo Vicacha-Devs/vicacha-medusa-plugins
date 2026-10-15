@@ -1,8 +1,8 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { DOCUMENTS_MODULE } from "../../../../../modules/documents/types"
 import DocumentsModuleService from "../../../../../modules/documents/service"
-import { SendForSignatureSchema } from "../../../../middlewares"
 import { createSignatureRequestWorkflow } from "../../../../../workflows/create-signature-request"
+import { SendForSignatureSchema } from "../../../../validators"
 
 /**
  * POST /admin/documents/:id/send-for-signature

@@ -4,13 +4,12 @@ import {
   StepResponse,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
+
+import DocumentsModuleService from "../modules/documents/service"
 import {
   DOCUMENTS_MODULE,
   type MarkDocumentsStaleInput,
 } from "../types"
-import DocumentsModuleService from "../modules/documents/service"
-
-export type { MarkDocumentsStaleInput } from "../types"
 
 const markDocumentsStaleStep = createStep(
   "mark-documents-stale",

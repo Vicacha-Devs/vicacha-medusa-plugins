@@ -3,9 +3,10 @@ import {
   transform,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
+
 import type { GenerateDocumentWorkflowInput } from "../types"
-import { fetchOrderContextStep } from "./steps/fetch-order-context"
 import { allocateAndRenderDocumentStep } from "./steps/allocate-and-render-document"
+import { fetchOrderContextStep } from "./steps/fetch-order-context"
 
 export type { GenerateDocumentWorkflowInput } from "../types"
 

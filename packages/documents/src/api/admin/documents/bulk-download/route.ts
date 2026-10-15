@@ -6,7 +6,7 @@ import {
   ZipFileEntry,
 } from "../../../../modules/documents/utils/zip-builder"
 import { sanitizeFilename } from "../../../../modules/documents/utils/formatters"
-import { BulkDownloadSchema } from "../../../middlewares"
+import { BulkDownloadSchema } from "../../../validators"
 
 /**
  * POST /admin/documents/bulk-download (Phase 7.2)

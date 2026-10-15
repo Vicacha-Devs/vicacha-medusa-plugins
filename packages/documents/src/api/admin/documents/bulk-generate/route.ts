@@ -1,6 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { executeBulkDocumentGeneration } from "../../../../utils/bulk-generate-documents"
-import { BulkGenerateSchema } from "../../../middlewares"
+import { BulkGenerateSchema } from "../../../validators"
 
 /**
  * POST /admin/documents/bulk-generate (Phase 7.1)

@@ -6,11 +6,12 @@ import {
   transform,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
+
+import DocumentsModuleService from "../modules/documents/service"
 import {
   DOCUMENTS_MODULE,
   type RegenerateDocumentRevisionInput,
 } from "../types"
-import DocumentsModuleService from "../modules/documents/service"
 import { generateDocumentWorkflow } from "./generate-document"
 
 export type { RegenerateDocumentRevisionInput } from "../types"

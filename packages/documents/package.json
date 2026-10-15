@@ -1,5 +1,5 @@
 {
-  "name": "medusa-plugin-documents",
+  "name": "@vicacha-devs/medusa-plugin-documents",
   "version": "0.0.1",
   "description": "Comprehensive commercial documents plugin for Medusa v2: Invoices, Packing Slips, Credit Notes & POS Receipts with Dual PDF Engine (@react-pdf/renderer + Handlebars/pdfmake), per-region settings, 10-locale i18n (including RTL Arabic & Turkish), localized Admin UI, optional B2B context, and optional Docuseal e-signatures.",
   "author": "Vicacha Devs",
