@@ -35,6 +35,8 @@
         "terminal_placeholder": "Data-phone Serial (e.g. POS_SMART_01)",
         "send_to_terminal": "Push to POS Terminal",
         "approved": "Payment Approved",
+        "partially_paid": "Partially Paid",
+        "remaining_balance": "Remaining Balance",
         "processing": "Processing Payment",
         "copy_link": "Copy Link",
         "copied": "Copied",

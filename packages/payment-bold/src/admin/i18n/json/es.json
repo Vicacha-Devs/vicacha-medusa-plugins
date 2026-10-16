@@ -35,6 +35,8 @@
         "terminal_placeholder": "Serial de Datáfono (ej. POS_SMART_01)",
         "send_to_terminal": "Enviar a Datáfono",
         "approved": "Pago Aprobado",
+        "partially_paid": "Pagado Parcialmente",
+        "remaining_balance": "Saldo Pendiente",
         "processing": "Procesando Pago",
         "copy_link": "Copiar Enlace",
         "copied": "Copiado",
