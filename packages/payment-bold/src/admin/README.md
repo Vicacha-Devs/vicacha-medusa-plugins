@@ -1,21 +1,41 @@
-# Medusa v2 Bold Payment Admin Module
+# Medusa v2 Bold Payment Admin Module (`src/admin`)
 
-This module injects an interactive Payment Operations Widget directly into the Medusa v2 Admin Panel under the **Order Details** screen (`order.details.after`).
+Injects the interactive **Bold Payment Actions** widget (`BoldPaymentActionsWidget`) into the Medusa v2 Admin Panel under the **Order Details** screen (`order.details.after`).
+
+```text
+admin/
+├── widgets/
+│   ├── bold-payment-actions.tsx          # Order details widget (mounts at order.details.after)
+│   └── components/
+│       ├── bold-pos-terminal-section.tsx # Dataphone model/serial selector & Push action
+│       └── bold-payment-link-section.tsx # On-demand Payment Link generator & copy action
+├── hooks/
+│   ├── use-bold-widget-state.tsx         # Aggregates balance state, terminal list, and action hooks
+│   ├── use-bold-pos-push.ts              # Mutation hook for POST /admin/bold/pos-push
+│   └── use-bold-payment-link.ts          # Mutation hook for POST /admin/bold/payment-link
+├── utils/
+│   └── bold-order-balance.ts             # getBoldOrderBalanceState() for full & partial payment balances
+├── i18n/                                 # English (en) & Spanish (es) translations
+└── lib/
+    └── sdk.ts                            # Medusa Admin SDK client instance
+```
 
 ---
 
 ## Features
 
-1. **Smart POS Terminal Push (`bold-terminal`)**:
-   - Dispatch checkout requests directly to physical Bold Smart Dataphones using serial numbers.
-   - Live transaction status sync via Medusa Payment Module sessions.
+1. **Partial Payment & Remaining Balance Support (`bold-order-balance.ts`)**:
+   - Remains active for both unpaid and **partially paid** orders (`partially_paid`, `partially_captured`, `partially_authorized`, or `summary.pending_difference > 0`).
+   - Displays a **Partial Payment Balance** banner showing how much has already been paid (`paidAmount`) and the exact remaining balance (`payableAmount`) that will be charged.
+   - Automatically disables actions only when the order is `canceled` or `isFullyPaid` (`payableAmount === 0`).
 
-2. **Payment Link & QR Generator (`bold-link` & `bold-online`)**:
-   - Generate secure Bold online payment links on demand for phone/chat orders.
-   - Automatic copy-to-clipboard functionality for customer sharing.
+2. **Smart POS Terminal Push (`bold-terminal`)**:
+   - Queries active bound terminals via `GET /admin/bold/terminals` with automatic fallback to manual model + serial number entry.
+   - Dispatches checkout requests for `payableAmount` directly to physical Bold Smart Dataphones via `POST /admin/bold/pos-push`.
 
-3. **HMAC Signature & Webhook Verification**:
-   - Built-in signature validation ensuring payment state transitions are authenticated.
+3. **Payment Link & QR Generator (`bold-link`)**:
+   - Generates secure Bold online payment links on demand for `payableAmount` via `POST /admin/bold/payment-link`.
+   - Includes one-click copy-to-clipboard functionality for sharing via WhatsApp, Email, or SMS.
 
 ---
 
