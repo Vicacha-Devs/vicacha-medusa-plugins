@@ -71,50 +71,65 @@
     "b2b"
   ],
   "scripts": {
-    "build": "medusa plugin:build",
+    "build": "medusa plugin:build && tsc-alias -p tsconfig.json",
     "dev": "medusa plugin:develop",
     "lint": "medusa lint",
     "prepublishOnly": "medusa plugin:build",
     "typecheck": "tsc --noEmit",
-    "test": "node --import ./src/__tests__/register-ts-resolver.mjs --test src/__tests__/documents.spec.ts"
+    "test": "node --import ./src/__tests__/register-ts-resolver.mjs --test src/__tests__/documents.spec.ts",
+    "publish:local": "medusa plugin:publish",
+    "clean": "rm -rf .medusa node_modules"
   },
   "devDependencies": {
-    "@medusajs/admin-sdk": "2.13.1",
-    "@medusajs/cli": "2.13.1",
-    "@medusajs/framework": "2.13.1",
-    "@medusajs/icons": "2.13.1",
-    "@medusajs/medusa": "2.13.1",
-    "@medusajs/test-utils": "2.13.1",
-    "@medusajs/ui": "4.1.1",
-    "@swc/core": "^1.7.28",
+    "@hookform/resolvers": "5.7.1",
+    "@medusajs/admin-sdk": "2.21.0",
+    "@medusajs/admin-shared": "2.21.0",
+    "@medusajs/cli": "2.21.0",
+    "@medusajs/dashboard": "2.21.0",
+    "@medusajs/framework": "2.21.0",
+    "@medusajs/icons": "2.21.0",
+    "@medusajs/medusa": "2.21.0",
+    "@medusajs/test-utils": "2.21.0",
+    "@medusajs/ui": "4.2.4",
+    "@swc/core": "1.7.28",
     "@types/jsdom": "^28.0.1",
-    "@types/node": "^20.0.0",
+    "@types/node": "20.0.0",
     "@types/pdfmake": "^0.2.11",
-    "@types/react": "^18.3.2",
-    "@types/react-dom": "^18.2.25",
-    "prop-types": "^15.8.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.6.2",
-    "vite": "^5.2.11",
-    "vitest": "^2.1.8",
-    "yalc": "^1.0.0-pre.53"
+    "@types/react": "18.3.2",
+    "@types/react-dom": "18.2.25",
+    "jiti": "2.0.0",
+    "prop-types": "15.8.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-hook-form": "7.85.0",
+    "react-i18next": "15.4.1",
+    "react-router-dom": "6.30.0",
+    "ts-node": "10.9.2",
+    "tsc-alias": "^1.9.2",
+    "typescript": "5.6.2",
+    "vite": "7.3.6"
   },
   "peerDependencies": {
-    "@medusajs/admin-sdk": "2.13.1",
-    "@medusajs/cli": "2.13.1",
-    "@medusajs/framework": "2.13.1",
-    "@medusajs/icons": "2.13.1",
-    "@medusajs/medusa": "2.13.1",
-    "@medusajs/test-utils": "2.13.1",
-    "@medusajs/ui": "4.1.1"
+    "@hookform/resolvers": "5.7.1",
+    "@medusajs/admin-sdk": "2.21.0",
+    "@medusajs/admin-shared": "2.21.0",
+    "@medusajs/cli": "2.21.0",
+    "@medusajs/framework": "2.21.0",
+    "@medusajs/icons": "2.21.0",
+    "@medusajs/medusa": "2.21.0",
+    "@medusajs/ui": "4.2.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "7.85.0",
+    "react-i18next": "^15.4.0",
+    "react-router-dom": "^6.20.0",
+    "zod": "4.2.0"
   },
   "publishConfig": {
     "access": "public"
   },
   "engines": {
-    "node": ">=20"
+    "node": "^20.19.0 || >=22.12.0"
   },
   "packageManager": "pnpm@11.20.0",
   "dependencies": {
@@ -123,6 +138,7 @@
     "html-to-pdfmake": "^2.5.33",
     "jsdom": "^29.0.1",
     "pdfmake": "^0.2.18",
-    "zod": "^3.23.8"
+    "zod": "^3.24.1",
+    "@mikro-orm/migrations": "6.4.3"
   }
 }
