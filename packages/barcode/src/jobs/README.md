@@ -1,36 +1,54 @@
-# Custom scheduled jobs
+# Scheduled Jobs
 
-A scheduled job is a function executed at a specified interval of time in the background of your Medusa application.
+Background cron jobs registered by `medusa-plugin-barcode` under `src/jobs/`.
 
-A scheduled job is created in a TypeScript or JavaScript file under the `src/jobs` directory.
+```sh
+jobs/
+└── purge-expired-barcode-cache.ts      purges expired barcode_cache rows every 6 hours
+```
 
-For example, create the file `src/jobs/hello-world.ts` with the following content:
+---
+
+## `purge-expired-barcode-cache`
+
+| Property | Value |
+| --- | --- |
+| **File** | `src/jobs/purge-expired-barcode-cache.ts` |
+| **Job Name** | `"purge-expired-barcode-cache"` |
+| **Cron Schedule** | `"0 */6 * * *"` (every 6 hours at minute 0) |
+| **Service Delegate** | `barcodeService.purgeExpiredCache()` |
+
+### Behavior
+
+When `cacheEnabled: true` (the default), external GTIN/ISBN lookup responses from the 10-provider chain are cached in the `barcode_cache` table with an `expires_at` timestamp (`now + cacheTtlSeconds`, default `86400` seconds / 24 hours).
+
+Every 6 hours, `purgeExpiredBarcodeCacheJob` resolves `BARCODE_MODULE` (`"barcode"`) from the `MedusaContainer` and executes `barcodeService.purgeExpiredCache()`, deleting all `BarcodeCache` rows whose `expires_at` timestamp is earlier than the current time.
 
 ```ts
-import {
-  MedusaContainer
-} from "@medusajs/framework/types";
+import type { MedusaContainer } from "@medusajs/framework/types"
+import type { BarcodeModuleService } from "../modules/barcode/service"
+import { BARCODE_MODULE } from "../modules/barcode/types"
 
-export default async function myCustomJob(container: MedusaContainer) {
-  const productService = container.resolve("product")
-
-  const products = await productService.listAndCountProducts();
-
-  // Do something with the products
+export default async function purgeExpiredBarcodeCacheJob(
+  container: MedusaContainer
+) {
+  const barcodeService = container.resolve(
+    BARCODE_MODULE
+  ) as BarcodeModuleService
+  await barcodeService.purgeExpiredCache()
 }
 
 export const config = {
-  name: "daily-product-report",
-  schedule: "0 0 * * *", // Every day at midnight
-};
+  name: "purge-expired-barcode-cache",
+  schedule: "0 */6 * * *",
+}
 ```
 
-A scheduled job file must export:
+---
 
-- The function to be executed whenever it’s time to run the scheduled job.
-- A configuration object defining the job. It has three properties:
-  - `name`: a unique name for the job.
-  - `schedule`: a [cron expression](https://crontab.guru/).
-  - `numberOfExecutions`: an optional integer, specifying how many times the job will execute before being removed
+## Manual cache purge
 
-The `handler` is a function that accepts one parameter, `container`, which is a `MedusaContainer` instance used to resolve services.
+In addition to the scheduled job, administrators can inspect or purge cached lookups on demand via:
+
+- **REST API**: `DELETE /admin/barcodes/cache` (purges expired rows) or `DELETE /admin/barcodes/cache?all=true` (clears all cached entries).
+- **Admin UI**: `/app/barcodes/providers` ("Providers & Cache" route).

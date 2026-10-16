@@ -686,13 +686,14 @@ export function ProductPageBarcodeSection({ code, hmacSignature }: { code: strin
 
 ## 17. Admin Studio (`/app/barcodes`) & Product Detail Widget
 
-- **Admin Barcode Studio (`src/admin/routes/barcodes/page.tsx`)**:
-  - Automatically mounts at `/app/barcodes` ("Barcode & Label Studio") with global USB HID scanner listener active across all 5 tabs:
-    1. **GTIN Lookup & Batch Importer**: Live single lookup, 1-click Medusa product creation, and multi-line batch GTIN/ISBN importer.
-    2. **Dynamic 1D/2D & HMAC QR Tags**: Create signed product/variant/order tags with GS1 GTIN, Batch/Lot, Serial Number, and scan action.
-    3. **Thermal & Sheet Label Print Center**: Choose any of the 7 thermal/A4 presets, configure multi-currency MRP & Sale price, and export print-ready HTML+SVG or raw Zebra ZPL II (`^XA...^XZ`).
-    4. **Warehouse Stock-Take**: Start count sessions, scan items (`+1` / `-1`), inspect variance, and apply counts to the Inventory Module.
-    5. **Providers & Cache**: Inspect active lookup providers and purge expired/all cached lookups.
+- **Admin Barcode Studio (`src/admin/routes/barcodes/`)**:
+  - Automatically mounts at `/app/barcodes` ("Barcode & Label Studio") with a `SINGLE_COLUMN` overview dashboard, `TWO_COLUMN` feature sub-routes (`LayoutComposer`), `RouteDrawer` modal creation flows, 10-locale `react-i18next` support (`en`, `es`, `fr`, `de`, `it`, `pt`, `nl`, `pl`, `tr`, and RTL `ar`), and a global USB HID scanner listener active across all routes:
+    1. **Overview Dashboard (`/app/barcodes` — `routes/barcodes/page.tsx`)**: KPI summary cards and navigation cards into each studio workflow.
+    2. **GTIN Lookup & Batch Importer (`/app/barcodes/lookup` — `routes/barcodes/lookup/page.tsx`)**: Live single lookup, 1-click Medusa product creation, and multi-line batch GTIN/ISBN importer.
+    3. **Dynamic 1D/2D & HMAC QR Tags (`/app/barcodes/tags` & `/app/barcodes/tags/create` — `routes/barcodes/tags/page.tsx` & `tags/@create/page.tsx`)**: Create signed product/variant/order tags with GS1 GTIN, Batch/Lot, Serial Number, and scan action via inline form or `RouteDrawer` (`KeyboundForm` + `Form`).
+    4. **Thermal & Sheet Label Print Center (`/app/barcodes/print` — `routes/barcodes/print/page.tsx`)**: Choose any of the 7 thermal/A4 presets, configure multi-currency MRP & Sale price, and export print-ready HTML+SVG or raw Zebra ZPL II (`^XA...^XZ`).
+    5. **Warehouse Stock-Take (`/app/barcodes/stock-take` — `routes/barcodes/stock-take/page.tsx`)**: Start count sessions, scan items (`+1` / `-1`), inspect variance, and apply counts to the Inventory Module.
+    6. **Providers & Cache (`/app/barcodes/providers` — `routes/barcodes/providers/page.tsx`)**: Inspect active lookup providers and purge expired/all cached lookups.
 - **Product Detail Widget (`src/admin/widgets/product-barcode-widget.tsx`)**:
   - Injected into `product.details.after` on every Medusa Admin product page for 1-click GS1 EAN-13 generation and thermal label printing.
 
