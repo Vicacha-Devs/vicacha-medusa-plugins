@@ -249,6 +249,67 @@ export const useTranslation = () => ({
   ready: true,
 })
 
+export const CORE_LAYOUT_IDS = {
+  SINGLE_COLUMN: "single_column",
+  TWO_COLUMN: "two_column",
+}
+
+const dummyComponent = (name) => {
+  const fn = (props) => ({ type: name, props })
+  return new Proxy(fn, {
+    get(target, prop) {
+      if (prop in target) return target[prop]
+      return dummyComponent(`${name}.${String(prop)}`)
+    },
+  })
+}
+
+export const LayoutComposer = dummyComponent("LayoutComposer")
+export const SectionRow = dummyComponent("SectionRow")
+export const RouteDrawer = dummyComponent("RouteDrawer")
+export const RouteFocusModal = dummyComponent("RouteFocusModal")
+export const Form = dummyComponent("Form")
+export const KeyboundForm = dummyComponent("KeyboundForm")
+export const useRouteModal = () => ({ handleSuccess: () => {} })
+
+export const Badge = dummyComponent("Badge")
+export const Button = dummyComponent("Button")
+export const Container = dummyComponent("Container")
+export const Heading = dummyComponent("Heading")
+export const Input = dummyComponent("Input")
+export const Select = dummyComponent("Select")
+export const Skeleton = dummyComponent("Skeleton")
+export const StatusBadge = dummyComponent("StatusBadge")
+export const Table = dummyComponent("Table")
+export const Tabs = dummyComponent("Tabs")
+export const Text = dummyComponent("Text")
+export const Textarea = dummyComponent("Textarea")
+export const Toaster = dummyComponent("Toaster")
+export const clx = (...classes) => classes.filter(Boolean).join(" ")
+export const toast = {
+  success: () => {},
+  error: () => {},
+}
+
+export const Buildings = dummyComponent("Buildings")
+export const BuildingStorefront = dummyComponent("BuildingStorefront")
+export const CheckCircle = dummyComponent("CheckCircle")
+export const DocumentText = dummyComponent("DocumentText")
+export const MagnifyingGlass = dummyComponent("MagnifyingGlass")
+export const Tag = dummyComponent("Tag")
+
+export const useNavigate = () => () => {}
+export const useParams = () => ({})
+export const useForm = (opts = {}) => ({
+  control: {},
+  register: () => ({}),
+  handleSubmit: (fn) => (e) => fn(opts.defaultValues || {}),
+  watch: () => opts.defaultValues || {},
+  reset: () => {},
+  setValue: () => {},
+})
+export const zodResolver = (schema) => schema
+
 export default {
   useState,
   useEffect,
@@ -258,5 +319,6 @@ export default {
   Fragment,
   useTranslation,
 }
+
 
 

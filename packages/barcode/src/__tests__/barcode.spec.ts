@@ -509,5 +509,48 @@ describe("medusa-plugin-barcode — Admin UI Localization (10 Locales Key Parity
       )
     }
   })
+
+  it("exports Medusa v2 Admin multi-route pages, breadcrumbs, drawer modal, widget, and modular components", async () => {
+    const overviewRoute = await import("../admin/routes/barcodes/page")
+    const lookupRoute = await import("../admin/routes/barcodes/lookup/page")
+    const tagsRoute = await import("../admin/routes/barcodes/tags/page")
+    const tagsCreateRoute = await import(
+      "../admin/routes/barcodes/tags/@create/page"
+    )
+    const printRoute = await import("../admin/routes/barcodes/print/page")
+    const stockTakeRoute = await import(
+      "../admin/routes/barcodes/stock-take/page"
+    )
+    const providersRoute = await import(
+      "../admin/routes/barcodes/providers/page"
+    )
+    const widget = await import("../admin/widgets/product-barcode-widget")
+    const components = await import("../admin/components")
+
+    for (const route of [
+      overviewRoute,
+      lookupRoute,
+      tagsRoute,
+      printRoute,
+      stockTakeRoute,
+      providersRoute,
+    ]) {
+      assert.equal(typeof route.default, "function")
+      assert.equal(route.config.translationNs, "barcodes")
+      assert.equal(typeof route.handle.breadcrumb, "function")
+    }
+
+    assert.equal(typeof tagsCreateRoute.default, "function")
+    assert.equal(typeof widget.default, "function")
+    assert.equal(widget.config.zone, "product.details.after")
+    assert.equal(typeof components.BarcodeStudioHeader, "function")
+    assert.equal(typeof components.GtinLookupTab, "function")
+    assert.equal(typeof components.DynamicQrTagsTab, "function")
+    assert.equal(typeof components.LabelPrintCenterTab, "function")
+    assert.equal(typeof components.WarehouseStockTakeTab, "function")
+    assert.equal(typeof components.ProvidersCacheTab, "function")
+    assert.equal(typeof components.ProductBarcodeCard, "function")
+  })
 })
+
 
