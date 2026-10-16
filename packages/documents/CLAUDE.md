@@ -15,15 +15,37 @@
 
 ```text
 src/
-├── index.ts                                  # Public package exports
+├── index.ts                                  # Public package exports (modules, workflows, sdk, hooks, types, validators)
+├── types/
+│   ├── index.ts                              # Central TypeScript domain, workflow, API, SDK & hook contracts
+│   ├── constants.ts                          # DOCUMENTS_MODULE, DOCUMENT_TYPES, SUPPORTED_LOCALES, BUILTIN_PRESETS
+│   ├── enums.ts                              # DocumentTypeEnum, DocumentStatusEnum, SignatureStatusEnum, etc.
+│   └── errors.ts                             # DocumentErrorCode & mapDocumentError() normalizer
+├── sdk/
+│   ├── index.ts                              # SDK barrel export
+│   ├── client.ts                             # Isomorphic Admin & Store SDK clients (documentsAdminSdk, documentsStoreSdk)
+│   └── query-keys.ts                         # Hierarchical React Query key factory (documentsQueryKeys)
+├── hooks/
+│   ├── index.ts                              # React hooks barrel export
+│   ├── use-sdk-primitives.ts                 # Lightweight query/mutation primitives with cache invalidation
+│   ├── use-documents-query.ts                # useDocumentsList & useDocumentDetail hooks
+│   ├── use-document-mutations.ts             # Generate, regenerate, email, signature, bulk generate & ZIP download hooks
+│   ├── use-document-settings.ts              # useDocumentSettings, useDocumentRegions, update & reset regional settings hooks
+│   ├── use-document-templates.ts             # useDocumentTemplates & template CRUD mutation hooks
+│   └── use-order-documents-widget-state.ts   # State & action controller hook for OrderDocumentsWidget
+├── utils/
+│   └── bulk-generate-documents.ts            # executeBulkDocumentGeneration() batch generation runner
 ├── links/
+│   ├── README.md
 │   └── order-documents.ts                    # Order <-> Document (isList: true) module link
 ├── modules/
+│   ├── README.md
 │   └── documents/
 │       ├── index.ts                          # Module("documentsModuleService", { service: DocumentsModuleService })
 │       ├── service.ts                        # DocumentsModuleService (MedusaService + numbering, snapshots, rendering, audit log)
-│       ├── types.ts                          # Core TypeScript types & constants (10 SUPPORTED_LOCALES)
+│       ├── types.ts                          # Re-exports shared domain types & constants from src/types/
 │       ├── models/
+│       │   ├── index.ts                      # Models barrel export
 │       │   ├── document.ts                   # mpd_document
 │       │   ├── document-settings.ts          # mpd_document_settings
 │       │   ├── document-template.ts          # mpd_document_template
@@ -35,9 +57,11 @@ src/
 │       ├── services/
 │       │   └── docuseal.ts                   # Optional Docuseal REST client + HMAC verification + SSRF guard
 │       ├── i18n/
-│       │   ├── index.ts                      # getTranslations(locale, customOverrides)
+│       │   ├── index.ts                      # getTranslations(locale, customOverrides) & normalizeLocale()
 │       │   ├── types.ts                      # DocumentTranslations interface
-│       │   └── locales/all-locales.ts        # en, es, pl, de, fr, pt, it, nl, tr, ar PDF dictionaries
+│       │   └── locales/
+│       │       ├── index.ts                  # LOCALE_DICTIONARIES barrel for all 10 locales
+│       │       └── *.ts                      # ar, de, en, es, fr, it, nl, pl, pt, tr PDF dictionaries
 │       ├── utils/
 │       │   ├── numbering.ts                  # formatDocumentNumber() token engine
 │       │   ├── formatters.ts                 # Currency, date, address, filename & HTML sanitizers
@@ -59,37 +83,77 @@ src/
 │               ├── default-templates.ts
 │               └── html-engine.ts
 ├── workflows/
-│   ├── index.ts
+│   ├── README.md
+│   ├── index.ts                              # Exports all 11 workflows and 2 steps
 │   ├── generate-document.ts                  # generateDocumentWorkflow
 │   ├── regenerate-document-revision.ts       # regenerateDocumentRevisionWorkflow
 │   ├── mark-documents-stale.ts               # markDocumentsStaleWorkflow
+│   ├── create-document-template.ts           # createDocumentTemplateWorkflow
+│   ├── update-document-template.ts           # updateDocumentTemplateWorkflow
+│   ├── delete-document-template.ts           # deleteDocumentTemplateWorkflow
+│   ├── delete-document.ts                    # deleteDocumentWorkflow
+│   ├── upsert-document-settings.ts           # upsertDocumentSettingsWorkflow
+│   ├── delete-region-settings.ts             # deleteRegionSettingsWorkflow
+│   ├── create-signature-request.ts           # createSignatureRequestWorkflow
+│   ├── update-signature-request.ts           # updateSignatureRequestWorkflow
 │   └── steps/
 │       ├── fetch-order-context.ts            # Queries Order + resolves optional B2B context
 │       └── allocate-and-render-document.ts   # Allocates number, renders PDF, uploads to Modules.FILE, emits event
 ├── subscribers/
+│   ├── README.md
 │   ├── order-placed.ts                       # order.placed -> auto_generate_invoice / auto_generate_receipt
 │   ├── order-updated.ts                      # order.updated / order.edit_confirmed -> mark stale
 │   ├── order-canceled.ts                     # order.canceled -> mark stale
-│   ├── fulfillment-created.ts                # order.fulfillment_created -> auto_generate_packing_slip
-│   ├── refund-created.ts                     # order.refund_created -> auto_generate_credit_note
+│   ├── fulfillment-created.ts                # order.fulfillment_created / shipment.created -> auto_generate_packing_slip
+│   ├── refund-created.ts                     # order.refund_created / payment.refunded -> auto_generate_credit_note
 │   └── document-generated-email.ts           # document.generated -> auto_email_* via Modules.NOTIFICATION
 ├── jobs/
-│   └── bulk-generate-documents.ts            # Batch generation runner
+│   └── README.md                             # Batch generation & scheduled jobs guide
+├── providers/
+│   └── README.md                             # File Module, Notification Module, Docuseal & B2B integration guide
 ├── api/
+│   ├── README.md
 │   ├── validators.ts                         # Zod request validation schemas & inferred types
 │   ├── middlewares.ts                        # rawBody webhook config & assertCustomerOwnsOrder helper
-│   ├── admin/documents/                      # Admin REST routes
-│   └── store/documents/[order_id]/           # Storefront REST routes
+│   ├── admin/
+│   │   ├── plugin/route.ts                   # GET /admin/plugin probe
+│   │   └── documents/                        # Admin REST routes (CRUD, pdf, regenerate, send-email, send-for-signature, bulk-generate, bulk-download, export.csv, preview, settings, templates, webhooks/docuseal)
+│   └── store/
+│       ├── plugin/route.ts                   # GET /store/plugin probe
+│       └── documents/[order_id]/             # Storefront REST routes (list, invoice.pdf, packing-slip.pdf, credit-note.pdf, receipt.pdf, signed.pdf, signing-url)
 ├── admin/
-│   ├── components/documents/constants.ts     # SUPPORTED_UI_LOCALES for Admin UI language switcher
+│   ├── README.md
+│   ├── tsconfig.json
+│   ├── vite-env.d.ts
+│   ├── components/documents/
+│   │   ├── index.ts                          # Barrel export for all decoupled document UI components
+│   │   ├── constants.ts                      # SUPPORTED_UI_LOCALES, DEFAULT_SETTINGS_VALUES, documentSettingsFormSchema
+│   │   ├── documents-overview-section.tsx    # Hub StatCards & NavigationCards
+│   │   ├── documents-filters-bar.tsx         # Hub search, filters, CSV export & ZIP download toolbar
+│   │   ├── documents-table-section.tsx       # Hub filterable documents table container
+│   │   ├── documents-table-row.tsx           # Hub document row
+│   │   ├── documents-bulk-generate-section.tsx # Hub batch generation CTA section
+│   │   ├── order-document-row.tsx            # Order sidebar document row & action buttons
+│   │   ├── order-document-audit-panel.tsx    # Order sidebar expandable audit log & prior versions panel
+│   │   ├── settings-company-section.tsx      # Company identity, colors, presets, notes & bank details section
+│   │   ├── settings-numbering-section.tsx    # Numbering format tokens & sequence section
+│   │   ├── settings-preview-section.tsx      # Live PDF preview section (4-item mock, 75-item stress test, real order)
+│   │   ├── settings-region-scope-section.tsx # Global vs. regional override scope selector
+│   │   └── settings-automation-section.tsx   # Auto-generate, auto-email & signature toggles section
 │   ├── i18n/
+│   │   ├── README.md
 │   │   ├── index.ts                          # Medusa Admin i18next resource bundle (10 locales)
 │   │   └── json/*.json                       # ar, de, en, es, fr, it, nl, pl, pt, tr Admin UI translations
-│   ├── widgets/order-documents-widget.tsx    # Localized Order detail sidebar widget (with RTL support)
-│   └── routes/documents/                     # Localized /app/documents Hub & /app/documents/settings Studio
+│   ├── widgets/
+│   │   └── order-documents-widget.tsx        # Localized Order detail sidebar widget (order.details.side.after)
+│   └── routes/documents/
+│       ├── page.tsx                          # /documents — Overview & Documents Hub (SINGLE_COLUMN)
+│       ├── @bulk-generate/page.tsx           # /documents/bulk-generate — RouteDrawer modal for batch generation
+│       └── settings/page.tsx                 # /documents/settings — Settings & Template Studio (TWO_COLUMN)
 └── __tests__/
+    ├── medusa-shim.mjs                       # Test runner shim for Medusa framework imports
     ├── register-ts-resolver.mjs              # Node native TS module resolver hook
-    └── documents.spec.ts                     # 18 unit, i18n parity & security tests
+    └── documents.spec.ts                     # Unit, i18n parity & security test suite
 ```
 
 ---
