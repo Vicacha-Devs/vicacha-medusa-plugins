@@ -73,41 +73,67 @@
     "abandoned-cart"
   ],
   "scripts": {
-    "build": "medusa plugin:build",
+    "build": "medusa plugin:build && tsc-alias -p tsconfig.json",
     "dev": "medusa plugin:develop",
     "lint": "medusa lint",
     "prepublishOnly": "medusa plugin:build",
     "typecheck": "tsc --noEmit",
-    "test": "node --import ./src/__tests__/register-ts-resolver.mjs --test src/__tests__/*.spec.ts"
+    "test": "node --import ./src/__tests__/register-ts-resolver.mjs --test src/__tests__/*.spec.ts",
+    "publish:local": "medusa plugin:publish",
+    "clean": "rm -rf .medusa node_modules"
   },
   "dependencies": {
-    "@medusajs/admin-sdk": "2.21.2",
-    "@medusajs/cli": "2.21.2",
-    "@medusajs/framework": "2.21.2",
-    "@medusajs/icons": "2.21.2",
-    "@medusajs/medusa": "2.21.2",
-    "@medusajs/ui": "4.2.6",
-    "zod": "^3.24.1"
+    "zod": "^3.24.1",
+    "@mikro-orm/migrations": "6.4.3"
   },
   "devDependencies": {
-    "@medusajs/test-utils": "2.21.2",
-    "@types/node": "^22.0.0",
-    "@types/react": "^18.3.2",
-    "@types/react-dom": "^18.2.25",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "typescript": "^5.6.2",
-    "vite": "^5.2.11"
+    "@medusajs/admin-sdk": "2.21.0",
+    "@medusajs/admin-shared": "2.21.0",
+    "@medusajs/cli": "2.21.0",
+    "@medusajs/dashboard": "2.21.0",
+    "@medusajs/framework": "2.21.0",
+    "@medusajs/icons": "2.21.0",
+    "@medusajs/medusa": "2.21.0",
+    "@medusajs/ui": "4.2.4",
+    "@swc/core": "1.7.28",
+    "@types/node": "20.0.0",
+    "@types/react": "18.3.2",
+    "@types/react-dom": "18.2.25",
+    "jiti": "2.0.0",
+    "prop-types": "15.8.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-hook-form": "7.85.0",
+    "react-i18next": "15.4.1",
+    "react-router-dom": "6.30.0",
+    "ts-node": "10.9.2",
+    "tsc-alias": "^1.9.2",
+    "typescript": "5.6.2",
+    "vite": "7.3.6"
   },
   "peerDependencies": {
-    "@medusajs/framework": "^2.21.0",
-    "@medusajs/medusa": "^2.21.0",
-    "@medusajs/ui": "^4.0.0",
-    "react": "^18.2.0 || ^19.0.0",
-    "react-dom": "^18.2.0 || ^19.0.0"
+    "@medusajs/admin-sdk": "2.21.0",
+    "@medusajs/admin-shared": "2.21.0",
+    "@medusajs/cli": "2.21.0",
+    "@medusajs/framework": "2.21.0",
+    "@medusajs/icons": "2.21.0",
+    "@medusajs/medusa": "2.21.0",
+    "@medusajs/ui": "4.2.4",
+    "nodemailer": ">=6.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "7.85.0",
+    "react-i18next": "^15.4.0",
+    "react-router-dom": "^6.20.0",
+    "zod": "4.2.0"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
   },
-  "packageManager": "pnpm@11.20.0"
+  "packageManager": "pnpm@11.20.0",
+  "peerDependenciesMeta": {
+    "nodemailer": {
+      "optional": true
+    }
+  }
 }
