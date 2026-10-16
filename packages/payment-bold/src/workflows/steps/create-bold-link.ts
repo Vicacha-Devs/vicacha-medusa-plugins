@@ -20,7 +20,7 @@ export interface CreateBoldLinkStepInput {
 }
 
 export const createBoldLinkStep = createStep(
-  "create-bold-link-step",
+  "create-bold-link",
   async (input: CreateBoldLinkStepInput, { container }) => {
     const paymentModule: IPaymentModuleService = container.resolve(Modules.PAYMENT)
     let collectionId = input.paymentCollectionId

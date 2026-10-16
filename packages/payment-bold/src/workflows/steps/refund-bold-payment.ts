@@ -9,7 +9,7 @@ export interface RefundBoldPaymentStepInput {
 }
 
 export const refundBoldPaymentStep = createStep(
-  "refund-bold-payment-step",
+  "refund-bold-payment",
   async (input: RefundBoldPaymentStepInput, { container }) => {
     // Execute Medusa v2 Core Refund Payment Workflow
     const { result } = await refundPaymentWorkflow(container).run({

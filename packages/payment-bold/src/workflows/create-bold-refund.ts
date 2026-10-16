@@ -2,7 +2,7 @@ import { createWorkflow, WorkflowResponse } from "@medusajs/framework/workflows-
 import { refundBoldPaymentStep, RefundBoldPaymentStepInput } from "./steps/refund-bold-payment"
 
 export const refundBoldPaymentWorkflow = createWorkflow(
-  "refund-bold-payment-workflow",
+  "refund-bold-payment",
   (input: RefundBoldPaymentStepInput) => {
     const result = refundBoldPaymentStep(input)
     return new WorkflowResponse(result)
