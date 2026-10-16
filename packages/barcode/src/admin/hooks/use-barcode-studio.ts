@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
+import { toast } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
 
 import { useHidBarcodeScanner } from "../../hooks"
@@ -115,10 +116,18 @@ export const useBarcodeStudio = () => {
     null
   )
 
-  const notify = (msg: string, tone: "success" | "error" = "success") => {
-    setBannerTone(tone)
-    setBannerMessage(msg)
-  }
+  const notify = useCallback(
+    (msg: string, tone: "success" | "error" = "success") => {
+      setBannerTone(tone)
+      setBannerMessage(msg)
+      if (tone === "error") {
+        toast.error(msg)
+      } else {
+        toast.success(msg)
+      }
+    },
+    []
+  )
 
   const refreshAll = useCallback(async () => {
     setIsLoading(true)
@@ -263,17 +272,18 @@ export const useBarcodeStudio = () => {
     }
   }
 
-  const handleCreateTag = async () => {
-    if (!tagForm.target_id.trim()) return
+  const handleCreateTag = async (override?: Partial<TagFormState>) => {
+    const payload = { ...tagForm, ...override }
+    if (!payload.target_id.trim()) return
     try {
       const res = await defaultAdminSdk.admin.createTag({
-        target_id: tagForm.target_id.trim(),
-        label: tagForm.label.trim() || null,
-        symbology: tagForm.symbology,
-        scan_action: tagForm.scan_action,
-        gs1_gtin: tagForm.gs1_gtin.trim() || null,
-        batch_lot: tagForm.batch_lot.trim() || null,
-        serial_number: tagForm.serial_number.trim() || null,
+        target_id: payload.target_id.trim(),
+        label: payload.label.trim() || null,
+        symbology: payload.symbology,
+        scan_action: payload.scan_action,
+        gs1_gtin: payload.gs1_gtin.trim() || null,
+        batch_lot: payload.batch_lot.trim() || null,
+        serial_number: payload.serial_number.trim() || null,
       })
       notify(t("messages.tagCreated", { code: String(res.tag?.code || "") }))
       await refreshAll()

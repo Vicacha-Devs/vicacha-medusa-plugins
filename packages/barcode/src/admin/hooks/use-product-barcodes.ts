@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
+import { toast } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
 
 import type { LabelPrintOutput } from "../../modules/barcode/types"
@@ -76,17 +77,18 @@ export const useProductBarcodes = (product?: ProductBarcodeWidgetEntity) => {
         })
       }
 
-      setFeedback(
-        t("messages.widgetBarcodeGenerated", {
-          code: String(tagRes.tag?.code || ""),
-          title: product?.title || productId,
-        })
-      )
+      const msg = t("messages.widgetBarcodeGenerated", {
+        code: String(tagRes.tag?.code || ""),
+        title: product?.title || productId,
+      })
+      setFeedback(msg)
+      toast.success(msg)
       await loadProductBarcodeData()
     } catch (err) {
-      setFeedback(
+      const msg =
         err instanceof Error ? err.message : t("messages.widgetBarcodeError")
-      )
+      setFeedback(msg)
+      toast.error(msg)
     } finally {
       setIsBusy(false)
     }
@@ -112,11 +114,14 @@ export const useProductBarcodes = (product?: ProductBarcodeWidgetEntity) => {
         ],
       })
       setPrintPreview(output)
-      setFeedback(t("messages.widgetLabelPrepared", { code }))
+      const msg = t("messages.widgetLabelPrepared", { code })
+      setFeedback(msg)
+      toast.success(msg)
     } catch (err) {
-      setFeedback(
+      const msg =
         err instanceof Error ? err.message : t("messages.widgetLabelError")
-      )
+      setFeedback(msg)
+      toast.error(msg)
     } finally {
       setIsBusy(false)
     }

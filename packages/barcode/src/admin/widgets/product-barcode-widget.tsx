@@ -1,4 +1,3 @@
-import * as React from "react"
 import { defineWidgetConfig } from "@medusajs/admin-sdk"
 import { useTranslation } from "react-i18next"
 import { ProductBarcodeCard } from "../components"
@@ -42,4 +41,3 @@ export const config = defineWidgetConfig({
 })
 
 export default ProductBarcodeWidget
-

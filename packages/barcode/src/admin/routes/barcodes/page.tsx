@@ -1,116 +1,209 @@
-import * as React from "react"
 import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { Tabs } from "@medusajs/ui"
-import { useTranslation } from "react-i18next"
+import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared"
+import { LayoutComposer } from "@medusajs/dashboard/components"
 import {
-  BarcodeStudioHeader,
-  DynamicQrTagsTab,
-  GtinLookupTab,
-  LabelPrintCenterTab,
-  ProvidersCacheTab,
-  WarehouseStockTakeTab,
-} from "../../components"
+  Buildings,
+  BuildingStorefront,
+  CheckCircle,
+  DocumentText,
+  MagnifyingGlass,
+  Tag,
+} from "@medusajs/icons"
+import {
+  Badge,
+  Button,
+  Container,
+  Heading,
+  StatusBadge,
+  Text,
+  Toaster,
+} from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
+import { useNavigate } from "react-router-dom"
+
+import { NavigationCard, StatCard } from "../../components"
 import { useBarcodeStudio } from "../../hooks/use-barcode-studio"
 
-const BarcodeStudioPage = () => {
+const BarcodesOverviewPage = () => {
   const { t, i18n } = useTranslation()
+  const navigate = useNavigate()
   const studio = useBarcodeStudio()
 
   const isRtl = (i18n.resolvedLanguage || i18n.language || "").startsWith("ar")
+  const providers = Array.isArray(studio.overview.active_providers)
+    ? (studio.overview.active_providers as string[])
+    : []
 
   return (
-    <div
-      className="flex flex-col gap-y-6 p-6"
-      dir={isRtl ? "rtl" : "ltr"}
-    >
-      <BarcodeStudioHeader
-        overview={studio.overview}
-        lastScanned={studio.lastScanned}
-        bannerMessage={studio.bannerMessage}
-        bannerTone={studio.bannerTone}
-        onDismissBanner={studio.dismissBanner}
-        onRefresh={studio.onRefresh}
-        onBulkGenerate={() => void studio.handleBulkGenerateBarcodes()}
-      />
+    <LayoutComposer
+      widgetsZonePrefix="barcodes.overview"
+      preferredLayoutId={CORE_LAYOUT_IDS.SINGLE_COLUMN}
+      sections={{
+        main: (
+          <LayoutComposer.Entry id="BarcodesOverviewMain">
+            <div
+              className="flex flex-col gap-y-4"
+              dir={isRtl ? "rtl" : "ltr"}
+            >
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Heading className="font-sans font-medium h1-core">
+                      {t("header.title")}
+                    </Heading>
+                    <StatusBadge color="green">
+                      {t("header.providersBadge")}
+                    </StatusBadge>
+                    {studio.lastScanned ? (
+                      <Badge color="blue">
+                        {t("header.lastHidScan", {
+                          code: studio.lastScanned,
+                        })}
+                      </Badge>
+                    ) : null}
+                  </div>
+                  <Text className="text-ui-fg-subtle mt-1">
+                    {t("header.subtitle")}
+                  </Text>
+                </div>
 
-      <Tabs defaultValue="lookup">
-        <Tabs.List>
-          <Tabs.Trigger value="lookup">
-            {t("tabs.lookup", { count: studio.barcodes.length })}
-          </Tabs.Trigger>
-          <Tabs.Trigger value="tags">
-            {t("tabs.tags", { count: studio.tags.length })}
-          </Tabs.Trigger>
-          <Tabs.Trigger value="print">{t("tabs.print")}</Tabs.Trigger>
-          <Tabs.Trigger value="stock-take">
-            {t("tabs.stockTake", { count: studio.sessions.length })}
-          </Tabs.Trigger>
-          <Tabs.Trigger value="providers">
-            {t("tabs.providers", { count: studio.cacheEntries.length })}
-          </Tabs.Trigger>
-        </Tabs.List>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="secondary"
+                    size="small"
+                    onClick={() => void studio.handleBulkGenerateBarcodes()}
+                  >
+                    {t("header.bulkGenerateButton")}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="small"
+                    onClick={studio.onRefresh}
+                  >
+                    {t("header.refreshButton")}
+                  </Button>
+                </div>
+              </div>
 
-        <Tabs.Content value="lookup">
-          <GtinLookupTab
-            form={studio.lookupForm}
-            onFormChange={studio.setLookupForm}
-            lookupResult={studio.lookupResult}
-            barcodes={studio.barcodes}
-            onLookup={() => void studio.handleLookupBarcode()}
-            onCreateProduct={() => void studio.handleCreateProductFromBarcode()}
-            onBatchImport={() => void studio.handleBatchImport()}
-          />
-        </Tabs.Content>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
+                <StatCard
+                  title={t("header.linkedProductsStat")}
+                  value={Number(studio.overview.total_barcode_products ?? 0)}
+                  icon={<MagnifyingGlass />}
+                  loading={studio.isLoading}
+                  onClick={() => navigate("/barcodes/lookup")}
+                />
 
-        <Tabs.Content value="tags">
-          <DynamicQrTagsTab
-            form={studio.tagForm}
-            onFormChange={studio.setTagForm}
-            tags={studio.tags}
-            onCreateTag={() => void studio.handleCreateTag()}
-            onDeleteTag={(id) => void studio.handleDeleteTag(id)}
-          />
-        </Tabs.Content>
+                <StatCard
+                  title={t("header.dynamicTagsStat")}
+                  value={Number(studio.overview.total_barcode_tags ?? 0)}
+                  icon={<Tag />}
+                  loading={studio.isLoading}
+                  onClick={() => navigate("/barcodes/tags")}
+                />
 
-        <Tabs.Content value="print">
-          <LabelPrintCenterTab
-            form={studio.printForm}
-            onFormChange={studio.setPrintForm}
-            templates={studio.templates}
-            output={studio.printOutput}
-            onRenderLabels={() => void studio.handleRenderLabels()}
-          />
-        </Tabs.Content>
+                <StatCard
+                  title={t("header.totalScansStat")}
+                  value={Number(studio.overview.total_tag_scans ?? 0)}
+                  icon={<CheckCircle />}
+                  loading={studio.isLoading}
+                  onClick={() => navigate("/barcodes/tags")}
+                />
 
-        <Tabs.Content value="stock-take">
-          <WarehouseStockTakeTab
-            form={studio.countForm}
-            onFormChange={studio.setCountForm}
-            sessions={studio.sessions}
-            selectedSessionId={studio.selectedSessionId}
-            onSelectSession={studio.setSelectedSessionId}
-            onCreateSession={() => void studio.handleCreateCountSession()}
-            onScanDelta={(delta) => void studio.handleScanIntoSession(delta)}
-            onApplySession={(id) => void studio.handleApplyCountSession(id)}
-          />
-        </Tabs.Content>
+                <StatCard
+                  title={t("header.cachedLookupsStat")}
+                  value={`${String(studio.overview.total_cached_lookups ?? 0)} (${String(studio.overview.total_cache_hits ?? 0)})`}
+                  icon={<DocumentText />}
+                  loading={studio.isLoading}
+                  onClick={() => navigate("/barcodes/providers")}
+                />
 
-        <Tabs.Content value="providers">
-          <ProvidersCacheTab
-            overview={studio.overview}
-            cacheEntries={studio.cacheEntries}
-            onPurgeExpired={() => void studio.handlePurgeCache(false)}
-            onClearAllCache={() => void studio.handlePurgeCache(true)}
-          />
-        </Tabs.Content>
-      </Tabs>
-    </div>
+                <StatCard
+                  title={t("header.activeProvidersStat")}
+                  value={providers.length}
+                  icon={<BuildingStorefront />}
+                  loading={studio.isLoading}
+                  onClick={() => navigate("/barcodes/providers")}
+                />
+              </div>
+
+              <Container className="p-0 overflow-hidden">
+                <div className="px-6 py-5 border-b border-ui-border-base">
+                  <Heading level="h2">{t("nav.label")}</Heading>
+                  <Text className="text-ui-fg-subtle mt-1">
+                    {t("header.subtitle")}
+                  </Text>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2">
+                  <NavigationCard
+                    icon={<MagnifyingGlass />}
+                    title={t("tabs.lookup", {
+                      count: studio.barcodes.length,
+                    })}
+                    description={t("lookupTab.lookupSubtitle")}
+                    onClick={() => navigate("/barcodes/lookup")}
+                    position="top-left"
+                  />
+
+                  <NavigationCard
+                    icon={<Tag />}
+                    title={t("tabs.tags", { count: studio.tags.length })}
+                    description={t("tagsTab.createTitle")}
+                    onClick={() => navigate("/barcodes/tags")}
+                    position="top-right"
+                  />
+
+                  <NavigationCard
+                    icon={<DocumentText />}
+                    title={t("tabs.print")}
+                    description={t("printTab.designerTitle")}
+                    onClick={() => navigate("/barcodes/print")}
+                    position="middle-left"
+                  />
+
+                  <NavigationCard
+                    icon={<Buildings />}
+                    title={t("tabs.stockTake", {
+                      count: studio.sessions.length,
+                    })}
+                    description={t("stockTakeTab.createTitle")}
+                    onClick={() => navigate("/barcodes/stock-take")}
+                    position="middle-right"
+                  />
+
+                  <NavigationCard
+                    icon={<CheckCircle />}
+                    title={t("tabs.providers", {
+                      count: studio.cacheEntries.length,
+                    })}
+                    description={t("providersTab.providersTitle")}
+                    onClick={() => navigate("/barcodes/providers")}
+                    position="bottom-left"
+                  />
+                </div>
+              </Container>
+            </div>
+          </LayoutComposer.Entry>
+        ),
+      }}
+    />
   )
+}
+
+const Breadcrumb = () => {
+  const { t } = useTranslation()
+  return t("nav.label")
 }
 
 export const config = defineRouteConfig({
   label: "nav.label",
   translationNs: "barcodes",
+  icon: Tag,
 })
 
-export default BarcodeStudioPage
+export const handle = {
+  breadcrumb: () => <Breadcrumb />,
+}
+
+export default BarcodesOverviewPage
