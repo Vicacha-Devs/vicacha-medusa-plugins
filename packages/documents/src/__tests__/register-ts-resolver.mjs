@@ -3,6 +3,9 @@ import { existsSync } from "node:fs"
 import { fileURLToPath, pathToFileURL } from "node:url"
 import { dirname, resolve as resolvePath } from "node:path"
 
+const currentDir = dirname(fileURLToPath(import.meta.url))
+const shimUrl = pathToFileURL(resolvePath(currentDir, "medusa-shim.mjs")).href
+
 registerHooks({
   resolve(specifier, context, nextResolve) {
     if (
@@ -25,6 +28,14 @@ registerHooks({
         }
       }
     }
-    return nextResolve(specifier, context)
+
+    try {
+      return nextResolve(specifier, context)
+    } catch (err) {
+      if (specifier.startsWith("@medusajs/")) {
+        return { url: shimUrl, shortCircuit: true }
+      }
+      throw err
+    }
   },
 })
