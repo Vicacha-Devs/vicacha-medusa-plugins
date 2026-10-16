@@ -1,8 +1,9 @@
 import { ArrowUpRightOnBox } from "@medusajs/icons"
-import { Button, Input, Tabs, Text } from "@medusajs/ui"
+import { Tabs } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
 
-import { CopyIcon, QrCodeIcon } from "../../../components/icons"
+import { QrCodeIcon } from "../../../components/icons"
+import { BoldRemotePaymentPanel } from "./bold-remote-payment-panel"
 
 interface BoldPaymentTabsProps {
   activeTab: "link" | "qr"
@@ -32,6 +33,7 @@ export const BoldPaymentTabs = ({
 
   const hasMultipleTabs = state.isLinkEnabled && state.isQrEnabled
   const isGeneratingRemote = state.isCreatingLink || state.isCreatingQr
+  const singleMode = state.isLinkEnabled ? "link" : "qr"
 
   return (
     <div className="border border-ui-border-base rounded-lg p-3 space-y-3 bg-ui-bg-subtle/40">
@@ -63,97 +65,37 @@ export const BoldPaymentTabs = ({
             )}
           </Tabs.List>
 
-          {/* Link Tab Panel */}
           {state.isLinkEnabled && (
-            <Tabs.Content value="link" className="space-y-2 pt-1">
-              <Button
-                variant="secondary"
-                size="small"
-                className="w-full flex items-center justify-center gap-x-1.5"
+            <Tabs.Content value="link">
+              <BoldRemotePaymentPanel
+                mode="link"
+                isApproved={state.isApproved}
                 isLoading={state.isCreatingLink}
-                onClick={() => actions.handleCreateRemotePayment("link")}
-                disabled={state.isApproved || isGeneratingRemote}
-              >
-                <ArrowUpRightOnBox className="w-4 h-4" />
-                <span>
-                  {state.isApproved
-                    ? t("bold.admin.widget.approved")
-                    : t("bold.admin.widget.link_btn")}
-                </span>
-              </Button>
-
-              {state.paymentLink && activeTab === "link" && (
-                <div className="pt-2 space-y-1">
-                  <Text className="text-xs text-ui-fg-subtle">
-                    {t("bold.admin.widget.generated_link")}
-                  </Text>
-                  <div className="flex items-center gap-x-1.5">
-                    <Input
-                      value={state.paymentLink}
-                      readOnly
-                      size="small"
-                      className="text-xs font-mono"
-                    />
-                    <Button
-                      variant="transparent"
-                      size="small"
-                      onClick={() => onCopy(state.paymentLink!)}
-                    >
-                      <CopyIcon />
-                    </Button>
-                  </div>
-                </div>
-              )}
+                isDisabled={isGeneratingRemote}
+                paymentLink={state.paymentLink}
+                showPayload={activeTab === "link"}
+                onGenerate={() => actions.handleCreateRemotePayment("link")}
+                onCopy={onCopy}
+              />
             </Tabs.Content>
           )}
 
-          {/* QR Tab Panel */}
           {state.isQrEnabled && (
-            <Tabs.Content value="qr" className="space-y-2 pt-1">
-              <Button
-                variant="secondary"
-                size="small"
-                className="w-full flex items-center justify-center gap-x-1.5"
+            <Tabs.Content value="qr">
+              <BoldRemotePaymentPanel
+                mode="qr"
+                isApproved={state.isApproved}
                 isLoading={state.isCreatingQr}
-                onClick={() => actions.handleCreateRemotePayment("qr")}
-                disabled={state.isApproved || isGeneratingRemote}
-              >
-                <QrCodeIcon className="w-4 h-4" />
-                <span>
-                  {state.isApproved
-                    ? t("bold.admin.widget.approved")
-                    : t("bold.admin.widget.qr_btn")}
-                </span>
-              </Button>
-
-              {state.paymentLink && activeTab === "qr" && (
-                <div className="p-3 border border-ui-border-base bg-ui-bg-base rounded-md flex flex-col items-center justify-center space-y-2 text-center">
-                  <QrCodeIcon className="w-8 h-8 text-ui-fg-subtle" />
-                  <Text className="text-xs text-ui-fg-subtle font-medium">
-                    {t("bold.admin.widget.scan_instruction")}
-                  </Text>
-                  <div className="flex items-center gap-x-1.5 w-full pt-1">
-                    <Input
-                      value={state.paymentLink}
-                      readOnly
-                      size="small"
-                      className="text-xs font-mono"
-                    />
-                    <Button
-                      variant="transparent"
-                      size="small"
-                      onClick={() => onCopy(state.paymentLink!)}
-                    >
-                      <CopyIcon />
-                    </Button>
-                  </div>
-                </div>
-              )}
+                isDisabled={isGeneratingRemote}
+                paymentLink={state.paymentLink}
+                showPayload={activeTab === "qr"}
+                onGenerate={() => actions.handleCreateRemotePayment("qr")}
+                onCopy={onCopy}
+              />
             </Tabs.Content>
           )}
         </Tabs>
       ) : (
-        /* Single Remote Option View (No Tab Bar Required) */
         <div className="space-y-2">
           <div className="flex items-center gap-x-2 font-medium text-xs text-ui-fg-base pb-1">
             {state.isLinkEnabled ? (
@@ -168,48 +110,16 @@ export const BoldPaymentTabs = ({
             </span>
           </div>
 
-          <Button
-            variant="secondary"
-            size="small"
-            className="w-full flex items-center justify-center gap-x-1.5"
+          <BoldRemotePaymentPanel
+            mode={singleMode}
+            isApproved={state.isApproved}
             isLoading={isGeneratingRemote}
-            onClick={() =>
-              actions.handleCreateRemotePayment(state.isLinkEnabled ? "link" : "qr")
-            }
-            disabled={state.isApproved || isGeneratingRemote}
-          >
-            {state.isLinkEnabled ? <ArrowUpRightOnBox /> : <QrCodeIcon />}
-            <span>
-              {state.isApproved
-                ? t("bold.admin.widget.approved")
-                : state.isLinkEnabled
-                ? t("bold.admin.widget.link_btn")
-                : t("bold.admin.widget.qr_btn")}
-            </span>
-          </Button>
-
-          {state.paymentLink && (
-            <div className="pt-2 space-y-1">
-              <Text className="text-xs text-ui-fg-subtle">
-                {t("bold.admin.widget.generated_link")}
-              </Text>
-              <div className="flex items-center gap-x-1.5">
-                <Input
-                  value={state.paymentLink}
-                  readOnly
-                  size="small"
-                  className="text-xs font-mono"
-                />
-                <Button
-                  variant="transparent"
-                  size="small"
-                  onClick={() => onCopy(state.paymentLink!)}
-                >
-                  <CopyIcon />
-                </Button>
-              </div>
-            </div>
-          )}
+            isDisabled={isGeneratingRemote}
+            paymentLink={state.paymentLink}
+            showPayload={Boolean(state.paymentLink)}
+            onGenerate={() => actions.handleCreateRemotePayment(singleMode)}
+            onCopy={onCopy}
+          />
         </div>
       )}
     </div>

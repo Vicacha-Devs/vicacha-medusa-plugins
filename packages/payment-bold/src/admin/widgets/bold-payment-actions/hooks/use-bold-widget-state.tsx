@@ -12,6 +12,7 @@ import {
   usePushToBoldTerminal,
   useBoldPaymentStatusStream,
 } from "../../../../hooks"
+import { getBoldOrderBalanceInfo } from "./bold-order-balance"
 
 export const useBoldWidgetState = (order: AdminOrder) => {
   const { t } = useTranslation()
@@ -29,37 +30,16 @@ export const useBoldWidgetState = (order: AdminOrder) => {
   const isLinkEnabled = activeBoldProviders.includes(EBoldPaymentProvider.LINK)
   const isQrEnabled = activeBoldProviders.includes(EBoldPaymentProvider.ONLINE)
 
-  // 2. Check if THIS specific order is associated with Bold
-  const belongsToBold = useMemo(() => {
-    if (!order.payment_collections?.length) return false
+  // 2. Balance & Status Check (Supports unpaid and partially paid orders)
+  const {
+    paymentCollectionId,
+    isPartiallyPaid,
+    payableAmount,
+    belongsToBold,
+    isApproved,
+  } = useMemo(() => getBoldOrderBalanceInfo(order), [order])
 
-    return order.payment_collections.some((collection) => {
-      const sessions = collection.payment_sessions || []
-      const payments = collection.payments || []
-
-      const hasBoldSession = sessions.some((s) => s.provider_id?.includes("bold"))
-      const hasBoldPayment = payments.some((p) => p.provider_id?.includes("bold"))
-
-      return hasBoldSession || hasBoldPayment
-    })
-  }, [order.payment_collections])
-
-  // 3. Status Check (Moved up before SSE Stream)
-  const paymentCollection = order.payment_collections?.[0]
-  const paymentCollectionId = paymentCollection?.id
-
-  const deriveStatus = () => {
-    if (!paymentCollection) return false
-    const collectionStatus = (paymentCollection.status || "").toLowerCase()
-    if (["captured", "authorized", "completed"].includes(collectionStatus)) return true
-    const sessions = paymentCollection.payment_sessions || []
-    if (sessions.some((s) => ["captured", "authorized"].includes(s.status || ""))) return true
-    return (paymentCollection.payments || []).length > 0
-  }
-
-  const isApproved = deriveStatus()
-
-  // 4. SSE Stream
+  // 3. SSE Stream
   useBoldPaymentStatusStream({
     sessionId: activeSessionId,
     enabled: !!activeSessionId && !isApproved,
@@ -77,14 +57,14 @@ export const useBoldWidgetState = (order: AdminOrder) => {
     },
   })
 
-  // 5. Mutations
+  // 4. Mutations
   const { mutateAsync: createLink, isPending: isCreatingLink } = useCreateBoldLink()
   const { mutateAsync: createQr, isPending: isCreatingQr } = useCreateBoldQr()
   const { mutateAsync: pushToTerminal, isPending: isPushingToPos } = usePushToBoldTerminal()
 
   const reference = `ORD_${order.display_id || order.id}_${Date.now()}`.slice(0, 60)
 
-  // 6. Handlers
+  // 5. Handlers
   const handlePushToPos = async () => {
     if (!paymentCollectionId || !terminalSerial) {
       toast(t("bold.admin.widget.toast.error"), {
@@ -97,13 +77,13 @@ export const useBoldWidgetState = (order: AdminOrder) => {
 
     try {
       const res = await pushToTerminal({
-        amount: order.total,
+        amount: payableAmount,
         currency: order.currency_code,
-        terminalModel: terminalModel,
-        terminalSerial: terminalSerial,
+        terminalModel,
+        terminalSerial,
         paymentCollectionId,
         reference,
-        userEmail: order.email || "guest@noemail.local", // TODO: get a better placeholder
+        userEmail: order.email || "guest@noemail.local",
       })
       if (res?.paymentSession?.id) setActiveSessionId(res.paymentSession.id)
       toast(t("bold.admin.widget.toast.terminal_sent"), {
@@ -125,7 +105,7 @@ export const useBoldWidgetState = (order: AdminOrder) => {
     try {
       if (mode === "link") {
         const result = await createLink({
-          amount: order.total,
+          amount: payableAmount,
           currency: order.currency_code,
           reference,
           description: `Order ${order.display_id || order.id}`,
@@ -145,7 +125,7 @@ export const useBoldWidgetState = (order: AdminOrder) => {
         })
       } else {
         const result = await createQr({
-          amount: order.total,
+          amount: payableAmount,
           currency_code: order.currency_code,
           paymentCollectionId,
         })
@@ -166,6 +146,8 @@ export const useBoldWidgetState = (order: AdminOrder) => {
       terminalModel,
       paymentLink,
       isApproved,
+      isPartiallyPaid,
+      payableAmount,
       isLoadingProviders,
       isTerminalEnabled,
       isLinkEnabled,

@@ -1,6 +1,6 @@
 import { defineWidgetConfig } from "@medusajs/admin-sdk"
 import { DetailWidgetProps, AdminOrder } from "@medusajs/framework/types"
-import { Container, Heading, StatusBadge, toast, Text, Badge } from "@medusajs/ui"
+import { Container, Heading, toast, Text, Badge } from "@medusajs/ui"
 import { useState, useEffect } from "react"
 import { useTranslation } from "react-i18next"
 
@@ -52,9 +52,28 @@ export const BoldPaymentActionsWidget = ({
         >
           {state.isApproved
             ? t("bold.admin.widget.approved")
+            : state.isPartiallyPaid
+            ? t("bold.admin.widget.partially_paid", {
+                defaultValue: "Partially Paid",
+              })
             : t("bold.admin.widget.processing")}
         </Badge>
       </div>
+
+      {state.isPartiallyPaid && !state.isApproved && (
+        <div className="flex items-center justify-between px-3 py-2 rounded-md bg-ui-bg-subtle border border-ui-border-base text-xs">
+          <span className="text-ui-fg-subtle">
+            {t("bold.admin.widget.remaining_balance", {
+              defaultValue: "Remaining Balance",
+            })}
+            :
+          </span>
+          <strong className="text-ui-fg-base font-mono">
+            ${state.payableAmount.toLocaleString()}{" "}
+            {(order.currency_code || "COP").toUpperCase()}
+          </strong>
+        </div>
+      )}
 
       <div className="space-y-4">
         {/* 1. REMOTE PAYMENTS (Tabs for Link vs QR) */}

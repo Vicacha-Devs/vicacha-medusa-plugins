@@ -1,20 +1,19 @@
-import { defineRouteConfig } from "@medusajs/admin-sdk";
-import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared";
-import { LayoutComposer } from "@medusajs/dashboard/components";
-import { Heading, Text, Button } from "@medusajs/ui";
-import { usePaymentProviders } from "@vicacha-devs/medusa-shared-admin/admin";
-import { useTranslation } from "react-i18next";
+import { defineRouteConfig } from "@medusajs/admin-sdk"
+import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared"
+import { LayoutComposer } from "@medusajs/dashboard/components"
+import { Heading, Text, Button } from "@medusajs/ui"
+import { usePaymentProviders } from "@vicacha-devs/medusa-shared-admin/admin"
+import { useTranslation } from "react-i18next"
 
-import { useBoldIntegrationApiPaymentMethods, useBoldPaymentLinkPaymentMethods, useBoldTerminals } from "../../../../hooks";
-import { getActiveBoldProviders } from "../../../../lib";
-import { EBoldPaymentProvider } from "../../../../types";
 import {
-  Section,
-  ProviderCard,
-  MethodItem,
-  BoldTerminalStatusWidget,
-} from "../../../components";
+  useBoldIntegrationApiPaymentMethods,
+  useBoldPaymentLinkPaymentMethods,
+  useBoldTerminals,
+} from "../../../../hooks";
+import { getActiveBoldProviders } from "../../../../lib"
+import { BoldTerminalStatusWidget } from "../../../components";
 import { BoldFavIcon } from "../../../components/icons/bold-fav";
+import { BoldMethodsSidebar, BoldProvidersSection } from "./components"
 
 export const BoldSettingsPage = () => {
   const { t } = useTranslation();
@@ -73,134 +72,25 @@ export const BoldSettingsPage = () => {
 
       {/* Content */}
       <LayoutComposer
-        widgetsZonePrefix="travel_flights_list.list"
+        widgetsZonePrefix="bold.settings.details"
         preferredLayoutId={CORE_LAYOUT_IDS.TWO_COLUMN}
         sections={{
           main: (
             <>
-              {/* Providers */}
-              <Section
-                title={t("bold.admin.settings.enabled_providers", {
-                  defaultValue: "Enabled Providers",
-                })}
-                description={t("bold.admin.settings.enabled_providers_description", {
-                  defaultValue: "Active payment provider types",
-                })}
-              >
-                {isLoadingProviders ? (
-                  <div className="p-4">
-                    <Text className="text-xs text-ui-fg-subtle">
-                      {t("bold.admin.settings.loading", { defaultValue: "Loading..." })}
-                    </Text>
-                  </div>
-                ) : activeBoldProviders.length === 0 ? (
-                  <div className="p-4">
-                    <Text className="text-xs text-ui-fg-subtle">
-                      {t("bold.admin.settings.no_providers_configured", {
-                        defaultValue: "No providers configured",
-                      })}
-                    </Text>
-                  </div>
-                ) : (
-                  <div className="p-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {[
-                      EBoldPaymentProvider.LINK,
-                      EBoldPaymentProvider.ONLINE,
-                      EBoldPaymentProvider.TERMINAL,
-                      EBoldPaymentProvider.BUTTON,
-                    ].map((provider) => {
-                      const providerKey = provider.replace("bold-", "");
-                      return (
-                        <ProviderCard
-                          key={provider}
-                          title={t(`bold.admin.settings.provider_${providerKey}`, {
-                            defaultValue: providerKey,
-                          })}
-                          providerId={provider}
-                          isEnabled={activeBoldProviders.includes(provider)}
-                        />
-                      );
-                    })}
-                  </div>
-                )}
-              </Section>
-              {/* Terminals */}
+              <BoldProvidersSection
+                activeBoldProviders={activeBoldProviders}
+                isLoading={isLoadingProviders}
+              />
               <BoldTerminalStatusWidget />
             </>
           ),
           side: (
-            <>
-              {/* Payment Link Methods */}
-              <Section
-                title={t("bold.admin.settings.payment_link_methods", {
-                  defaultValue: "Payment Link Methods",
-                })}
-                description={t("bold.admin.settings.payment_link_methods_description", {
-                  defaultValue: "Online payment methods (QR, Cards, PSE, Nequi)",
-                })}
-              >
-                {isLoadingLink ? (
-                  <div className="p-4">
-                    <Text className="text-xs text-ui-fg-subtle">
-                      {t("bold.admin.settings.loading", { defaultValue: "Loading..." })}
-                    </Text>
-                  </div>
-                ) : linkMethods && Object.keys(linkMethods).length > 0 ? (
-                  <div>
-                    {Object.entries(linkMethods).map(([method]: [string, any], i: number) => (
-                      <MethodItem
-                        key={i}
-                        name={method}
-                        status={t("bold.admin.settings.method_status_available", {
-                          defaultValue: "Available",
-                        })}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="p-4">
-                    <Text className="text-xs text-ui-fg-subtle">
-                      {t("bold.admin.settings.no_methods_available", {
-                        defaultValue: "No methods available",
-                      })}
-                    </Text>
-                  </div>
-                )}
-              </Section>
-
-
-              {/* Integration API Methods */}
-              <Section
-                title={t("bold.admin.settings.integration_methods", {
-                  defaultValue: "Integration API Methods",
-                })}
-                description={t("bold.admin.settings.integration_methods_description", {
-                  defaultValue: "POS and terminal payment methods",
-                })}
-              >
-                {isLoadingIntegration ? (
-                  <div className="p-4">
-                    <Text className="text-xs text-ui-fg-subtle">
-                      {t("bold.admin.settings.loading", { defaultValue: "Loading..." })}
-                    </Text>
-                  </div>
-                ) : integrationMethods.length === 0 ? (
-                  <div className="p-4">
-                    <Text className="text-xs text-ui-fg-subtle">
-                      {t("bold.admin.settings.no_methods_available", {
-                        defaultValue: "No methods available",
-                      })}
-                    </Text>
-                  </div>
-                ) : (
-                  <div>
-                    {integrationMethods.map((m: any, i: number) => (
-                      <MethodItem key={i} name={m.name} status={m.enabled ? "Enabled" : "Disabled"} />
-                    ))}
-                  </div>
-                )}
-              </Section>
-            </>
+            <BoldMethodsSidebar
+              linkMethods={linkMethods}
+              isLoadingLink={isLoadingLink}
+              integrationMethods={integrationMethods}
+              isLoadingIntegration={isLoadingIntegration}
+            />
           ),
         }}
       />
