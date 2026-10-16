@@ -35,6 +35,8 @@
         "terminal_placeholder": "POS Seri No (ör. POS_SMART_01)",
         "send_to_terminal": "POS Terminaline Gönder",
         "approved": "Ödeme Onaylandı",
+        "partially_paid": "Kısmen Ödendi",
+        "remaining_balance": "Kalan Bakiye",
         "processing": "Ödeme İşleniyor",
         "copy_link": "Bağlantıyı Kopyala",
         "copied": "Kopyalandı",

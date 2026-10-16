@@ -35,6 +35,8 @@
         "terminal_placeholder": "الرقم التسلسلي للجهاز (مثال: POS_SMART_01)",
         "send_to_terminal": "إرسال إلى جهاز POS",
         "approved": "تمت الموافقة على الدفع",
+        "partially_paid": "مدفوع جزئياً",
+        "remaining_balance": "الرصيد المتبقي",
         "processing": "جاري معالجة الدفع",
         "copy_link": "نسخ الرابط",
         "copied": "تم النسخ",
