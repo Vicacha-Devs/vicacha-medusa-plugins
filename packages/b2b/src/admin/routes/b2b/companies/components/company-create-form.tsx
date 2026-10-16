@@ -1,19 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import {
-  Form,
-  KeyboundForm,
-  RouteFocusModal,
-} from "@medusajs/dashboard/components"
+import { KeyboundForm, RouteFocusModal } from "@medusajs/dashboard/components"
 import { useRegions } from "@medusajs/dashboard/hooks"
 import { currencies } from "@medusajs/dashboard/lib"
-import { Button, Hint, Input, ProgressStatus, ProgressTabs, Select } from "@medusajs/ui"
+import { Button, ProgressStatus, ProgressTabs } from "@medusajs/ui"
 import { useQuery } from "@tanstack/react-query"
-import { CoolSwitch, sdk } from "@vicacha-devs/medusa-shared-admin/admin"
+import { sdk } from "@vicacha-devs/medusa-shared-admin/admin"
 import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 
 import { ESpendingLimitResetFrequency } from "../../../../../types"
+import { CompanyCreateAdminTab } from "./company-create-admin-tab"
+import { CompanyCreateDetailsTab } from "./company-create-details-tab"
 import {
   type CompanyCreateFormValues,
   makeCompanyCreateFormSchema,
@@ -22,14 +20,6 @@ import {
 const ALL_CURRENCIES = Object.values(currencies).sort((a, b) =>
   a.name.localeCompare(b.name)
 )
-
-const RESET_FREQUENCIES = [
-  ESpendingLimitResetFrequency.NEVER,
-  ESpendingLimitResetFrequency.DAILY,
-  ESpendingLimitResetFrequency.WEEKLY,
-  ESpendingLimitResetFrequency.MONTHLY,
-  ESpendingLimitResetFrequency.YEARLY,
-]
 
 enum Tab {
   DETAILS = "details",
@@ -148,293 +138,22 @@ export function CompanyCreateForm({ onSubmit, loading }: CompanyCreateFormProps)
           </RouteFocusModal.Header>
 
           <RouteFocusModal.Body className="size-full overflow-hidden">
-            {/* ── DETAILS ── */}
             <ProgressTabs.Content className="size-full overflow-y-auto" value={Tab.DETAILS}>
-              <div className="mx-auto flex w-full max-w-[720px] flex-col gap-y-6 p-8">
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <Form.Field
-                    control={form.control}
-                    name="name"
-                    render={({ field }: any) => (
-                      <Form.Item>
-                        <Form.Label>{t("companies.form.name")}</Form.Label>
-                        <Form.Control>
-                          <Input {...field} />
-                        </Form.Control>
-                        <Form.ErrorMessage />
-                      </Form.Item>
-                    )}
-                  />
-                  <Form.Field
-                    control={form.control}
-                    name="email"
-                    render={({ field }: any) => (
-                      <Form.Item>
-                        <Form.Label>{t("companies.form.email")}</Form.Label>
-                        <Form.Control>
-                          <Input type="email" {...field} />
-                        </Form.Control>
-                        <Form.ErrorMessage />
-                      </Form.Item>
-                    )}
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <Form.Field
-                    control={form.control}
-                    name="phone"
-                    render={({ field }: any) => (
-                      <Form.Item>
-                        <Form.Label optional>{t("companies.form.phone")}</Form.Label>
-                        <Form.Control>
-                          <Input {...field} />
-                        </Form.Control>
-                        <Form.ErrorMessage />
-                      </Form.Item>
-                    )}
-                  />
-                  <Form.Field
-                    control={form.control}
-                    name="logo_url"
-                    render={({ field }: any) => (
-                      <Form.Item>
-                        <Form.Label optional>{t("companies.form.logoUrl")}</Form.Label>
-                        <Form.Control>
-                          <Input type="url" {...field} />
-                        </Form.Control>
-                        <Form.ErrorMessage />
-                      </Form.Item>
-                    )}
-                  />
-                </div>
-
-                <Form.Field
-                  control={form.control}
-                  name="address"
-                  render={({ field }: any) => (
-                    <Form.Item>
-                      <Form.Label optional>{t("companies.form.address")}</Form.Label>
-                      <Form.Control>
-                        <Input {...field} />
-                      </Form.Control>
-                      <Form.ErrorMessage />
-                    </Form.Item>
-                  )}
-                />
-
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                  <Form.Field
-                    control={form.control}
-                    name="city"
-                    render={({ field }: any) => (
-                      <Form.Item>
-                        <Form.Label optional>{t("companies.form.city")}</Form.Label>
-                        <Form.Control>
-                          <Input {...field} />
-                        </Form.Control>
-                        <Form.ErrorMessage />
-                      </Form.Item>
-                    )}
-                  />
-                  <Form.Field
-                    control={form.control}
-                    name="state"
-                    render={({ field }: any) => (
-                      <Form.Item>
-                        <Form.Label optional>{t("companies.form.state")}</Form.Label>
-                        <Form.Control>
-                          <Input {...field} />
-                        </Form.Control>
-                        <Form.ErrorMessage />
-                      </Form.Item>
-                    )}
-                  />
-                  <Form.Field
-                    control={form.control}
-                    name="zip"
-                    render={({ field }: any) => (
-                      <Form.Item>
-                        <Form.Label optional>{t("companies.form.zip")}</Form.Label>
-                        <Form.Control>
-                          <Input {...field} />
-                        </Form.Control>
-                        <Form.ErrorMessage />
-                      </Form.Item>
-                    )}
-                  />
-                </div>
-
-                <Form.Field
-                  control={form.control}
-                  name="country"
-                  render={({ field }: any) => (
-                    <Form.Item>
-                      <Form.Label optional>{t("companies.form.country")}</Form.Label>
-                      <Form.Control>
-                        <Select
-                          value={field.value?.toLowerCase() ?? ""}
-                          onValueChange={(v) => field.onChange(v)}
-                          disabled={regionsLoading}
-                        >
-                          <Select.Trigger>
-                            <Select.Value placeholder={t("companies.form.selectCountry")} />
-                          </Select.Trigger>
-                          <Select.Content>
-                            {availableCountries.map((c: any) => (
-                              <Select.Item key={c.iso_2} value={c.iso_2}>
-                                {c.display_name}
-                              </Select.Item>
-                            ))}
-                          </Select.Content>
-                        </Select>
-                      </Form.Control>
-                      <Form.ErrorMessage />
-                    </Form.Item>
-                  )}
-                />
-              </div>
+              <CompanyCreateDetailsTab
+                form={form}
+                availableCountries={availableCountries}
+                regionsLoading={regionsLoading}
+              />
             </ProgressTabs.Content>
 
-            {/* ── ADMIN ── */}
             <ProgressTabs.Content className="size-full overflow-y-auto" value={Tab.ADMIN}>
-              <div className="mx-auto flex w-full max-w-[720px] flex-col gap-y-8 p-8">
-                <Form.Field
-                  control={form.control}
-                  name="currency_code"
-                  render={({ field }: any) => (
-                    <Form.Item>
-                      <Form.Label>{t("companies.form.currency")}</Form.Label>
-                      <Form.Control>
-                        <Select
-                          value={field.value?.toUpperCase() ?? ""}
-                          onValueChange={(v) => field.onChange(v.toLowerCase())}
-                          disabled={regionsLoading}
-                        >
-                          <Select.Trigger>
-                            <Select.Value placeholder={t("companies.form.selectCurrency")} />
-                          </Select.Trigger>
-                          <Select.Content>
-                            {availableCurrencies.map((c) => (
-                              <Select.Item key={c.code} value={c.code}>
-                                {c.code} — {c.name}
-                              </Select.Item>
-                            ))}
-                          </Select.Content>
-                        </Select>
-                      </Form.Control>
-                      <Form.ErrorMessage />
-                    </Form.Item>
-                  )}
-                />
-
-                <div className="flex flex-col gap-y-4">
-                  <h2 className="h2-core">{t("companies.form.spendingSection")}</h2>
-                  <Form.Field
-                    control={form.control}
-                    name="spending_limit_reset_frequency"
-                    render={({ field }: any) => (
-                      <Form.Item>
-                        <Form.Label optional>
-                          {t("companies.form.spendingLimitResetFrequency")}
-                        </Form.Label>
-                        <Form.Control>
-                          <Select
-                            value={field.value ?? ESpendingLimitResetFrequency.NEVER}
-                            onValueChange={field.onChange}
-                          >
-                            <Select.Trigger>
-                              <Select.Value />
-                            </Select.Trigger>
-                            <Select.Content>
-                              {RESET_FREQUENCIES.map((freq) => (
-                                <Select.Item key={freq} value={freq}>
-                                  {t(`companies.form.resetFrequency.${freq}`)}
-                                </Select.Item>
-                              ))}
-                            </Select.Content>
-                          </Select>
-                        </Form.Control>
-                        <Form.ErrorMessage />
-                      </Form.Item>
-                    )}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-y-4">
-                  <h2 className="h2-core">{t("companies.customerGroup.title")}</h2>
-                  {groupsLoading ? null : customerGroups.length === 0 ? (
-                    <Hint variant="info">{t("companies.customerGroup.noGroups")}</Hint>
-                  ) : (
-                    <Form.Field
-                      control={form.control}
-                      name="customer_group_id"
-                      render={({ field }: any) => (
-                        <Form.Item>
-                          <Form.Label optional>{t("companies.customerGroup.header")}</Form.Label>
-                          <Form.Control>
-                            <Select value={field.value ?? ""} onValueChange={field.onChange}>
-                              <Select.Trigger>
-                                <Select.Value
-                                  placeholder={t("companies.customerGroup.selectPlaceholder")}
-                                />
-                              </Select.Trigger>
-                              <Select.Content>
-                                {customerGroups.map((g: any) => (
-                                  <Select.Item key={g.id} value={g.id}>
-                                    {g.name}
-                                  </Select.Item>
-                                ))}
-                              </Select.Content>
-                            </Select>
-                          </Form.Control>
-                          <Form.ErrorMessage />
-                        </Form.Item>
-                      )}
-                    />
-                  )}
-                </div>
-
-                <div className="flex flex-col gap-y-4">
-                  <h2 className="h2-core">{t("companies.approvalSettings.title")}</h2>
-                  <Form.Field
-                    control={form.control}
-                    name="requires_admin_approval"
-                    render={({ field }: any) => (
-                      <Form.Item>
-                        <Form.Control>
-                          <CoolSwitch
-                            fieldName="requires_admin_approval"
-                            label={t("companies.approvalSettings.requiresAdmin")}
-                            description={t("companies.approvalSettings.requiresAdminDescription")}
-                            checked={field.value}
-                            onChange={field.onChange}
-                          />
-                        </Form.Control>
-                      </Form.Item>
-                    )}
-                  />
-                  <Form.Field
-                    control={form.control}
-                    name="requires_sales_manager_approval"
-                    render={({ field }: any) => (
-                      <Form.Item>
-                        <Form.Control>
-                          <CoolSwitch
-                            fieldName="requires_sales_manager_approval"
-                            label={t("companies.approvalSettings.requiresSalesManager")}
-                            description={t(
-                              "companies.approvalSettings.requiresSalesManagerDescription"
-                            )}
-                            checked={field.value}
-                            onChange={field.onChange}
-                          />
-                        </Form.Control>
-                      </Form.Item>
-                    )}
-                  />
-                </div>
-              </div>
+              <CompanyCreateAdminTab
+                form={form}
+                availableCurrencies={availableCurrencies}
+                customerGroups={customerGroups}
+                regionsLoading={regionsLoading}
+                groupsLoading={groupsLoading}
+              />
             </ProgressTabs.Content>
           </RouteFocusModal.Body>
         </ProgressTabs>

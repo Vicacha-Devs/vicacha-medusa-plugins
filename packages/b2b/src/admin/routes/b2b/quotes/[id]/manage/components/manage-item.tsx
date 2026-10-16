@@ -1,27 +1,24 @@
-import {
-  ActionMenu,
-  Thumbnail,
-} from "@medusajs/dashboard/components";
-import { getCurrencySymbol } from "@medusajs/dashboard/lib";
-import { AdminOrder, AdminOrderPreview } from "@medusajs/framework/types"
+import { ActionMenu } from "@medusajs/dashboard/components";
+import { AdminOrder, AdminOrderPreview } from "@medusajs/framework/types";
 import {
   ArrowUturnLeft,
   DocumentSeries,
   PencilSquare,
   XCircle,
-  XMark,
-} from "@medusajs/icons"
-import { Badge, CurrencyInput, Hint, IconButton, Input, Label, Text, toast } from "@medusajs/ui"
-import { AmountCell } from "@vicacha-devs/medusa-shared-admin/admin"
-import debounce from "lodash/debounce"
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { useTranslation } from "react-i18next"
+} from "@medusajs/icons";
+import { Input, Text, toast } from "@medusajs/ui";
+import { AmountCell } from "@vicacha-devs/medusa-shared-admin/admin";
+import debounce from "lodash/debounce";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import {
   useAddItemsToQuote,
   useRemoveQuoteItem,
   useUpdateQuoteItem,
-} from "../../../../../../hooks/api"
+} from "../../../../../../hooks/api";
+import { ManageItemInfo } from "./manage-item-info";
+import { ManageItemPriceForm } from "./manage-item-price-form";
 
 type ManageItemProps = {
   originalItem: AdminOrder["items"][0]
@@ -31,12 +28,21 @@ type ManageItemProps = {
   onItemChange: (changes: { quantity?: number; unit_price?: number }) => void
 }
 
-export const ManageItem = ({ originalItem, item, currencyCode, orderId, onItemChange }: ManageItemProps) => {
+export const ManageItem = ({
+  originalItem,
+  item,
+  currencyCode,
+  orderId,
+  onItemChange,
+}: ManageItemProps) => {
   const { t } = useTranslation()
   const [showPriceForm, setShowPriceForm] = useState(false)
   const [localQty, setLocalQty] = useState(item.quantity)
   const [localPrice, setLocalPrice] = useState(item.unit_price)
-  const prevServerValuesRef = useRef({ quantity: item.quantity, unit_price: item.unit_price })
+  const prevServerValuesRef = useRef({
+    quantity: item.quantity,
+    unit_price: item.unit_price,
+  })
 
   const { mutateAsync: addItems } = useAddItemsToQuote(orderId)
   const { mutateAsync: updateOriginalItem } = useUpdateQuoteItem(orderId)
@@ -51,11 +57,16 @@ export const ManageItem = ({ originalItem, item, currencyCode, orderId, onItemCh
     return () => debouncedPriceNotify.cancel()
   }, [debouncedPriceNotify])
 
-  // Sync local state when server values change (e.g. after undo/remove)
   useEffect(() => {
     const prev = prevServerValuesRef.current
-    if (prev.quantity !== item.quantity || prev.unit_price !== item.unit_price) {
-      prevServerValuesRef.current = { quantity: item.quantity, unit_price: item.unit_price }
+    if (
+      prev.quantity !== item.quantity ||
+      prev.unit_price !== item.unit_price
+    ) {
+      prevServerValuesRef.current = {
+        quantity: item.quantity,
+        unit_price: item.unit_price,
+      }
       setLocalQty(item.quantity)
       setLocalPrice(item.unit_price)
       onItemChange({ quantity: item.quantity, unit_price: item.unit_price })
@@ -73,7 +84,8 @@ export const ManageItem = ({ originalItem, item, currencyCode, orderId, onItemCh
 
   const isAddedItem = !!addItemAction
   const isItemUpdated = !!updateItemAction
-  const isItemRemoved = !!updateItemAction && item.quantity === item.detail.fulfilled_quantity
+  const isItemRemoved =
+    !!updateItemAction && item.quantity === item.detail.fulfilled_quantity
 
   const localItemTotal = localQty * localPrice
 
@@ -82,7 +94,10 @@ export const ManageItem = ({ originalItem, item, currencyCode, orderId, onItemCh
       if (addItemAction) {
         await undoAction(addItemAction.id)
       } else {
-        await updateOriginalItem({ quantity: item.detail.fulfilled_quantity, itemId: item.id })
+        await updateOriginalItem({
+          quantity: item.detail.fulfilled_quantity,
+          itemId: item.id,
+        })
       }
     } catch (e: any) {
       toast.error(e.message)
@@ -101,7 +116,9 @@ export const ManageItem = ({ originalItem, item, currencyCode, orderId, onItemCh
 
   const onDuplicate = async () => {
     try {
-      await addItems({ items: [{ variant_id: item.variant_id, quantity: item.quantity }] })
+      await addItems({
+        items: [{ variant_id: item.variant_id, quantity: item.quantity }],
+      })
     } catch (e: any) {
       toast.error(e.message)
     }
@@ -117,50 +134,19 @@ export const ManageItem = ({ originalItem, item, currencyCode, orderId, onItemCh
   }
 
   const handlePriceChange = (price: number) => {
-    setLocalPrice(price) // immediate — updates the per-item AmountCell
+    setLocalPrice(price)
     debouncedPriceNotify(price)
   }
 
   return (
     <div className="bg-ui-bg-subtle shadow-elevation-card-rest my-2 rounded-xl">
       <div className="flex flex-col items-center gap-x-2 gap-y-2 p-3 text-sm md:flex-row">
-        <div className="flex flex-1 items-center justify-between">
-          <div className="flex flex-row items-center gap-x-3">
-            <Thumbnail src={item.thumbnail} />
-            <div className="flex flex-col">
-              <div>
-                <Text className="txt-small" as="span" weight="plus">
-                  {item.title}
-                </Text>
-                {item.variant_sku && (
-                  <span className="txt-small text-ui-fg-subtle"> ({item.variant_sku})</span>
-                )}
-              </div>
-              <Text as="div" className="text-ui-fg-subtle txt-small">
-                {item.product_title}
-              </Text>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-1">
-            {isAddedItem && (
-              <Badge size="2xsmall" rounded="full" color="blue">
-                {t("general.new")}
-              </Badge>
-            )}
-            {isItemRemoved ? (
-              <Badge size="2xsmall" rounded="full" color="red">
-                {t("general.removed")}
-              </Badge>
-            ) : (
-              isItemUpdated && (
-                <Badge size="2xsmall" rounded="full" color="orange">
-                  {t("general.modified")}
-                </Badge>
-              )
-            )}
-          </div>
-        </div>
+        <ManageItemInfo
+          item={item}
+          isAddedItem={isAddedItem}
+          isItemUpdated={isItemUpdated}
+          isItemRemoved={isItemRemoved}
+        />
 
         <div className="flex flex-1 justify-between">
           <div className="flex flex-grow items-center gap-2">
@@ -171,11 +157,14 @@ export const ManageItem = ({ originalItem, item, currencyCode, orderId, onItemCh
               min={item.detail.fulfilled_quantity}
               value={localQty}
               onChange={(e) => {
-                const qty = e.target.value === "" ? localQty : Number(e.target.value)
+                const qty =
+                  e.target.value === "" ? localQty : Number(e.target.value)
                 handleQtyChange(qty)
               }}
             />
-            <Text className="txt-small text-ui-fg-subtle">{t("fields.qty")}</Text>
+            <Text className="txt-small text-ui-fg-subtle">
+              {t("fields.qty")}
+            </Text>
           </div>
 
           <div className="text-ui-fg-subtle txt-small mr-2 flex flex-shrink-0">
@@ -209,7 +198,8 @@ export const ManageItem = ({ originalItem, item, currencyCode, orderId, onItemCh
                         label: t("actions.remove"),
                         onClick: onRemove,
                         icon: <XCircle />,
-                        disabled: item.detail.fulfilled_quantity === item.quantity,
+                        disabled:
+                          item.detail.fulfilled_quantity === item.quantity,
                       }
                     : {
                         label: t("actions.undo"),
@@ -224,39 +214,13 @@ export const ManageItem = ({ originalItem, item, currencyCode, orderId, onItemCh
       </div>
 
       {showPriceForm && (
-        <div className="grid grid-cols-1 gap-2 p-3 md:grid-cols-2">
-          <div>
-            <Label size="small" weight="plus">{t("fields.price")}</Label>
-            <Hint className="!mt-1">{t("quotes.manage.priceOverrideHint")}</Hint>
-          </div>
-          <div className="flex items-center gap-1">
-            <div className="flex-grow">
-              <CurrencyInput
-                key={`price-${item.id}-${item.unit_price}`}
-                symbol={getCurrencySymbol(currencyCode) ?? currencyCode}
-                code={currencyCode}
-                defaultValue={item.unit_price}
-                type="numeric"
-                min={0}
-                onChange={(e) => {
-                  const price = parseFloat(e.target.value.replace(/,/g, ""))
-                  if (!isNaN(price) && price > 0) {
-                    handlePriceChange(price)
-                  }
-                }}
-                className="bg-ui-bg-field-component hover:bg-ui-bg-field-component-hover"
-              />
-            </div>
-            <IconButton
-              type="button"
-              className="flex-shrink"
-              variant="transparent"
-              onClick={() => setShowPriceForm(false)}
-            >
-              <XMark className="text-ui-fg-muted" />
-            </IconButton>
-          </div>
-        </div>
+        <ManageItemPriceForm
+          itemId={item.id}
+          unitPrice={item.unit_price}
+          currencyCode={currencyCode}
+          onPriceChange={handlePriceChange}
+          onClose={() => setShowPriceForm(false)}
+        />
       )}
     </div>
   )

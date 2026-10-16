@@ -1,20 +1,27 @@
-import { LayoutComposer } from "@medusajs/dashboard/components"
-import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared"
-import { Button, Text, toast, usePrompt } from "@medusajs/ui"
-import { useOrderPreview } from "@medusajs/dashboard/hooks"
-import { detailPageDefaultEntries, OrderSummarySection, TwoColumnPageSkeleton } from "@vicacha-devs/medusa-shared-admin/admin"
-import { useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
-import { useTranslation } from "react-i18next"
+import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared";
+import { LayoutComposer } from "@medusajs/dashboard/components";
+import { useOrderPreview } from "@medusajs/dashboard/hooks";
+import { Text, toast, usePrompt } from "@medusajs/ui";
+import {
+  detailPageDefaultEntries,
+  OrderSummarySection,
+  TwoColumnPageSkeleton,
+} from "@vicacha-devs/medusa-shared-admin/admin";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate, useParams } from "react-router-dom";
 
-import { useQuote, useRejectQuote, useSendQuote } from "../../../../hooks/api"
-import { EQuoteStatus } from "../../../../../types"
-import { QuoteGeneralSection } from "./components/quote-general-section"
-import { QuoteMessagesSection } from "./components/quote-messages-section"
-import { QuoteCustomerSection } from "./components/quote-customer-section"
-import { QuoteOrderSection } from "./components/quote-order-section"
-import { QuoteCompanySection } from "./components/quote-company-section"
-import { SendQuoteDrawer } from "../components/send-quote-drawer"
+import { EQuoteStatus } from "../../../../../types";
+import { useQuote, useRejectQuote, useSendQuote } from "../../../../hooks/api";
+import { SendQuoteDrawer } from "../components/send-quote-drawer";
+import {
+  QuoteCompanySection,
+  QuoteCustomerSection,
+  QuoteDetailActions,
+  QuoteGeneralSection,
+  QuoteMessagesSection,
+  QuoteOrderSection,
+} from "./components";
 
 const CUSTOMER_FIELDS =
   "*customer,*customer.employee,*customer.employee.company"
@@ -35,10 +42,7 @@ const QuoteDetail = () => {
   const draftOrderId = (quote as any)?.draft_order_id
   const draftOrderCurrencyCode = (quote as any)?.draft_order?.currency_code
 
-  const {
-    order: orderPreview,
-    isPending: isPreviewPending,
-  } = useOrderPreview(
+  const { order: orderPreview, isPending: isPreviewPending } = useOrderPreview(
     draftOrderId!,
     {
       fields: [
@@ -57,10 +61,11 @@ const QuoteDetail = () => {
     { enabled: !!draftOrderId }
   ) as any
 
-  // Ensure currency_code is always present — the preview endpoint may omit it,
-  // so fall back to what the quote already fetched from draft_order.currency_code.
   const order = orderPreview
-    ? { ...orderPreview, currency_code: orderPreview.currency_code ?? draftOrderCurrencyCode }
+    ? {
+        ...orderPreview,
+        currency_code: orderPreview.currency_code ?? draftOrderCurrencyCode,
+      }
     : orderPreview
 
   if (isPending || !quote) {
@@ -69,9 +74,10 @@ const QuoteDetail = () => {
 
   if (isError) throw error
 
-  const canSend = [EQuoteStatus.PendingMerchant, EQuoteStatus.CustomerRejected].includes(
-    quote.status as EQuoteStatus
-  )
+  const canSend = [
+    EQuoteStatus.PendingMerchant,
+    EQuoteStatus.CustomerRejected,
+  ].includes(quote.status as EQuoteStatus)
   const canReject = [
     EQuoteStatus.PendingMerchant,
     EQuoteStatus.PendingCustomer,
@@ -111,34 +117,17 @@ const QuoteDetail = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      {(canSend || canReject || isAccepted) && (
-        <div className="flex items-center justify-end gap-2">
-          {isAccepted && draftOrderId && (
-            <Button
-              size="small"
-              variant="secondary"
-              onClick={() => navigate(`/orders/${draftOrderId}`)}
-            >
-              {t("quotes.detail.viewOrder")}
-            </Button>
-          )}
-          {canReject && (
-            <Button
-              size="small"
-              variant="secondary"
-              isLoading={isRejecting}
-              onClick={handleReject}
-            >
-              {t("quotes.detail.rejectQuote")}
-            </Button>
-          )}
-          {canSend && (
-            <Button size="small" isLoading={isSending} onClick={() => setSendDrawerOpen(true)}>
-              {t("quotes.detail.sendQuote")}
-            </Button>
-          )}
-        </div>
-      )}
+      <QuoteDetailActions
+        canSend={canSend}
+        canReject={canReject}
+        isAccepted={isAccepted}
+        draftOrderId={draftOrderId}
+        isSending={isSending}
+        isRejecting={isRejecting}
+        onViewOrder={() => navigate(`/orders/${draftOrderId}`)}
+        onReject={handleReject}
+        onOpenSendDrawer={() => setSendDrawerOpen(true)}
+      />
 
       <LayoutComposer
         widgetsZonePrefix="b2b.quote.details"
@@ -152,7 +141,11 @@ const QuoteDetail = () => {
               </LayoutComposer.Entry>
               {order && !isPreviewPending && (
                 <LayoutComposer.Entry id="QuoteOrderSummarySection">
-                  <OrderSummarySection order={order as any} plugins={[]} readOnly />
+                  <OrderSummarySection
+                    order={order as any}
+                    plugins={[]}
+                    readOnly
+                  />
                 </LayoutComposer.Entry>
               )}
               <LayoutComposer.Entry id="QuoteMessagesSection">
@@ -161,7 +154,9 @@ const QuoteDetail = () => {
               {isAccepted && (
                 <LayoutComposer.Entry id="QuoteAcceptedMessage">
                   <div className="rounded-lg border border-ui-border-base bg-ui-bg-subtle px-6 py-4">
-                    <Text size="small">{t("quotes.detail.acceptedMessage")}</Text>
+                    <Text size="small">
+                      {t("quotes.detail.acceptedMessage")}
+                    </Text>
                   </div>
                 </LayoutComposer.Entry>
               )}
@@ -198,7 +193,7 @@ const Breadcrumb = ({ id }: { id?: string }) => {
   const { t } = useTranslation()
   const { quote } = useQuote(id ?? "", undefined, { enabled: !!id })
   const displayId = (quote as any)?.draft_order?.display_id
-  
+
   return displayId != null ? `#${displayId}` : id ?? t("quote.title")
 }
 
