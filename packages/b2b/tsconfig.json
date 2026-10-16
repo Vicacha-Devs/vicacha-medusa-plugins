@@ -21,8 +21,10 @@
     "baseUrl": ".",
     "ignoreDeprecations": "5.0",
     "paths": {
-      "@b2b/*": ["./src/*"]
-    },
+      "@b2b/*": [
+        "./src/*"
+      ]
+    }
   },
   "ts-node": {
     "swc": true
