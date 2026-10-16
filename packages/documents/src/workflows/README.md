@@ -1,79 +1,55 @@
-# Custom Workflows
+# Workflows
 
-A workflow is a series of queries and actions that complete a task.
+Medusa workflows (`@medusajs/framework/workflows-sdk`) that implement document generation, revision management, stale detection, template CRUD, regional settings management, and Docuseal signature tracking. Every mutation workflow includes roll-back compensation.
 
-The workflow is created in a TypeScript or JavaScript file under the `src/workflows` directory.
-
-For example:
-
-```ts
-import {
-  createStep,
-  createWorkflow,
-  WorkflowResponse,
-  StepResponse,
-} from "@medusajs/framework/workflows-sdk"
-
-const step1 = createStep("step-1", async () => {
-  return new StepResponse(`Hello from step one!`)
-})
-
-type WorkflowInput = {
-  name: string
-}
-
-const step2 = createStep(
-  "step-2",
-  async ({ name }: WorkflowInput) => {
-    return new StepResponse(`Hello ${name} from step two!`)
-  }
-)
-
-type WorkflowOutput = {
-  message1: string
-  message2: string
-}
-
-const helloWorldWorkflow = createWorkflow(
-  "hello-world",
-  (input: WorkflowInput) => {
-    const greeting1 = step1()
-    const greeting2 = step2(input)
-    
-    return new WorkflowResponse({
-      message1: greeting1,
-      message2: greeting2
-    })
-  }
-)
-
-export default helloWorldWorkflow
+```sh
+workflows/
+├── index.ts                                  Barrel re-exporting all workflows and steps
+├── generate-document.ts                      generateDocumentWorkflow — idempotent document generation
+├── regenerate-document-revision.ts           regenerateDocumentRevisionWorkflow — issues v2+ revisions or retries failed docs
+├── mark-documents-stale.ts                   markDocumentsStaleWorkflow — flags invoices/receipts stale on order edits/cancellations
+├── create-document-template.ts               createDocumentTemplateWorkflow — creates custom mpd_document_template
+├── update-document-template.ts               updateDocumentTemplateWorkflow — updates custom mpd_document_template
+├── delete-document-template.ts               deleteDocumentTemplateWorkflow — deletes custom mpd_document_template
+├── delete-document.ts                        deleteDocumentWorkflow — deletes draft/failed mpd_document
+├── upsert-document-settings.ts               upsertDocumentSettingsWorkflow — creates/updates global or regional settings
+├── delete-region-settings.ts                 deleteRegionSettingsWorkflow — removes regional settings override
+├── create-signature-request.ts               createSignatureRequestWorkflow — records Docuseal signature request + audit entry
+├── update-signature-request.ts               updateSignatureRequestWorkflow — updates signature request from webhook + audit entry
+└── steps/
+    ├── fetch-order-context.ts                fetchOrderContextStep — queries Order + fulfillment/refund + optional B2B context
+    └── allocate-and-render-document.ts       allocateAndRenderDocumentStep — allocates number, renders PDF, uploads to Modules.FILE, emits document.generated
 ```
 
-## Execute Workflow
+---
 
-You can execute the workflow from other resources, such as API routes, scheduled jobs, or subscribers.
+## Step conventions
 
-For example, to execute the workflow in an API route:
+- Every step is created with `createStep` from `@medusajs/framework/workflows-sdk`.
+- Steps resolve `DOCUMENTS_MODULE` (`DocumentsModuleService`) and core Medusa services (`ContainerRegistrationKeys.QUERY`, `Modules.ORDER`, `Modules.FILE`, `Modules.EVENT_BUS`) from `container`.
+- Mutating steps return previous state or created entity IDs as their second `StepResponse` argument and define a `compensate` handler to roll back database changes if a downstream step fails.
 
-```ts
-import type {
-  MedusaRequest,
-  MedusaResponse,
-} from "@medusajs/framework"
-import myWorkflow from "../../../workflows/hello-world"
+### Core reusable steps (`src/workflows/steps/`)
 
-export async function GET(
-  req: MedusaRequest,
-  res: MedusaResponse
-) {
-  const { result } = await myWorkflow(req.scope)
-    .run({
-      input: {
-        name: req.query.name as string,
-      },
-    })
+| Step ID | Export | File | Behavior & Compensation |
+| --- | --- | --- | --- |
+| `fetch-order-context` | `fetchOrderContextStep` | `steps/fetch-order-context.ts` | Queries order details (`items`, `billing_address`, `shipping_address`, `fulfillments`, `labels`, `customer`) via `query.graph` with fallback to `Modules.ORDER`, extracts fulfillment/refund snapshots, and resolves optional B2B buyer context via `documentsService.resolveOrderB2BContext` |
+| `allocate-and-render-document` | `allocateAndRenderDocumentStep` | `steps/allocate-and-render-document.ts` | Checks idempotency, resolves regional/global settings, allocates sequential document number (or archives prior revision into `prior_versions` and increments `version`), renders PDF via `documentsService.renderPdf`, uploads private PDF to `Modules.FILE` (with inline base64 fallback), persists `mpd_document`, and emits `document.generated`. On render failure, records `status: "failed"` with `error_message` for admin retry. Compensates by deleting newly created document records |
 
-  res.send(result)
-}
-```
+---
+
+## Workflow index
+
+| Workflow ID | Export | File | Trigger | Compensation Behavior |
+| --- | --- | --- | --- | --- |
+| `generate-document` | `generateDocumentWorkflow` | `generate-document.ts` | `POST /admin/documents`, `POST /admin/documents/bulk-generate`, `GET /store/documents/:order_id/invoice.pdf?generate=true`, `order.placed` / `order.fulfillment_created` / `order.refund_created` subscribers | Deletes newly created `mpd_document` record via `allocateAndRenderDocumentStep` compensation |
+| `regenerate-document-revision` | `regenerateDocumentRevisionWorkflow` | `regenerate-document-revision.ts` | `POST /admin/documents/:id/regenerate` | Looks up existing document via `lookup-existing-document` step and delegates to `generateDocumentWorkflow.runAsStep` with `force_new_version: true` |
+| `mark-documents-stale` | `markDocumentsStaleWorkflow` | `mark-documents-stale.ts` | `order.updated`, `order.edit_confirmed`, and `order.canceled` subscribers | Marks generated `invoice` and `receipt` documents for the order as `is_stale = true` with `stale_reason` and appends `marked_stale` audit log entry |
+| `create-document-template` | `createDocumentTemplateWorkflow` | `create-document-template.ts` | `POST /admin/documents/templates` | Deletes the created `mpd_document_template` by ID |
+| `update-document-template` | `updateDocumentTemplateWorkflow` | `update-document-template.ts` | `PUT /admin/documents/templates/:id` | Restores the previous `mpd_document_template` snapshot |
+| `delete-document-template` | `deleteDocumentTemplateWorkflow` | `delete-document-template.ts` | `DELETE /admin/documents/templates/:id` | Recreates the deleted `mpd_document_template` record from its snapshot |
+| `delete-document` | `deleteDocumentWorkflow` | `delete-document.ts` | `DELETE /admin/documents/:id` | Recreates the deleted `mpd_document` record from its snapshot |
+| `upsert-document-settings` | `upsertDocumentSettingsWorkflow` | `upsert-document-settings.ts` | `PUT /admin/documents/settings` | Restores previous `mpd_document_settings` row if updated, or deletes the newly created regional override row |
+| `delete-region-settings` | `deleteRegionSettingsWorkflow` | `delete-region-settings.ts` | `DELETE /admin/documents/settings?region_id=...` | Recreates the deleted regional `mpd_document_settings` row(s) from their snapshot |
+| `create-signature-request` | `createSignatureRequestWorkflow` | `create-signature-request.ts` | `POST /admin/documents/:id/send-for-signature` | Deletes the created `mpd_signature_request` record by ID |
+| `update-signature-request` | `updateSignatureRequestWorkflow` | `update-signature-request.ts` | `POST /admin/documents/webhooks/docuseal` | Restores the previous `mpd_signature_request` snapshot |
