@@ -1,52 +1,38 @@
 {
   "name": "@vicacha-devs/medusa-plugin-notifications",
   "version": "0.0.1",
-  "description": "Unified multi-channel notification studio, visual block & raw template builder, DB event mapping orchestrator, TCPA/10DLC consent ledger, abandoned cart recovery, customer group broadcasts, and multi-driver providers (Email/SMTP, WhatsApp Cloud API + OpenWA/WAHA/Evolution, Telegram Merchant Topics + Customer Bot, SMS Twilio/SignalHouse/MSG91/SMSAPI, Slack Block Kit, and Dummy OTP Sandbox) for Medusa v2.",
+  "description": "Unified multi-channel notification studio for Medusa v2: visual and raw template builder, event mappings, consent ledger, abandoned cart recovery, broadcasts, and Email, WhatsApp, Telegram, SMS, Slack and sandbox providers.",
   "author": "Vicacha Devs",
   "license": "MIT",
-  "types": "./src/index.ts",
   "files": [
     ".medusa/server",
     "src",
-    "src/modules/notifications/migrations/*.js",
-    "src/modules/notifications/migrations/.snapshot-*.json",
+    "!src/__tests__",
     "README.md",
     "LICENSE",
     "tsconfig.json"
   ],
   "exports": {
     "./package.json": "./package.json",
-    ".": {
-      "types": "./src/index.ts",
-      "import": "./.medusa/server/src/index.js",
-      "require": "./.medusa/server/src/index.js",
-      "default": "./.medusa/server/src/index.js"
-    },
+    ".": "./.medusa/server/src/index.js",
     "./admin": {
       "import": "./.medusa/server/src/admin/index.mjs",
       "require": "./.medusa/server/src/admin/index.js",
       "default": "./.medusa/server/src/admin/index.js"
     },
     "./hooks": {
-      "types": "./src/hooks/index.ts",
       "import": "./src/hooks/index.ts",
       "default": "./.medusa/server/src/hooks/index.js"
     },
     "./sdk": {
-      "types": "./src/sdk/index.ts",
       "import": "./src/sdk/index.ts",
       "default": "./.medusa/server/src/sdk/index.js"
     },
     "./types": {
-      "types": "./src/types/index.ts",
       "import": "./src/types/index.ts",
       "default": "./.medusa/server/src/types/index.js"
     },
-    "./workflows": {
-      "types": "./src/workflows/index.ts",
-      "import": "./.medusa/server/src/workflows/index.js",
-      "default": "./.medusa/server/src/workflows/index.js"
-    },
+    "./workflows": "./.medusa/server/src/workflows/index.js",
     "./.medusa/server/src/modules/*": "./.medusa/server/src/modules/*/index.js",
     "./modules/*": "./.medusa/server/src/modules/*/index.js",
     "./providers/*": "./.medusa/server/src/providers/*/index.js",
@@ -74,32 +60,36 @@
   ],
   "scripts": {
     "build": "medusa plugin:build && tsc-alias -p tsconfig.json",
+    "publish:local": "medusa plugin:publish",
     "dev": "medusa plugin:develop",
     "lint": "medusa lint",
-    "prepublishOnly": "medusa plugin:build",
+    "prepublishOnly": "pnpm run build",
     "typecheck": "tsc --noEmit",
     "test": "node --import ./src/__tests__/register-ts-resolver.mjs --test src/__tests__/*.spec.ts",
-    "publish:local": "medusa plugin:publish",
     "clean": "rm -rf .medusa node_modules"
   },
-  "dependencies": {
-    "zod": "^3.24.1",
-    "@mikro-orm/migrations": "6.4.3"
-  },
   "devDependencies": {
+    "@hookform/resolvers": "5.7.1",
     "@medusajs/admin-sdk": "2.21.0",
     "@medusajs/admin-shared": "2.21.0",
     "@medusajs/cli": "2.21.0",
+    "@medusajs/core-flows": "2.21.0",
     "@medusajs/dashboard": "2.21.0",
     "@medusajs/framework": "2.21.0",
     "@medusajs/icons": "2.21.0",
+    "@medusajs/js-sdk": "2.21.0",
     "@medusajs/medusa": "2.21.0",
+    "@medusajs/test-utils": "2.21.0",
+    "@medusajs/types": "2.21.0",
     "@medusajs/ui": "4.2.4",
+    "@mikro-orm/migrations": "6.4.3",
     "@swc/core": "1.7.28",
     "@types/node": "20.0.0",
+    "@types/nodemailer": "^6.4.17",
     "@types/react": "18.3.2",
     "@types/react-dom": "18.2.25",
     "jiti": "2.0.0",
+    "nodemailer": "^6.10.0",
     "prop-types": "15.8.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -112,12 +102,17 @@
     "vite": "7.3.6"
   },
   "peerDependencies": {
+    "@hookform/resolvers": "5.7.1",
     "@medusajs/admin-sdk": "2.21.0",
     "@medusajs/admin-shared": "2.21.0",
     "@medusajs/cli": "2.21.0",
+    "@medusajs/core-flows": "2.21.0",
     "@medusajs/framework": "2.21.0",
     "@medusajs/icons": "2.21.0",
+    "@medusajs/js-sdk": "2.21.0",
     "@medusajs/medusa": "2.21.0",
+    "@medusajs/test-utils": "2.21.0",
+    "@medusajs/types": "2.21.0",
     "@medusajs/ui": "4.2.4",
     "nodemailer": ">=6.0.0",
     "react": "^18.2.0",
@@ -127,13 +122,16 @@
     "react-router-dom": "^6.20.0",
     "zod": "4.2.0"
   },
-  "engines": {
-    "node": "^20.19.0 || >=22.12.0"
-  },
-  "packageManager": "pnpm@11.20.0",
   "peerDependenciesMeta": {
     "nodemailer": {
       "optional": true
     }
-  }
+  },
+  "dependencies": {
+    "zod": "^3.24.1"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "packageManager": "pnpm@11.20.0"
 }
