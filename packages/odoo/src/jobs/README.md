@@ -1,36 +1,37 @@
-# Custom scheduled jobs
+# Scheduled Jobs
 
-A scheduled job is a function executed at a specified interval of time in the background of your Medusa application.
+Background cron jobs in `src/jobs/` that execute periodic bidirectional synchronization and automated inventory drift reconciliation between Medusa and Odoo ERP.
 
-A scheduled job is created in a TypeScript or JavaScript file under the `src/jobs` directory.
-
-For example, create the file `src/jobs/hello-world.ts` with the following content:
-
-```ts
-import {
-  MedusaContainer
-} from "@medusajs/framework/types";
-
-export default async function myCustomJob(container: MedusaContainer) {
-  const productService = container.resolve("product")
-
-  const products = await productService.listAndCountProducts();
-
-  // Do something with the products
-}
-
-export const config = {
-  name: "daily-product-report",
-  schedule: "0 0 * * *", // Every day at midnight
-};
+```sh
+jobs/
+├── README.md                    Scheduled jobs reference and configuration guide
+├── odoo-scheduled-sync.ts       Periodic products, multi-warehouse inventory & customer sync job
+└── odoo-reconciliation.ts       Periodic inventory drift detection & reconciliation job
 ```
 
-A scheduled job file must export:
+---
 
-- The function to be executed whenever it’s time to run the scheduled job.
-- A configuration object defining the job. It has three properties:
-  - `name`: a unique name for the job.
-  - `schedule`: a [cron expression](https://crontab.guru/).
-  - `numberOfExecutions`: an optional integer, specifying how many times the job will execute before being removed
+## Job Reference
 
-The `handler` is a function that accepts one parameter, `container`, which is a `MedusaContainer` instance used to resolve services.
+| File | Job Name (`config.name`) | Cron Schedule (`config.schedule`) | Pre-Flight Guards | Executed Operations |
+| :--- | :--- | :--- | :--- | :--- |
+| `odoo-scheduled-sync.ts` | `odoo-scheduled-sync-job` | `*/15 * * * *` *(or `0 */6 * * *` in low-frequency setups)* | 1. Checks `config.url && config.db && config.username` are configured.<br>2. Each service method checks its own section setting (`product.enableProductSync`, `inventory.enableStock`, `customers.enableCustomerSync`). | Sequentially executes:<br>1. `odooService.syncProducts(container, undefined, "scheduled")`<br>2. `odooService.syncInventory(container, undefined, "scheduled")`<br>3. `odooService.syncCustomers({ trigger: "scheduled" })` |
+| `odoo-reconciliation.ts` | `odoo-inventory-reconciliation-job` | `0 */6 * * *` *(every 6 hours, or `0 2 * * *` nightly)* | 1. Checks `config.url && config.db && config.username` are configured.<br>2. Checks `reconciliation.enableScheduledReconciliation !== false`. | Executes `odooService.reconcileInventory({ triggeredBy: "scheduled" })` using the configured strategy (`odoo_wins`, `medusa_wins`, or `manual_conflict`) and `driftThreshold`. |
+
+---
+
+## How Scheduled Jobs Check Section Settings Before Running
+
+1. **Connection Readiness Check**:
+   Both jobs first resolve `OdooModuleService` (`container.resolve(ODOO_MODULE)`) and call `await odooService.getConnectionConfig()`. If `url`, `db`, or `username` is empty (i.e. the plugin is in `"unconfigured"` state), the job exits cleanly without logging spurious errors.
+2. **Per-Section Enablement Toggles**:
+   - In `odoo-scheduled-sync.ts`:
+     - `syncProducts` reads `getSectionSettings<OdooProductSyncSettings>("product")` and skips execution if `enableProductSync === false`.
+     - `syncInventory` reads `getSectionSettings<OdooInventorySyncSettings>("inventory")` and skips execution if `enableStock === false`.
+     - `syncCustomers` reads `getSectionSettings<OdooCustomerSyncSettings>("customers")` and skips execution if `enableCustomerSync === false`.
+   - In `odoo-reconciliation.ts`:
+     - Explicitly reads `getSectionSettings<OdooReconciliationSettings>("reconciliation")` and exits early if `settings.enableScheduledReconciliation === false`.
+     - Operators can toggle `Enable Scheduled Drift Reconciliation` at runtime in `/app/odoo/settings` (`ReconciliationSettingsSection`) without restarting the Medusa server.
+3. **Observability & Audit Logging**:
+   - Every scheduled sync run creates an `ErpSyncLog` (`mpo_sync_log`) entry with `trigger: "scheduled"`.
+   - Every scheduled reconciliation run creates an `ErpReconciliationLog` (`mpo_reconciliation_log`) entry with `triggered_by: "scheduled"` and writes point-in-time `ErpInventorySnapshot` (`mpo_inventory_snapshot`) records.
