@@ -1,4 +1,13 @@
-import { Badge, Button, Heading, Table, Text } from "@medusajs/ui"
+import { SectionRow } from "@medusajs/dashboard/components"
+import {
+  Badge,
+  Button,
+  Container,
+  Heading,
+  StatusBadge,
+  Table,
+  Text,
+} from "@medusajs/ui"
 import React from "react"
 import { useTranslation } from "react-i18next"
 
@@ -22,74 +31,64 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
   const { t } = useTranslation()
 
   return (
-    <div className="flex flex-col gap-y-6">
+    <div className="flex flex-col gap-y-4">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {collections.map((col) => (
-          <div
-            key={col.entity}
-            className="border-ui-border-base flex flex-col justify-between rounded-lg border p-4"
-          >
-            <div>
-              <div className="flex items-center justify-between">
+          <Container key={col.entity} className="divide-y p-0">
+            <div className="flex items-center justify-between px-6 py-4">
+              <div>
                 <Heading level="h2" className="capitalize">
                   {col.entity}
                 </Heading>
-                <div className="flex items-center gap-x-1">
-                  {col.isCustom && (
-                    <Badge color="purple" size="small">
-                      {t("overview.customEntityBadge")}
-                    </Badge>
-                  )}
-                  <Badge
-                    color={col.physicalCollection ? "green" : "orange"}
-                    size="small"
-                  >
-                    {col.physicalCollection
-                      ? t("overview.indexedBadge")
-                      : t("overview.notIndexedBadge")}
+                <Text size="xsmall" className="text-ui-fg-subtle mt-0.5 font-mono">
+                  {t("overview.aliasLabel", {
+                    alias: col.aliasName,
+                    physical: col.physicalCollection || t("overview.none"),
+                  })}
+                </Text>
+              </div>
+              <div className="flex items-center gap-x-1.5">
+                {col.isCustom && (
+                  <Badge color="purple" size="xsmall">
+                    {t("overview.customEntityBadge")}
                   </Badge>
-                </div>
+                )}
+                <StatusBadge
+                  color={col.physicalCollection ? "green" : "orange"}
+                >
+                  {col.physicalCollection
+                    ? t("overview.indexedBadge")
+                    : t("overview.notIndexedBadge")}
+                </StatusBadge>
               </div>
-              <Text size="xsmall" className="text-ui-fg-subtle mt-1 font-mono">
-                {t("overview.aliasLabel", {
-                  alias: col.aliasName,
-                  physical: col.physicalCollection || t("overview.none"),
-                })}
-              </Text>
+            </div>
 
-              <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-                <div className="bg-ui-bg-subtle rounded p-2">
-                  <Text size="xsmall" className="text-ui-fg-subtle">
-                    {t("overview.documents")}
-                  </Text>
-                  <Text weight="plus">{col.numDocuments}</Text>
-                </div>
-                <div className="bg-ui-bg-subtle rounded p-2">
-                  <Text size="xsmall" className="text-ui-fg-subtle">
-                    {t("overview.synonyms")}
-                  </Text>
-                  <Text weight="plus">{col.synonymsCount}</Text>
-                </div>
-                <div className="bg-ui-bg-subtle rounded p-2">
-                  <Text size="xsmall" className="text-ui-fg-subtle">
-                    {t("overview.curations")}
-                  </Text>
-                  <Text weight="plus">{col.curationsCount}</Text>
-                </div>
-              </div>
-
-              {col.hasVectorEmbedder && (
-                <div className="mt-2">
-                  <Badge color="blue" size="small">
+            <SectionRow
+              title={t("overview.documents")}
+              value={String(col.numDocuments ?? 0)}
+            />
+            <SectionRow
+              title={t("overview.synonyms")}
+              value={String(col.synonymsCount ?? 0)}
+            />
+            <SectionRow
+              title={t("overview.curations")}
+              value={String(col.curationsCount ?? 0)}
+            />
+            {col.hasVectorEmbedder && (
+              <SectionRow
+                title="Vector AI"
+                value={
+                  <Badge color="blue" size="xsmall">
                     {t("overview.vectorAiBadge", {
                       model: col.embedderModel || "",
                     })}
                   </Badge>
-                </div>
-              )}
-            </div>
+                }
+              />
+            )}
 
-            <div className="mt-4 flex items-center justify-between gap-x-2">
+            <div className="flex items-center justify-between gap-x-2 px-6 py-4">
               <Button
                 variant="secondary"
                 size="small"
@@ -109,14 +108,15 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
                 </Button>
               )}
             </div>
-          </div>
+          </Container>
         ))}
       </div>
 
-      <div>
-        <Heading level="h2" className="mb-3">
-          {t("overview.recentJobsTitle")}
-        </Heading>
+      <Container className="divide-y p-0 overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4">
+          <Heading level="h2">{t("overview.recentJobsTitle")}</Heading>
+        </div>
+
         <Table>
           <Table.Header>
             <Table.Row>
@@ -136,25 +136,25 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
                 <Table.Cell className="text-ui-fg-subtle">
                   {t("overview.noJobs")}
                 </Table.Cell>
-                <Table.Cell>-</Table.Cell>
-                <Table.Cell>-</Table.Cell>
-                <Table.Cell>-</Table.Cell>
-                <Table.Cell>-</Table.Cell>
-                <Table.Cell>-</Table.Cell>
+                <Table.Cell>—</Table.Cell>
+                <Table.Cell>—</Table.Cell>
+                <Table.Cell>—</Table.Cell>
+                <Table.Cell>—</Table.Cell>
+                <Table.Cell>—</Table.Cell>
               </Table.Row>
             ) : (
               syncJobs.map((job) => (
                 <Table.Row key={job.id}>
                   <Table.Cell className="font-medium capitalize">
-                    {job.entity}
+                    {job.entity || (job as any).entity_type}
                   </Table.Cell>
                   <Table.Cell>{job.action}</Table.Cell>
                   <Table.Cell className="font-mono text-xs">
-                    {job.collection_name}
+                    {job.collection_name || "—"}
                   </Table.Cell>
                   <Table.Cell>
                     {t("overview.docsCount", {
-                      count: job.documents_processed,
+                      count: job.documents_processed ?? 0,
                     })}
                     {job.documents_failed > 0
                       ? t("overview.failedCount", {
@@ -163,10 +163,10 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
                       : ""}
                   </Table.Cell>
                   <Table.Cell>
-                    {job.duration_ms != null ? `${job.duration_ms} ms` : "-"}
+                    {job.duration_ms != null ? `${job.duration_ms} ms` : "—"}
                   </Table.Cell>
                   <Table.Cell>
-                    <Badge
+                    <StatusBadge
                       color={
                         job.status === "completed"
                           ? "green"
@@ -174,17 +174,16 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
                             ? "red"
                             : "orange"
                       }
-                      size="small"
                     >
                       {job.status}
-                    </Badge>
+                    </StatusBadge>
                   </Table.Cell>
                 </Table.Row>
               ))
             )}
           </Table.Body>
         </Table>
-      </div>
+      </Container>
     </div>
   )
 }

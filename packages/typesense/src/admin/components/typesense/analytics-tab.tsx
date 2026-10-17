@@ -1,4 +1,12 @@
-import { Button, Heading, Table, Text } from "@medusajs/ui"
+import { SectionRow } from "@medusajs/dashboard/components"
+import {
+  Badge,
+  Button,
+  Container,
+  Heading,
+  Table,
+  Text,
+} from "@medusajs/ui"
 import React from "react"
 import { useTranslation } from "react-i18next"
 
@@ -16,45 +24,80 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
   const { t } = useTranslation()
 
   return (
-    <div className="flex flex-col gap-y-6">
+    <div className="flex flex-col gap-y-4">
       <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
-        <div className="border-ui-border-base rounded-lg border p-4">
+        <Container className="p-5">
           <Text size="xsmall" className="text-ui-fg-subtle">
             {t("analytics.totalSearches")}
           </Text>
-          <Heading level="h2">{analytics?.totalSearches ?? 0}</Heading>
-        </div>
-        <div className="border-ui-border-base rounded-lg border p-4">
+          <Heading level="h2" className="mt-2">
+            {analytics?.totalSearches ?? 0}
+          </Heading>
+        </Container>
+        <Container className="p-5">
           <Text size="xsmall" className="text-ui-fg-subtle">
             {t("analytics.noHitRate")}
           </Text>
-          <Heading level="h2">{analytics?.noHitRate ?? 0}%</Heading>
-        </div>
-        <div className="border-ui-border-base rounded-lg border p-4">
+          <Heading level="h2" className="mt-2">
+            {analytics?.noHitRate ?? 0}%
+          </Heading>
+        </Container>
+        <Container className="p-5">
           <Text size="xsmall" className="text-ui-fg-subtle">
             {t("analytics.clickThroughRate")}
           </Text>
-          <Heading level="h2">{analytics?.clickThroughRate ?? 0}%</Heading>
-        </div>
-        <div className="border-ui-border-base rounded-lg border p-4">
+          <Heading level="h2" className="mt-2">
+            {analytics?.clickThroughRate ?? 0}%
+          </Heading>
+        </Container>
+        <Container className="p-5">
           <Text size="xsmall" className="text-ui-fg-subtle">
             {t("analytics.conversionRate")}
           </Text>
-          <Heading level="h2">{analytics?.conversionRate ?? 0}%</Heading>
-        </div>
-        <div className="border-ui-border-base rounded-lg border p-4">
+          <Heading level="h2" className="mt-2">
+            {analytics?.conversionRate ?? 0}%
+          </Heading>
+        </Container>
+        <Container className="p-5">
           <Text size="xsmall" className="text-ui-fg-subtle">
             {t("analytics.avgLatency")}
           </Text>
-          <Heading level="h2">{analytics?.averageLatencyMs ?? 0} ms</Heading>
-        </div>
+          <Heading level="h2" className="mt-2">
+            {analytics?.averageLatencyMs ?? 0} ms
+          </Heading>
+        </Container>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <div>
-          <Heading level="h2" className="mb-2">
-            {t("analytics.popularQueriesTitle")}
-          </Heading>
+      <Container className="divide-y p-0">
+        <div className="px-6 py-4">
+          <Heading level="h2">{t("tabs.analytics")}</Heading>
+        </div>
+        <SectionRow
+          title={t("analytics.totalSearches")}
+          value={String(analytics?.totalSearches ?? 0)}
+        />
+        <SectionRow
+          title={t("analytics.noHitRate")}
+          value={
+            <Badge
+              size="xsmall"
+              color={(analytics?.noHitRate ?? 0) > 20 ? "orange" : "green"}
+            >
+              {analytics?.noHitRate ?? 0}%
+            </Badge>
+          }
+        />
+        <SectionRow
+          title={t("analytics.avgLatency")}
+          value={`${analytics?.averageLatencyMs ?? 0} ms`}
+        />
+      </Container>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <Container className="divide-y p-0 overflow-hidden">
+          <div className="px-6 py-4">
+            <Heading level="h2">{t("analytics.popularQueriesTitle")}</Heading>
+          </div>
           <Table>
             <Table.Header>
               <Table.Row>
@@ -75,12 +118,12 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
               ))}
             </Table.Body>
           </Table>
-        </div>
+        </Container>
 
-        <div>
-          <Heading level="h2" className="mb-2">
-            {t("analytics.zeroResultTitle")}
-          </Heading>
+        <Container className="divide-y p-0 overflow-hidden">
+          <div className="px-6 py-4">
+            <Heading level="h2">{t("analytics.zeroResultTitle")}</Heading>
+          </div>
           <Table>
             <Table.Header>
               <Table.Row>
@@ -109,7 +152,7 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
               ))}
             </Table.Body>
           </Table>
-        </div>
+        </Container>
       </div>
     </div>
   )

@@ -1,116 +1,49 @@
-# Custom Module
+# Modules
 
-A module is a package of reusable functionalities. It can be integrated into your Medusa application without affecting the overall system. You can create a module as part of a plugin.
+Standalone Medusa module (`typesense`) implementing zero-downtime collection alias rebuilds, vector/hybrid AI search, merchandising (synonyms, curations, stopwords), custom entity indexing, and search analytics persistence.
 
-Learn more about modules in [this documentation](https://docs.medusajs.com/learn/fundamentals/modules).
-
-To create a module:
-
-## 1. Create a Data Model
-
-A data model represents a table in the database. You create a data model in a TypeScript or JavaScript file under the `models` directory of a module.
-
-For example, create the file `src/modules/blog/models/post.ts` with the following content:
-
-```ts
-import { model } from "@medusajs/framework/utils"
-
-const Post = model.define("post", {
-  id: model.id().primaryKey(),
-  title: model.text(),
-})
-
-export default Post
+```
+modules/
+└── typesense/
+    ├── index.ts                              Module("typesense", { service: TypesenseModuleService })
+    ├── service.ts                            TypesenseModuleService (extends MedusaService)
+    ├── types.ts                              All TypeScript interfaces, DTOs & constants
+    ├── migrations/
+    │   └── Migration20260401000000.ts        Creates mpt_sync_job, mpt_entity_config, and mpt_search_analytics
+    ├── models/
+    │   ├── index.ts                          Barrel exporting SyncJob, EntityConfig, SearchAnalyticsEvent
+    │   ├── sync-job.ts                       mpt_sync_job DML model
+    │   ├── entity-config.ts                  mpt_entity_config DML model
+    │   └── search-analytics.ts               mpt_search_analytics DML model
+    └── utils/
+        ├── schemas.ts                        Built-in schemas (products, categories, collections) & buildCollectionSchema
+        ├── transformers.ts                   Product, Category, Collection & Custom Entity document transformers
+        └── filter-compiler.ts                compileTypesenseFilter, escapeTypesenseFilterValue & combineTypesenseFilters
 ```
 
-## 2. Create a Service
+---
 
-A module must define a service. A service is a TypeScript or JavaScript class holding methods related to a business logic or commerce functionality.
+## Service Registration
 
-For example, create the file `src/modules/blog/service.ts` with the following content:
+- **Module token:** `TYPESENSE_MODULE = "typesense"`
+- **Service class:** `TypesenseModuleService`
 
-```ts
-import { MedusaService } from "@medusajs/framework/utils"
-import Post from "./models/post"
+---
 
-class BlogModuleService extends MedusaService({
-  Post,
-}){
-}
+## Data Models (`models/`)
 
-export default BlogModuleService
-```
+| Model | Table Name | ID Prefix | Purpose |
+| --- | --- | --- | --- |
+| `SyncJob` | `mpt_sync_job` | `tsjob_` | Tracks full zero-downtime alias rebuilds and incremental sync batches (`entity`, `locale`, `operation`, `status`, `triggered_by`, `total_records`, `synced_records`, `deleted_records`, `failed_records`, `target_collection`, `alias_name`, `duration_ms`, `error_message`). |
+| `EntityConfig` | `mpt_entity_config` | `tsent_` | Persists runtime custom entity index configurations (`entity_name`, `graph_entity`, `graph_fields`, `schema_fields`, `query_by`, `query_by_weights`, `facet_by`, `default_sorting_field`, `embedder_config`, `storefront_filter_constraint`, `is_custom`, `enabled`). |
+| `SearchAnalyticsEvent` | `mpt_search_analytics` | `tsana_` | Records search telemetry (`query`, `normalized_query`, `entity`, `locale`, `mode`, `event_type` (`search \| click \| conversion`), `hits_count`, `processing_time_ms`, `clicked_document_id`, `sales_channel_id`, `customer_id`). |
 
-## 3. Export Module Definition
+---
 
-A module must have an `index.ts` file in its root directory that exports its definition. The definition specifies the main service of the module.
+## Key Service Capabilities (`service.ts`)
 
-For example, create the file `src/modules/blog/index.ts` with the following content:
-
-```ts
-import BlogModuleService from "./service"
-import { Module } from "@medusajs/framework/utils"
-
-export const BLOG_MODULE = "blog"
-
-export default Module(BLOG_MODULE, {
-  service: BlogModuleService,
-})
-```
-
-## 4. Generate Migrations
-
-To generate migrations for your module, run the following command in the plugin's directory:
-
-```bash
-npx medusa plugin:db:genreate
-```
-
-## Use Module
-
-You can use the module in customizations within the plugin or within the Medusa application using this plugin. When the plugin is added to a Medusa application, all its modules are registered as well.
-
-For example, to use the module in an API route:
-
-```ts
-import { MedusaRequest, MedusaResponse } from "@medusajs/framework"
-import BlogModuleService from "../../../modules/blog/service"
-import { BLOG_MODULE } from "../../../modules/blog"
-
-export async function GET(
-  req: MedusaRequest,
-  res: MedusaResponse
-): Promise<void> {
-  const blogModuleService: BlogModuleService = req.scope.resolve(
-    BLOG_MODULE
-  )
-
-  const posts = await blogModuleService.listPosts()
-
-  res.json({
-    posts
-  })
-}
-```
-
-## Module Options
-
-When you register the plugin in the Medusa application, it can accept options. These options are passed to the modules within the plugin:
-
-```ts
-import { defineConfig } from "@medusajs/framework/utils"
-
-module.exports = defineConfig({
-  // ...
-  plugins: [
-    {
-      resolve: "@myorg/plugin-name",
-      options: {
-        apiKey: process.env.API_KEY,
-      },
-    },
-  ],
-})
-```
-
-Learn more about module options in [this documentation](https://docs.medusajs.com/learn/fundamentals/modules/options).
+- **Cluster & Collection Management:** `checkHealth`, `getClusterOverview`, `ensureEntityCollection`, `zeroDowntimeReindexEntity`, `pruneOldVersionedCollections`
+- **Document Indexing:** `upsertEntityDocuments`, `deleteEntityDocuments`, `getDocumentById`, `transformRecordsForEntity`
+- **Search & AI Discovery:** `searchEntity` (Keyword, Semantic, Hybrid `alpha`, Disjunctive & Range Facets), `multiSearchEntities`, `conversationalSearch`, `generateScopedSearchKey`
+- **Merchandising:** `listSynonyms`, `upsertSynonym`, `deleteSynonym`, `listCurations`, `upsertCuration`, `deleteCuration`, `listStopwords`, `upsertStopwords`, `deleteStopwords`
+- **Custom Entities & Analytics:** `listResolvedEntityConfigs`, `upsertCustomEntityConfig`, `removeCustomEntityConfig`, `recordAnalyticsEvent`, `getAnalyticsSummary`

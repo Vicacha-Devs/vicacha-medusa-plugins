@@ -71,12 +71,23 @@ medusa-plugin-typesense/
 │   │   │   ├── safe-highlight.tsx                # Safe <mark> highlight JSX renderer
 │   │   │   ├── use-typesense-studio.ts           # Studio state & API hook
 │   │   │   ├── header-bar.tsx                    # Cluster status & language switcher header
+│   │   │   ├── overview-cards.tsx                # Cluster status, active aliases & indexed document summary cards
 │   │   │   ├── overview-tab.tsx                  # Collections & sync jobs tab
 │   │   │   ├── entities-tab.tsx                  # Custom entity registration & embedder config tab
-│   │   │   ├── merchandising-tab.tsx             # Synonyms, Curations & Stopwords tab
-│   │   │   ├── playground-tab.tsx                # AI Search Playground tab
+│   │   │   ├── merchandising-tab.tsx             # Synonyms, Curations & Stopwords tab container
+│   │   │   ├── synonyms-section.tsx              # Multi-way & One-way Synonyms management section
+│   │   │   ├── curations-section.tsx             # Curations / Overrides management section
+│   │   │   ├── stopwords-section.tsx             # Stopwords set management section
+│   │   │   ├── playground-tab.tsx                # AI Search Playground controls tab
+│   │   │   ├── playground-results-section.tsx    # Search Playground hit cards, highlights & JSON modal
 │   │   │   └── analytics-tab.tsx                 # Search Analytics & No-Hit Query tab
-│   │   ├── routes/typesense/page.tsx             # /app/typesense Admin UI Dashboard page
+│   │   ├── routes/typesense/
+│   │   │   ├── page.tsx                          # /app/typesense Unified Studio Dashboard page
+│   │   │   ├── collections/page.tsx              # /app/typesense/collections sub-route
+│   │   │   ├── entities/page.tsx                 # /app/typesense/entities sub-route
+│   │   │   ├── merchandising/page.tsx            # /app/typesense/merchandising sub-route
+│   │   │   ├── playground/page.tsx               # /app/typesense/playground sub-route
+│   │   │   └── analytics/page.tsx                # /app/typesense/analytics sub-route
 │   │   └── widgets/product-typesense-widget.tsx  # product.details.side.after widget
 │   └── __tests__/
 │       ├── register-ts-resolver.mjs              # Node native test runner TypeScript hook

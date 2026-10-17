@@ -1,23 +1,35 @@
-## Module Providers
+# Providers
 
-You can create module providers, such as Notification or File Module Providers under a sub-directory of this directory. For example, `src/providers/my-notification`.
+Native Medusa `2.21` Search Module Provider (`@medusajs/medusa/search` / `Modules.SEARCH`) implementation for Typesense.
 
-Then, you register them in the Medusa application as `plugin-name/providers/my-notification`:
+```
+providers/
+└── typesense/
+    ├── index.ts        ModuleProvider(Modules.SEARCH, { services: [TypesenseSearchProviderService] })
+    └── service.ts      TypesenseSearchProviderService (extends AbstractSearchProviderService)
+```
+
+---
+
+## Registration (`medusa-config.ts`)
 
 ```ts
-module.exports = defineConfig({
-  // ...
+import { defineConfig, Modules } from "@medusajs/framework/utils"
+
+export default defineConfig({
   modules: [
     {
-      resolve: "@medusajs/medusa/notification",
+      resolve: Modules.SEARCH,
       options: {
         providers: [
           {
-            resolve: "@myorg/plugin-name/providers/my-notification",
-            id: "my-notification",
+            resolve: "@vicacha-devs/medusa-plugin-typesense/providers/typesense",
+            id: "typesense",
             options: {
-              channels: ["email"],
-              // provider options...
+              host: process.env.TYPESENSE_HOST || "http://127.0.0.1:8108",
+              apiKey: process.env.TYPESENSE_API_KEY!,
+              collectionPrefix: process.env.TYPESENSE_COLLECTION_PREFIX || "medusa",
+              zeroDowntimeSwap: true,
             },
           },
         ],
@@ -27,4 +39,16 @@ module.exports = defineConfig({
 })
 ```
 
-Learn more in [this documentation](https://docs.medusajs.com/learn/fundamentals/plugins/create).
+---
+
+## Provider Contract (`TypesenseSearchProviderService`)
+
+- **Identifier:** `TYPESENSE_PROVIDER_IDENTIFIER = "typesense"`
+- **Methods:**
+  - `createIndex(indexName, options)` — Creates a physical Typesense collection and points the alias `indexName` to it.
+  - `getIndex(indexName)` — Retrieves the Typesense collection schema for `indexName`.
+  - `addDocuments(indexName, documents, type)` — Transforms and batch-imports documents via JSONL (`action: "upsert"`).
+  - `replaceDocuments(indexName, documents, type)` — Performs a zero-downtime versioned collection build (`{indexName}_v_{timestamp}`), imports documents, swaps the alias, and prunes old physical collections.
+  - `deleteDocument(indexName, document_id)` / `deleteDocuments(indexName, document_ids)` / `deleteAllDocuments(indexName)` — Deletes one, many, or all documents in `indexName`.
+  - `search(indexName, query, options)` — Executes a Typesense search (`keyword`, `semantic`, or `hybrid`).
+  - `updateSettings(indexName, settings)` — Updates collection schema fields, synonyms, and curations/overrides.

@@ -1,79 +1,21 @@
-# Custom Workflows
+# Workflows
 
-A workflow is a series of queries and actions that complete a task.
+Medusa workflows (`@medusajs/framework/workflows-sdk`) that execute full zero-downtime collection alias rebuilds, incremental document upserts, and compensated document deletions in `@vicacha-devs/medusa-plugin-typesense`.
 
-The workflow is created in a TypeScript or JavaScript file under the `src/workflows` directory.
-
-For example:
-
-```ts
-import {
-  createStep,
-  createWorkflow,
-  WorkflowResponse,
-  StepResponse,
-} from "@medusajs/framework/workflows-sdk"
-
-const step1 = createStep("step-1", async () => {
-  return new StepResponse(`Hello from step one!`)
-})
-
-type WorkflowInput = {
-  name: string
-}
-
-const step2 = createStep(
-  "step-2",
-  async ({ name }: WorkflowInput) => {
-    return new StepResponse(`Hello ${name} from step two!`)
-  }
-)
-
-type WorkflowOutput = {
-  message1: string
-  message2: string
-}
-
-const helloWorldWorkflow = createWorkflow(
-  "hello-world",
-  (input: WorkflowInput) => {
-    const greeting1 = step1()
-    const greeting2 = step2(input)
-    
-    return new WorkflowResponse({
-      message1: greeting1,
-      message2: greeting2
-    })
-  }
-)
-
-export default helloWorldWorkflow
+```
+workflows/
+├── index.ts                Barrel exporting all 3 workflows and steps
+├── sync-entities.ts        syncEntitiesToTypesenseWorkflow (zero-downtime rebuild or incremental graph sync)
+├── upsert-documents.ts     upsertTypesenseDocumentsWorkflow (with rollback compensation)
+└── delete-documents.ts     deleteTypesenseDocumentsWorkflow (snapshots & restores deleted docs on rollback)
 ```
 
-## Execute Workflow
+---
 
-You can execute the workflow from other resources, such as API routes, scheduled jobs, or subscribers.
+## Workflow Index
 
-For example, to execute the workflow in an API route:
-
-```ts
-import type {
-  MedusaRequest,
-  MedusaResponse,
-} from "@medusajs/framework"
-import myWorkflow from "../../../workflows/hello-world"
-
-export async function GET(
-  req: MedusaRequest,
-  res: MedusaResponse
-) {
-  const { result } = await myWorkflow(req.scope)
-    .run({
-      input: {
-        name: req.query.name as string,
-      },
-    })
-
-  res.send(result)
-}
-```
+| Workflow ID | Export | Step IDs | Compensation Behavior | Trigger |
+| --- | --- | --- | --- | --- |
+| `sync-entities-to-typesense-workflow` | `syncEntitiesToTypesenseWorkflow` | `resolve-typesense-entities-step`, `execute-typesense-entity-sync-step` | If a zero-downtime rebuild fails mid-flight, drops the temporary physical collection while keeping the live alias untouched | `POST /admin/typesense/collections`, `POST /admin/typesense/collections/:entity/sync`, nightly cron job |
+| `upsert-typesense-documents-workflow` | `upsertTypesenseDocumentsWorkflow` | `upsert-typesense-documents-step` | Restores pre-existing documents to their previous snapshot and deletes newly inserted documents | `product.*`, `product-category.*`, `product-collection.*` subscribers & `POST /admin/typesense/documents/:entity/:id` |
+| `delete-typesense-documents-workflow` | `deleteTypesenseDocumentsWorkflow` | `delete-typesense-documents-step` | Re-imports the pre-deletion document snapshots back into Typesense on workflow rollback | `*.deleted` subscribers & `DELETE /admin/typesense/documents/:entity/:id` |

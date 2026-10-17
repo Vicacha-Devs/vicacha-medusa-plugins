@@ -1,17 +1,20 @@
-import {
-  Badge,
-  Button,
-  Heading,
-  Input,
-  Label,
-  Select,
-  Text,
-} from "@medusajs/ui"
-import React from "react"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Form, KeyboundForm } from "@medusajs/dashboard/components"
+import { Button, Container, Heading, Input, Select } from "@medusajs/ui"
+import React, { useEffect } from "react"
+import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
+import { z } from "zod"
 
-import { renderSafeHighlight } from "./safe-highlight"
+import { PlaygroundResultsSection } from "./playground-results-section"
 import type { CollectionOverviewItem, PlaygroundResponse } from "./types"
+
+const playgroundFormSchema = z.object({
+  playEntity: z.string().min(1),
+  playQuery: z.string(),
+  playMode: z.string(),
+  playAlpha: z.string(),
+})
 
 export interface PlaygroundTabProps {
   collections: CollectionOverviewItem[]
@@ -44,174 +47,161 @@ export const PlaygroundTab: React.FC<PlaygroundTabProps> = ({
 }) => {
   const { t } = useTranslation()
 
+  const form = useForm({
+    resolver: zodResolver(playgroundFormSchema),
+    defaultValues: {
+      playEntity,
+      playQuery,
+      playMode,
+      playAlpha,
+    },
+  })
+
+  useEffect(() => {
+    form.reset({
+      playEntity,
+      playQuery,
+      playMode,
+      playAlpha,
+    })
+  }, [playEntity, playQuery, playMode, playAlpha, form])
+
   return (
     <div className="flex flex-col gap-y-4">
-      <form
-        onSubmit={onRunPlayground}
-        className="border-ui-border-base grid grid-cols-1 gap-3 rounded-lg border p-4 md:grid-cols-5"
-      >
-        <div>
-          <Label>{t("playground.entityLabel")}</Label>
-          <Select value={playEntity} onValueChange={setPlayEntity}>
-            <Select.Trigger>
-              <Select.Value />
-            </Select.Trigger>
-            <Select.Content>
-              {collections.map((c) => (
-                <Select.Item key={c.entity} value={c.entity}>
-                  {c.entity}
-                </Select.Item>
-              ))}
-            </Select.Content>
-          </Select>
+      <Container className="divide-y p-0">
+        <div className="px-6 py-4">
+          <Heading level="h2">{t("tabs.playground")}</Heading>
         </div>
-        <div className="md:col-span-2">
-          <Label>{t("playground.queryLabel")}</Label>
-          <Input
-            placeholder={t("playground.queryPlaceholder")}
-            value={playQuery}
-            onChange={(e) => setPlayQuery(e.target.value)}
-          />
-        </div>
-        <div>
-          <Label>{t("playground.modeLabel")}</Label>
-          <Select value={playMode} onValueChange={setPlayMode}>
-            <Select.Trigger>
-              <Select.Value />
-            </Select.Trigger>
-            <Select.Content>
-              <Select.Item value="keyword">
-                {t("playground.modeKeyword")}
-              </Select.Item>
-              <Select.Item value="hybrid">
-                {t("playground.modeHybrid")}
-              </Select.Item>
-              <Select.Item value="semantic">
-                {t("playground.modeSemantic")}
-              </Select.Item>
-              <Select.Item value="conversational">
-                {t("playground.modeConversational")}
-              </Select.Item>
-            </Select.Content>
-          </Select>
-        </div>
-        <div className="flex items-end gap-x-2">
-          <div className="w-24">
-            <Label>{t("playground.alphaLabel")}</Label>
-            <Input
-              value={playAlpha}
-              onChange={(e) => setPlayAlpha(e.target.value)}
-            />
-          </div>
-          <Button type="submit" variant="primary" isLoading={playLoading}>
-            {t("playground.searchButton")}
-          </Button>
-        </div>
-      </form>
 
-      {playResult && (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-          <div className="border-ui-border-base rounded-lg border p-4">
-            <Heading level="h3" className="mb-2">
-              {t("playground.facetsTitle", {
-                count: playResult.facets?.length || 0,
-              })}
-            </Heading>
-            {Array.isArray(playResult.facets) &&
-            playResult.facets.length > 0 ? (
-              playResult.facets.map((f) => (
-                <div key={f.field_name} className="mb-3">
-                  <Text weight="plus" size="xsmall" className="uppercase">
-                    {f.field_name}
-                  </Text>
-                  <div className="mt-1 flex flex-col gap-y-1">
-                    {(f.counts || []).slice(0, 6).map((c) => (
-                      <div
-                        key={c.value}
-                        className="flex justify-between text-xs"
-                      >
-                        <span>{c.value}</span>
-                        <Badge size="xsmall" color="grey">
-                          {c.count}
-                        </Badge>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))
-            ) : (
-              <Text size="small" className="text-ui-fg-subtle">
-                {t("playground.noFacets")}
-              </Text>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-y-3 md:col-span-3">
-            <div className="flex items-center justify-between">
-              <Text size="small">
-                {t("playground.resultsSummary", {
-                  found: playResult.found,
-                  ms: playResult.search_time_ms,
-                  collection: playResult.collection,
-                })}
-              </Text>
-            </div>
-
-            {playResult.conversation?.answer && (
-              <div className="bg-ui-bg-subtle border-ui-border-base rounded-lg border p-3">
-                <Text weight="plus" size="small">
-                  {t("playground.aiAnswerTitle")}
-                </Text>
-                <Text size="small" className="mt-1">
-                  {playResult.conversation.answer}
-                </Text>
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-              {(playResult.hits || []).map((hit, i) => {
-                const doc = hit.document || {}
-                const firstHl = Array.isArray(hit.highlights)
-                  ? hit.highlights[0]?.snippet
-                  : undefined
-                return (
-                  <div
-                    key={doc.id || i}
-                    className="border-ui-border-base rounded-lg border p-3"
-                  >
-                    <div className="flex items-center justify-between">
-                      <Text weight="plus">
-                        {doc.title || doc.name || doc.id}
-                      </Text>
-                      {hit.curated && (
-                        <Badge color="purple" size="xsmall">
-                          {t("playground.pinnedBadge")}
-                        </Badge>
-                      )}
-                    </div>
-                    <Text
-                      size="xsmall"
-                      className="text-ui-fg-subtle font-mono"
+        <Form {...form}>
+          <KeyboundForm
+            onSubmit={form.handleSubmit(() => onRunPlayground())}
+            className="grid grid-cols-1 gap-4 px-6 py-4 md:grid-cols-5"
+          >
+            <Form.Field
+              control={form.control}
+              name="playEntity"
+              render={({ field }: any) => (
+                <Form.Item>
+                  <Form.Label>{t("playground.entityLabel")}</Form.Label>
+                  <Form.Control>
+                    <Select
+                      value={field.value}
+                      onValueChange={(val) => {
+                        field.onChange(val)
+                        setPlayEntity(val)
+                      }}
                     >
-                      {t("playground.idLabel", { id: doc.id })}{" "}
-                      {doc.min_price !== undefined
-                        ? t("playground.minPriceLabel", {
-                            price: doc.min_price,
-                          })
-                        : ""}
-                    </Text>
-                    {firstHl && (
-                      <div className="mt-2 text-xs">
-                        {renderSafeHighlight(firstHl)}
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
+                      <Select.Trigger>
+                        <Select.Value />
+                      </Select.Trigger>
+                      <Select.Content>
+                        {collections.map((c) => (
+                          <Select.Item key={c.entity} value={c.entity}>
+                            {c.entity}
+                          </Select.Item>
+                        ))}
+                      </Select.Content>
+                    </Select>
+                  </Form.Control>
+                </Form.Item>
+              )}
+            />
+
+            <div className="md:col-span-2">
+              <Form.Field
+                control={form.control}
+                name="playQuery"
+                render={({ field }: any) => (
+                  <Form.Item>
+                    <Form.Label>{t("playground.queryLabel")}</Form.Label>
+                    <Form.Control>
+                      <Input
+                        placeholder={t("playground.queryPlaceholder")}
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e)
+                          setPlayQuery(e.target.value)
+                        }}
+                      />
+                    </Form.Control>
+                  </Form.Item>
+                )}
+              />
             </div>
-          </div>
-        </div>
-      )}
+
+            <Form.Field
+              control={form.control}
+              name="playMode"
+              render={({ field }: any) => (
+                <Form.Item>
+                  <Form.Label>{t("playground.modeLabel")}</Form.Label>
+                  <Form.Control>
+                    <Select
+                      value={field.value}
+                      onValueChange={(val) => {
+                        field.onChange(val)
+                        setPlayMode(val)
+                      }}
+                    >
+                      <Select.Trigger>
+                        <Select.Value />
+                      </Select.Trigger>
+                      <Select.Content>
+                        <Select.Item value="keyword">
+                          {t("playground.modeKeyword")}
+                        </Select.Item>
+                        <Select.Item value="hybrid">
+                          {t("playground.modeHybrid")}
+                        </Select.Item>
+                        <Select.Item value="semantic">
+                          {t("playground.modeSemantic")}
+                        </Select.Item>
+                        <Select.Item value="conversational">
+                          {t("playground.modeConversational")}
+                        </Select.Item>
+                      </Select.Content>
+                    </Select>
+                  </Form.Control>
+                </Form.Item>
+              )}
+            />
+
+            <div className="flex items-end gap-x-2">
+              <div className="w-24">
+                <Form.Field
+                  control={form.control}
+                  name="playAlpha"
+                  render={({ field }: any) => (
+                    <Form.Item>
+                      <Form.Label>{t("playground.alphaLabel")}</Form.Label>
+                      <Form.Control>
+                        <Input
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e)
+                            setPlayAlpha(e.target.value)
+                          }}
+                        />
+                      </Form.Control>
+                    </Form.Item>
+                  )}
+                />
+              </div>
+              <Button
+                type="submit"
+                variant="primary"
+                size="small"
+                isLoading={playLoading}
+              >
+                {t("playground.searchButton")}
+              </Button>
+            </div>
+          </KeyboundForm>
+        </Form>
+      </Container>
+
+      {playResult && <PlaygroundResultsSection playResult={playResult} />}
     </div>
   )
 }

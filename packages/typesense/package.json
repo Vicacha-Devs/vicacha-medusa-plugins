@@ -4,27 +4,21 @@
   "description": "Full-featured Typesense search, vector/hybrid AI search, merchandising (synonyms, curations, stopwords), custom entity indexing, and InstantSearch plugin for Medusa v2",
   "author": "Vicacha Devs",
   "license": "MIT",
-  "keywords": [
-    "medusa",
-    "medusa-v2",
-    "medusa-plugin",
-    "medusa-plugin-search",
-    "medusa-plugin-integration",
-    "medusa-plugin-typesense",
-    "medusa-search",
-    "medusa-search-provider",
-    "typesense",
-    "search",
-    "faceted-search",
-    "semantic-search",
-    "vector-search",
-    "hybrid-search",
-    "instantsearch",
-    "ecommerce"
+  "files": [
+    ".medusa/server",
+    "src",
+    "README.md",
+    "LICENSE",
+    "tsconfig.json"
   ],
-  "types": "./src/index.ts",
   "exports": {
     "./package.json": "./package.json",
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./.medusa/server/src/index.js",
+      "require": "./.medusa/server/src/index.js",
+      "default": "./.medusa/server/src/index.js"
+    },
     "./admin": {
       "import": "./.medusa/server/src/admin/index.mjs",
       "require": "./.medusa/server/src/admin/index.js",
@@ -45,66 +39,101 @@
       "import": "./src/types/index.ts",
       "default": "./.medusa/server/src/types/index.js"
     },
-    "./workflows": {
-      "types": "./src/workflows/index.ts",
-      "import": "./.medusa/server/src/workflows/index.js",
-      "default": "./.medusa/server/src/workflows/index.js"
-    },
-    "./modules/*": "./.medusa/server/src/modules/*/index.js",
-    "./providers/typesense": "./.medusa/server/src/providers/typesense/index.js",
     "./indexes": {
       "types": "./src/indexes/index.ts",
       "import": "./.medusa/server/src/indexes/index.js",
       "default": "./.medusa/server/src/indexes/index.js"
     },
-    ".": {
-      "types": "./src/index.ts",
-      "import": "./.medusa/server/src/index.js",
-      "require": "./.medusa/server/src/index.js",
-      "default": "./.medusa/server/src/index.js"
-    }
+    "./workflows": {
+      "types": "./src/workflows/index.ts",
+      "import": "./.medusa/server/src/workflows/index.js",
+      "default": "./.medusa/server/src/workflows/index.js"
+    },
+    "./.medusa/server/src/modules/*": "./.medusa/server/src/modules/*/index.js",
+    "./modules/*": "./.medusa/server/src/modules/*/index.js",
+    "./providers/*": "./.medusa/server/src/providers/*/index.js"
   },
-  "files": [
-    ".medusa/server",
-    "src",
-    "medusa-config.js",
-    "README.md",
-    "LICENSE",
-    "tsconfig.json"
+  "keywords": [
+    "medusa",
+    "medusa-v2",
+    "medusa-plugin",
+    "medusa-plugin-search",
+    "medusa-plugin-integration",
+    "medusa-plugin-typesense",
+    "medusa-search",
+    "medusa-search-provider",
+    "typesense",
+    "search",
+    "faceted-search",
+    "semantic-search",
+    "vector-search",
+    "hybrid-search",
+    "instantsearch",
+    "ecommerce"
   ],
   "scripts": {
     "build": "medusa plugin:build",
+    "publish:local": "medusa plugin:publish",
     "dev": "medusa plugin:develop",
     "lint": "medusa lint",
     "prepublishOnly": "medusa plugin:build",
     "typecheck": "tsc --noEmit",
     "test": "node --import ./src/__tests__/register-ts-resolver.mjs --test src/__tests__/*.spec.ts"
   },
-  "dependencies": {
+  "devDependencies": {
+    "@hookform/resolvers": "5.7.1",
     "@medusajs/admin-sdk": "2.21.0",
+    "@medusajs/admin-shared": "2.21.0",
     "@medusajs/cli": "2.21.0",
+    "@medusajs/core-flows": "2.21.0",
+    "@medusajs/dashboard": "2.21.0",
     "@medusajs/framework": "2.21.0",
     "@medusajs/icons": "2.21.0",
+    "@medusajs/js-sdk": "2.21.0",
     "@medusajs/medusa": "2.21.0",
-    "@medusajs/ui": "4.2.6",
-    "typesense": "^3.1.1",
-    "zod": "^3.24.1"
-  },
-  "devDependencies": {
     "@medusajs/test-utils": "2.21.0",
+    "@medusajs/types": "2.21.0",
+    "@medusajs/ui": "4.2.4",
+    "@swc/core": "1.7.28",
     "@types/node": "20.0.0",
-    "@types/react": "^18.3.2",
-    "@types/react-dom": "^18.2.25",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "typescript": "^5.6.2",
+    "@types/react": "18.3.2",
+    "@types/react-dom": "18.2.25",
+    "jiti": "2.0.0",
+    "prop-types": "15.8.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-hook-form": "7.85.0",
+    "react-i18next": "15.4.1",
+    "react-router-dom": "6.30.0",
+    "typescript": "5.6.2",
     "vite": "7.3.6"
   },
   "peerDependencies": {
+    "@hookform/resolvers": "^5.0.0",
+    "@medusajs/admin-sdk": "^2.21.0",
+    "@medusajs/admin-shared": "^2.21.0",
+    "@medusajs/cli": "^2.21.0",
+    "@medusajs/core-flows": "^2.21.0",
     "@medusajs/framework": "^2.21.0",
+    "@medusajs/icons": "^2.21.0",
+    "@medusajs/js-sdk": "^2.21.0",
     "@medusajs/medusa": "^2.21.0",
+    "@medusajs/test-utils": "^2.21.0",
+    "@medusajs/types": "^2.21.0",
     "@medusajs/ui": "^4.0.0",
-    "react": "^18.2.0 || ^19.0.0",
-    "react-dom": "^18.2.0 || ^19.0.0"
-  }
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.50.0",
+    "react-i18next": "^15.4.0",
+    "react-router-dom": "^6.20.0"
+  },
+  "dependencies": {
+    "typesense": "^3.1.1",
+    "zod": "^3.24.1"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "packageManager": "pnpm@11.20.0",
+  "types": "./src/index.ts"
 }

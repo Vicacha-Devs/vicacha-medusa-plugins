@@ -16,16 +16,29 @@
     "jsx": "react-jsx",
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "checkJs": false
+    "checkJs": false,
+    "strictNullChecks": true,
+    "baseUrl": ".",
+    "ignoreDeprecations": "5.0",
+    "paths": {
+      "@typesense/*": [
+        "./src/*"
+      ]
+    }
   },
-  "include": ["src"],
+  "ts-node": {
+    "swc": true
+  },
+  "include": [
+    "**/*",
+    ".medusa/types/*"
+  ],
   "exclude": [
-    "dist",
-    "build",
+    "node_modules",
     ".medusa/server",
     ".medusa/admin",
-    "node_modules",
-    "**/*.spec.ts",
-    "**/*.spec.js"
+    "src/admin",
+    ".cache",
+    "eslint.config.*"
   ]
 }
