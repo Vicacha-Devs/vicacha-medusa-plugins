@@ -76,13 +76,17 @@ export type { MultiInterpolateOptions } from "../../../types"
 import type { MultiInterpolateOptions } from "../../../types"
 
 /**
- * Unified multi-pass interpolation engine combining:
+ * Unified interpolation engine combining:
  * 1. `codee-sh` two-prefix placeholders: `{{data.items.0.title}}` and `{{translations.order.placedTitle}}`
  * 2. `@sam-ael` Go-style placeholders: `{{ .first_name }}` or `{{ .StoreName }}`
- * 3. Direct shorthand placeholders: `{{order_number}}` (falls back to `data`)
+ * 3. Direct shorthand placeholders: `{{order_number}}` (falls back to `data`, then `translations`)
  *
- * Performs up to `maxPasses` (default 3) so translations containing `{{data.*}}`
- * placeholders (e.g. `"Order #{{data.display_id}} Confirmed"`) are recursively resolved!
+ * Step 1: Resolves `{{translations.*}}` (and shorthand translation keys) up to `maxPasses` so
+ *         translations containing `{{data.*}}` placeholders (e.g. `"Order #{{data.display_id}} Confirmed"`)
+ *         are expanded into the template without escaping template-author HTML.
+ * Step 2: Resolves `{{data.*}}`, `{{ .var }}`, and shorthand data keys in a SINGLE scan so that
+ *         `$&`, `$1`, and `{{...}}` inside data values are inserted literally and never re-interpolated,
+ *         and HTML-escapes data values when `escapeHtmlValues` is true.
  */
 export function multiInterpolateString(
   template: string,
@@ -99,10 +103,22 @@ export function multiInterpolateString(
   const escapeValues = Boolean(options?.escapeHtmlValues)
   const removeUnmatched = options?.removeUnmatched ?? true
   const maxPasses = options?.maxPasses ?? 3
+  const arrayPath = options?.arrayPath?.trim()
 
   const dataObj = sources.data ?? {}
   const translationsObj = sources.translations ?? {}
 
+  // Helper to resolve a path from `translationsObj` (supporting flat `general.*` fallback like codee-sh)
+  const resolveTranslation = (path: string): unknown => {
+    const direct = getNestedValue(translationsObj, path)
+    if (direct !== undefined) return direct
+    if (translationsObj.general && typeof translationsObj.general === "object") {
+      return getNestedValue(translationsObj.general, path)
+    }
+    return undefined
+  }
+
+  // Step 1: Expand `{{translations.*}}` (and shorthand keys that only exist in translations)
   let current = template
   for (let pass = 0; pass < maxPasses; pass++) {
     let changed = false
@@ -110,49 +126,78 @@ export function multiInterpolateString(
       /\{\{\s*([a-zA-Z0-9_.\-[\]]+)\s*\}\}/g,
       (fullMatch, rawExpr: string) => {
         const expr = rawExpr.replace(/\[(\d+)\]/g, ".$1").trim()
-        let resolved: unknown
-
-        if (expr.startsWith("data.")) {
-          resolved = getNestedValue(dataObj, expr.slice("data.".length))
-        } else if (expr.startsWith("translations.")) {
-          resolved = getNestedValue(
-            translationsObj,
-            expr.slice("translations.".length)
-          )
-        } else if (expr.startsWith(".")) {
-          // Go-style {{ .first_name }} or {{ .StoreName }}
-          resolved = getNestedValue(dataObj, expr.slice(1))
-        } else {
-          resolved = getNestedValue(dataObj, expr)
-          if (resolved === undefined) {
-            resolved = getNestedValue(translationsObj, expr)
-          }
-        }
-
-        if (resolved === undefined || resolved === null) {
-          if (pass === maxPasses - 1 && removeUnmatched) {
-            changed = true
-            return ""
-          }
+        if (expr.startsWith("data.") || expr.startsWith(".")) {
           return fullMatch
         }
 
-        if (typeof resolved === "object") {
+        let resolved: unknown
+        if (expr.startsWith("translations.")) {
+          resolved = resolveTranslation(expr.slice("translations.".length))
+        } else {
+          // Shorthand: only expand in Step 1 if it is NOT a data key and IS a translation key
+          const inData = getNestedValue(dataObj, expr)
+          if (inData !== undefined) {
+            return fullMatch
+          }
+          resolved = resolveTranslation(expr)
+        }
+
+        if (
+          resolved === undefined ||
+          resolved === null ||
+          typeof resolved === "object"
+        ) {
           return fullMatch
         }
 
         changed = true
-        const strVal = String(resolved)
-        // If this pass resolved a translation string that itself contains `{{data.*}}`,
-        // only escape on the final value or if it doesn't contain further tokens.
-        if (escapeValues && !/\{\{.*?\}\}/.test(strVal)) {
-          return escapeHtml(strVal)
-        }
-        return strVal
+        return String(resolved)
       }
     )
     if (!changed) break
   }
+
+  // Step 2: Single-pass scan for `{{data.*}}`, `{{ .var }}`, and shorthand data placeholders
+  current = current.replace(
+    /\{\{\s*([a-zA-Z0-9_.\-[\]]+)\s*\}\}/g,
+    (fullMatch, rawExpr: string) => {
+      const expr = rawExpr.replace(/\[(\d+)\]/g, ".$1").trim()
+
+      if (expr.startsWith("translations.")) {
+        return removeUnmatched ? "" : fullMatch
+      }
+
+      let dataKey: string
+      if (expr.startsWith("data.")) {
+        dataKey = expr.slice("data.".length)
+      } else if (expr.startsWith(".")) {
+        dataKey = expr.slice(1)
+      } else {
+        dataKey = expr
+      }
+
+      // If inside a repeater with `arrayPath`, allow `{{data.<arrayPath>.<field>}}` to read from current item
+      let resolved = getNestedValue(dataObj, dataKey)
+      if (
+        resolved === undefined &&
+        arrayPath &&
+        dataKey.startsWith(`${arrayPath}.`)
+      ) {
+        resolved = getNestedValue(dataObj, dataKey.slice(arrayPath.length + 1))
+      }
+
+      if (resolved === undefined || resolved === null) {
+        return removeUnmatched ? "" : fullMatch
+      }
+
+      if (typeof resolved === "object") {
+        return removeUnmatched ? "" : fullMatch
+      }
+
+      const strVal = String(resolved)
+      return escapeValues ? escapeHtml(strVal) : strVal
+    }
+  )
 
   return current
 }

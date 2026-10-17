@@ -58,6 +58,7 @@ export const RenderTemplatePreviewSchema = z.object({
   context_type: z.enum(CONTEXT_TYPES).optional().default("order"),
   entity_id: z.string().max(120).nullable().optional(),
   locale: z.string().max(16).nullable().optional(),
+  subject: z.string().max(300).nullable().optional(),
   data: z.record(z.unknown()).optional(),
   append_sms_consent_footer: z.boolean().optional(),
 })

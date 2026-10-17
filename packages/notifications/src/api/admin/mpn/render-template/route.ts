@@ -34,6 +34,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     context_type: input.context_type,
     data: hydrated.transformedData,
     locale: input.locale,
+    subject: input.subject,
     append_sms_consent_footer: input.append_sms_consent_footer,
   })
 

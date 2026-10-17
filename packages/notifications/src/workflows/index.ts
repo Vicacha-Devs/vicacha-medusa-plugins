@@ -550,6 +550,7 @@ const renderTemplateStep = createStep(
       entity_id?: string | null
       data?: Record<string, any>
       locale?: string | null
+      subject?: string | null
     },
     { container }
   ) => {
@@ -569,6 +570,7 @@ const renderTemplateStep = createStep(
       context_type: input.context_type,
       data: hydrated.transformedData,
       locale: input.locale,
+      subject: input.subject,
     })
 
     return new StepResponse(rendered)
@@ -583,6 +585,7 @@ export const renderNotificationTemplateWorkflow = createWorkflow(
     entity_id?: string | null
     data?: Record<string, any>
     locale?: string | null
+    subject?: string | null
   }) => {
     const rendered = renderTemplateStep(input)
     return new WorkflowResponse(rendered)

@@ -301,6 +301,234 @@ describe("medusa-plugin-notifications — Interpolation, i18n, and Multi-Channel
     assert.equal(rendered.blocks_json?.[0]?.type, "header")
     assert.equal(rendered.blocks_json?.[3]?.type, "actions")
   })
+
+  it("12b. (v1.1.0) scans data in a single pass, keeps $& / $1 / {{...}} literal in data, and escapes data HTML but not translation HTML", () => {
+    const rendered = renderNotificationTemplate({
+      template_id: "test_v110_escape",
+      template_name: "test_v110_escape",
+      channel: "email",
+      mode: "blocks",
+      locale: "en",
+      translations: {
+        general: {
+          richNotice: "<strong>Trusted Translation</strong> for {{data.customer}}",
+        },
+      },
+      data: {
+        customer: "A < B & C",
+        literalPattern: "$& $1",
+        nestedInjection: "{{data.secret}}",
+        secret: "LEAKED_SECRET",
+      },
+      blocks: [
+        {
+          id: "t1",
+          type: "text",
+          position: 0,
+          metadata: { text: "{{translations.richNotice}}" },
+        },
+        {
+          id: "t2",
+          type: "text",
+          position: 1,
+          metadata: {
+            text: "Pattern: {{data.literalPattern}} | Injection: {{data.nestedInjection}}",
+          },
+        },
+        {
+          id: "r1",
+          type: "row",
+          position: 2,
+          metadata: { label: "Row", value: "<b>{{data.customer}}</b>" },
+        },
+      ],
+    })
+
+    // Translation HTML stays unescaped, while data value inside it is HTML-escaped
+    assert.ok(
+      rendered.html?.includes(
+        "<strong>Trusted Translation</strong> for A &lt; B &amp; C"
+      )
+    )
+    // Replacement patterns ($&, $1) and nested placeholders ({{data.secret}}) in data remain literal
+    assert.ok(rendered.text.includes("Pattern: $& $1 | Injection: {{data.secret}}"))
+    assert.equal(rendered.text.includes("LEAKED_SECRET"), false)
+    assert.equal(rendered.html?.includes("LEAKED_SECRET"), false)
+  })
+
+  it("12c. (v1.1.0) skips empty heading, text, and row blocks and supports repeater emptyBlocks & {{data.<arrayPath>.<field>}}", () => {
+    const blocksWithRepeater: any[] = [
+      {
+        id: "empty_h",
+        type: "heading",
+        position: 0,
+        metadata: { text: "{{data.missing_heading}}" },
+      },
+      {
+        id: "empty_t",
+        type: "text",
+        position: 1,
+        metadata: { text: "   " },
+      },
+      {
+        id: "empty_r",
+        type: "row",
+        position: 2,
+        metadata: { label: "Optional Discount", value: "{{data.missing_row}}" },
+      },
+      {
+        id: "rep_rows",
+        type: "repeater",
+        position: 3,
+        metadata: {
+          arrayPath: "rows",
+          itemBlocks: [
+            {
+              id: "item_h",
+              type: "heading",
+              position: 0,
+              props: { value: "{{data.rows.title}}" },
+            },
+            {
+              id: "item_sec",
+              type: "section",
+              position: 1,
+              props: {
+                blocks: [
+                  {
+                    id: "item_msg",
+                    type: "text",
+                    position: 0,
+                    props: { value: "{{data.rows.message}}" },
+                  },
+                ],
+              },
+            },
+          ],
+          emptyBlocks: [
+            {
+              id: "empty_fallback",
+              type: "text",
+              position: 0,
+              props: { value: "Nothing to report" },
+            },
+          ],
+        },
+      },
+    ]
+
+    const populated = renderNotificationTemplate({
+      template_id: "test_repeater",
+      template_name: "test_repeater",
+      channel: "email",
+      mode: "blocks",
+      blocks: blocksWithRepeater,
+      data: {
+        rows: [
+          { title: "T1", message: "M1" },
+          { title: "T2", message: "M2" },
+        ],
+      },
+    })
+
+    // Empty heading and empty row were skipped
+    assert.equal(populated.html?.includes("Optional Discount"), false)
+    // Repeater items rendered in order and nested section read {{data.rows.message}}
+    assert.equal(populated.text, "T1\n\nM1\n\nT2\n\nM2")
+
+    const emptyList = renderNotificationTemplate({
+      template_id: "test_repeater_empty",
+      template_name: "test_repeater_empty",
+      channel: "email",
+      mode: "blocks",
+      blocks: blocksWithRepeater,
+      data: { rows: [] },
+    })
+
+    assert.equal(emptyList.html?.includes("{{"), false)
+    assert.ok(emptyList.html?.includes("Nothing to report"))
+    assert.equal(emptyList.text, "Nothing to report")
+  })
+
+  it("12d. (v1.1.0) loads external templates from module or path, logs errors on broken paths, and supports unescaped subject override", async () => {
+    const { NotificationsModuleService } = await import(
+      "../modules/notifications/service"
+    )
+    const loggedErrors: string[] = []
+    const loggedInfos: string[] = []
+    const mockLogger = {
+      info: (msg: string) => loggedInfos.push(msg),
+      error: (msg: string) => loggedErrors.push(msg),
+    }
+
+    const service = new NotificationsModuleService(
+      { logger: mockLogger },
+      {
+        extend: {
+          services: [
+            {
+              id: "email",
+              templates: [
+                {
+                  name: "external_order-summary",
+                  module: {
+                    translations: {
+                      en: {
+                        general: {
+                          headerTitle: "Report {{data.job_id}}",
+                        },
+                      },
+                    },
+                    templateBlocks: [
+                      {
+                        id: "title",
+                        type: "heading",
+                        props: { value: "{{translations.headerTitle}}" },
+                      },
+                      {
+                        id: "total",
+                        type: "row",
+                        props: { label: "Job", value: "{{data.job_id}}" },
+                      },
+                    ],
+                  },
+                },
+                {
+                  name: "external_broken",
+                  path: "/non-existent-path/does-not-exist",
+                },
+              ],
+            },
+          ],
+        },
+      }
+    )
+
+    assert.equal(
+      loggedInfos.some((m) => m.includes('"external_order-summary"')),
+      true
+    )
+    assert.equal(
+      loggedErrors.some((m) => m.includes('"external_broken"')),
+      true
+    )
+
+    const defaultSubj = await service.renderTemplateById({
+      template_id: "external_order-summary",
+      data: { job_id: "A&B" },
+      locale: "en",
+    })
+    assert.equal(defaultSubj.subject, "Report A&B")
+    assert.ok(defaultSubj.html?.includes("Report A&amp;B"))
+
+    const customSubj = await service.renderTemplateById({
+      template_id: "external_order-summary",
+      data: { job_id: "A&B" },
+      locale: "en",
+      subject: "Sync {{data.job_id}}",
+    })
+    assert.equal(customSubj.subject, "Sync A&B")
+  })
 })
 
 describe("medusa-plugin-notifications — Multi-Driver Providers & Sibling Integration", () => {
