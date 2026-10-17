@@ -1,58 +1,87 @@
-# Admin Customizations Translations
+# i18n
 
-The Medusa Admin dashboard supports multiple languages for its interface. Medusa uses [react-i18next](https://react.i18next.com/) to manage translations in the admin dashboard.
+Internationalisation setup for the Product Extensions admin extension using [react-i18next](https://react.i18next.com/).
 
-To add translations, create JSON translation files for each language under the `src/admin/i18n/json` directory. For example, create the `src/admin/i18n/json/en.json` file with the following content:
+```
+i18n/
+├── index.ts          exports SUPPORTED_UI_LOCALES and the 10-locale translation map
+└── json/             one JSON file per locale
+    ├── ar.json       Arabic (RTL)
+    ├── de.json       German
+    ├── en.json       English (default)
+    ├── es.json       Spanish
+    ├── fr.json       French
+    ├── it.json       Italian
+    ├── nl.json       Dutch
+    ├── pl.json       Polish
+    ├── pt.json       Portuguese
+    └── tr.json       Turkish
+```
+
+---
+
+## Supported locales
+
+Each locale is registered under both the default `translation` namespace and the `"product-ext"` namespace (used by `defineRouteConfig({ translationNs: "product-ext" })`):
+
+| Code | Language | Direction |
+| --- | --- | --- |
+| `en` | English | LTR |
+| `es` | Español | LTR |
+| `fr` | Français | LTR |
+| `de` | Deutsch | LTR |
+| `it` | Italiano | LTR |
+| `pt` | Português | LTR |
+| `nl` | Nederlands | LTR |
+| `pl` | Polski | LTR |
+| `tr` | Türkçe | LTR |
+| `ar` | العربية | RTL |
+
+---
+
+## Adding a translation key
+
+1. Add the key to `json/en.json` and all 9 other locale files in `json/`.
+2. Reference it in any admin route, widget, or component via `useTranslation`:
+
+```tsx
+import { useTranslation } from "react-i18next"
+
+const MyComponent = () => {
+  const { t } = useTranslation()
+  return <span>{t("header.title")}</span>
+}
+```
+
+---
+
+## Key structure
+
+Keys are organised by domain section:
 
 ```json
 {
-  "brands": {
-    "title": "Brands",
-    "description": "Manage your product brands"
+  "nav": {
+    "label": "Product Extensions"
   },
-  "done": "Done"
-}
-```
-
-Then, export the translations in `src/admin/i18n/index.ts`:
-
-```ts
-import en from "./json/en.json" with { type: "json" }
-
-export default {
-  en: {
-    translation: en,
+  "header": {
+    "title": "Product Extensions Studio",
+    "subtitle": "Manage typed attributes, hierarchical content templates, feature badges, variant media & SEO alt-text",
+    "refresh": "Refresh"
   },
+  "tabs": {
+    "attributes": "Attributes ({{count}})",
+    "templates": "Templates ({{count}})",
+    "features": "Feature Badges ({{count}})",
+    "variantMedia": "Bulk Variant Media",
+    "imageAlts": "Image Alt-Text CSV"
+  },
+  "attributesTab": { ... },
+  "templatesTab": { ... },
+  "featuresTab": { ... },
+  "variantMediaTab": { ... },
+  "imageAltsTab": { ... },
+  "productWidget": { ... },
+  "categoryWidget": { ... }
 }
 ```
-
-Finally, use translations in your admin widgets and routes using the `useTranslation` hook:
-
-```tsx
-import { defineWidgetConfig } from "@medusajs/admin-sdk"
-import { Button, Container, Heading } from "@medusajs/ui"
-import { useTranslation } from "react-i18next"
-
-const ProductWidget = () => {
-  const { t } = useTranslation()
-  return (
-    <Container className="p-0">
-      <div className="flex items-center justify-between px-6 py-4">
-        <Heading level="h2">{t("brands.title")}</Heading>
-        <p>{t("brands.description")}</p>
-      </div>
-      <div className="flex justify-end px-6 py-4">
-        <Button variant="primary">{t("done")}</Button>
-      </div>
-    </Container>
-  )
-}
-
-export const config = defineWidgetConfig({
-  zone: "product.details.before",
-})
-
-export default ProductWidget
-```
-
-Learn more about translating admin extensions in the [Translate Admin Customizations](https://docs.medusajs.com/learn/fundamentals/admin/translations) documentation.

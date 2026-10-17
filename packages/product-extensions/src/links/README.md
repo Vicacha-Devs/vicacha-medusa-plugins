@@ -1,26 +1,35 @@
-# Module Links
+# Links
 
-A module link forms an association between two data models of different modules, while maintaining module isolation.
+Remote link definitions that join `ProductExtModule` entities to Medusa core `@medusajs/medusa/product` entities without creating cross-module foreign keys.
 
-Learn more about links in [this documentation](https://docs.medusajs.com/learn/fundamentals/module-links)
-
-For example:
-
-```ts
-import BlogModule from "../modules/blog"
-import ProductModule from "@medusajs/medusa/product"
-import { defineLink } from "@medusajs/framework/utils"
-
-export default defineLink(
-  ProductModule.linkable.product,
-  BlogModule.linkable.post
-)
+```
+links/
+├── index.ts                      Barrel exporting productExtensionLink & variantExtensionLink
+├── product-extension-link.ts     Product (core)         ↔  ProductExtension (ProductExt)
+└── variant-extension-link.ts     ProductVariant (core)  ↔  VariantExtension (ProductExt)
 ```
 
-This defines a link between the Product Module's `product` data model and the Blog Module (custom module)'s `post` data model.
+---
 
-Then, in the Medusa application using this plugin, run the following command to sync the links to the database:
+## Link definitions
+
+| File | Left | Right | Cardinality |
+| --- | --- | --- | --- |
+| `product-extension-link.ts` | `ProductModule.linkable.product` | `ProductExtModule.linkable.productExtension` | 1 : 1 |
+| `variant-extension-link.ts` | `ProductModule.linkable.productVariant` | `ProductExtModule.linkable.variantExtension` | 1 : 1 |
+
+---
+
+## Syncing to the database
+
+Links are applied when running migrations in the host application:
 
 ```bash
 npx medusa db:migrate
 ```
+
+---
+
+## Cascade cleanup
+
+In addition to remote links, `src/subscribers/product-deleted.ts` listens for `product.deleted` and `product-variant.deleted` events and calls `service.purgeProductData(productId)` / `service.deleteByVariantId(variantId)` to ensure all `ProductExtension`, `VariantExtension`, and `ProductAttributeValue` records are cleaned up when core products or variants are deleted.

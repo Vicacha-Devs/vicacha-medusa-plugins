@@ -1,116 +1,51 @@
-# Custom Module
+# Modules
 
-A module is a package of reusable functionalities. It can be integrated into your Medusa application without affecting the overall system. You can create a module as part of a plugin.
+Custom Medusa module (`ProductExt`) implementing the data models, business logic, media parsers, SI/Imperial unit normalization, and hierarchical content tree resolution for `@vicacha-devs/medusa-plugin-product-extensions`.
 
-Learn more about modules in [this documentation](https://docs.medusajs.com/learn/fundamentals/modules).
-
-To create a module:
-
-## 1. Create a Data Model
-
-A data model represents a table in the database. You create a data model in a TypeScript or JavaScript file under the `models` directory of a module.
-
-For example, create the file `src/modules/blog/models/post.ts` with the following content:
-
-```ts
-import { model } from "@medusajs/framework/utils"
-
-const Post = model.define("post", {
-  id: model.id().primaryKey(),
-  title: model.text(),
-})
-
-export default Post
+```
+modules/
+└── product-ext/
+    ├── index.ts                    Module("ProductExt", { service: ProductExtModuleService })
+    ├── service.ts                  ProductExtModuleService (and ProductExtService alias)
+    ├── types.ts                    DTOs, inputs, unit codes, and tree@1 / diff@1 types
+    ├── models/
+    │   └── index.ts                6 Medusa DML models
+    └── utils/
+        ├── security.ts             validateExternalMediaUrl, validateHexColor, escapeHtml, escapeCsvCell, sanitizeFilename, slugifyAttributeKey
+        ├── media-parser.ts         Multi-provider video parser, buildUnifiedProductMedia, CSV image alt-text parser/serializer
+        ├── unit-converter.ts       normalizeToSI, convertUnit, formatUnitDisplay
+        └── content-tree.ts         validateTreeDocV1, validateDiffDocV1, resolveTree (with DFS cycle detection)
 ```
 
-## 2. Create a Service
+---
 
-A module must define a service. A service is a TypeScript or JavaScript class holding methods related to a business logic or commerce functionality.
+## Service Registration
 
-For example, create the file `src/modules/blog/service.ts` with the following content:
+- **Module token:** `PRODUCT_EXT_MODULE = "ProductExt"` (`PRODUCT_EXT_MODULE_KEY = "product_ext"` — 100% compatible with `@bambiste/medusa-product-ext`)
+- **Service class:** `ProductExtModuleService` (also exported as `ProductExtService`)
 
-```ts
-import { MedusaService } from "@medusajs/framework/utils"
-import Post from "./models/post"
+---
 
-class BlogModuleService extends MedusaService({
-  Post,
-}){
-}
+## Data Models (`models/index.ts`)
 
-export default BlogModuleService
-```
+| Model | Table Name | Purpose |
+| --- | --- | --- |
+| `ProductExtension` | `product_extension` | Per-product extension storing `videos`, `tagline`, `media_items`, `models_3d`, `attachments`, `image_alts`, `content_tree` (`tree@1`), `content_diff` (`diff@1`), `template_id`, `feature_ids`, `option_metadata`, `storefront_overrides`, and `seo_metadata`. |
+| `VariantExtension` | `variant_extension` | Per-variant extension storing `thumbnail`, ordered `images`, `videos`, `media_items`, `option_signature`, `swatch_color`, and `swatch_image_url`. |
+| `AttributeDefinition` | `product_ext_attribute` | Typed custom attribute schema (`text`, `number`, `boolean`, `select`, `multiselect`, `color`, `unit`, `file`, `sortable_list`), `unit_family`, `default_unit`, `allowed_units`, `options`, `validation_rules`, `is_filterable`, `is_global`, and `category_ids`. |
+| `AttributeTemplate` | `product_ext_attribute_template` | Category-linked template bundling `attribute_keys` and a base `content_tree` (`tree@1`). |
+| `ProductAttributeValue` | `product_ext_attribute_value` | Typed attribute value assigned to a product, including `value_normalized_si` for fast cross-unit numeric filtering and optional `locale`. |
+| `ProductFeature` | `product_ext_feature` | Reusable product feature badge (`code`, `title`, `subtitle`, `description`, `icon_url`, `icon_name`, `badge_color`, `sort_order`, `is_active`). |
 
-## 3. Export Module Definition
+---
 
-A module must have an `index.ts` file in its root directory that exports its definition. The definition specifies the main service of the module.
+## Key Service Methods (`service.ts`)
 
-For example, create the file `src/modules/blog/index.ts` with the following content:
-
-```ts
-import BlogModuleService from "./service"
-import { Module } from "@medusajs/framework/utils"
-
-export const BLOG_MODULE = "blog"
-
-export default Module(BLOG_MODULE, {
-  service: BlogModuleService,
-})
-```
-
-## 4. Generate Migrations
-
-To generate migrations for your module, run the following command in the plugin's directory:
-
-```bash
-npx medusa plugin:db:genreate
-```
-
-## Use Module
-
-You can use the module in customizations within the plugin or within the Medusa application using this plugin. When the plugin is added to a Medusa application, all its modules are registered as well.
-
-For example, to use the module in an API route:
-
-```ts
-import { MedusaRequest, MedusaResponse } from "@medusajs/framework"
-import BlogModuleService from "../../../modules/blog/service"
-import { BLOG_MODULE } from "../../../modules/blog"
-
-export async function GET(
-  req: MedusaRequest,
-  res: MedusaResponse
-): Promise<void> {
-  const blogModuleService: BlogModuleService = req.scope.resolve(
-    BLOG_MODULE
-  )
-
-  const posts = await blogModuleService.listPosts()
-
-  res.json({
-    posts
-  })
-}
-```
-
-## Module Options
-
-When you register the plugin in the Medusa application, it can accept options. These options are passed to the modules within the plugin:
-
-```ts
-import { defineConfig } from "@medusajs/framework/utils"
-
-module.exports = defineConfig({
-  // ...
-  plugins: [
-    {
-      resolve: "@myorg/plugin-name",
-      options: {
-        apiKey: process.env.API_KEY,
-      },
-    },
-  ],
-})
-```
-
-Learn more about module options in [this documentation](https://docs.medusajs.com/learn/fundamentals/modules/options).
+- **Product Extensions:** `getByProductId`, `upsertByProductId`, `upsertByProductIdWithState`, `deleteByProductId`
+- **Variant Extensions & Bulk Media:** `getByVariantId`, `getByVariantIds`, `listByProductId`, `upsertByVariantId`, `upsertByVariantIdWithState`, `deleteByVariantId`, `bulkAssignVariantMediaByOption`
+- **Attribute Definitions:** `getAttributeByKey`, `createAttribute`, `updateAttribute`, `deleteAttribute`, `listAttributes` (supports `category_id` + `ancestor_category_ids` hierarchy inheritance)
+- **Product Attribute Values & Filtering:** `getProductAttributeValues`, `setProductAttributesWithState`, `rollbackProductAttributeValues`, `filterProductIdsByAttributes`
+- **Templates:** `getTemplateByIdOrCode`, `createTemplate`, `updateTemplate`, `deleteTemplate`, `listTemplates`, `applyTemplateToProductWithState`
+- **Feature Badges:** `createFeature`, `updateFeature`, `deleteFeature`, `listFeatures`
+- **Image Alt-Text CSV:** `exportAllImageAltsCsv`, `importImageAltsCsvWithState`
+- **Storefront Resolution & Cleanup:** `resolveStorefrontOverride`, `getStorefrontProductPayload`, `purgeProductData`

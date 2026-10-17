@@ -1,59 +1,18 @@
-# Custom subscribers
+# Subscribers
 
-Subscribers handle events emitted in the Medusa application.
+Event subscribers that keep `ProductExtModule` data synchronized with Medusa's core `@medusajs/medusa/product` module lifecycle events.
 
-The subscriber is created in a TypeScript or JavaScript file under the `src/subscribers` directory.
-
-For example, create the file `src/subscribers/product-created.ts` with the following content:
-
-```ts
-import {
-  type SubscriberConfig,
-} from "@medusajs/framework"
-
-// subscriber function
-export default async function productCreateHandler() {
-  console.log("A product was created")
-}
-
-// subscriber config
-export const config: SubscriberConfig = {
-  event: "product.created",
-}
+```
+subscribers/
+├── product-created.ts      Handles product.created — auto-applies matching category AttributeTemplate
+└── product-deleted.ts      Handles product.deleted & product-variant.deleted — cascade cleanup
 ```
 
-A subscriber file must export:
+---
 
-- The subscriber function that is an asynchronous function executed whenever the associated event is triggered.
-- A configuration object defining the event this subscriber is listening to.
+## Subscriber Index
 
-## Subscriber Parameters
-
-A subscriber receives an object having the following properties:
-
-- `event`: An object holding the event's details. It has a `data` property, which is the event's data payload.
-- `container`: The Medusa container. Use it to resolve modules' main services and other registered resources.
-
-```ts
-import type {
-  SubscriberArgs,
-  SubscriberConfig,
-} from "@medusajs/framework"
-
-export default async function productCreateHandler({
-  event: { data },
-  container,
-}: SubscriberArgs<{ id: string }>) {
-  const productId = data.id
-
-  const productModuleService = container.resolve("product")
-
-  const product = await productModuleService.retrieveProduct(productId)
-
-  console.log(`The product ${product.title} was created`)
-}
-
-export const config: SubscriberConfig = {
-  event: "product.created",
-}
-```
+| File | Subscribed Events | Behavior |
+| --- | --- | --- |
+| `product-created.ts` | `product.created` | Inspects `event.data.category_ids`. If the product does not yet have a `template_id` and belongs to a category linked to an active `AttributeTemplate`, executes `applyAttributeTemplateWorkflow` to initialize the product's `template_id` and `content_tree`. |
+| `product-deleted.ts` | `product.deleted`, `product-variant.deleted` | On `product.deleted`, calls `service.purgeProductData(productId)` to remove the `ProductExtension`, all `VariantExtension` rows for that product, and all `ProductAttributeValue` rows. On `product-variant.deleted`, calls `service.deleteByVariantId(variantId)`. |

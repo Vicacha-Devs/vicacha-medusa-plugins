@@ -1,36 +1,35 @@
-# Custom scheduled jobs
+# Scheduled Jobs
 
-A scheduled job is a function executed at a specified interval of time in the background of your Medusa application.
+Directory reserved for Medusa scheduled background jobs (`src/jobs/*.ts`) in `@vicacha-devs/medusa-plugin-product-extensions`.
 
-A scheduled job is created in a TypeScript or JavaScript file under the `src/jobs` directory.
+```
+jobs/
+└── README.md
+```
 
-For example, create the file `src/jobs/hello-world.ts` with the following content:
+---
+
+## Overview
+
+`@vicacha-devs/medusa-plugin-product-extensions` performs all product extension, variant media, attribute normalization, and template updates synchronously via compensated Medusa workflows (`src/workflows/index.ts`) and event subscribers (`src/subscribers/product-created.ts`, `src/subscribers/product-deleted.ts`), so no background cron jobs are registered by default.
+
+## Adding a Scheduled Job
+
+To add a scheduled job in the future, create a file in `src/jobs/<job-name>.ts` exporting a default handler function and a `config` object:
 
 ```ts
-import {
-  MedusaContainer
-} from "@medusajs/framework/types";
+import type { MedusaContainer } from "@medusajs/framework/types"
+import { PRODUCT_EXT_MODULE, type ProductExtModuleService } from "../modules/product-ext"
 
-export default async function myCustomJob(container: MedusaContainer) {
-  const productService = container.resolve("product")
-
-  const products = await productService.listAndCountProducts();
-
-  // Do something with the products
+export default async function reconcileProductExtensionsJob(
+  container: MedusaContainer
+) {
+  const service = container.resolve<ProductExtModuleService>(PRODUCT_EXT_MODULE)
+  await service.listAttributes()
 }
 
 export const config = {
-  name: "daily-product-report",
-  schedule: "0 0 * * *", // Every day at midnight
-};
+  name: "product-ext-reconcile",
+  schedule: "0 0 * * *",
+}
 ```
-
-A scheduled job file must export:
-
-- The function to be executed whenever it’s time to run the scheduled job.
-- A configuration object defining the job. It has three properties:
-  - `name`: a unique name for the job.
-  - `schedule`: a [cron expression](https://crontab.guru/).
-  - `numberOfExecutions`: an optional integer, specifying how many times the job will execute before being removed
-
-The `handler` is a function that accepts one parameter, `container`, which is a `MedusaContainer` instance used to resolve services.
