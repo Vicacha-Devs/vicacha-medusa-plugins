@@ -127,9 +127,6 @@
       "optional": true
     }
   },
-  "dependencies": {
-    "zod": "^3.24.1"
-  },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
   },
