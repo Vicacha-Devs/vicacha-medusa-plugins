@@ -1,116 +1,200 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { ChatBubbleLeftRight } from "@medusajs/icons"
-import { Tabs } from "@medusajs/ui"
+import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared"
+import { LayoutComposer } from "@medusajs/dashboard/components"
+import {
+  ArrowPath,
+  ChatBubbleLeftRight,
+  CheckCircle,
+  CogSixTooth,
+  DocumentText,
+  EnvelopeSolid,
+  Megaphone,
+  Tag,
+} from "@medusajs/icons"
+import {
+  Button,
+  Container,
+  Heading,
+  Text,
+  Toaster,
+  toast,
+} from "@medusajs/ui"
 import React from "react"
 import { useTranslation } from "react-i18next"
-import { BroadcastsConsentTab } from "../../components/mpn/broadcasts-tab"
-import { ChannelsConfigTab } from "../../components/mpn/channels-tab"
-import { DeliveryLogsTab } from "../../components/mpn/delivery-logs-tab"
-import { EventMappingsTab } from "../../components/mpn/event-mappings-tab"
-import { NotificationHeaderBar } from "../../components/mpn/header-bar"
-import { DummySandboxTab } from "../../components/mpn/sandbox-tab"
-import { TemplatesBuilderTab } from "../../components/mpn/templates-tab"
-import { useNotificationStudio } from "../../components/mpn/use-notification-studio"
+import { useNavigate } from "react-router-dom"
+import {
+  NavigationCard,
+  StatCard,
+  useNotificationStudio,
+} from "../../components/mpn"
 
-const NotificationStudioPage: React.FC = () => {
+const NotificationStudioOverviewPage: React.FC = () => {
   const { t, i18n } = useTranslation()
+  const navigate = useNavigate()
   const {
-    statusBanner,
-    setStatusBanner,
+    isLoading,
     templates,
     mappings,
-    supportedEvents,
-    channelsConfig,
     logs,
-    broadcasts,
-    consentSummary,
     sandboxMessages,
     loadAllStudioData,
   } = useNotificationStudio()
 
   const isRtl = (i18n.resolvedLanguage || i18n.language || "").startsWith("ar")
 
+  const handleRefresh = async () => {
+    try {
+      await loadAllStudioData()
+      toast.success(t("header.refresh"))
+    } catch {
+      toast.error(t("messages.loadStudioError"))
+    }
+  }
+
   return (
-    <div className="flex flex-col gap-y-4 p-6" dir={isRtl ? "rtl" : "ltr"}>
-      <NotificationHeaderBar
-        statusBanner={statusBanner}
-        onRefresh={() => void loadAllStudioData()}
-      />
+    <LayoutComposer
+      widgetsZonePrefix="mpn.overview"
+      preferredLayoutId={CORE_LAYOUT_IDS.SINGLE_COLUMN}
+      sections={{
+        main: (
+          <LayoutComposer.Entry id="MpnOverviewDashboard">
+            <div className="flex flex-col gap-y-4" dir={isRtl ? "rtl" : "ltr"}>
+              <Toaster />
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <Heading className="font-sans font-medium h1-core">
+                    {t("header.title")}
+                  </Heading>
 
-      <Tabs defaultValue="templates">
-        <Tabs.List>
-          <Tabs.Trigger value="templates">
-            {t("tabs.templates", { count: templates.length })}
-          </Tabs.Trigger>
-          <Tabs.Trigger value="mappings">
-            {t("tabs.mappings", { count: mappings.length })}
-          </Tabs.Trigger>
-          <Tabs.Trigger value="channels">{t("tabs.channels")}</Tabs.Trigger>
-          <Tabs.Trigger value="logs">
-            {t("tabs.logs", { count: logs.length })}
-          </Tabs.Trigger>
-          <Tabs.Trigger value="broadcasts">
-            {t("tabs.broadcasts")}
-          </Tabs.Trigger>
-          <Tabs.Trigger value="sandbox">
-            {t("tabs.sandbox", { count: sandboxMessages.length })}
-          </Tabs.Trigger>
-        </Tabs.List>
+                  <Text className="text-ui-fg-subtle mt-1">
+                    {t("header.subtitle")}
+                  </Text>
+                </div>
 
-        <Tabs.Content value="templates" className="mt-4">
-          <TemplatesBuilderTab
-            templates={templates}
-            onRefresh={loadAllStudioData}
-            onStatus={setStatusBanner}
-          />
-        </Tabs.Content>
+                <Button
+                  size="small"
+                  variant="secondary"
+                  onClick={() => void handleRefresh()}
+                >
+                  <ArrowPath />
+                  {t("header.refresh")}
+                </Button>
+              </div>
 
-        <Tabs.Content value="mappings" className="mt-4">
-          <EventMappingsTab
-            mappings={mappings}
-            supportedEvents={supportedEvents}
-            templates={templates}
-            onRefresh={loadAllStudioData}
-            onStatus={setStatusBanner}
-          />
-        </Tabs.Content>
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                <StatCard
+                  title={t("templates.title")}
+                  value={templates.length}
+                  icon={<DocumentText />}
+                  loading={isLoading}
+                  onClick={() => navigate("/mpn/templates")}
+                />
 
-        <Tabs.Content value="channels" className="mt-4">
-          <ChannelsConfigTab
-            channelsConfig={channelsConfig}
-            onRefresh={loadAllStudioData}
-            onStatus={setStatusBanner}
-          />
-        </Tabs.Content>
+                <StatCard
+                  title={t("mappings.title")}
+                  value={mappings.length}
+                  icon={<Tag />}
+                  loading={isLoading}
+                  onClick={() => navigate("/mpn/mappings")}
+                />
 
-        <Tabs.Content value="logs" className="mt-4">
-          <DeliveryLogsTab logs={logs} />
-        </Tabs.Content>
+                <StatCard
+                  title={t("logs.title")}
+                  value={logs.length}
+                  icon={<CheckCircle />}
+                  loading={isLoading}
+                  onClick={() => navigate("/mpn/logs")}
+                />
 
-        <Tabs.Content value="broadcasts" className="mt-4">
-          <BroadcastsConsentTab
-            broadcasts={broadcasts}
-            consentSummary={consentSummary}
-            templates={templates}
-            onRefresh={loadAllStudioData}
-            onStatus={setStatusBanner}
-          />
-        </Tabs.Content>
+                <StatCard
+                  title={t("sandbox.title")}
+                  value={sandboxMessages.length}
+                  icon={<EnvelopeSolid />}
+                  loading={isLoading}
+                  onClick={() => navigate("/mpn/sandbox")}
+                />
+              </div>
 
-        <Tabs.Content value="sandbox" className="mt-4">
-          <DummySandboxTab
-            sandboxMessages={sandboxMessages}
-            onRefresh={loadAllStudioData}
-          />
-        </Tabs.Content>
-      </Tabs>
-    </div>
+              <Container className="p-0 overflow-hidden">
+                <div className="px-6 py-5 border-b border-ui-border-base">
+                  <Heading level="h2">{t("nav.label")}</Heading>
+
+                  <Text className="text-ui-fg-subtle mt-1">
+                    {t("header.subtitle")}
+                  </Text>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2">
+                  <NavigationCard
+                    icon={<DocumentText />}
+                    title={t("tabs.templates", { count: templates.length })}
+                    description={t("templates.emptySelection")}
+                    onClick={() => navigate("/mpn/templates")}
+                    position="top-left"
+                  />
+
+                  <NavigationCard
+                    icon={<Tag />}
+                    title={t("tabs.mappings", { count: mappings.length })}
+                    description={t("mappings.title")}
+                    onClick={() => navigate("/mpn/mappings")}
+                    position="top-right"
+                  />
+
+                  <NavigationCard
+                    icon={<CogSixTooth />}
+                    title={t("tabs.channels")}
+                    description={t("channels.whatsappSubtitle")}
+                    onClick={() => navigate("/mpn/channels")}
+                    position="middle-left"
+                  />
+
+                  <NavigationCard
+                    icon={<CheckCircle />}
+                    title={t("tabs.logs", { count: logs.length })}
+                    description={t("logs.title")}
+                    onClick={() => navigate("/mpn/logs")}
+                    position="middle-right"
+                  />
+
+                  <NavigationCard
+                    icon={<Megaphone />}
+                    title={t("tabs.broadcasts")}
+                    description={t("broadcasts.title")}
+                    onClick={() => navigate("/mpn/broadcasts")}
+                    position="bottom-left"
+                  />
+
+                  <NavigationCard
+                    icon={<EnvelopeSolid />}
+                    title={t("tabs.sandbox", { count: sandboxMessages.length })}
+                    description={t("sandbox.subtitle")}
+                    onClick={() => navigate("/mpn/sandbox")}
+                    position="bottom-right"
+                  />
+                </div>
+              </Container>
+            </div>
+          </LayoutComposer.Entry>
+        ),
+      }}
+    />
   )
+}
+
+const Breadcrumb = () => {
+  const { t } = useTranslation()
+  return t("nav.label")
 }
 
 export const config = defineRouteConfig({
   label: "Notifications",
+  translationNs: "mpn",
   icon: ChatBubbleLeftRight,
 })
 
-export default NotificationStudioPage
+export const handle = {
+  breadcrumb: () => <Breadcrumb />,
+}
+
+export default NotificationStudioOverviewPage

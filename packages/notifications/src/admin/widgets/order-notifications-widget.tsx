@@ -1,15 +1,19 @@
 import { defineWidgetConfig } from "@medusajs/admin-sdk"
+import { SectionRow } from "@medusajs/dashboard/components"
 import {
   Badge,
   Button,
   Container,
   Heading,
   Select,
+  StatusBadge,
   Switch,
   Table,
   Text,
+  Toaster,
+  toast,
 } from "@medusajs/ui"
-import React from "react"
+import React, { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 
 import { useOrderNotificationsWidgetState } from "../../hooks"
@@ -28,28 +32,54 @@ const OrderNotificationsActivityWidget = ({ data }: { data?: any }) => {
     setAttachInvoicePdf,
     sending,
     statusMessage,
+    setStatusMessage,
     handleSendOrderNotification,
   } = useOrderNotificationsWidgetState({
     order: data,
     t,
   })
 
+  useEffect(() => {
+    if (!statusMessage) return
+    const isError = statusMessage
+      .toLowerCase()
+      .includes(t("widget.dispatchFailed").toLowerCase())
+    if (isError) {
+      toast.error(statusMessage)
+    } else {
+      toast.success(statusMessage)
+    }
+    setStatusMessage(null)
+  }, [statusMessage, setStatusMessage, t])
+
   if (!orderId) return null
 
   const isRtl = (i18n.resolvedLanguage || i18n.language || "").startsWith("ar")
 
   return (
-    <Container className="p-6" dir={isRtl ? "rtl" : "ltr"}>
-      <Heading level="h2">
-        {t("widget.title", { count: logs.length })}
-      </Heading>
-      <Text className="text-ui-fg-subtle text-xs mt-1">
-        {t("widget.subtitle")}
-      </Text>
+    <Container className="divide-y p-0" dir={isRtl ? "rtl" : "ltr"}>
+      <Toaster />
+      <div className="flex items-center justify-between px-6 py-4">
+        <div>
+          <Heading level="h2">
+            {t("widget.title", { count: logs.length })}
+          </Heading>
+          <Text className="text-ui-fg-subtle text-xs mt-1">
+            {t("widget.subtitle")}
+          </Text>
+        </div>
+        <StatusBadge color="green">{logs.length}</StatusBadge>
+      </div>
 
-      <div className="mt-4 flex flex-wrap items-center gap-3">
+      <SectionRow title={t("widget.colChannel")} value={selectedChannel} />
+
+      <div className="flex flex-wrap items-center gap-3 px-6 py-4">
         <div className="w-40">
-          <Select value={selectedChannel} onValueChange={setSelectedChannel}>
+          <Select
+            size="small"
+            value={selectedChannel}
+            onValueChange={setSelectedChannel}
+          >
             <Select.Trigger>
               <Select.Value placeholder={t("widget.channelPlaceholder")} />
             </Select.Trigger>
@@ -65,6 +95,7 @@ const OrderNotificationsActivityWidget = ({ data }: { data?: any }) => {
 
         <div className="w-64">
           <Select
+            size="small"
             value={selectedTemplateId}
             onValueChange={setSelectedTemplateId}
           >
@@ -93,15 +124,14 @@ const OrderNotificationsActivityWidget = ({ data }: { data?: any }) => {
           size="small"
           variant="primary"
           disabled={sending}
+          isLoading={sending}
           onClick={() => void handleSendOrderNotification()}
         >
           {sending ? t("widget.sending") : t("widget.sendResendButton")}
         </Button>
-
-        {statusMessage && <Badge color="green">{statusMessage}</Badge>}
       </div>
 
-      <Table className="mt-4">
+      <Table>
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell>{t("widget.colChannel")}</Table.HeaderCell>
@@ -114,14 +144,16 @@ const OrderNotificationsActivityWidget = ({ data }: { data?: any }) => {
           {logs.map((row) => (
             <Table.Row key={row.id}>
               <Table.Cell>
-                <Badge color="blue">{row.channel}</Badge>
+                <Badge size="2xsmall" color="blue">
+                  {row.channel}
+                </Badge>
               </Table.Cell>
               <Table.Cell>
                 {row.event_name} ({row.template_id || "—"})
               </Table.Cell>
               <Table.Cell>{row.recipient_masked}</Table.Cell>
               <Table.Cell>
-                <Badge
+                <StatusBadge
                   color={
                     row.status === "sent" || row.status === "delivered"
                       ? "green"
@@ -129,7 +161,7 @@ const OrderNotificationsActivityWidget = ({ data }: { data?: any }) => {
                   }
                 >
                   {row.status}
-                </Badge>
+                </StatusBadge>
               </Table.Cell>
             </Table.Row>
           ))}

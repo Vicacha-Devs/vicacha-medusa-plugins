@@ -1,25 +1,26 @@
+import { SectionRow } from "@medusajs/dashboard/components"
 import {
   Badge,
   Button,
   Container,
   Heading,
-  Input,
-  Label,
-  Select,
-  Switch,
+  StatusBadge,
   Table,
+  Toaster,
+  toast,
 } from "@medusajs/ui"
 import React, { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useCreateMpnMapping, useDeleteMpnMapping } from "../../../hooks"
-import { CHANNELS, type StatusBannerState } from "./constants"
+import type { StatusBannerState } from "./constants"
+import { EventMappingForm } from "./event-mapping-form"
 
-interface EventMappingsTabProps {
+export interface EventMappingsTabProps {
   mappings: Array<Record<string, any>>
   supportedEvents: string[]
   templates: Array<Record<string, any>>
   onRefresh: () => Promise<void>
-  onStatus: (status: StatusBannerState) => void
+  onStatus?: (status: StatusBannerState) => void
 }
 
 export const EventMappingsTab: React.FC<EventMappingsTabProps> = ({
@@ -57,19 +58,17 @@ export const EventMappingsTab: React.FC<EventMappingsTabProps> = ({
         attach_document_types: newMappingAttachInvoice ? ["invoice"] : null,
         is_active: true,
       })
-      onStatus({
-        type: "success",
-        text: t("messages.createdMappingSuccess", {
-          event: newMappingEvent,
-          channel: newMappingChannel,
-        }),
+      const msg = t("messages.createdMappingSuccess", {
+        event: newMappingEvent,
+        channel: newMappingChannel,
       })
+      toast.success(msg)
+      onStatus?.({ type: "success", text: msg })
       await onRefresh()
     } catch {
-      onStatus({
-        type: "error",
-        text: t("messages.createMappingError"),
-      })
+      const msg = t("messages.createMappingError")
+      toast.error(msg)
+      onStatus?.({ type: "error", text: msg })
     }
   }
 
@@ -83,121 +82,42 @@ export const EventMappingsTab: React.FC<EventMappingsTabProps> = ({
   }
 
   return (
-    <Container className="p-6">
-      <Heading level="h2" className="mb-4">
-        {t("mappings.title")}
-      </Heading>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
-        <div>
-          <Label>{t("mappings.eventLabel")}</Label>
-          <Select value={newMappingEvent} onValueChange={setNewMappingEvent}>
-            <Select.Trigger>
-              <Select.Value />
-            </Select.Trigger>
-            <Select.Content>
-              {supportedEvents.map((ev) => (
-                <Select.Item key={ev} value={ev}>
-                  {ev}
-                </Select.Item>
-              ))}
-            </Select.Content>
-          </Select>
-        </div>
-
-        <div>
-          <Label>{t("mappings.channelLabel")}</Label>
-          <Select
-            value={newMappingChannel}
-            onValueChange={setNewMappingChannel}
-          >
-            <Select.Trigger>
-              <Select.Value />
-            </Select.Trigger>
-            <Select.Content>
-              {CHANNELS.map((ch) => (
-                <Select.Item key={ch} value={ch}>
-                  {ch.toUpperCase()}
-                </Select.Item>
-              ))}
-            </Select.Content>
-          </Select>
-        </div>
-
-        <div>
-          <Label>{t("mappings.templateLabel")}</Label>
-          <Select
-            value={newMappingTemplateId}
-            onValueChange={setNewMappingTemplateId}
-          >
-            <Select.Trigger>
-              <Select.Value />
-            </Select.Trigger>
-            <Select.Content>
-              {templates.map((tpl) => (
-                <Select.Item key={tpl.id} value={tpl.id}>
-                  [{tpl.channel}] {tpl.label}
-                </Select.Item>
-              ))}
-            </Select.Content>
-          </Select>
-        </div>
-
-        <div>
-          <Label>{t("mappings.recipientRuleLabel")}</Label>
-          <Select
-            value={newMappingRecipientRule}
-            onValueChange={setNewMappingRecipientRule}
-          >
-            <Select.Trigger>
-              <Select.Value />
-            </Select.Trigger>
-            <Select.Content>
-              <Select.Item value="customer_auto">
-                {t("mappings.ruleCustomerAuto")}
-              </Select.Item>
-              <Select.Item value="order_email">
-                {t("mappings.ruleOrderEmail")}
-              </Select.Item>
-              <Select.Item value="order_phone">
-                {t("mappings.ruleOrderPhone")}
-              </Select.Item>
-              <Select.Item value="customer_telegram">
-                {t("mappings.ruleCustomerTelegram")}
-              </Select.Item>
-              <Select.Item value="merchant_channel">
-                {t("mappings.ruleMerchantChannel")}
-              </Select.Item>
-              <Select.Item value="b2b_accounting_contact">
-                {t("mappings.ruleB2bAccounting")}
-              </Select.Item>
-            </Select.Content>
-          </Select>
-        </div>
-
-        <div>
-          <Label>{t("mappings.threadIdLabel")}</Label>
-          <Input
-            placeholder={t("mappings.threadIdPlaceholder")}
-            value={newMappingThreadId}
-            onChange={(e) => setNewMappingThreadId(e.target.value)}
-          />
-        </div>
+    <Container className="divide-y p-0">
+      <Toaster />
+      <div className="flex items-center justify-between px-6 py-4">
+        <Heading level="h2">{t("mappings.title")}</Heading>
+        <StatusBadge color="green">{mappings.length}</StatusBadge>
       </div>
 
-      <div className="mt-4 flex items-center justify-between">
-        <div className="flex items-center gap-x-2">
-          <Switch
-            checked={newMappingAttachInvoice}
-            onCheckedChange={setNewMappingAttachInvoice}
-          />
-          <Label>{t("mappings.attachInvoiceLabel")}</Label>
-        </div>
-        <Button variant="primary" onClick={() => void handleCreateMapping()}>
-          {t("mappings.addMappingButton")}
-        </Button>
-      </div>
+      <SectionRow
+        title={t("mappings.eventLabel")}
+        value={
+          <Badge size="2xsmall" color="grey">
+            {supportedEvents.length}
+          </Badge>
+        }
+      />
 
-      <Table className="mt-6">
+      <EventMappingForm
+        supportedEvents={supportedEvents}
+        templates={templates}
+        newMappingEvent={newMappingEvent}
+        newMappingChannel={newMappingChannel}
+        newMappingTemplateId={newMappingTemplateId}
+        newMappingRecipientRule={newMappingRecipientRule}
+        newMappingAttachInvoice={newMappingAttachInvoice}
+        newMappingThreadId={newMappingThreadId}
+        isSubmitting={createMappingMutation.isPending}
+        onEventChange={setNewMappingEvent}
+        onChannelChange={setNewMappingChannel}
+        onTemplateChange={setNewMappingTemplateId}
+        onRecipientRuleChange={setNewMappingRecipientRule}
+        onAttachInvoiceChange={setNewMappingAttachInvoice}
+        onThreadIdChange={setNewMappingThreadId}
+        onSubmit={() => void handleCreateMapping()}
+      />
+
+      <Table>
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell>{t("mappings.colEvent")}</Table.HeaderCell>
@@ -215,7 +135,9 @@ export const EventMappingsTab: React.FC<EventMappingsTabProps> = ({
             <Table.Row key={m.id}>
               <Table.Cell>{m.event_name}</Table.Cell>
               <Table.Cell>
-                <Badge color="blue">{m.channel}</Badge>
+                <Badge size="2xsmall" color="blue">
+                  {m.channel}
+                </Badge>
               </Table.Cell>
               <Table.Cell>{m.template_id}</Table.Cell>
               <Table.Cell>{m.recipient_rule}</Table.Cell>
@@ -228,6 +150,7 @@ export const EventMappingsTab: React.FC<EventMappingsTabProps> = ({
                 <Button
                   size="small"
                   variant="secondary"
+                  isLoading={deleteMappingMutation.isPending}
                   onClick={() => void handleDeleteMapping(m.id)}
                 >
                   {t("mappings.deleteButton")}

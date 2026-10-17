@@ -1,3 +1,4 @@
+import { Form, KeyboundForm } from "@medusajs/dashboard/components"
 import {
   Badge,
   Button,
@@ -6,19 +7,25 @@ import {
   Input,
   Label,
   Select,
+  StatusBadge,
   Table,
+  Toaster,
+  toast,
 } from "@medusajs/ui"
 import React, { useState } from "react"
+import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { useCreateMpnBroadcast } from "../../../hooks"
+import { BroadcastConsentSection } from "./broadcast-consent-section"
 import type { StatusBannerState } from "./constants"
 
-interface BroadcastsConsentTabProps {
+export interface BroadcastsConsentTabProps {
   broadcasts: Array<Record<string, any>>
   consentSummary: Record<string, any> | null
   templates: Array<Record<string, any>>
   onRefresh: () => Promise<void>
-  onStatus: (status: StatusBannerState) => void
+  onStatus?: (status: StatusBannerState) => void
+  section?: "main" | "side" | "all"
 }
 
 export const BroadcastsConsentTab: React.FC<BroadcastsConsentTabProps> = ({
@@ -27,6 +34,7 @@ export const BroadcastsConsentTab: React.FC<BroadcastsConsentTabProps> = ({
   templates,
   onRefresh,
   onStatus,
+  section = "all",
 }) => {
   const { t } = useTranslation()
   const [broadcastName, setBroadcastName] = useState<string>("")
@@ -34,6 +42,14 @@ export const BroadcastsConsentTab: React.FC<BroadcastsConsentTabProps> = ({
   const [broadcastTemplateId, setBroadcastTemplateId] = useState<string>(
     "system_sms_order_placed"
   )
+
+  const form = useForm({
+    defaultValues: {
+      name: "",
+      channel: "sms",
+      template_id: "system_sms_order_placed",
+    },
+  })
 
   const createBroadcastMutation = useCreateMpnBroadcast()
 
@@ -47,92 +63,94 @@ export const BroadcastsConsentTab: React.FC<BroadcastsConsentTabProps> = ({
         send_now: true,
       })
       setBroadcastName("")
-      onStatus({
+      const msg = t("messages.broadcastSentSuccess")
+      toast.success(msg)
+      onStatus?.({
         type: "success",
-        text: t("messages.broadcastSentSuccess"),
+        text: msg,
       })
       await onRefresh()
-    } catch {
-      // Ignore broadcast error
+    } catch (err: any) {
+      toast.error(err?.message || t("messages.loadStudioError"))
     }
   }
 
-  return (
-    <Container className="p-6">
-      <Heading level="h2">{t("broadcasts.title")}</Heading>
-      {consentSummary && (
-        <div className="mt-3 flex flex-wrap gap-3">
-          <Badge color="green">
-            {t("broadcasts.smsOptedIn", {
-              count: consentSummary.opted_in_sms,
-            })}
-          </Badge>
-          <Badge color="green">
-            {t("broadcasts.whatsappOptedIn", {
-              count: consentSummary.opted_in_whatsapp,
-            })}
-          </Badge>
-          <Badge color="blue">
-            {t("broadcasts.telegramLinked", {
-              count: consentSummary.opted_in_telegram,
-            })}
-          </Badge>
-          <Badge color="red">
-            {t("broadcasts.optedOut", {
-              count: consentSummary.opted_out_total,
-            })}
-          </Badge>
-        </div>
-      )}
-
-      <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-4">
-        <div>
-          <Label>{t("broadcasts.campaignNameLabel")}</Label>
-          <Input
-            placeholder={t("broadcasts.campaignNamePlaceholder")}
-            value={broadcastName}
-            onChange={(e) => setBroadcastName(e.target.value)}
-          />
-        </div>
-        <div>
-          <Label>{t("broadcasts.channelLabel")}</Label>
-          <Select value={broadcastChannel} onValueChange={setBroadcastChannel}>
-            <Select.Trigger>
-              <Select.Value />
-            </Select.Trigger>
-            <Select.Content>
-              <Select.Item value="sms">SMS</Select.Item>
-              <Select.Item value="whatsapp">WhatsApp</Select.Item>
-              <Select.Item value="telegram">Telegram</Select.Item>
-            </Select.Content>
-          </Select>
-        </div>
-        <div>
-          <Label>{t("broadcasts.templateLabel")}</Label>
-          <Select
-            value={broadcastTemplateId}
-            onValueChange={setBroadcastTemplateId}
-          >
-            <Select.Trigger>
-              <Select.Value />
-            </Select.Trigger>
-            <Select.Content>
-              {templates.map((tpl) => (
-                <Select.Item key={tpl.id} value={tpl.id}>
-                  [{tpl.channel}] {tpl.label}
-                </Select.Item>
-              ))}
-            </Select.Content>
-          </Select>
-        </div>
-        <div className="flex items-end">
-          <Button variant="primary" onClick={() => void handleSendBroadcast()}>
-            {t("broadcasts.sendNowButton")}
-          </Button>
-        </div>
+  const mainSection = (
+    <Container className="divide-y p-0">
+      <div className="flex items-center justify-between px-6 py-4">
+        <Heading level="h2">{t("broadcasts.title")}</Heading>
+        <StatusBadge color="green">{broadcasts.length}</StatusBadge>
       </div>
 
-      <Table className="mt-6">
+      <Form {...form}>
+        <KeyboundForm
+          onSubmit={(e) => {
+            e.preventDefault()
+            void handleSendBroadcast()
+          }}
+          className="px-6 py-4"
+        >
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+            <div className="flex flex-col gap-y-2">
+              <Label size="small">{t("broadcasts.campaignNameLabel")}</Label>
+              <Input
+                size="small"
+                placeholder={t("broadcasts.campaignNamePlaceholder")}
+                value={broadcastName}
+                onChange={(e) => setBroadcastName(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col gap-y-2">
+              <Label size="small">{t("broadcasts.channelLabel")}</Label>
+              <Select
+                size="small"
+                value={broadcastChannel}
+                onValueChange={setBroadcastChannel}
+              >
+                <Select.Trigger>
+                  <Select.Value />
+                </Select.Trigger>
+                <Select.Content>
+                  <Select.Item value="sms">SMS</Select.Item>
+                  <Select.Item value="whatsapp">WhatsApp</Select.Item>
+                  <Select.Item value="telegram">Telegram</Select.Item>
+                </Select.Content>
+              </Select>
+            </div>
+            <div className="flex flex-col gap-y-2">
+              <Label size="small">{t("broadcasts.templateLabel")}</Label>
+              <Select
+                size="small"
+                value={broadcastTemplateId}
+                onValueChange={setBroadcastTemplateId}
+              >
+                <Select.Trigger>
+                  <Select.Value />
+                </Select.Trigger>
+                <Select.Content>
+                  {templates.map((tpl) => (
+                    <Select.Item key={tpl.id} value={tpl.id}>
+                      [{tpl.channel}] {tpl.label}
+                    </Select.Item>
+                  ))}
+                </Select.Content>
+              </Select>
+            </div>
+            <div className="flex items-end">
+              <Button
+                size="small"
+                variant="primary"
+                type="submit"
+                isLoading={createBroadcastMutation.isPending}
+              >
+                {t("broadcasts.sendNowButton")}
+              </Button>
+            </div>
+          </div>
+        </KeyboundForm>
+      </Form>
+
+      <Table>
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell>{t("broadcasts.colCampaign")}</Table.HeaderCell>
@@ -145,9 +163,13 @@ export const BroadcastsConsentTab: React.FC<BroadcastsConsentTabProps> = ({
           {broadcasts.map((b) => (
             <Table.Row key={b.id}>
               <Table.Cell>{b.name}</Table.Cell>
-              <Table.Cell>{b.channel}</Table.Cell>
               <Table.Cell>
-                <Badge color="green">{b.status}</Badge>
+                <Badge size="2xsmall" color="blue">
+                  {b.channel}
+                </Badge>
+              </Table.Cell>
+              <Table.Cell>
+                <StatusBadge color="green">{b.status}</StatusBadge>
               </Table.Cell>
               <Table.Cell>
                 {b.sent_count} / {b.total_recipients}
@@ -157,5 +179,30 @@ export const BroadcastsConsentTab: React.FC<BroadcastsConsentTabProps> = ({
         </Table.Body>
       </Table>
     </Container>
+  )
+
+  const sideSection = (
+    <BroadcastConsentSection consentSummary={consentSummary} />
+  )
+
+  if (section === "main") {
+    return (
+      <>
+        <Toaster />
+        {mainSection}
+      </>
+    )
+  }
+
+  if (section === "side") {
+    return sideSection
+  }
+
+  return (
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <Toaster />
+      <div className="lg:col-span-2">{mainSection}</div>
+      <div>{sideSection}</div>
+    </div>
   )
 }

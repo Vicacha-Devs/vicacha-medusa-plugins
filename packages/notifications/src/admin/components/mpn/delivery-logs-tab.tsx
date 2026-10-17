@@ -1,4 +1,12 @@
-import { Badge, Container, Heading, Table } from "@medusajs/ui"
+import { SectionRow } from "@medusajs/dashboard/components"
+import {
+  Badge,
+  Container,
+  Heading,
+  StatusBadge,
+  Table,
+  Toaster,
+} from "@medusajs/ui"
 import React from "react"
 import { useTranslation } from "react-i18next"
 
@@ -10,10 +18,15 @@ export const DeliveryLogsTab: React.FC<DeliveryLogsTabProps> = ({ logs }) => {
   const { t } = useTranslation()
 
   return (
-    <Container className="p-6">
-      <Heading level="h2" className="mb-4">
-        {t("logs.title")}
-      </Heading>
+    <Container className="divide-y p-0">
+      <Toaster />
+      <div className="flex items-center justify-between px-6 py-4">
+        <Heading level="h2">{t("logs.title")}</Heading>
+        <StatusBadge color="green">{logs.length}</StatusBadge>
+      </div>
+
+      <SectionRow title={t("logs.colStatus")} value={logs.length} />
+
       <Table>
         <Table.Header>
           <Table.Row>
@@ -29,11 +42,13 @@ export const DeliveryLogsTab: React.FC<DeliveryLogsTabProps> = ({ logs }) => {
             <Table.Row key={row.id}>
               <Table.Cell>{row.event_name}</Table.Cell>
               <Table.Cell>
-                <Badge color="blue">{row.channel}</Badge>
+                <Badge size="2xsmall" color="blue">
+                  {row.channel}
+                </Badge>
               </Table.Cell>
               <Table.Cell>{row.recipient_masked}</Table.Cell>
               <Table.Cell>
-                <Badge
+                <StatusBadge
                   color={
                     row.status === "sent" || row.status === "delivered"
                       ? "green"
@@ -43,7 +58,7 @@ export const DeliveryLogsTab: React.FC<DeliveryLogsTabProps> = ({ logs }) => {
                   }
                 >
                   {row.status}
-                </Badge>
+                </StatusBadge>
               </Table.Cell>
               <Table.Cell>{row.external_message_id || "—"}</Table.Cell>
             </Table.Row>

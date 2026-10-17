@@ -1,4 +1,5 @@
-import { useCallback, useState } from "react"
+import { useCallback } from "react"
+import { toast } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
 import {
   useMpnBroadcasts,
@@ -8,49 +9,67 @@ import {
   useMpnSandboxMessages,
   useMpnTemplates,
 } from "../../../hooks"
-import { invalidateNotificationsQueries, notificationsQueryKeys } from "../../../sdk"
+import {
+  invalidateNotificationsQueries,
+  notificationsQueryKeys,
+} from "../../../sdk"
 import type { StatusBannerState } from "./constants"
 
 export function useNotificationStudio() {
   const { t } = useTranslation()
-  const [statusBanner, setStatusBanner] = useState<StatusBannerState | null>(
-    null
-  )
 
   const handleLoadError = useCallback(() => {
-    setStatusBanner({
-      type: "error",
-      text: t("messages.loadStudioError"),
-    })
+    toast.error(t("messages.loadStudioError"))
   }, [t])
 
-  const { data: tplData } = useMpnTemplates(undefined, {
+  const { data: tplData, isLoading: templatesLoading } = useMpnTemplates(
+    undefined,
+    {
+      onError: handleLoadError,
+    }
+  )
+  const { data: mapData, isLoading: mappingsLoading } = useMpnMappings({
     onError: handleLoadError,
   })
-  const { data: mapData } = useMpnMappings({
+  const { data: chData, isLoading: channelsLoading } = useMpnChannels({
     onError: handleLoadError,
   })
-  const { data: chData } = useMpnChannels({
-    onError: handleLoadError,
-  })
-  const { data: logData } = useMpnLogs(
+  const { data: logData, isLoading: logsLoading } = useMpnLogs(
     { limit: 50 },
     { onError: handleLoadError }
   )
-  const { data: brcData } = useMpnBroadcasts({
+  const { data: brcData, isLoading: broadcastsLoading } = useMpnBroadcasts({
     onError: handleLoadError,
   })
-  const { data: sbxData } = useMpnSandboxMessages(
+  const { data: sbxData, isLoading: sandboxLoading } = useMpnSandboxMessages(
     { limit: 50 },
     { onError: handleLoadError }
   )
+
+  const setStatusBanner = useCallback((status: StatusBannerState | null) => {
+    if (!status) return
+    if (status.type === "success") {
+      toast.success(status.text)
+    } else {
+      toast.error(status.text)
+    }
+  }, [])
 
   const loadAllStudioData = useCallback(async () => {
     invalidateNotificationsQueries(notificationsQueryKeys.all)
   }, [])
 
+  const isLoading =
+    templatesLoading ||
+    mappingsLoading ||
+    channelsLoading ||
+    logsLoading ||
+    broadcastsLoading ||
+    sandboxLoading
+
   return {
-    statusBanner,
+    isLoading,
+    statusBanner: null as StatusBannerState | null,
     setStatusBanner,
     templates: tplData?.templates || [],
     mappings: mapData?.mappings || [],

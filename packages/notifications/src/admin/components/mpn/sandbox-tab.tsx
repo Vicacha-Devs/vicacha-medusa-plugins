@@ -1,4 +1,15 @@
-import { Badge, Button, Container, Heading, Table, Text } from "@medusajs/ui"
+import { SectionRow } from "@medusajs/dashboard/components"
+import {
+  Badge,
+  Button,
+  Container,
+  Heading,
+  StatusBadge,
+  Table,
+  Text,
+  Toaster,
+  toast,
+} from "@medusajs/ui"
 import React from "react"
 import { useTranslation } from "react-i18next"
 import { useClearMpnSandbox } from "../../../hooks"
@@ -18,25 +29,34 @@ export const DummySandboxTab: React.FC<DummySandboxTabProps> = ({
   const handleClearSandbox = async () => {
     try {
       await clearSandboxMutation.mutateAsync()
+      toast.success(t("sandbox.clearButton"))
       await onRefresh()
-    } catch {
-      // Ignore clear error
+    } catch (err: any) {
+      toast.error(err?.message || t("messages.loadStudioError"))
     }
   }
 
   return (
-    <Container className="p-6">
-      <div className="mb-4 flex items-center justify-between">
+    <Container className="divide-y p-0">
+      <Toaster />
+      <div className="flex items-center justify-between px-6 py-4">
         <div>
           <Heading level="h2">{t("sandbox.title")}</Heading>
-          <Text className="text-ui-fg-subtle text-xs">
+          <Text className="text-ui-fg-subtle text-xs mt-1">
             {t("sandbox.subtitle")}
           </Text>
         </div>
-        <Button variant="secondary" onClick={() => void handleClearSandbox()}>
+        <Button
+          size="small"
+          variant="secondary"
+          isLoading={clearSandboxMutation.isPending}
+          onClick={() => void handleClearSandbox()}
+        >
           {t("sandbox.clearButton")}
         </Button>
       </div>
+
+      <SectionRow title={t("sandbox.colOtp")} value={sandboxMessages.length} />
 
       <Table>
         <Table.Header>
@@ -51,12 +71,14 @@ export const DummySandboxTab: React.FC<DummySandboxTabProps> = ({
           {sandboxMessages.map((msg) => (
             <Table.Row key={msg.id}>
               <Table.Cell>
-                <Badge color="blue">{msg.channel}</Badge>
+                <Badge size="2xsmall" color="blue">
+                  {msg.channel}
+                </Badge>
               </Table.Cell>
               <Table.Cell>{msg.recipient}</Table.Cell>
               <Table.Cell>
                 {msg.otp_code ? (
-                  <Badge color="green">{msg.otp_code}</Badge>
+                  <StatusBadge color="green">{msg.otp_code}</StatusBadge>
                 ) : (
                   "—"
                 )}
