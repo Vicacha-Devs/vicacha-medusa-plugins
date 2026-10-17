@@ -1,1 +1,36 @@
-export default {}
+import ar from "./json/ar.json"
+import de from "./json/de.json"
+import en from "./json/en.json"
+import es from "./json/es.json"
+import fr from "./json/fr.json"
+import it from "./json/it.json"
+import nl from "./json/nl.json"
+import pl from "./json/pl.json"
+import pt from "./json/pt.json"
+import tr from "./json/tr.json"
+
+export const SUPPORTED_UI_LOCALES = [
+  { code: "en", label: "English" },
+  { code: "es", label: "Español" },
+  { code: "fr", label: "Français" },
+  { code: "de", label: "Deutsch" },
+  { code: "it", label: "Italiano" },
+  { code: "pt", label: "Português" },
+  { code: "nl", label: "Nederlands" },
+  { code: "pl", label: "Polski" },
+  { code: "tr", label: "Türkçe" },
+  { code: "ar", label: "العربية" },
+] as const
+
+export default {
+  ar: { translation: ar, stories: ar },
+  de: { translation: de, stories: de },
+  en: { translation: en, stories: en },
+  es: { translation: es, stories: es },
+  fr: { translation: fr, stories: fr },
+  it: { translation: it, stories: it },
+  nl: { translation: nl, stories: nl },
+  pl: { translation: pl, stories: pl },
+  pt: { translation: pt, stories: pt },
+  tr: { translation: tr, stories: tr },
+}

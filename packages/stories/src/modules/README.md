@@ -1,116 +1,46 @@
-# Custom Module
+# Modules
 
-A module is a package of reusable functionalities. It can be integrated into your Medusa application without affecting the overall system. You can create a module as part of a plugin.
+Custom Medusa module (`stories`) implementing Story Highlight Rings (`StoryGroup`), 9:16 Story Slides (`Story`), X/Y Product Hotspots (`StoryHotspot`), Interactive Stickers (`StorySticker`), and Conversion Funnel Analytics (`StoryEvent`).
 
-Learn more about modules in [this documentation](https://docs.medusajs.com/learn/fundamentals/modules).
-
-To create a module:
-
-## 1. Create a Data Model
-
-A data model represents a table in the database. You create a data model in a TypeScript or JavaScript file under the `models` directory of a module.
-
-For example, create the file `src/modules/blog/models/post.ts` with the following content:
-
-```ts
-import { model } from "@medusajs/framework/utils"
-
-const Post = model.define("post", {
-  id: model.id().primaryKey(),
-  title: model.text(),
-})
-
-export default Post
+```
+modules/
+├── story/
+│   ├── index.ts                Module("stories", { service: StoriesModuleService })
+│   ├── service.ts              StoriesModuleService (extends MedusaService)
+│   ├── types.ts                DTOs, ring themes, placement zones, sticker & funnel types
+│   ├── models/
+│   │   └── index.ts            StoryGroup, Story, StoryHotspot, StorySticker, StoryEvent
+│   └── utils/
+│       └── security.ts         sanitizeSafeUrl, sanitizeHexColor, clampPercentage
+└── stories/
+    └── index.ts                Alias re-exporting ../story for backward compatibility
 ```
 
-## 2. Create a Service
+---
 
-A module must define a service. A service is a TypeScript or JavaScript class holding methods related to a business logic or commerce functionality.
+## Service Registration
 
-For example, create the file `src/modules/blog/service.ts` with the following content:
+- **Module token:** `STORIES_MODULE = "stories"` (100% compatible with `@bambiste/medusa-stories`)
+- **Service class:** `StoriesModuleService`
 
-```ts
-import { MedusaService } from "@medusajs/framework/utils"
-import Post from "./models/post"
+---
 
-class BlogModuleService extends MedusaService({
-  Post,
-}){
-}
+## Data Models (`story/models/index.ts`)
 
-export default BlogModuleService
-```
+| Model | Table Name | ID Prefix | Purpose |
+| --- | --- | --- | --- |
+| `StoryGroup` | `mps_story_group` | `sgrp_` | Highlight Ring container with `title`, `handle`, `avatar_url`, `ring_theme` (`instagram`, `tiktok`, `sunset`, `emerald`, `violet`, `cyber`, `neon`, `gold`, `minimal`, `custom`), `placement`, `target_entity_id`, `is_pinned`, `is_ephemeral`, `is_active`, and `display_order`. |
+| `Story` | `story` | `stry_` | Individual 9:16 slide (`image` or `video`) with `group_id`, `title`, `caption`, `media_url`, `thumbnail_url`, `duration_ms`, `link_url`, `link_text`, `starts_at`, `expires_at`, and funnel counters (`views_count`, `completions_count`, `clicks_count`, `cart_conversions_count`). |
+| `StoryHotspot` | `mps_story_hotspot` | `shsp_` | Product pin at `(x_percent, y_percent)` on a slide with `product_id`, `variant_id`, `product_title`, `product_handle`, `product_thumbnail`, `price_formatted`, `price_amount`, `currency_code`, `label`, and `badge_style` (`pill \| card \| dot`). |
+| `StorySticker` | `mps_story_sticker` | `sstk_` | Interactive overlay (`poll`, `countdown`, `coupon`, `question_badge`) at `(x_percent, y_percent)` with `prompt`, `options`, `coupon_code`, `countdown_until`, and `total_interactions`. |
+| `StoryEvent` | `mps_story_event` | `sevt_` | Funnel telemetry log (`impression`, `complete`, `tap_forward`, `tap_back`, `exit`, `hotspot_click`, `link_click`, `add_to_cart`, `sticker_interact`). |
 
-## 3. Export Module Definition
+---
 
-A module must have an `index.ts` file in its root directory that exports its definition. The definition specifies the main service of the module.
+## Key Service Methods (`story/service.ts`)
 
-For example, create the file `src/modules/blog/index.ts` with the following content:
-
-```ts
-import BlogModuleService from "./service"
-import { Module } from "@medusajs/framework/utils"
-
-export const BLOG_MODULE = "blog"
-
-export default Module(BLOG_MODULE, {
-  service: BlogModuleService,
-})
-```
-
-## 4. Generate Migrations
-
-To generate migrations for your module, run the following command in the plugin's directory:
-
-```bash
-npx medusa plugin:db:genreate
-```
-
-## Use Module
-
-You can use the module in customizations within the plugin or within the Medusa application using this plugin. When the plugin is added to a Medusa application, all its modules are registered as well.
-
-For example, to use the module in an API route:
-
-```ts
-import { MedusaRequest, MedusaResponse } from "@medusajs/framework"
-import BlogModuleService from "../../../modules/blog/service"
-import { BLOG_MODULE } from "../../../modules/blog"
-
-export async function GET(
-  req: MedusaRequest,
-  res: MedusaResponse
-): Promise<void> {
-  const blogModuleService: BlogModuleService = req.scope.resolve(
-    BLOG_MODULE
-  )
-
-  const posts = await blogModuleService.listPosts()
-
-  res.json({
-    posts
-  })
-}
-```
-
-## Module Options
-
-When you register the plugin in the Medusa application, it can accept options. These options are passed to the modules within the plugin:
-
-```ts
-import { defineConfig } from "@medusajs/framework/utils"
-
-module.exports = defineConfig({
-  // ...
-  plugins: [
-    {
-      resolve: "@myorg/plugin-name",
-      options: {
-        apiKey: process.env.API_KEY,
-      },
-    },
-  ],
-})
-```
-
-Learn more about module options in [this documentation](https://docs.medusajs.com/learn/fundamentals/modules/options).
+- **Story Groups (Highlight Rings):** `createGroup`, `updateGroup`, `deleteGroup`, `getGroupById`, `listGroups`
+- **Story Slides:** `createSlide`, `updateSlide`, `deleteSlide`, `getSlideById`, `listSlides`, `listAdminStudioState`, `listStorefrontStories`
+- **Product Hotspots:** `addHotspotToSlide`, `removeHotspot`, `removeHotspotsByProductId`
+- **Interactive Stickers:** `addStickerToSlide`, `removeSticker`, `interactWithSticker`
+- **Analytics & Expiration:** `recordEngagementEvent`, `getAnalyticsOverview`, `expireOutdatedStories`

@@ -1,30 +1,14 @@
-## Module Providers
+# Providers
 
-You can create module providers, such as Notification or File Module Providers under a sub-directory of this directory. For example, `src/providers/my-notification`.
+Directory reserved for external module providers in `@vicacha-devs/medusa-plugin-stories`.
 
-Then, you register them in the Medusa application as `plugin-name/providers/my-notification`:
-
-```ts
-module.exports = defineConfig({
-  // ...
-  modules: [
-    {
-      resolve: "@medusajs/medusa/notification",
-      options: {
-        providers: [
-          {
-            resolve: "@myorg/plugin-name/providers/my-notification",
-            id: "my-notification",
-            options: {
-              channels: ["email"],
-              // provider options...
-            },
-          },
-        ],
-      },
-    },
-  ],
-})
+```
+providers/
+└── README.md
 ```
 
-Learn more in [this documentation](https://docs.medusajs.com/learn/fundamentals/plugins/create).
+---
+
+## Overview
+
+`@vicacha-devs/medusa-plugin-stories` validates and renders 9:16 image and video URLs directly from Medusa's core File Module or any HTTPS CDN (`sanitizeSafeUrl` in `src/modules/story/utils/security.ts`), so no custom provider registration is required.

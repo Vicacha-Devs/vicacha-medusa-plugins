@@ -1,26 +1,18 @@
-# Module Links
+# Links
 
-A module link forms an association between two data models of different modules, while maintaining module isolation.
+Cross-entity associations in `@vicacha-devs/medusa-plugin-stories`.
 
-Learn more about links in [this documentation](https://docs.medusajs.com/learn/fundamentals/module-links)
-
-For example:
-
-```ts
-import BlogModule from "../modules/blog"
-import ProductModule from "@medusajs/medusa/product"
-import { defineLink } from "@medusajs/framework/utils"
-
-export default defineLink(
-  ProductModule.linkable.product,
-  BlogModule.linkable.post
-)
+```
+links/
+└── README.md
 ```
 
-This defines a link between the Product Module's `product` data model and the Blog Module (custom module)'s `post` data model.
+---
 
-Then, in the Medusa application using this plugin, run the following command to sync the links to the database:
+## Overview
 
-```bash
-npx medusa db:migrate
-```
+`@vicacha-devs/medusa-plugin-stories` associates story slides and highlight rings with Medusa core entities (`Product`, `ProductVariant`, `ProductCollection`, `ProductCategory`) via indexed identifier columns on its module models rather than cross-module join tables:
+
+- **`StoryHotspot`** (`src/modules/story/models/index.ts`) — stores `story_id`, `product_id` (indexed), `variant_id`, and denormalized product card metadata (`product_title`, `product_handle`, `product_thumbnail`, `price_formatted`, `price_amount`, `currency_code`, `x_percent`, `y_percent`) for zero-latency 9:16 player rendering.
+- **`StoryGroup`** (`src/modules/story/models/index.ts`) — stores `placement` (`home`, `collection`, `category`, `product`, `floating_bubble`, `global`) and `target_entity_id` to scope Highlight Rings to specific collections, categories, or product pages.
+- **`product-deleted.ts` subscriber** (`src/subscribers/product-deleted.ts`) — listens to `product.deleted` and calls `storiesService.removeHotspotsByProductId(productId)` to keep hotspot references clean.
