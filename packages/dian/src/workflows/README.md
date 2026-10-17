@@ -1,79 +1,20 @@
-# Custom Workflows
+# Workflows & Subscribers (`src/workflows` & `src/subscribers`)
 
-A workflow is a series of queries and actions that complete a task.
+Compensated Medusa v2 workflows and event subscribers for `@vicacha-devs/medusa-plugin-dian`.
 
-The workflow is created in a TypeScript or JavaScript file under the `src/workflows` directory.
+## Workflows (`src/workflows/index.ts`)
 
-For example:
+| Workflow ID | Step ID | Description |
+| :--- | :--- | :--- |
+| `dian-emit-invoice` | `dian-emit-invoice-step` | Emits an Electronic Invoice (`01` / `02` / `03`) with rollback compensation if downstream steps fail |
+| `dian-emit-credit-note` | `dian-emit-credit-note-step` | Emits a Nota Crédito Electrónica (`91`) linked to the original invoice CUFE |
+| `dian-emit-debit-note` | `dian-emit-debit-note-step` | Emits a Nota Débito Electrónica (`92`) linked to the original invoice CUFE |
+| `dian-emit-pos-equivalent` | `dian-emit-pos-step` | Emits a Documento Equivalente POS (`20` — Resolución 000165) |
+| `dian-emit-radian-event` | `dian-emit-radian-step` | Registers a RADIAN title-value event (`030`–`034`) |
+| `dian-upsert-fiscal-profile` | `dian-upsert-fiscal-profile-step` | Validates NIT Modulo-11 DV and B2B Legal Client link before upserting a fiscal profile |
 
-```ts
-import {
-  createStep,
-  createWorkflow,
-  WorkflowResponse,
-  StepResponse,
-} from "@medusajs/framework/workflows-sdk"
+## Event Subscribers (`src/subscribers/`)
 
-const step1 = createStep("step-1", async () => {
-  return new StepResponse(`Hello from step one!`)
-})
-
-type WorkflowInput = {
-  name: string
-}
-
-const step2 = createStep(
-  "step-2",
-  async ({ name }: WorkflowInput) => {
-    return new StepResponse(`Hello ${name} from step two!`)
-  }
-)
-
-type WorkflowOutput = {
-  message1: string
-  message2: string
-}
-
-const helloWorldWorkflow = createWorkflow(
-  "hello-world",
-  (input: WorkflowInput) => {
-    const greeting1 = step1()
-    const greeting2 = step2(input)
-    
-    return new WorkflowResponse({
-      message1: greeting1,
-      message2: greeting2
-    })
-  }
-)
-
-export default helloWorldWorkflow
-```
-
-## Execute Workflow
-
-You can execute the workflow from other resources, such as API routes, scheduled jobs, or subscribers.
-
-For example, to execute the workflow in an API route:
-
-```ts
-import type {
-  MedusaRequest,
-  MedusaResponse,
-} from "@medusajs/framework"
-import myWorkflow from "../../../workflows/hello-world"
-
-export async function GET(
-  req: MedusaRequest,
-  res: MedusaResponse
-) {
-  const { result } = await myWorkflow(req.scope)
-    .run({
-      input: {
-        name: req.query.name as string,
-      },
-    })
-
-  res.send(result)
-}
-```
+- **`order-placed.ts` (`order.placed`)**: Automatically emits a Factura Electrónica (`01`) or Documento Equivalente POS (`20`) when `auto_emit_on_order_placed` is enabled in `DianConfig`.
+- **`order-canceled.ts` (`order.canceled`)**: Automatically emits a Concept `2` (*Anulación de factura electrónica*) Nota Crédito (`91`) when `auto_credit_note_on_cancel` is enabled.
+- **`refund-created.ts` (`payment.refund_created`)**: Automatically emits a partial or full Nota Crédito (`91`) when `auto_credit_note_on_refund` is enabled.

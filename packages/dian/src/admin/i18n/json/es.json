@@ -1,0 +1,14 @@
+{
+  "dian": {
+    "nav": {
+      "label": "Facturación DIAN",
+      "resolutions": "Resoluciones 1876",
+      "fiscalProfiles": "Perfiles Fiscales / B2B",
+      "settings": "DIAN Colombia"
+    },
+    "overview": {
+      "title": "Facturación Electrónica DIAN (Colombia)",
+      "subtitle": "UBL 2.1 Anexo Técnico 1.9 • CUFE/CUDE SHA-384 • XAdES-EPES • PDF vía @vicacha-devs/medusa-plugin-documents • Clientes Jurídicos vía @vicacha-devs/medusa-plugin-b2b"
+    }
+  }
+}

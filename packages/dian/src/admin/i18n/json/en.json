@@ -1,0 +1,14 @@
+{
+  "dian": {
+    "nav": {
+      "label": "DIAN Invoicing",
+      "resolutions": "Resolutions 1876",
+      "fiscalProfiles": "Fiscal Profiles / B2B",
+      "settings": "DIAN Colombia"
+    },
+    "overview": {
+      "title": "DIAN Electronic Invoicing (Colombia)",
+      "subtitle": "UBL 2.1 Technical Annex 1.9 • CUFE/CUDE SHA-384 • XAdES-EPES • PDF via @vicacha-devs/medusa-plugin-documents • Legal Clients via @vicacha-devs/medusa-plugin-b2b"
+    }
+  }
+}
