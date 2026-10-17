@@ -1,0 +1,115 @@
+{
+  "nav": {
+    "label": "Social Commerce"
+  },
+  "page": {
+    "loading": "Social-Commerce-Daten werden geladen..."
+  },
+  "header": {
+    "title": "Social Commerce & Ephemere Stories",
+    "subtitle": "TikTok, Instagram, Facebook & On-Site Shoppable Stories, Live-Shopping und Katalogsynchronisierung",
+    "languageLabel": "Sprache",
+    "platformFilterAria": "Nach Plattform filtern",
+    "syncNow": "Medien jetzt synchronisieren",
+    "platforms": {
+      "all": "Alle Plattformen",
+      "tiktok": "TikTok",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "local": "Lokale Stories"
+    }
+  },
+  "tabs": {
+    "accounts": "Konten ({{count}})",
+    "feed": "Shoppable Feed ({{count}})",
+    "stories": "24h-Stories ({{count}})",
+    "live": "Live-Shopping ({{count}})",
+    "catalog": "Katalog-Sync ({{count}})"
+  },
+  "accountsTab": {
+    "connectTiktok": "+ TikTok verbinden",
+    "connectInstagram": "+ Instagram verbinden",
+    "connectFacebook": "+ Facebook-Seite verbinden",
+    "noExpiry": "—",
+    "columns": {
+      "platform": "Plattform",
+      "username": "Benutzername",
+      "displayName": "Anzeigename",
+      "status": "Status",
+      "expiresAt": "Läuft ab am"
+    }
+  },
+  "feedTab": {
+    "taggedProducts": "{{count}} markierte Produkte",
+    "viewOriginalPost": "Originalbeitrag ansehen"
+  },
+  "storiesTab": {
+    "titlePlaceholder": "Story-Titel",
+    "mediaUrlPlaceholder": "Medien-URL (https://...)",
+    "linkUrlPlaceholder": "Swipe-Up-Link-URL (optional)",
+    "durationAria": "Dauer in Sekunden",
+    "publishButton": "Story veröffentlichen",
+    "untitledStory": "Unbenannte Story",
+    "expiresLabel": "Läuft ab: {{date}}",
+    "neverExpires": "Nie",
+    "durationMeta": "{{platform}} • {{seconds}}s",
+    "mediaTypes": {
+      "story": "24h-Story",
+      "video": "Shoppable Video",
+      "image": "Shoppable Bild"
+    }
+  },
+  "liveTab": {
+    "titlePlaceholder": "Livestream-Titel",
+    "streamUrlPlaceholder": "Stream-Embed-URL (https://...)",
+    "scheduleButton": "Livestream planen",
+    "statusLabel": "Status: {{status}}",
+    "statsLine": "Spitzenzuschauer: {{peakViewers}} | Angepinnte Produkte: {{pinnedCount}}",
+    "goLiveButton": "Live gehen",
+    "endStreamButton": "Stream beenden",
+    "platforms": {
+      "tiktok": "TikTok Live",
+      "instagram": "Instagram Live",
+      "facebook": "Facebook Live",
+      "local": "On-Site-Livestream"
+    }
+  },
+  "catalogTab": {
+    "publicFeedsLabel": "Öffentliche gehostete Feeds:",
+    "metaXmlFeed": "Meta RSS 2.0 XML",
+    "tiktokCsvFeed": "TikTok Shop CSV",
+    "jsonFeed": "JSON-Feed",
+    "emptyValue": "—",
+    "columns": {
+      "productId": "Produkt-ID",
+      "platform": "Plattform",
+      "externalProductId": "Externe Produkt-ID",
+      "syncStatus": "Sync-Status",
+      "lastSynced": "Zuletzt synchronisiert"
+    }
+  },
+  "widget": {
+    "title": "Social Commerce & Shoppable Stories",
+    "loading": "Soziale Markierungen werden geladen...",
+    "taggedHeading": "Markiert in Beiträgen / Stories ({{count}}):",
+    "none": "Keine",
+    "catalogStatusHeading": "Externer Katalogstatus:",
+    "notSyncedYet": "Noch nicht synchronisiert"
+  },
+  "messages": {
+    "loadDashboardError": "Social-Commerce-Daten konnten nicht geladen werden.",
+    "oauthInitError": "{{platform}}-OAuth konnte nicht gestartet werden",
+    "oauthRequestError": "OAuth-Verbindungsanfrage fehlgeschlagen.",
+    "syncingMedia": "Social-Media-Beiträge und Reels werden synchronisiert...",
+    "syncMediaError": "Mediensynchronisierung fehlgeschlagen.",
+    "syncMediaSuccess": "{{count}} Medienbeiträge synchronisiert.",
+    "createStoryError": "Lokale Story konnte nicht erstellt werden.",
+    "createStorySuccess": "24h-Shoppable-Story erstellt.",
+    "scheduleLiveError": "Live-Sitzung konnte nicht geplant werden.",
+    "scheduleLiveSuccess": "Live-Shopping-Sitzung erstellt.",
+    "liveStarted": "Live-Sitzung gestartet.",
+    "liveEnded": "Live-Sitzung beendet.",
+    "liveTransitionError": "Statuswechsel der Live-Sitzung fehlgeschlagen.",
+    "loadWidgetError": "Social-Commerce-Status des Produkts konnte nicht geladen werden."
+  }
+}

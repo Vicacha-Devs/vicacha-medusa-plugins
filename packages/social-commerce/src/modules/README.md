@@ -1,116 +1,57 @@
-# Custom Module
+# Modules
 
-A module is a package of reusable functionalities. It can be integrated into your Medusa application without affecting the overall system. You can create a module as part of a plugin.
+Custom Medusa module (`social_commerce`) implementing multi-platform OAuth 2.0 + PKCE, AES-256-GCM token encryption, shoppable media & 24h stories, live shopping stock reservations, and outbound product catalog feeds.
 
-Learn more about modules in [this documentation](https://docs.medusajs.com/learn/fundamentals/modules).
-
-To create a module:
-
-## 1. Create a Data Model
-
-A data model represents a table in the database. You create a data model in a TypeScript or JavaScript file under the `models` directory of a module.
-
-For example, create the file `src/modules/blog/models/post.ts` with the following content:
-
-```ts
-import { model } from "@medusajs/framework/utils"
-
-const Post = model.define("post", {
-  id: model.id().primaryKey(),
-  title: model.text(),
-})
-
-export default Post
+```
+modules/
+└── social-commerce/
+    ├── index.ts                                  Module("social_commerce", { service: SocialCommerceService })
+    ├── migrations/
+    │   └── Migration20261013000000.ts            Creates the 6 social_commerce tables and indexes
+    ├── models/
+    │   ├── index.ts                              Barrel exporting all 6 DML models
+    │   ├── social-account.ts                     SocialAccount (social_account)
+    │   ├── social-media-post.ts                  SocialMediaPost (social_media_post)
+    │   ├── social-product-tag.ts                 SocialProductTag (social_product_tag)
+    │   ├── live-session.ts                       LiveSession (live_session)
+    │   ├── live-product.ts                       LiveProduct (live_product)
+    │   └── catalog-sync-item.ts                  CatalogSyncItem (catalog_sync_item)
+    ├── providers/
+    │   ├── index.ts                              Exports TikTokProvider & MetaGraphProvider
+    │   ├── tiktok.provider.ts                    TikTok OAuth v2, Display API v2, TikTok Shop Catalog & Webhooks
+    │   └── meta-graph.provider.ts                Instagram & Facebook Graph API v21.0, Meta Catalog items_batch & Webhooks
+    ├── services/
+    │   ├── social-commerce.service.ts            SocialCommerceService (extends MedusaService)
+    │   ├── inventory-reservation.service.ts      InventoryReservationService (Redis Lua + in-memory mutex/TTL)
+    │   └── catalog-feed.service.ts               CatalogFeedService (XML RSS 2.0, CSV, JSON & SHA-256 checksums)
+    ├── types/
+    │   └── index.ts                              Module DTOs, provider interfaces, and workflow types
+    └── utils/
+        ├── medusa-error.ts                       MedusaError factory helper
+        └── security.ts                           AES-256-GCM token vault, PKCE S256, signed OAuth state, HMAC-SHA256
 ```
 
-## 2. Create a Service
+---
 
-A module must define a service. A service is a TypeScript or JavaScript class holding methods related to a business logic or commerce functionality.
+## Service Token
 
-For example, create the file `src/modules/blog/service.ts` with the following content:
+- **Module token:** `SOCIAL_COMMERCE_MODULE = "social_commerce"`
+- **Primary service:** `SocialCommerceService`
 
-```ts
-import { MedusaService } from "@medusajs/framework/utils"
-import Post from "./models/post"
+---
 
-class BlogModuleService extends MedusaService({
-  Post,
-}){
-}
+## Sub-services
 
-export default BlogModuleService
-```
+### 1. `SocialCommerceService` (`services/social-commerce.service.ts`)
+- **OAuth & Accounts:** `initiateOAuthConnect`, `completeOAuthCallback`, `listAccounts`, `getAccount`, `updateAccountSettings`, `disconnectAccount`, `refreshAccountToken`, `refreshExpiringAccounts`
+- **Media & 24h Stories:** `syncAccountMedia`, `syncAllAccountsMedia`, `publishLocalStory`, `listFeedPosts`, `listActiveStories`, `getPostWithTags`, `modifyMediaPost`, `purgeMediaPost`, `cleanupExpiredStories`
+- **Product Hotspot Tagging:** `tagProductsOnPost`, `untagProductFromPost`, `listPostProductTags`
+- **Live Selling & Flash-Sale Reservations:** `scheduleLiveSession`, `startLiveSession`, `endLiveSession`, `listLiveSessions`, `getLiveSessionWithProducts`, `pinProductsToLiveSession`, `reserveLiveProductStock`, `confirmLiveProductReservation`, `releaseLiveProductReservation`
+- **Catalog Sync & Checkout Handoff:** `syncProductsToSocialCatalog`, `listCatalogSyncItems`, `renderCatalogFeed`, `createCheckoutHandoff`, `verifyAndParseWebhook`
 
-## 3. Export Module Definition
+### 2. `InventoryReservationService` (`services/inventory-reservation.service.ts`)
+- Supports **Redis Lua atomic mode** (`EVAL` script checking `allocated - reserved - sold >= quantity`) and **in-memory mutex/TTL fallback mode**.
+- Methods: `allocateVariantStock`, `reserveStock`, `confirmReservation`, `releaseReservation`, `cleanupExpiredReservations`, `getStockSnapshot`, `listReservations`.
 
-A module must have an `index.ts` file in its root directory that exports its definition. The definition specifies the main service of the module.
-
-For example, create the file `src/modules/blog/index.ts` with the following content:
-
-```ts
-import BlogModuleService from "./service"
-import { Module } from "@medusajs/framework/utils"
-
-export const BLOG_MODULE = "blog"
-
-export default Module(BLOG_MODULE, {
-  service: BlogModuleService,
-})
-```
-
-## 4. Generate Migrations
-
-To generate migrations for your module, run the following command in the plugin's directory:
-
-```bash
-npx medusa plugin:db:genreate
-```
-
-## Use Module
-
-You can use the module in customizations within the plugin or within the Medusa application using this plugin. When the plugin is added to a Medusa application, all its modules are registered as well.
-
-For example, to use the module in an API route:
-
-```ts
-import { MedusaRequest, MedusaResponse } from "@medusajs/framework"
-import BlogModuleService from "../../../modules/blog/service"
-import { BLOG_MODULE } from "../../../modules/blog"
-
-export async function GET(
-  req: MedusaRequest,
-  res: MedusaResponse
-): Promise<void> {
-  const blogModuleService: BlogModuleService = req.scope.resolve(
-    BLOG_MODULE
-  )
-
-  const posts = await blogModuleService.listPosts()
-
-  res.json({
-    posts
-  })
-}
-```
-
-## Module Options
-
-When you register the plugin in the Medusa application, it can accept options. These options are passed to the modules within the plugin:
-
-```ts
-import { defineConfig } from "@medusajs/framework/utils"
-
-module.exports = defineConfig({
-  // ...
-  plugins: [
-    {
-      resolve: "@myorg/plugin-name",
-      options: {
-        apiKey: process.env.API_KEY,
-      },
-    },
-  ],
-})
-```
-
-Learn more about module options in [this documentation](https://docs.medusajs.com/learn/fundamentals/modules/options).
+### 3. `CatalogFeedService` (`services/catalog-feed.service.ts`)
+- Generates Meta / Google Merchant RSS 2.0 XML (`g:id`, `g:price`, `g:availability`, `g:image_link`), RFC-4180 CSV (with formula-injection escaping), and JSON product feeds, plus deterministic SHA-256 item checksums (`computeItemChecksum`) for incremental catalog sync.

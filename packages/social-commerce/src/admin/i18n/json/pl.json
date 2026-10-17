@@ -1,0 +1,115 @@
+{
+  "nav": {
+    "label": "Social Commerce"
+  },
+  "page": {
+    "loading": "Ładowanie danych Social Commerce..."
+  },
+  "header": {
+    "title": "Social Commerce i Relacje 24h",
+    "subtitle": "TikTok, Instagram, Facebook oraz zakupowe relacje na stronie, transmisje na żywo i synchronizacja katalogu",
+    "languageLabel": "Język",
+    "platformFilterAria": "Filtruj według platformy",
+    "syncNow": "Synchronizuj multimedia teraz",
+    "platforms": {
+      "all": "Wszystkie platformy",
+      "tiktok": "TikTok",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "local": "Lokalne relacje"
+    }
+  },
+  "tabs": {
+    "accounts": "Konta ({{count}})",
+    "feed": "Kanał zakupowy ({{count}})",
+    "stories": "Relacje 24h ({{count}})",
+    "live": "Zakupy na żywo ({{count}})",
+    "catalog": "Synchronizacja katalogu ({{count}})"
+  },
+  "accountsTab": {
+    "connectTiktok": "+ Połącz TikTok",
+    "connectInstagram": "+ Połącz Instagram",
+    "connectFacebook": "+ Połącz stronę Facebook",
+    "noExpiry": "—",
+    "columns": {
+      "platform": "Platforma",
+      "username": "Nazwa użytkownika",
+      "displayName": "Nazwa wyświetlana",
+      "status": "Status",
+      "expiresAt": "Wygasa"
+    }
+  },
+  "feedTab": {
+    "taggedProducts": "Oznaczone produkty: {{count}}",
+    "viewOriginalPost": "Zobacz oryginalny post"
+  },
+  "storiesTab": {
+    "titlePlaceholder": "Tytuł relacji",
+    "mediaUrlPlaceholder": "URL multimediów (https://...)",
+    "linkUrlPlaceholder": "URL linku swipe-up (opcjonalnie)",
+    "durationAria": "Czas trwania w sekundach",
+    "publishButton": "Opublikuj relację",
+    "untitledStory": "Relacja bez tytułu",
+    "expiresLabel": "Wygasa: {{date}}",
+    "neverExpires": "Nigdy",
+    "durationMeta": "{{platform}} • {{seconds}}s",
+    "mediaTypes": {
+      "story": "Relacja 24h",
+      "video": "Wideo zakupowe",
+      "image": "Obraz zakupowy"
+    }
+  },
+  "liveTab": {
+    "titlePlaceholder": "Tytuł transmisji na żywo",
+    "streamUrlPlaceholder": "URL osadzenia transmisji (https://...)",
+    "scheduleButton": "Zaplanuj transmisję na żywo",
+    "statusLabel": "Status: {{status}}",
+    "statsLine": "Szczyt widzów: {{peakViewers}} | Przypięte produkty: {{pinnedCount}}",
+    "goLiveButton": "Rozpocznij na żywo",
+    "endStreamButton": "Zakończ transmisję",
+    "platforms": {
+      "tiktok": "TikTok Live",
+      "instagram": "Instagram Live",
+      "facebook": "Facebook Live",
+      "local": "Transmisja na żywo w sklepie"
+    }
+  },
+  "catalogTab": {
+    "publicFeedsLabel": "Publiczne kanały danych:",
+    "metaXmlFeed": "Meta RSS 2.0 XML",
+    "tiktokCsvFeed": "TikTok Shop CSV",
+    "jsonFeed": "Kanał JSON",
+    "emptyValue": "—",
+    "columns": {
+      "productId": "ID produktu",
+      "platform": "Platforma",
+      "externalProductId": "Zewnętrzne ID produktu",
+      "syncStatus": "Status synchronizacji",
+      "lastSynced": "Ostatnia synchronizacja"
+    }
+  },
+  "widget": {
+    "title": "Social Commerce i Zakupowe Relacje",
+    "loading": "Ładowanie oznaczeń społecznościowych...",
+    "taggedHeading": "Oznaczono w postach / relacjach ({{count}}):",
+    "none": "Brak",
+    "catalogStatusHeading": "Status katalogu zewnętrznego:",
+    "notSyncedYet": "Jeszcze niezsynchronizowano"
+  },
+  "messages": {
+    "loadDashboardError": "Nie udało się załadować danych Social Commerce.",
+    "oauthInitError": "Nie udało się zainicjować OAuth dla {{platform}}",
+    "oauthRequestError": "Żądanie połączenia OAuth nie powiodło się.",
+    "syncingMedia": "Synchronizowanie postów i rolek z mediów społecznościowych...",
+    "syncMediaError": "Synchronizacja multimediów nie powiodła się.",
+    "syncMediaSuccess": "Zsynchronizowano {{count}} postów multimedialnych.",
+    "createStoryError": "Nie udało się utworzyć lokalnej relacji.",
+    "createStorySuccess": "Utworzono 24-godzinną relację zakupową.",
+    "scheduleLiveError": "Nie udało się zaplanować sesji na żywo.",
+    "scheduleLiveSuccess": "Utworzono sesję zakupów na żywo.",
+    "liveStarted": "Sesja na żywo rozpoczęta.",
+    "liveEnded": "Sesja na żywo zakończona.",
+    "liveTransitionError": "Zmiana stanu sesji na żywo nie powiodła się.",
+    "loadWidgetError": "Nie udało się załadować statusu social commerce produktu."
+  }
+}

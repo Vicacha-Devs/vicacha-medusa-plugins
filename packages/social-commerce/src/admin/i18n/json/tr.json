@@ -1,0 +1,115 @@
+{
+  "nav": {
+    "label": "Sosyal Ticaret"
+  },
+  "page": {
+    "loading": "Sosyal Ticaret verileri yükleniyor..."
+  },
+  "header": {
+    "title": "Sosyal Ticaret ve Süreli Hikayeler",
+    "subtitle": "TikTok, Instagram, Facebook ve Site İçi Alışveriş Yapılabilir Hikayeler, Canlı Satış ve Katalog Senkronizasyonu",
+    "languageLabel": "Dil",
+    "platformFilterAria": "Platforma Göre Filtrele",
+    "syncNow": "Medyayı Şimdi Senkronize Et",
+    "platforms": {
+      "all": "Tüm Platformlar",
+      "tiktok": "TikTok",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "local": "Yerel Hikayeler"
+    }
+  },
+  "tabs": {
+    "accounts": "Hesaplar ({{count}})",
+    "feed": "Alışveriş Akışı ({{count}})",
+    "stories": "24s Hikayeler ({{count}})",
+    "live": "Canlı Alışveriş ({{count}})",
+    "catalog": "Katalog Senkronizasyonu ({{count}})"
+  },
+  "accountsTab": {
+    "connectTiktok": "+ TikTok Bağla",
+    "connectInstagram": "+ Instagram Bağla",
+    "connectFacebook": "+ Facebook Sayfası Bağla",
+    "noExpiry": "—",
+    "columns": {
+      "platform": "Platform",
+      "username": "Kullanıcı Adı",
+      "displayName": "Görünen Ad",
+      "status": "Durum",
+      "expiresAt": "Bitiş Tarihi"
+    }
+  },
+  "feedTab": {
+    "taggedProducts": "{{count}} etiketli ürün",
+    "viewOriginalPost": "Orijinal Gönderiyi Gör"
+  },
+  "storiesTab": {
+    "titlePlaceholder": "Hikaye Başlığı",
+    "mediaUrlPlaceholder": "Medya URL'si (https://...)",
+    "linkUrlPlaceholder": "Yukarı Kaydırma Bağlantı URL'si (isteğe bağlı)",
+    "durationAria": "Saniye cinsinden süre",
+    "publishButton": "Hikayeyi Yayınla",
+    "untitledStory": "Başlıksız Hikaye",
+    "expiresLabel": "Bitiş: {{date}}",
+    "neverExpires": "Asla",
+    "durationMeta": "{{platform}} • {{seconds}}sn",
+    "mediaTypes": {
+      "story": "24s Hikaye",
+      "video": "Alışveriş Yapılabilir Video",
+      "image": "Alışveriş Yapılabilir Görsel"
+    }
+  },
+  "liveTab": {
+    "titlePlaceholder": "Canlı Yayın Başlığı",
+    "streamUrlPlaceholder": "Yayın Yerleştirme URL'si (https://...)",
+    "scheduleButton": "Canlı Yayın Planla",
+    "statusLabel": "Durum: {{status}}",
+    "statsLine": "Zirve İzleyici: {{peakViewers}} | Sabitlenen Ürünler: {{pinnedCount}}",
+    "goLiveButton": "Canlı Yayına Geç",
+    "endStreamButton": "Yayını Bitir",
+    "platforms": {
+      "tiktok": "TikTok Canlı",
+      "instagram": "Instagram Canlı",
+      "facebook": "Facebook Canlı",
+      "local": "Site İçi Canlı Yayın"
+    }
+  },
+  "catalogTab": {
+    "publicFeedsLabel": "Herkese Açık Barındırılan Akışlar:",
+    "metaXmlFeed": "Meta RSS 2.0 XML",
+    "tiktokCsvFeed": "TikTok Shop CSV",
+    "jsonFeed": "JSON Akışı",
+    "emptyValue": "—",
+    "columns": {
+      "productId": "Ürün Kimliği",
+      "platform": "Platform",
+      "externalProductId": "Harici Ürün Kimliği",
+      "syncStatus": "Senkronizasyon Durumu",
+      "lastSynced": "Son Senkronizasyon"
+    }
+  },
+  "widget": {
+    "title": "Sosyal Ticaret ve Alışveriş Yapılabilir Hikayeler",
+    "loading": "Sosyal etiketler yükleniyor...",
+    "taggedHeading": "Gönderilerde / Hikayelerde Etiketlenen ({{count}}):",
+    "none": "Yok",
+    "catalogStatusHeading": "Harici Katalog Durumu:",
+    "notSyncedYet": "Henüz senkronize edilmedi"
+  },
+  "messages": {
+    "loadDashboardError": "Sosyal Ticaret verileri yüklenemedi.",
+    "oauthInitError": "{{platform}} OAuth başlatılamadı",
+    "oauthRequestError": "OAuth bağlantı isteği başarısız oldu.",
+    "syncingMedia": "Sosyal medya gönderileri ve reels videoları senkronize ediliyor...",
+    "syncMediaError": "Medya senkronizasyonu başarısız oldu.",
+    "syncMediaSuccess": "{{count}} medya gönderisi senkronize edildi.",
+    "createStoryError": "Yerel hikaye oluşturulamadı.",
+    "createStorySuccess": "24 saatlik alışveriş yapılabilir hikaye oluşturuldu.",
+    "scheduleLiveError": "Canlı oturum planlanamadı.",
+    "scheduleLiveSuccess": "Canlı alışveriş oturumu oluşturuldu.",
+    "liveStarted": "Canlı oturum başlatıldı.",
+    "liveEnded": "Canlı oturum sonlandırıldı.",
+    "liveTransitionError": "Canlı oturum durum geçişi başarısız oldu.",
+    "loadWidgetError": "Ürünün sosyal ticaret durumu yüklenemedi."
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "nav": {
+    "label": "التجارة الاجتماعية"
+  },
+  "page": {
+    "loading": "جاري تحميل بيانات التجارة الاجتماعية..."
+  },
+  "header": {
+    "title": "التجارة الاجتماعية والقصص المؤقتة",
+    "subtitle": "تيك توك وإنستغرام وفيسبوك وقصص التسوق داخل الموقع والبث المباشر ومزامنة الكتالوج",
+    "languageLabel": "اللغة",
+    "platformFilterAria": "تصفية حسب المنصة",
+    "syncNow": "مزامنة الوسائط الآن",
+    "platforms": {
+      "all": "جميع المنصات",
+      "tiktok": "TikTok",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "local": "القصص المحلية"
+    }
+  },
+  "tabs": {
+    "accounts": "الحسابات ({{count}})",
+    "feed": "واجهة التسوق ({{count}})",
+    "stories": "قصص 24 ساعة ({{count}})",
+    "live": "التسوق المباشر ({{count}})",
+    "catalog": "مزامنة الكتالوج ({{count}})"
+  },
+  "accountsTab": {
+    "connectTiktok": "+ ربط TikTok",
+    "connectInstagram": "+ ربط Instagram",
+    "connectFacebook": "+ ربط صفحة Facebook",
+    "noExpiry": "—",
+    "columns": {
+      "platform": "المنصة",
+      "username": "اسم المستخدم",
+      "displayName": "الاسم المعروض",
+      "status": "الحالة",
+      "expiresAt": "ينتهي في"
+    }
+  },
+  "feedTab": {
+    "taggedProducts": "{{count}} منتجات مُشار إليها",
+    "viewOriginalPost": "عرض المنشور الأصلي"
+  },
+  "storiesTab": {
+    "titlePlaceholder": "عنوان القصة",
+    "mediaUrlPlaceholder": "رابط الوسائط (https://...)",
+    "linkUrlPlaceholder": "رابط السحب للأعلى (اختياري)",
+    "durationAria": "المدة بالثواني",
+    "publishButton": "نشر القصة",
+    "untitledStory": "قصة بدون عنوان",
+    "expiresLabel": "تنتهي: {{date}}",
+    "neverExpires": "أبداً",
+    "durationMeta": "{{platform}} • {{seconds}} ث",
+    "mediaTypes": {
+      "story": "قصة 24 ساعة",
+      "video": "فيديو قابل للتسوق",
+      "image": "صورة قابلة للتسوق"
+    }
+  },
+  "liveTab": {
+    "titlePlaceholder": "عنوان البث المباشر",
+    "streamUrlPlaceholder": "رابط تضمين البث (https://...)",
+    "scheduleButton": "جدولة البث المباشر",
+    "statusLabel": "الحالة: {{status}}",
+    "statsLine": "ذروة المشاهدين: {{peakViewers}} | المنتجات المثبتة: {{pinnedCount}}",
+    "goLiveButton": "بدء البث المباشر",
+    "endStreamButton": "إنهاء البث",
+    "platforms": {
+      "tiktok": "بث TikTok المباشر",
+      "instagram": "بث Instagram المباشر",
+      "facebook": "بث Facebook المباشر",
+      "local": "بث مباشر على الموقع"
+    }
+  },
+  "catalogTab": {
+    "publicFeedsLabel": "التغذيات العامة المستضافة:",
+    "metaXmlFeed": "Meta RSS 2.0 XML",
+    "tiktokCsvFeed": "TikTok Shop CSV",
+    "jsonFeed": "تغذية JSON",
+    "emptyValue": "—",
+    "columns": {
+      "productId": "معرّف المنتج",
+      "platform": "المنصة",
+      "externalProductId": "معرّف المنتج الخارجي",
+      "syncStatus": "حالة المزامنة",
+      "lastSynced": "آخر مزامنة"
+    }
+  },
+  "widget": {
+    "title": "التجارة الاجتماعية وقصص التسوق",
+    "loading": "جاري تحميل الإشارات الاجتماعية...",
+    "taggedHeading": "مُشار إليه في المنشورات / القصص ({{count}}):",
+    "none": "لا يوجد",
+    "catalogStatusHeading": "حالة الكتالوج الخارجي:",
+    "notSyncedYet": "لم تتم المزامنة بعد"
+  },
+  "messages": {
+    "loadDashboardError": "فشل تحميل بيانات التجارة الاجتماعية.",
+    "oauthInitError": "فشل بدء مصادقة OAuth لمنصة {{platform}}",
+    "oauthRequestError": "فشل طلب اتصال OAuth.",
+    "syncingMedia": "جاري مزامنة منشورات ومقاطع الفيديو الاجتماعية...",
+    "syncMediaError": "فشلت مزامنة الوسائط.",
+    "syncMediaSuccess": "تمت مزامنة {{count}} من منشورات الوسائط.",
+    "createStoryError": "فشل إنشاء القصة المحلية.",
+    "createStorySuccess": "تم إنشاء قصة تسوق لمدة 24 ساعة.",
+    "scheduleLiveError": "فشل جدولة جلسة البث المباشر.",
+    "scheduleLiveSuccess": "تم إنشاء جلسة تسوق مباشر.",
+    "liveStarted": "بدأت جلسة البث المباشر.",
+    "liveEnded": "انتهت جلسة البث المباشر.",
+    "liveTransitionError": "فشل تغيير حالة جلسة البث المباشر.",
+    "loadWidgetError": "فشل تحميل حالة التجارة الاجتماعية للمنتج."
+  }
+}

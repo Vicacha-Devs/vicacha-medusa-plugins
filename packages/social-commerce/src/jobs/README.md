@@ -1,36 +1,18 @@
-# Custom scheduled jobs
+# Scheduled Jobs
 
-A scheduled job is a function executed at a specified interval of time in the background of your Medusa application.
+Medusa scheduled background jobs that refresh expiring OAuth 2.0 tokens, ingest remote social media posts & 24h stories, and reclaim expired live-stream stock reservations.
 
-A scheduled job is created in a TypeScript or JavaScript file under the `src/jobs` directory.
-
-For example, create the file `src/jobs/hello-world.ts` with the following content:
-
-```ts
-import {
-  MedusaContainer
-} from "@medusajs/framework/types";
-
-export default async function myCustomJob(container: MedusaContainer) {
-  const productService = container.resolve("product")
-
-  const products = await productService.listAndCountProducts();
-
-  // Do something with the products
-}
-
-export const config = {
-  name: "daily-product-report",
-  schedule: "0 0 * * *", // Every day at midnight
-};
+```
+jobs/
+├── sync-social-media-and-tokens.job.ts           Every 30 minutes (0 */30 * * * *)
+└── cleanup-reservations-and-sync-catalog.job.ts  Every 5 minutes  (0 */5 * * * *)
 ```
 
-A scheduled job file must export:
+---
 
-- The function to be executed whenever it’s time to run the scheduled job.
-- A configuration object defining the job. It has three properties:
-  - `name`: a unique name for the job.
-  - `schedule`: a [cron expression](https://crontab.guru/).
-  - `numberOfExecutions`: an optional integer, specifying how many times the job will execute before being removed
+## Job Index
 
-The `handler` is a function that accepts one parameter, `container`, which is a `MedusaContainer` instance used to resolve services.
+| Job Name | Schedule | File | Handler Behavior |
+| --- | --- | --- | --- |
+| `social-commerce-sync-media-and-tokens` | `0 */30 * * * *` (Every 30 minutes) | `sync-social-media-and-tokens.job.ts` | 1. Calls `socialService.refreshExpiringAccounts(60)` to refresh any TikTok or Meta OAuth token expiring within 60 minutes.<br>2. Calls `socialService.syncAllAccountsMedia({ includeStories: true })` to ingest new videos, reels, posts, and 24-hour stories and mark expired stories. |
+| `social-commerce-cleanup-expired-reservations` | `0 */5 * * * *` (Every 5 minutes) | `cleanup-reservations-and-sync-catalog.job.ts` | Calls `socialService.reservationService.cleanupExpiredReservations()` to release held flash-sale stock reservations whose TTL has elapsed without order completion. |

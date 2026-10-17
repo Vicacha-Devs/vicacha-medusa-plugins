@@ -1,59 +1,20 @@
-# Custom subscribers
+# Subscribers
 
-Subscribers handle events emitted in the Medusa application.
+Event subscribers that react to Medusa core order/product events and social domain/webhook events.
 
-The subscriber is created in a TypeScript or JavaScript file under the `src/subscribers` directory.
-
-For example, create the file `src/subscribers/product-created.ts` with the following content:
-
-```ts
-import {
-  type SubscriberConfig,
-} from "@medusajs/framework"
-
-// subscriber function
-export default async function productCreateHandler() {
-  console.log("A product was created")
-}
-
-// subscriber config
-export const config: SubscriberConfig = {
-  event: "product.created",
-}
+```
+subscribers/
+├── order-placed.subscriber.ts      Handles order.placed — confirms held live stock reservations
+├── product-sync.subscriber.ts      Handles product.created & product.updated — syncs outbound catalogs
+└── social-events.subscriber.ts     Handles social.* events — triggers onboarding & live session workflows
 ```
 
-A subscriber file must export:
+---
 
-- The subscriber function that is an asynchronous function executed whenever the associated event is triggered.
-- A configuration object defining the event this subscriber is listening to.
+## Subscriber Index
 
-## Subscriber Parameters
-
-A subscriber receives an object having the following properties:
-
-- `event`: An object holding the event's details. It has a `data` property, which is the event's data payload.
-- `container`: The Medusa container. Use it to resolve modules' main services and other registered resources.
-
-```ts
-import type {
-  SubscriberArgs,
-  SubscriberConfig,
-} from "@medusajs/framework"
-
-export default async function productCreateHandler({
-  event: { data },
-  container,
-}: SubscriberArgs<{ id: string }>) {
-  const productId = data.id
-
-  const productModuleService = container.resolve("product")
-
-  const product = await productModuleService.retrieveProduct(productId)
-
-  console.log(`The product ${product.title} was created`)
-}
-
-export const config: SubscriberConfig = {
-  event: "product.created",
-}
-```
+| File | Subscribed Events | Behavior |
+| --- | --- | --- |
+| `order-placed.subscriber.ts` | `order.placed` | Inspects `order.metadata.reservation_id`, `order.metadata.live_reservation_ids`, and `order.cart_id` to find any held live-stream stock reservations (`status: "held"`) and calls `socialService.confirmLiveProductReservation(reservationId)` so reserved stock transitions to `sold_stock`. |
+| `product-sync.subscriber.ts` | `product.created`, `product.updated` | Iterates active `SocialAccount` records (excluding `platform: "local"`) that have a configured `external_catalog_id` or `external_shop_id` and pushes updated `CatalogFeedProductItem[]` via `socialService.syncProductsToSocialCatalog`. |
+| `social-events.subscriber.ts` | `social.account_connected`, `social.media_synced`, `social.live_started`, `social.live_ended` | Executes `accountConnectedWorkflow`, `liveStartedWorkflow`, or `liveEndedWorkflow` when social domain events are emitted by OAuth callbacks or incoming platform webhooks. |

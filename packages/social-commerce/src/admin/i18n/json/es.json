@@ -1,0 +1,115 @@
+{
+  "nav": {
+    "label": "Comercio Social"
+  },
+  "page": {
+    "loading": "Cargando datos de Comercio Social..."
+  },
+  "header": {
+    "title": "Comercio Social e Historias Efímeras",
+    "subtitle": "TikTok, Instagram, Facebook e historias comprables en el sitio, ventas en vivo y sincronización de catálogo",
+    "languageLabel": "Idioma",
+    "platformFilterAria": "Filtrar por plataforma",
+    "syncNow": "Sincronizar medios ahora",
+    "platforms": {
+      "all": "Todas las plataformas",
+      "tiktok": "TikTok",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "local": "Historias locales"
+    }
+  },
+  "tabs": {
+    "accounts": "Cuentas ({{count}})",
+    "feed": "Feed comprable ({{count}})",
+    "stories": "Historias 24h ({{count}})",
+    "live": "Compras en vivo ({{count}})",
+    "catalog": "Sincronización de catálogo ({{count}})"
+  },
+  "accountsTab": {
+    "connectTiktok": "+ Conectar TikTok",
+    "connectInstagram": "+ Conectar Instagram",
+    "connectFacebook": "+ Conectar página de Facebook",
+    "noExpiry": "—",
+    "columns": {
+      "platform": "Plataforma",
+      "username": "Usuario",
+      "displayName": "Nombre visible",
+      "status": "Estado",
+      "expiresAt": "Expira el"
+    }
+  },
+  "feedTab": {
+    "taggedProducts": "{{count}} productos etiquetados",
+    "viewOriginalPost": "Ver publicación original"
+  },
+  "storiesTab": {
+    "titlePlaceholder": "Título de la historia",
+    "mediaUrlPlaceholder": "URL del medio (https://...)",
+    "linkUrlPlaceholder": "URL de enlace deslizable (opcional)",
+    "durationAria": "Duración en segundos",
+    "publishButton": "Publicar historia",
+    "untitledStory": "Historia sin título",
+    "expiresLabel": "Expira: {{date}}",
+    "neverExpires": "Nunca",
+    "durationMeta": "{{platform}} • {{seconds}}s",
+    "mediaTypes": {
+      "story": "Historia de 24h",
+      "video": "Video comprable",
+      "image": "Imagen comprable"
+    }
+  },
+  "liveTab": {
+    "titlePlaceholder": "Título de la transmisión en vivo",
+    "streamUrlPlaceholder": "URL de inserción del stream (https://...)",
+    "scheduleButton": "Programar transmisión en vivo",
+    "statusLabel": "Estado: {{status}}",
+    "statsLine": "Pico de espectadores: {{peakViewers}} | Productos fijados: {{pinnedCount}}",
+    "goLiveButton": "Transmitir en vivo",
+    "endStreamButton": "Finalizar transmisión",
+    "platforms": {
+      "tiktok": "TikTok Live",
+      "instagram": "Instagram Live",
+      "facebook": "Facebook Live",
+      "local": "Transmisión en vivo en el sitio"
+    }
+  },
+  "catalogTab": {
+    "publicFeedsLabel": "Feeds públicos alojados:",
+    "metaXmlFeed": "XML RSS 2.0 de Meta",
+    "tiktokCsvFeed": "CSV de TikTok Shop",
+    "jsonFeed": "Feed JSON",
+    "emptyValue": "—",
+    "columns": {
+      "productId": "ID de producto",
+      "platform": "Plataforma",
+      "externalProductId": "ID de producto externo",
+      "syncStatus": "Estado de sincronización",
+      "lastSynced": "Última sincronización"
+    }
+  },
+  "widget": {
+    "title": "Comercio Social e Historias Comprables",
+    "loading": "Cargando etiquetas sociales...",
+    "taggedHeading": "Etiquetado en publicaciones / historias ({{count}}):",
+    "none": "Ninguno",
+    "catalogStatusHeading": "Estado del catálogo externo:",
+    "notSyncedYet": "Aún no sincronizado"
+  },
+  "messages": {
+    "loadDashboardError": "Error al cargar los datos de Comercio Social.",
+    "oauthInitError": "Error al iniciar OAuth con {{platform}}",
+    "oauthRequestError": "Falló la solicitud de conexión OAuth.",
+    "syncingMedia": "Sincronizando publicaciones y reels de redes sociales...",
+    "syncMediaError": "Falló la sincronización de medios.",
+    "syncMediaSuccess": "Se sincronizaron {{count}} publicaciones multimedia.",
+    "createStoryError": "Error al crear la historia local.",
+    "createStorySuccess": "Historia comprable de 24h creada.",
+    "scheduleLiveError": "Error al programar la sesión en vivo.",
+    "scheduleLiveSuccess": "Sesión de compras en vivo creada.",
+    "liveStarted": "Sesión en vivo iniciada.",
+    "liveEnded": "Sesión en vivo finalizada.",
+    "liveTransitionError": "Falló la transición de la sesión en vivo.",
+    "loadWidgetError": "Error al cargar el estado de comercio social del producto."
+  }
+}

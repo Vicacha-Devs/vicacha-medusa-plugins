@@ -1,0 +1,115 @@
+{
+  "nav": {
+    "label": "Commerce Social"
+  },
+  "page": {
+    "loading": "Chargement des données de Commerce Social..."
+  },
+  "header": {
+    "title": "Commerce Social et Stories Éphémères",
+    "subtitle": "TikTok, Instagram, Facebook et Stories achetables sur site, Live Shopping et synchronisation du catalogue",
+    "languageLabel": "Langue",
+    "platformFilterAria": "Filtrer par plateforme",
+    "syncNow": "Synchroniser les médias",
+    "platforms": {
+      "all": "Toutes les plateformes",
+      "tiktok": "TikTok",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "local": "Stories locales"
+    }
+  },
+  "tabs": {
+    "accounts": "Comptes ({{count}})",
+    "feed": "Flux achetable ({{count}})",
+    "stories": "Stories 24h ({{count}})",
+    "live": "Live Shopping ({{count}})",
+    "catalog": "Synchronisation catalogue ({{count}})"
+  },
+  "accountsTab": {
+    "connectTiktok": "+ Connecter TikTok",
+    "connectInstagram": "+ Connecter Instagram",
+    "connectFacebook": "+ Connecter une page Facebook",
+    "noExpiry": "—",
+    "columns": {
+      "platform": "Plateforme",
+      "username": "Nom d'utilisateur",
+      "displayName": "Nom affiché",
+      "status": "Statut",
+      "expiresAt": "Expire le"
+    }
+  },
+  "feedTab": {
+    "taggedProducts": "{{count}} produits identifiés",
+    "viewOriginalPost": "Voir la publication originale"
+  },
+  "storiesTab": {
+    "titlePlaceholder": "Titre de la story",
+    "mediaUrlPlaceholder": "URL du média (https://...)",
+    "linkUrlPlaceholder": "URL du lien swipe-up (optionnel)",
+    "durationAria": "Durée en secondes",
+    "publishButton": "Publier la story",
+    "untitledStory": "Story sans titre",
+    "expiresLabel": "Expire : {{date}}",
+    "neverExpires": "Jamais",
+    "durationMeta": "{{platform}} • {{seconds}}s",
+    "mediaTypes": {
+      "story": "Story 24h",
+      "video": "Vidéo achetable",
+      "image": "Image achetable"
+    }
+  },
+  "liveTab": {
+    "titlePlaceholder": "Titre du direct",
+    "streamUrlPlaceholder": "URL d'intégration du flux (https://...)",
+    "scheduleButton": "Planifier le direct",
+    "statusLabel": "Statut : {{status}}",
+    "statsLine": "Pic de spectateurs : {{peakViewers}} | Produits épinglés : {{pinnedCount}}",
+    "goLiveButton": "Passer en direct",
+    "endStreamButton": "Terminer le direct",
+    "platforms": {
+      "tiktok": "TikTok Live",
+      "instagram": "Instagram Live",
+      "facebook": "Facebook Live",
+      "local": "Direct sur le site"
+    }
+  },
+  "catalogTab": {
+    "publicFeedsLabel": "Flux publics hébergés :",
+    "metaXmlFeed": "XML RSS 2.0 Meta",
+    "tiktokCsvFeed": "CSV TikTok Shop",
+    "jsonFeed": "Flux JSON",
+    "emptyValue": "—",
+    "columns": {
+      "productId": "ID produit",
+      "platform": "Plateforme",
+      "externalProductId": "ID produit externe",
+      "syncStatus": "Statut de synchro",
+      "lastSynced": "Dernière synchro"
+    }
+  },
+  "widget": {
+    "title": "Commerce Social et Stories Achetables",
+    "loading": "Chargement des tags sociaux...",
+    "taggedHeading": "Identifié dans les publications / stories ({{count}}) :",
+    "none": "Aucun",
+    "catalogStatusHeading": "Statut du catalogue externe :",
+    "notSyncedYet": "Pas encore synchronisé"
+  },
+  "messages": {
+    "loadDashboardError": "Échec du chargement des données de Commerce Social.",
+    "oauthInitError": "Échec de l'initialisation OAuth pour {{platform}}",
+    "oauthRequestError": "La demande de connexion OAuth a échoué.",
+    "syncingMedia": "Synchronisation des publications et reels...",
+    "syncMediaError": "La synchronisation des médias a échoué.",
+    "syncMediaSuccess": "{{count}} publications média synchronisées.",
+    "createStoryError": "Échec de la création de la story locale.",
+    "createStorySuccess": "Story achetable 24h créée.",
+    "scheduleLiveError": "Échec de la planification de la session en direct.",
+    "scheduleLiveSuccess": "Session de live shopping créée.",
+    "liveStarted": "Session en direct démarrée.",
+    "liveEnded": "Session en direct terminée.",
+    "liveTransitionError": "Échec de la transition de la session en direct.",
+    "loadWidgetError": "Échec du chargement du statut social du produit."
+  }
+}

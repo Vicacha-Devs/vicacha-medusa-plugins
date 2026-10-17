@@ -1,0 +1,115 @@
+{
+  "nav": {
+    "label": "Social Commerce"
+  },
+  "page": {
+    "loading": "Social Commerce-gegevens laden..."
+  },
+  "header": {
+    "title": "Social Commerce & Tijdelijke Stories",
+    "subtitle": "TikTok, Instagram, Facebook & Shoppable Stories op de site, Live Shopping en catalogussynchronisatie",
+    "languageLabel": "Taal",
+    "platformFilterAria": "Filteren op platform",
+    "syncNow": "Media nu synchroniseren",
+    "platforms": {
+      "all": "Alle platformen",
+      "tiktok": "TikTok",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "local": "Lokale stories"
+    }
+  },
+  "tabs": {
+    "accounts": "Accounts ({{count}})",
+    "feed": "Shoppable feed ({{count}})",
+    "stories": "24u-stories ({{count}})",
+    "live": "Live shopping ({{count}})",
+    "catalog": "Catalogussynchronisatie ({{count}})"
+  },
+  "accountsTab": {
+    "connectTiktok": "+ TikTok koppelen",
+    "connectInstagram": "+ Instagram koppelen",
+    "connectFacebook": "+ Facebook-pagina koppelen",
+    "noExpiry": "—",
+    "columns": {
+      "platform": "Platform",
+      "username": "Gebruikersnaam",
+      "displayName": "Weergavenaam",
+      "status": "Status",
+      "expiresAt": "Verloopt op"
+    }
+  },
+  "feedTab": {
+    "taggedProducts": "{{count}} getagde producten",
+    "viewOriginalPost": "Origineel bericht bekijken"
+  },
+  "storiesTab": {
+    "titlePlaceholder": "Storytitel",
+    "mediaUrlPlaceholder": "Media-URL (https://...)",
+    "linkUrlPlaceholder": "Swipe-up link-URL (optioneel)",
+    "durationAria": "Duur in seconden",
+    "publishButton": "Story publiceren",
+    "untitledStory": "Naamloze story",
+    "expiresLabel": "Verloopt: {{date}}",
+    "neverExpires": "Nooit",
+    "durationMeta": "{{platform}} • {{seconds}}s",
+    "mediaTypes": {
+      "story": "24u-story",
+      "video": "Shoppable video",
+      "image": "Shoppable afbeelding"
+    }
+  },
+  "liveTab": {
+    "titlePlaceholder": "Titel van livestream",
+    "streamUrlPlaceholder": "Stream embed-URL (https://...)",
+    "scheduleButton": "Livestream plannen",
+    "statusLabel": "Status: {{status}}",
+    "statsLine": "Piek kijkers: {{peakViewers}} | Vastgezette producten: {{pinnedCount}}",
+    "goLiveButton": "Nu live gaan",
+    "endStreamButton": "Stream beëindigen",
+    "platforms": {
+      "tiktok": "TikTok Live",
+      "instagram": "Instagram Live",
+      "facebook": "Facebook Live",
+      "local": "Livestream op de site"
+    }
+  },
+  "catalogTab": {
+    "publicFeedsLabel": "Openbare gehoste feeds:",
+    "metaXmlFeed": "Meta RSS 2.0 XML",
+    "tiktokCsvFeed": "TikTok Shop CSV",
+    "jsonFeed": "JSON-feed",
+    "emptyValue": "—",
+    "columns": {
+      "productId": "Product-ID",
+      "platform": "Platform",
+      "externalProductId": "Externe product-ID",
+      "syncStatus": "Synchronisatiestatus",
+      "lastSynced": "Laatst gesynchroniseerd"
+    }
+  },
+  "widget": {
+    "title": "Social Commerce & Shoppable Stories",
+    "loading": "Sociale tags laden...",
+    "taggedHeading": "Getagd in berichten / stories ({{count}}):",
+    "none": "Geen",
+    "catalogStatusHeading": "Status externe catalogus:",
+    "notSyncedYet": "Nog niet gesynchroniseerd"
+  },
+  "messages": {
+    "loadDashboardError": "Kan Social Commerce-gegevens niet laden.",
+    "oauthInitError": "Kan OAuth voor {{platform}} niet starten",
+    "oauthRequestError": "OAuth-verbindingsverzoek mislukt.",
+    "syncingMedia": "Berichten en reels van sociale media synchroniseren...",
+    "syncMediaError": "Mediasynchronisatie mislukt.",
+    "syncMediaSuccess": "{{count}} mediaberichten gesynchroniseerd.",
+    "createStoryError": "Kan lokale story niet maken.",
+    "createStorySuccess": "24u shoppable story aangemaakt.",
+    "scheduleLiveError": "Kan livesessie niet plannen.",
+    "scheduleLiveSuccess": "Live shopping-sessie aangemaakt.",
+    "liveStarted": "Livesessie gestart.",
+    "liveEnded": "Livesessie beëindigd.",
+    "liveTransitionError": "Statuswijziging van livesessie mislukt.",
+    "loadWidgetError": "Kan social commerce-status van product niet laden."
+  }
+}

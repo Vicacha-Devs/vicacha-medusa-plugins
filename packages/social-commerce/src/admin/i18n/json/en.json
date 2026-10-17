@@ -1,0 +1,115 @@
+{
+  "nav": {
+    "label": "Social Commerce"
+  },
+  "page": {
+    "loading": "Loading Social Commerce data..."
+  },
+  "header": {
+    "title": "Social Commerce & Ephemeral Stories",
+    "subtitle": "TikTok, Instagram, Facebook & On-Site Shoppable Stories, Live Selling, and Catalog Sync",
+    "languageLabel": "Language",
+    "platformFilterAria": "Filter by Platform",
+    "syncNow": "Sync Media Now",
+    "platforms": {
+      "all": "All Platforms",
+      "tiktok": "TikTok",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "local": "Local Stories"
+    }
+  },
+  "tabs": {
+    "accounts": "Accounts ({{count}})",
+    "feed": "Shoppable Feed ({{count}})",
+    "stories": "24h Stories ({{count}})",
+    "live": "Live Shopping ({{count}})",
+    "catalog": "Catalog Sync ({{count}})"
+  },
+  "accountsTab": {
+    "connectTiktok": "+ Connect TikTok",
+    "connectInstagram": "+ Connect Instagram",
+    "connectFacebook": "+ Connect Facebook Page",
+    "noExpiry": "—",
+    "columns": {
+      "platform": "Platform",
+      "username": "Username",
+      "displayName": "Display Name",
+      "status": "Status",
+      "expiresAt": "Expires At"
+    }
+  },
+  "feedTab": {
+    "taggedProducts": "{{count}} tagged products",
+    "viewOriginalPost": "View Original Post"
+  },
+  "storiesTab": {
+    "titlePlaceholder": "Story Title",
+    "mediaUrlPlaceholder": "Media URL (https://...)",
+    "linkUrlPlaceholder": "Swipe-up Link URL (optional)",
+    "durationAria": "Duration in seconds",
+    "publishButton": "Publish Story",
+    "untitledStory": "Untitled Story",
+    "expiresLabel": "Expires: {{date}}",
+    "neverExpires": "Never",
+    "durationMeta": "{{platform}} • {{seconds}}s",
+    "mediaTypes": {
+      "story": "24h Story",
+      "video": "Shoppable Video",
+      "image": "Shoppable Image"
+    }
+  },
+  "liveTab": {
+    "titlePlaceholder": "Live Stream Title",
+    "streamUrlPlaceholder": "Stream Embed URL (https://...)",
+    "scheduleButton": "Schedule Live Stream",
+    "statusLabel": "Status: {{status}}",
+    "statsLine": "Peak Viewers: {{peakViewers}} | Pinned Products: {{pinnedCount}}",
+    "goLiveButton": "Go Live",
+    "endStreamButton": "End Stream",
+    "platforms": {
+      "tiktok": "TikTok Live",
+      "instagram": "Instagram Live",
+      "facebook": "Facebook Live",
+      "local": "On-Site Live Stream"
+    }
+  },
+  "catalogTab": {
+    "publicFeedsLabel": "Public Hosted Feeds:",
+    "metaXmlFeed": "Meta RSS 2.0 XML",
+    "tiktokCsvFeed": "TikTok Shop CSV",
+    "jsonFeed": "JSON Feed",
+    "emptyValue": "—",
+    "columns": {
+      "productId": "Product ID",
+      "platform": "Platform",
+      "externalProductId": "External Product ID",
+      "syncStatus": "Sync Status",
+      "lastSynced": "Last Synced"
+    }
+  },
+  "widget": {
+    "title": "Social Commerce & Shoppable Stories",
+    "loading": "Loading social tags...",
+    "taggedHeading": "Tagged in Posts / Stories ({{count}}):",
+    "none": "None",
+    "catalogStatusHeading": "External Catalog Status:",
+    "notSyncedYet": "Not synced yet"
+  },
+  "messages": {
+    "loadDashboardError": "Failed to load Social Commerce data.",
+    "oauthInitError": "Failed to initiate {{platform}} OAuth",
+    "oauthRequestError": "OAuth connection request failed.",
+    "syncingMedia": "Syncing social media posts and reels...",
+    "syncMediaError": "Media sync failed.",
+    "syncMediaSuccess": "Synced {{count}} media posts.",
+    "createStoryError": "Failed to create local story.",
+    "createStorySuccess": "Created 24h shoppable story.",
+    "scheduleLiveError": "Failed to schedule live session.",
+    "scheduleLiveSuccess": "Created live shopping session.",
+    "liveStarted": "Live session started.",
+    "liveEnded": "Live session ended.",
+    "liveTransitionError": "Live session transition failed.",
+    "loadWidgetError": "Failed to load product social commerce status."
+  }
+}

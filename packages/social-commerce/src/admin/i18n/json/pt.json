@@ -1,0 +1,115 @@
+{
+  "nav": {
+    "label": "Comércio Social"
+  },
+  "page": {
+    "loading": "Carregando dados de Comércio Social..."
+  },
+  "header": {
+    "title": "Comércio Social e Stories Efêmeros",
+    "subtitle": "TikTok, Instagram, Facebook e Stories compráveis no site, Live Commerce e sincronização de catálogo",
+    "languageLabel": "Idioma",
+    "platformFilterAria": "Filtrar por plataforma",
+    "syncNow": "Sincronizar mídia agora",
+    "platforms": {
+      "all": "Todas as plataformas",
+      "tiktok": "TikTok",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "local": "Stories locais"
+    }
+  },
+  "tabs": {
+    "accounts": "Contas ({{count}})",
+    "feed": "Feed comprável ({{count}})",
+    "stories": "Stories 24h ({{count}})",
+    "live": "Live Shopping ({{count}})",
+    "catalog": "Sincronização de catálogo ({{count}})"
+  },
+  "accountsTab": {
+    "connectTiktok": "+ Conectar TikTok",
+    "connectInstagram": "+ Conectar Instagram",
+    "connectFacebook": "+ Conectar página do Facebook",
+    "noExpiry": "—",
+    "columns": {
+      "platform": "Plataforma",
+      "username": "Usuário",
+      "displayName": "Nome de exibição",
+      "status": "Status",
+      "expiresAt": "Expira em"
+    }
+  },
+  "feedTab": {
+    "taggedProducts": "{{count}} produtos marcados",
+    "viewOriginalPost": "Ver publicação original"
+  },
+  "storiesTab": {
+    "titlePlaceholder": "Título do story",
+    "mediaUrlPlaceholder": "URL da mídia (https://...)",
+    "linkUrlPlaceholder": "URL do link arrasta pra cima (opcional)",
+    "durationAria": "Duração em segundos",
+    "publishButton": "Publicar story",
+    "untitledStory": "Story sem título",
+    "expiresLabel": "Expira: {{date}}",
+    "neverExpires": "Nunca",
+    "durationMeta": "{{platform}} • {{seconds}}s",
+    "mediaTypes": {
+      "story": "Story 24h",
+      "video": "Vídeo comprável",
+      "image": "Imagem comprável"
+    }
+  },
+  "liveTab": {
+    "titlePlaceholder": "Título da transmissão ao vivo",
+    "streamUrlPlaceholder": "URL de incorporação do stream (https://...)",
+    "scheduleButton": "Agendar transmissão ao vivo",
+    "statusLabel": "Status: {{status}}",
+    "statsLine": "Pico de espectadores: {{peakViewers}} | Produtos fixados: {{pinnedCount}}",
+    "goLiveButton": "Entrar ao vivo",
+    "endStreamButton": "Encerrar transmissão",
+    "platforms": {
+      "tiktok": "TikTok Live",
+      "instagram": "Instagram Live",
+      "facebook": "Facebook Live",
+      "local": "Transmissão ao vivo no site"
+    }
+  },
+  "catalogTab": {
+    "publicFeedsLabel": "Feeds públicos hospedados:",
+    "metaXmlFeed": "XML RSS 2.0 da Meta",
+    "tiktokCsvFeed": "CSV do TikTok Shop",
+    "jsonFeed": "Feed JSON",
+    "emptyValue": "—",
+    "columns": {
+      "productId": "ID do produto",
+      "platform": "Plataforma",
+      "externalProductId": "ID externo do produto",
+      "syncStatus": "Status de sincronização",
+      "lastSynced": "Última sincronização"
+    }
+  },
+  "widget": {
+    "title": "Comércio Social e Stories Compráveis",
+    "loading": "Carregando marcações sociais...",
+    "taggedHeading": "Marcado em publicações / stories ({{count}}):",
+    "none": "Nenhum",
+    "catalogStatusHeading": "Status do catálogo externo:",
+    "notSyncedYet": "Ainda não sincronizado"
+  },
+  "messages": {
+    "loadDashboardError": "Falha ao carregar os dados de Comércio Social.",
+    "oauthInitError": "Falha ao iniciar OAuth do {{platform}}",
+    "oauthRequestError": "A solicitação de conexão OAuth falhou.",
+    "syncingMedia": "Sincronizando publicações e reels das redes sociais...",
+    "syncMediaError": "Falha na sincronização de mídia.",
+    "syncMediaSuccess": "{{count}} publicações de mídia sincronizadas.",
+    "createStoryError": "Falha ao criar story local.",
+    "createStorySuccess": "Story comprável de 24h criado.",
+    "scheduleLiveError": "Falha ao agendar sessão ao vivo.",
+    "scheduleLiveSuccess": "Sessão de live shopping criada.",
+    "liveStarted": "Sessão ao vivo iniciada.",
+    "liveEnded": "Sessão ao vivo encerrada.",
+    "liveTransitionError": "Falha na transição da sessão ao vivo.",
+    "loadWidgetError": "Falha ao carregar o status social do produto."
+  }
+}
