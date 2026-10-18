@@ -173,11 +173,13 @@ export function verifyOdooWebhookSignature(
 
   const expectedHex = crypto
     .createHmac("sha256", secret)
-    .update(rawBody)
+    .update(typeof rawBody === "string" ? rawBody : new Uint8Array(rawBody))
     .digest("hex")
 
-  const providedBuf = Buffer.from(normalizedSig, "hex")
-  const expectedBuf = Buffer.from(expectedHex, "hex")
+  // Copy into plain Uint8Arrays so the types hold across @types/node versions
+  // (Buffer<ArrayBufferLike> is not assignable to ArrayBufferView there).
+  const providedBuf = new Uint8Array(Buffer.from(normalizedSig, "hex"))
+  const expectedBuf = new Uint8Array(Buffer.from(expectedHex, "hex"))
 
   if (providedBuf.length !== expectedBuf.length) {
     return false

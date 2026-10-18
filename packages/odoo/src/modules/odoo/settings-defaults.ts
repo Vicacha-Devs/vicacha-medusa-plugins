@@ -1,0 +1,78 @@
+import type {
+  OdooCustomerSyncSettings,
+  OdooInventorySyncSettings,
+  OdooOrderSyncSettings,
+  OdooPluginOptions,
+  OdooPosSettings,
+  OdooProductSyncSettings,
+  OdooReconciliationSettings,
+  OdooSectionName,
+  OdooWebhookSettings,
+} from "./types"
+
+export const buildSectionDefaults = (
+  options: OdooPluginOptions
+): Record<OdooSectionName, unknown> => ({
+  product: {
+    enableProductSync: true,
+    direction: "odoo_to_medusa",
+    creationMode: "create_update",
+    skuMapping: "sku",
+    createDraft: false,
+    autoPublish: true,
+    syncImages: true,
+    updateFields: ["title", "description", "prices", "images"],
+    odooCategoryIds: [],
+    medusaCollectionIds: [],
+    productLimit: null,
+    ...(options.productSettings ?? {}),
+  } satisfies OdooProductSyncSettings,
+  inventory: {
+    enableStock: true,
+    direction: "odoo_to_medusa",
+    qtyType: "on_hand",
+    doNotSyncZeroStock: false,
+    locationMappings: [],
+    ...(options.inventorySettings ?? {}),
+  } satisfies OdooInventorySyncSettings,
+  orders: {
+    orderSync: true,
+    confirmOrderInOdoo: true,
+    failOnUnmatchedSku: true,
+    exportInvoice: false,
+    invoiceMode: "paid",
+    markInvoicePaid: false,
+    createPayment: false,
+    paymentJournalId: null,
+    ...(options.orderSettings ?? {}),
+  } satisfies OdooOrderSyncSettings,
+  customers: {
+    enableCustomerSync: true,
+    direction: "bidirectional",
+    syncAddresses: true,
+    syncCompanyVat: true,
+    ...(options.customerSettings ?? {}),
+  } satisfies OdooCustomerSyncSettings,
+  reconciliation: {
+    enableScheduledReconciliation: true,
+    strategy: "odoo_wins",
+    driftThreshold: 0,
+    defaultOdooLocationId: 8,
+    ...(options.reconciliationSettings ?? {}),
+  } satisfies OdooReconciliationSettings,
+  webhooks: {
+    enableInboundWebhooks: true,
+    autoProcessProductEvents: true,
+    autoProcessStockEvents: true,
+    autoProcessCustomerEvents: true,
+    autoProcessOrderEvents: true,
+    ...(options.webhookSettings ?? {}),
+  } satisfies OdooWebhookSettings,
+  pos: {
+    enableOfflinePosReplay: true,
+    enableBarcodeCache: true,
+    posCacheTtlSeconds: 3600,
+    warehouseCacheTtlSeconds: 14400,
+    ...(options.posSettings ?? {}),
+  } satisfies OdooPosSettings,
+})

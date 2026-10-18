@@ -42,7 +42,18 @@ src/
 │   ├── README.md                                           Architecture & usage docs for the odoo and odoo-sync modules
 │   ├── odoo/
 │   │   ├── index.ts                                        Defines Module("odoo", { service: OdooModuleService }) and re-exports client/utils/types
-│   │   ├── service.ts                                      OdooModuleService extending MedusaService(OdooModels) — all sync, reconciliation, POS & webhook logic
+│   │   ├── service.ts                                      OdooModuleService extending MedusaService(OdooModels) — config, client cache, mapping/log/failure helpers; domain methods are delegated to the modules below
+│   │   ├── settings-defaults.ts                            buildSectionDefaults(options) — default values per settings section
+│   │   ├── webhooks.ts                                     processWebhookEvent (HMAC verification, dedupe, auto-sync dispatch)
+│   │   ├── sync/                                           Domain logic written as `function (this: OdooModuleService, ...)` and bound onto the service class
+│   │   │   ├── products.ts                                 import/export/sync/archive products
+│   │   │   ├── inventory.ts                                import/export/sync stock levels
+│   │   │   ├── reconciliation.ts                           reconcileInventory & resolveConflict
+│   │   │   ├── orders.ts                                   syncOrderToOdoo (invoice/payment) & cancelOrderInOdoo
+│   │   │   └── customers.ts                                two-way res.partner ↔ Customer sync
+│   │   ├── pos/
+│   │   │   ├── barcode.ts                                  resolveBarcode with bounded TTL cache, invalidate & warm
+│   │   │   └── offline.ts                                  offline POS queue & replay
 │   │   ├── types.ts                                        All domain interfaces, section setting types, DTOs, and constants (ODOO_MODULE, ODOO_SYNC_MODULE)
 │   │   ├── client/
 │   │   │   └── odoo-client.ts                              Multi-protocol OdooClient (JSON-RPC 2.0 & Odoo 19+ JSON-2) with rate limiter, circuit breaker & retries
@@ -51,6 +62,7 @@ src/
 │   │   ├── migrations/
 │   │   │   └── Migration20260412000000.ts                  MikroORM migration creating and indexing all 10 mpo_* tables
 │   │   └── utils/
+│   │       ├── errors.ts                               errorMessage(err) helper
 │   │       ├── security.ts                                 validateSafeOdooUrl, redactSecret, redactOdooConfig, verifyOdooWebhookSignature, computeExternalChecksum, slugifyHandle
 │   │       └── metrics.ts                                  OdooMetricsRegistry (odooMetrics) tracking counters/gauges and rendering OpenMetrics/Prometheus text
 │   └── odoo-sync/
