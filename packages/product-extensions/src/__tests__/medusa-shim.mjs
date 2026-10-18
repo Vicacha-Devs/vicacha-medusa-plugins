@@ -53,7 +53,11 @@ export function MedusaService(models = {}) {
             const rows = this.__stores[plural]
             return rows.filter((row) =>
               Object.entries(filter).every(([k, v]) =>
-                v === undefined ? true : row[k] === v
+                v === undefined
+                  ? true
+                  : Array.isArray(v)
+                    ? v.includes(row[k])
+                    : row[k] === v
               )
             )
           }
@@ -181,6 +185,17 @@ export function createWorkflow(name, composerFn) {
   wf.getName = () => name
   return wf
 }
+
+export class Migration {
+  constructor() {
+    this.queries = []
+  }
+
+  addSql(sql) {
+    this.queries.push(sql)
+  }
+}
+
 
 const createZodChain = (shape = {}) => {
   const schema = {

@@ -141,3 +141,358 @@ declare module "react-i18next" {
   }
 }
 
+declare module "@mikro-orm/migrations" {
+  export abstract class Migration {
+    addSql(sql: string): void
+    abstract up(): Promise<void>
+    down(): Promise<void>
+  }
+}
+
+declare module "@medusajs/framework/mikro-orm/migrations" {
+  export { Migration } from "@mikro-orm/migrations"
+}
+
+declare module "@medusajs/framework/utils" {
+  export const Modules: {
+    PRODUCT: string
+    FILE: string
+    INVENTORY: string
+    [key: string]: string
+  }
+
+  export function defineLink(
+    left: unknown,
+    right: unknown
+  ): { left: unknown; right: unknown }
+
+  export class MedusaError extends Error {
+    static Types: {
+      DB_ERROR: string
+      DUPLICATE_ERROR: string
+      INVALID_ARGUMENT: string
+      INVALID_DATA: string
+      UNAUTHORIZED: string
+      NOT_FOUND: string
+      NOT_ALLOWED: string
+      UNEXPECTED_STATE: string
+      CONFLICT: string
+    }
+    type: string
+    code?: string
+    constructor(type: string, message: string, code?: string)
+  }
+
+  interface ChainableProperty {
+    primaryKey(): ChainableProperty
+    searchable(): ChainableProperty
+    nullable(): ChainableProperty
+    default(val: unknown): ChainableProperty
+  }
+
+  export const model: {
+    define(
+      name: string,
+      schema: Record<string, unknown>
+    ): {
+      indexes(idx: Array<{ on: string[]; unique?: boolean }>): unknown
+    }
+    id(opts?: { prefix?: string }): ChainableProperty
+    text(): ChainableProperty
+    number(): ChainableProperty
+    boolean(): ChainableProperty
+    json(): ChainableProperty
+    dateTime(): ChainableProperty
+    enum(values: string[]): ChainableProperty
+  }
+
+  export function MedusaService<TModels extends Record<string, unknown>>(
+    models: TModels
+  ): {
+    new (...args: any[]): {
+      [K in keyof TModels as `list${string & K}s`]: (
+        filter?: Record<string, any>,
+        config?: Record<string, any>
+      ) => Promise<any[]>
+    } & {
+      [K in keyof TModels as `create${string & K}s`]: (data: any) => Promise<any>
+    } & {
+      [K in keyof TModels as `update${string & K}s`]: (data: any) => Promise<any>
+    } & {
+      [K in keyof TModels as `delete${string & K}s`]: (
+        id: string | string[]
+      ) => Promise<void>
+    }
+  }
+
+  export function Module(
+    name: string,
+    config: { service: unknown; loaders?: unknown[] }
+  ): {
+    name: string
+    linkable: Record<string, any>
+    service: unknown
+    loaders?: unknown[]
+  }
+}
+
+declare module "@medusajs/framework/http" {
+  export interface MedusaRequest<TBody = unknown> {
+    params: Record<string, string>
+    query: Record<string, unknown>
+    body: TBody
+    validatedBody: TBody
+    validatedQuery?: Record<string, unknown>
+    scope: {
+      resolve<T = any>(key: string): T
+    }
+  }
+
+  export interface MedusaResponse {
+    status(code: number): MedusaResponse
+    sendStatus(code: number): MedusaResponse
+    json(payload: unknown): void
+  }
+
+  export function defineMiddlewares(config: {
+    routes: Array<{
+      matcher: string
+      method?: string | string[]
+      middlewares?: unknown[]
+    }>
+  }): {
+    routes: Array<{
+      matcher: string
+      method?: string | string[]
+      middlewares?: unknown[]
+    }>
+  }
+
+  export function validateAndTransformBody(schema: unknown): unknown
+}
+
+declare module "@medusajs/framework/workflows-sdk" {
+  export class StepResponse<TOutput = any, TComp = any> {
+    constructor(output: TOutput, compensateInput?: TComp)
+  }
+
+  export class WorkflowResponse<TOutput = any> {
+    constructor(output: TOutput)
+  }
+
+  export function createStep<TInput = any, TOutput = any, TComp = any>(
+    name: string,
+    invokeFn: (
+      input: TInput,
+      context: { container: { resolve<T = any>(key: string): T } }
+    ) => Promise<StepResponse<TOutput, TComp>>,
+    compensateFn?: (
+      compInput: TComp | undefined,
+      context: { container: { resolve<T = any>(key: string): T } }
+    ) => Promise<void>
+  ): ((input: TInput) => TOutput) & {
+    __stepName: string
+    invoke: (
+      input: TInput,
+      context: { container: { resolve<T = any>(key: string): T } }
+    ) => Promise<StepResponse<TOutput, TComp>>
+    compensate?: (
+      compInput: TComp | undefined,
+      context: { container: { resolve<T = any>(key: string): T } }
+    ) => Promise<void>
+  }
+
+  export function createWorkflow<TInput = any, TOutput = any>(
+    name: string,
+    composer: (input: TInput) => WorkflowResponse<TOutput>
+  ): ((scope?: unknown) => {
+    run(opts?: { input?: TInput }): Promise<{
+      result: TOutput
+      compensate?: () => Promise<void>
+    }>
+  }) & {
+    getName(): string
+  }
+}
+
+declare module "@medusajs/framework/zod" {
+  export interface ZodType<T = any> {
+    _output: T
+    min(n: number): ZodType<T>
+    max(n: number): ZodType<T>
+    int(): ZodType<T>
+    regex(pattern: RegExp, msg?: string): ZodType<T>
+    or<U extends ZodType<any>>(other: U): ZodType<T | U["_output"]>
+    positive(): ZodType<T>
+    nonnegative(): ZodType<T>
+    email(): ZodType<T>
+    url(): ZodType<T>
+    optional(): ZodType<T | undefined>
+    nullable(): ZodType<T | null>
+    default(val: T): ZodType<T>
+    partial(): ZodType<Partial<T>>
+    omit<K extends keyof T>(mask: Record<K, true>): ZodType<Omit<T, K>>
+    passthrough(): ZodType<T>
+    parse(val: unknown): T
+    safeParse(
+      val: unknown
+    ): { success: true; data: T } | { success: false; error: unknown }
+  }
+
+  export const z: {
+    string(): ZodType<string>
+    number(): ZodType<number>
+    boolean(): ZodType<boolean>
+    unknown(): ZodType<unknown>
+    enum<T extends readonly [string, ...string[]]>(values: T): ZodType<T[number]>
+    array<T extends ZodType<any>>(schema: T): ZodType<Array<T["_output"]>>
+    record<K extends ZodType<string>, V extends ZodType<any>>(
+      key: K,
+      value: V
+    ): ZodType<Record<string, V["_output"]>>
+    object<T extends Record<string, ZodType<any>>>(
+      shape: T
+    ): ZodType<{ [K in keyof T]: T[K]["_output"] }>
+    union<T extends readonly [ZodType<any>, ...ZodType<any>[]]>(
+      items: T
+    ): ZodType<T[number]["_output"]>
+    coerce: {
+      number(): ZodType<number>
+    }
+  }
+
+  export namespace z {
+    export type infer<T extends ZodType<any>> = T["_output"]
+  }
+}
+
+declare module "@medusajs/framework/types" {
+  export interface MedusaContainer {
+    resolve<T = any>(key: string): T
+  }
+}
+
+declare module "@medusajs/framework" {
+  import type { MedusaContainer } from "@medusajs/framework/types"
+
+  export interface SubscriberArgs<T = unknown> {
+    event: { data: T; name?: string }
+    container: MedusaContainer
+  }
+
+  export interface SubscriberConfig {
+    event: string | string[]
+    context?: Record<string, unknown>
+  }
+}
+
+declare module "react" {
+  export type ReactNode = any
+  export type CSSProperties = Record<string, string | number | undefined>
+  export type MouseEvent<T = Element> = {
+    currentTarget: T
+    clientX: number
+    clientY: number
+    stopPropagation(): void
+    preventDefault(): void
+  }
+  export type KeyboardEvent<T = Element> = {
+    key: string
+    stopPropagation(): void
+    preventDefault(): void
+  }
+  export type ChangeEvent<T = Element> = {
+    target: T & { value: string; checked?: boolean }
+    currentTarget: T & { value: string; checked?: boolean }
+    stopPropagation(): void
+    preventDefault(): void
+  }
+  export type HTMLAttributes<T = Element> = Record<string, any> & {
+    children?: ReactNode
+    className?: string
+    style?: CSSProperties
+  }
+  export type ButtonHTMLAttributes<T = Element> = HTMLAttributes<T> & {
+    type?: "button" | "submit" | "reset"
+    disabled?: boolean
+  }
+  export type InputHTMLAttributes<T = Element> = HTMLAttributes<T> & {
+    value?: string | number
+    placeholder?: string
+    type?: string
+    disabled?: boolean
+  }
+  export type LabelHTMLAttributes<T = Element> = HTMLAttributes<T> & {
+    htmlFor?: string
+  }
+  export type TableHTMLAttributes<T = Element> = HTMLAttributes<T>
+  export type ThHTMLAttributes<T = Element> = HTMLAttributes<T>
+  export type TdHTMLAttributes<T = Element> = HTMLAttributes<T>
+  export type SVGProps<T = SVGSVGElement> = Record<string, any>
+  export type FC<P = {}> = (props: P & { key?: any }) => any
+
+  export function createElement(
+    type: any,
+    props?: any,
+    ...children: any[]
+  ): any
+  export const Fragment: any
+
+  export function useState<T>(
+    initial: T | (() => T)
+  ): [T, (next: T | ((prev: T) => T)) => void]
+  export function useEffect(
+    effect: () => void | (() => void),
+    deps?: readonly unknown[]
+  ): void
+  export function useCallback<T extends (...args: any[]) => any>(
+    fn: T,
+    deps: readonly unknown[]
+  ): T
+  export function useMemo<T>(fn: () => T, deps: readonly unknown[]): T
+  export function useRef<T>(initial: T): { current: T }
+
+  export namespace JSX {
+    interface IntrinsicAttributes {
+      key?: any
+    }
+    interface IntrinsicElements {
+      [elemName: string]: any
+    }
+  }
+}
+
+declare module "react/jsx-runtime" {
+  export namespace JSX {
+    interface IntrinsicAttributes {
+      key?: any
+    }
+    interface IntrinsicElements {
+      [elemName: string]: any
+    }
+  }
+  export function jsx(type: any, props: any, key?: any): any
+  export function jsxs(type: any, props: any, key?: any): any
+  export const Fragment: any
+}
+
+declare module "node:test" {
+  export function describe(name: string, fn: () => void | Promise<void>): void
+  export function it(name: string, fn: () => void | Promise<void>): void
+}
+
+declare module "node:assert/strict" {
+  const assert: {
+    ok(value: unknown, message?: string): void
+    equal(actual: unknown, expected: unknown, message?: string): void
+    deepEqual(actual: unknown, expected: unknown, message?: string): void
+    match(value: string, regExp: RegExp, message?: string): void
+    throws(fn: () => unknown, error?: unknown, message?: string): void
+    rejects(
+      fn: () => Promise<unknown>,
+      error?: unknown,
+      message?: string
+    ): Promise<void>
+  }
+  export default assert
+}

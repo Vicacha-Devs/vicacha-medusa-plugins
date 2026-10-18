@@ -134,42 +134,57 @@ export function createProductExtSdk(config: ProductExtSdkConfig = {}) {
     admin: {
       async getProductExtension(
         productId: string
-      ): Promise<ProductExtensionDTO> {
-        return request<ProductExtensionDTO>(
-          `/admin/products/${encodeURIComponent(productId)}/extension`
-        )
+      ): Promise<ProductExtensionDTO & { extension?: ProductExtensionDTO | null }> {
+        const res = await request<
+          ProductExtensionDTO & { extension?: ProductExtensionDTO | null }
+        >(`/admin/products/${encodeURIComponent(productId)}/extension`)
+        if (res && typeof res === "object" && "extension" in res && res.extension) {
+          return { ...res.extension, ...res, extension: res.extension }
+        }
+        return res
       },
 
       async upsertProductExtension(
         productId: string,
         body: Omit<UpsertProductExtensionInput, "product_id">
-      ): Promise<ProductExtensionDTO> {
-        return request<ProductExtensionDTO>(
-          `/admin/products/${encodeURIComponent(productId)}/extension`,
-          {
-            method: "POST",
-            body: JSON.stringify(body),
-          }
-        )
+      ): Promise<ProductExtensionDTO & { extension?: ProductExtensionDTO | null }> {
+        const res = await request<
+          ProductExtensionDTO & { extension?: ProductExtensionDTO | null }
+        >(`/admin/products/${encodeURIComponent(productId)}/extension`, {
+          method: "POST",
+          body: JSON.stringify(body),
+        })
+        if (res && typeof res === "object" && "extension" in res && res.extension) {
+          return { ...res.extension, ...res, extension: res.extension }
+        }
+        return res
       },
 
       async getVariantExtension(
         productId: string,
         variantId: string
-      ): Promise<VariantExtensionDTO> {
-        return request<VariantExtensionDTO>(
+      ): Promise<VariantExtensionDTO & { extension?: VariantExtensionDTO | null }> {
+        const res = await request<
+          VariantExtensionDTO & { extension?: VariantExtensionDTO | null }
+        >(
           `/admin/products/${encodeURIComponent(
             productId
           )}/variants/${encodeURIComponent(variantId)}/extension`
         )
+        if (res && typeof res === "object" && "extension" in res && res.extension) {
+          return { ...res.extension, ...res, extension: res.extension }
+        }
+        return res
       },
 
       async upsertVariantExtension(
         productId: string,
         variantId: string,
         body: Omit<UpsertVariantExtensionInput, "variant_id">
-      ): Promise<VariantExtensionDTO> {
-        return request<VariantExtensionDTO>(
+      ): Promise<VariantExtensionDTO & { extension?: VariantExtensionDTO | null }> {
+        const res = await request<
+          VariantExtensionDTO & { extension?: VariantExtensionDTO | null }
+        >(
           `/admin/products/${encodeURIComponent(
             productId
           )}/variants/${encodeURIComponent(variantId)}/extension`,
@@ -178,7 +193,12 @@ export function createProductExtSdk(config: ProductExtSdkConfig = {}) {
             body: JSON.stringify(body),
           }
         )
+        if (res && typeof res === "object" && "extension" in res && res.extension) {
+          return { ...res.extension, ...res, extension: res.extension }
+        }
+        return res
       },
+
 
       async bulkAssignVariantMediaByOption(
         productId: string,

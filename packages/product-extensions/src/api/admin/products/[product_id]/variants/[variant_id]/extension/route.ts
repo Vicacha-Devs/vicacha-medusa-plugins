@@ -12,6 +12,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const ext = await service.getByVariantId(variant_id)
 
   return res.status(200).json({
+    ...(ext ? { id: ext.id, created_at: ext.created_at, updated_at: ext.updated_at } : {}),
     variant_id,
     product_id: ext?.product_id ?? product_id ?? null,
     thumbnail: ext?.thumbnail ?? null,
@@ -22,6 +23,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     swatch_color: ext?.swatch_color ?? null,
     swatch_image_url: ext?.swatch_image_url ?? null,
     metadata: ext?.metadata ?? null,
+    extension: ext ?? null,
   })
 }
 
@@ -40,5 +42,8 @@ export async function POST(
     },
   })
 
-  return res.status(200).json(result)
+  return res.status(200).json({
+    ...result,
+    extension: result,
+  })
 }

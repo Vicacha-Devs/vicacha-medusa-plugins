@@ -18,7 +18,13 @@
     "resolveJsonModule": true,
     "checkJs": false,
     "strictNullChecks": true,
-    "ignoreDeprecations": "5.0"
+    "baseUrl": ".",
+    "ignoreDeprecations": "5.0",
+    "paths": {
+      "@product-extensions/*": [
+        "./src/*"
+      ]
+    }
   },
   "ts-node": {
     "swc": true

@@ -12,6 +12,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const ext = await service.getByProductId(product_id)
 
   return res.status(200).json({
+    ...(ext ? { id: ext.id, created_at: ext.created_at, updated_at: ext.updated_at } : {}),
     product_id,
     videos: ext?.videos ?? [],
     tagline: ext?.tagline ?? null,
@@ -27,6 +28,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     storefront_overrides: ext?.storefront_overrides ?? [],
     seo_metadata: ext?.seo_metadata ?? null,
     metadata: ext?.metadata ?? null,
+    extension: ext ?? null,
   })
 }
 
@@ -44,5 +46,8 @@ export async function POST(
     },
   })
 
-  return res.status(200).json(result)
+  return res.status(200).json({
+    ...result,
+    extension: result,
+  })
 }

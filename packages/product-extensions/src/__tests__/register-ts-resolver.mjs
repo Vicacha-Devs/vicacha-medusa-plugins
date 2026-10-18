@@ -11,12 +11,21 @@ let ts = null
 try {
   ts = require("typescript")
 } catch {
-  const siblingTs = resolvePath(
-    currentDir,
-    "../../../strapi-plugin-tiptap-editor/node_modules/typescript"
-  )
-  if (existsSync(siblingTs)) {
-    ts = require(siblingTs)
+  const candidates = [
+    resolvePath(
+      currentDir,
+      "../../../strapi-plugin-tiptap-editor/node_modules/typescript"
+    ),
+    resolvePath(
+      currentDir,
+      "../../../../gweb-uniblog-author-prod/node_modules/typescript"
+    ),
+  ]
+  for (const candidate of candidates) {
+    if (existsSync(candidate)) {
+      ts = require(candidate)
+      break
+    }
   }
 }
 
@@ -24,6 +33,7 @@ registerHooks({
   resolve(specifier, context, nextResolve) {
     if (
       specifier.startsWith("@medusajs/") ||
+      specifier === "@mikro-orm/migrations" ||
       specifier === "react" ||
       specifier.startsWith("react/") ||
       specifier === "react-i18next" ||
@@ -41,12 +51,17 @@ registerHooks({
     ) {
       const parentDir = dirname(fileURLToPath(context.parentURL))
       const baseCandidate = resolvePath(parentDir, specifier)
+      const withoutJs = baseCandidate.endsWith(".js")
+        ? baseCandidate.slice(0, -3)
+        : baseCandidate
 
       const candidates = [
+        `${withoutJs}.ts`,
+        `${withoutJs}.tsx`,
         `${baseCandidate}.ts`,
         `${baseCandidate}.tsx`,
-        resolvePath(baseCandidate, "index.ts"),
-        resolvePath(baseCandidate, "index.tsx"),
+        resolvePath(withoutJs, "index.ts"),
+        resolvePath(withoutJs, "index.tsx"),
       ]
 
       for (const candidate of candidates) {
@@ -60,7 +75,7 @@ registerHooks({
   },
 
   load(url, context, nextLoad) {
-    if (url.endsWith(".json")) {
+    if (url.endsWith(".json") && !url.includes("/node_modules/")) {
       const filePath = fileURLToPath(url)
       const source = readFileSync(filePath, "utf8")
       return {
@@ -96,3 +111,4 @@ registerHooks({
     return nextLoad(url, context)
   },
 })
+

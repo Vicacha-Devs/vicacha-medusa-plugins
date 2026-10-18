@@ -22,9 +22,19 @@ import {
   type UpdateProductFeatureInput,
   type UpsertProductAttributeValueInput,
   type UpsertProductExtensionInput,
+  type UpsertProductExtInput,
   type UpsertVariantExtensionInput,
+  type UpsertVariantExtInput,
   type VariantExtensionDTO,
 } from "../modules/product-ext"
+
+export type {
+  UpsertProductExtInput,
+  UpsertProductExtensionInput,
+  UpsertVariantExtInput,
+  UpsertVariantExtensionInput,
+}
+
 
 export interface UpsertProductExtCompensateInput {
   product_id: string

@@ -477,8 +477,16 @@ export class ProductExtModuleService extends MedusaService({
     if (!Array.isArray(variantIds) || variantIds.length === 0) {
       return []
     }
-    const wanted = new Set(variantIds.map((v) => v.trim()).filter(Boolean))
-    const all = (await this.listVariantExtensions({})) as unknown as Array<
+    const uniqueIds = Array.from(
+      new Set(variantIds.map((v) => v.trim()).filter(Boolean))
+    )
+    if (uniqueIds.length === 0) {
+      return []
+    }
+    const wanted = new Set(uniqueIds)
+    const all = (await this.listVariantExtensions({
+      variant_id: uniqueIds,
+    } as unknown as Record<string, unknown>)) as unknown as Array<
       Record<string, unknown>
     >
     return all
@@ -1549,6 +1557,43 @@ export class ProductExtModuleService extends MedusaService({
   // 6. Product Feature Badges Catalog
   // ---------------------------------------------------------------------------
 
+  private async findFeatureByIdOrCode(
+    idOrCode: string
+  ): Promise<ProductFeatureDTO | null> {
+    const trimmed = String(idOrCode ?? "").trim()
+    if (!trimmed) {
+      return null
+    }
+    const byId = (await this.listProductFeatures({
+      id: trimmed,
+    } as unknown as Record<string, unknown>)) as unknown as Array<
+      Record<string, unknown>
+    >
+    const matchedById = byId
+      .map(normalizeProductFeatureRecord)
+      .find((f) => f.id === trimmed || f.code === trimmed)
+    if (matchedById) {
+      return matchedById
+    }
+
+    const normalizedCode = slugifyAttributeKey(trimmed)
+    const byCode = (await this.listProductFeatures({
+      code: normalizedCode,
+    } as unknown as Record<string, unknown>)) as unknown as Array<
+      Record<string, unknown>
+    >
+    return (
+      byCode
+        .map(normalizeProductFeatureRecord)
+        .find(
+          (f) =>
+            f.id === trimmed ||
+            f.code === trimmed ||
+            f.code === normalizedCode
+        ) ?? null
+    )
+  }
+
   async createFeature(
     input: CreateProductFeatureInput
   ): Promise<ProductFeatureDTO> {
@@ -1560,10 +1605,12 @@ export class ProductExtModuleService extends MedusaService({
       )
     }
     const code = slugifyAttributeKey(input.code || title)
-    const all = (await this.listProductFeatures({})) as unknown as Array<
+    const matching = (await this.listProductFeatures({
+      code,
+    } as unknown as Record<string, unknown>)) as unknown as Array<
       Record<string, unknown>
     >
-    const dup = all
+    const dup = matching
       .map(normalizeProductFeatureRecord)
       .find((f) => f.code === code)
     if (dup) {
@@ -1601,12 +1648,7 @@ export class ProductExtModuleService extends MedusaService({
   async updateFeature(
     input: UpdateProductFeatureInput
   ): Promise<ProductFeatureDTO> {
-    const all = (await this.listProductFeatures({})) as unknown as Array<
-      Record<string, unknown>
-    >
-    const existing = all
-      .map(normalizeProductFeatureRecord)
-      .find((f) => f.id === input.id || f.code === input.id)
+    const existing = await this.findFeatureByIdOrCode(input.id)
     if (!existing) {
       throw new MedusaError(
         MedusaError.Types.NOT_FOUND,
@@ -1661,12 +1703,7 @@ export class ProductExtModuleService extends MedusaService({
   }
 
   async deleteFeature(idOrCode: string): Promise<void> {
-    const all = (await this.listProductFeatures({})) as unknown as Array<
-      Record<string, unknown>
-    >
-    const existing = all
-      .map(normalizeProductFeatureRecord)
-      .find((f) => f.id === idOrCode || f.code === idOrCode)
+    const existing = await this.findFeatureByIdOrCode(idOrCode)
     if (!existing) {
       throw new MedusaError(
         MedusaError.Types.NOT_FOUND,
@@ -1680,9 +1717,31 @@ export class ProductExtModuleService extends MedusaService({
     ids?: string[]
     is_active?: boolean
   }): Promise<ProductFeatureDTO[]> {
-    const rawList = (await this.listProductFeatures({})) as unknown as Array<
-      Record<string, unknown>
-    >
+    const dbFilter: Record<string, unknown> = {}
+    if (filter?.is_active !== undefined) {
+      dbFilter.is_active = filter.is_active
+    }
+    if (filter?.ids && filter.ids.length > 0) {
+      dbFilter.id = filter.ids
+    }
+
+    let rawList = (await this.listProductFeatures(
+      dbFilter
+    )) as unknown as Array<Record<string, unknown>>
+
+    // Fallback when callers pass feature codes in `filter.ids` instead of record IDs
+    if (
+      filter?.ids &&
+      filter.ids.length > 0 &&
+      rawList.length < filter.ids.length
+    ) {
+      const fallbackFilter: Record<string, unknown> =
+        filter.is_active !== undefined ? { is_active: filter.is_active } : {}
+      rawList = (await this.listProductFeatures(
+        fallbackFilter
+      )) as unknown as Array<Record<string, unknown>>
+    }
+
     let items = rawList.map(normalizeProductFeatureRecord)
     if (filter?.is_active !== undefined) {
       items = items.filter((f) => f.is_active === filter.is_active)
@@ -1706,11 +1765,20 @@ export class ProductExtModuleService extends MedusaService({
   // ---------------------------------------------------------------------------
 
   async exportAllImageAltsCsv(productIds?: string[]): Promise<string> {
+    const uniqueProductIds =
+      productIds && productIds.length > 0
+        ? Array.from(new Set(productIds.map((p) => p.trim()).filter(Boolean)))
+        : null
+
     const rawExtensions = (await this.listProductExtensions(
-      {}
+      (uniqueProductIds && uniqueProductIds.length > 0
+        ? { product_id: uniqueProductIds }
+        : {}) as unknown as Record<string, unknown>
     )) as unknown as Array<Record<string, unknown>>
     const filterSet =
-      productIds && productIds.length > 0 ? new Set(productIds) : null
+      uniqueProductIds && uniqueProductIds.length > 0
+        ? new Set(uniqueProductIds)
+        : null
 
     const rows: CsvImageAltRow[] = []
     for (const raw of rawExtensions) {
@@ -1853,30 +1921,30 @@ export class ProductExtModuleService extends MedusaService({
     core_images?: Array<{ id?: string; url: string; rank?: number }>
   }): Promise<StorefrontProductExtensionResponse> {
     const ext = await this.getByProductId(params.product_id)
-    const override = await this.resolveStorefrontOverride(ext, {
-      sales_channel_id: params.sales_channel_id,
-      locale: params.locale,
-    })
+
+    // Parallel fetch of override, template, feature badges, custom attributes, and variant extensions
+    const [override, tpl, features, attributes, variantExts] =
+      await Promise.all([
+        this.resolveStorefrontOverride(ext, {
+          sales_channel_id: params.sales_channel_id,
+          locale: params.locale,
+        }),
+        !ext?.content_tree && ext?.template_id
+          ? this.getTemplateByIdOrCode(ext.template_id)
+          : Promise.resolve(null),
+        ext && ext.feature_ids.length > 0
+          ? this.listFeatures({ ids: ext.feature_ids, is_active: true })
+          : Promise.resolve([]),
+        this.getProductAttributeValues(params.product_id, params.locale),
+        params.variant_ids && params.variant_ids.length > 0
+          ? this.getByVariantIds(params.variant_ids)
+          : Promise.resolve([]),
+      ])
 
     // Resolve hierarchical content tree (from product's content_tree or linked template + diff)
-    let baseTree: TreeDocV1 | null = ext?.content_tree ?? null
-    if (!baseTree && ext?.template_id) {
-      const tpl = await this.getTemplateByIdOrCode(ext.template_id)
-      baseTree = tpl?.content_tree ?? null
-    }
+    const baseTree: TreeDocV1 | null =
+      ext?.content_tree ?? tpl?.content_tree ?? null
     const resolvedTree = resolveTree(baseTree, ext?.content_diff)
-
-    // Resolve feature badges
-    const features =
-      ext && ext.feature_ids.length > 0
-        ? await this.listFeatures({ ids: ext.feature_ids, is_active: true })
-        : []
-
-    // Resolve typed custom attributes
-    const attributes = await this.getProductAttributeValues(
-      params.product_id,
-      params.locale
-    )
 
     // Build unified media gallery
     const effectiveMedia = override?.videos
@@ -1897,13 +1965,9 @@ export class ProductExtModuleService extends MedusaService({
             locale: params.locale,
           })
 
-    let variantsMap:
-      | Record<string, StorefrontVariantExtensionSummary>
-      | undefined
+    const variantsMap: Record<string, StorefrontVariantExtensionSummary> = {}
     if (params.variant_ids && params.variant_ids.length > 0) {
-      const variantExts = await this.getByVariantIds(params.variant_ids)
       const byId = new Map(variantExts.map((v) => [v.variant_id, v]))
-      variantsMap = {}
       for (const vid of params.variant_ids) {
         const matched = byId.get(vid)
         variantsMap[vid] = {
@@ -1934,7 +1998,7 @@ export class ProductExtModuleService extends MedusaService({
       option_metadata: ext?.option_metadata ?? [],
       seo_metadata: ext?.seo_metadata ?? null,
       resolved_override: override,
-      ...(variantsMap ? { variants: variantsMap } : {}),
+      variants: variantsMap,
     }
   }
 
@@ -1975,6 +2039,11 @@ export class ProductExtModuleService extends MedusaService({
     }
   }
 }
+
+export type ProductExtServiceType = typeof ProductExtModuleService
+export type ProductExtServiceInstance = InstanceType<
+  typeof ProductExtModuleService
+>
 
 export { ProductExtModuleService as ProductExtService }
 export default ProductExtModuleService

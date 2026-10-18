@@ -1,7 +1,9 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import {
   PRODUCT_EXT_MODULE,
+  type ProductExtensionDTO,
   type ProductExtModuleService,
+  type ResolvedProductAttributeEntry,
   type UpsertProductAttributeValueInput,
 } from "../../../../../modules/product-ext"
 import {
@@ -35,7 +37,7 @@ export async function POST(
   const { product_id } = req.params
   const body = req.validatedBody
 
-  let appliedExtension = null
+  let appliedExtension: ProductExtensionDTO | null = null
   if (body.template_id_or_code) {
     const { result } = await applyAttributeTemplateWorkflow(req.scope).run({
       input: {
@@ -46,7 +48,7 @@ export async function POST(
     appliedExtension = result
   }
 
-  let attributesResult = null
+  let attributesResult: ResolvedProductAttributeEntry[] | null = null
   if (body.attributes && body.attributes.length > 0) {
     const { result } = await setProductAttributesWorkflow(req.scope).run({
       input: {
@@ -61,6 +63,7 @@ export async function POST(
     )
     attributesResult = await service.getProductAttributeValues(product_id)
   }
+
 
   return res.status(200).json({
     product_id,

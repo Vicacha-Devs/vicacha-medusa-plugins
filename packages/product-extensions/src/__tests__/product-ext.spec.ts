@@ -7,9 +7,11 @@ import {
   buildUnifiedProductMedia,
   convertUnit,
   createEmptyTree,
+  createProductExtSdk,
   escapeCsvCell,
   escapeHtml,
   importImageAltsWorkflow,
+  Migration20260514000000,
   normalizeToSI,
   parseVideoMediaItem,
   PRODUCT_EXT_MODULE,
@@ -24,8 +26,18 @@ import {
   upsertVariantExtWorkflow,
   validateExternalMediaUrl,
   validateTreeDocV1,
+  type ProductExtServiceInstance,
+  type ProductExtServiceType,
+  type UpsertProductExtInput,
+  type UpsertVariantExtInput,
+  type VideoItem,
 } from "../index"
+import * as ModulesBarrel from "../modules"
+import * as AdminProductExtRoute from "../api/admin/products/[product_id]/extension/route"
+import * as AdminVariantExtRoute from "../api/admin/products/[product_id]/variants/[variant_id]/extension/route"
+import * as StoreProductExtRoute from "../api/store/products/[product_id]/extension/route"
 import type { TreeDocV1 } from "../types"
+
 
 function createTestContainer(serviceInstance?: ProductExtModuleService) {
   const svc = serviceInstance ?? new ProductExtModuleService()
@@ -635,5 +647,309 @@ describe("medusa-plugin-product-ext", () => {
       }
     })
   })
+
+  describe("9. @bambiste/medusa-product-ext Drop-In Compatibility (VideoItem, Envelopes, Barrels)", () => {
+    it("supports @bambiste VideoItem ({ url, name, mimeType, size }) and barrel re-exports", async () => {
+      assert.equal(ModulesBarrel.PRODUCT_EXT_MODULE, "ProductExt")
+      assert.equal(ModulesBarrel.ProductExtService, ProductExtModuleService)
+
+      const legacyVideo: VideoItem = {
+        url: "https://cdn.example.com/videos/demo.mp4",
+        name: "Demo Video",
+        mimeType: "video/mp4",
+        size: 1048576,
+      }
+
+      const parsed = parseVideoMediaItem(legacyVideo)
+      assert.equal(parsed.url, "https://cdn.example.com/videos/demo.mp4")
+      assert.equal(parsed.title, "Demo Video")
+      assert.equal(parsed.name, "Demo Video")
+      assert.equal(parsed.mime_type, "video/mp4")
+      assert.equal(parsed.mimeType, "video/mp4")
+      assert.equal(parsed.size, 1048576)
+
+      const service: ProductExtServiceInstance =
+        new (ProductExtService as ProductExtServiceType)()
+
+      const prodInput: UpsertProductExtInput = {
+        product_id: "prod_bambiste_compat",
+        videos: [legacyVideo],
+      }
+      const saved = await service.upsertByProductId(prodInput)
+      assert.equal(saved.videos.length, 1)
+      assert.equal(saved.videos[0], "https://cdn.example.com/videos/demo.mp4")
+      assert.equal(saved.media_items.length, 1)
+      assert.equal(saved.media_items[0].name, "Demo Video")
+      assert.equal(saved.media_items[0].title, "Demo Video")
+      assert.equal(saved.media_items[0].mimeType, "video/mp4")
+      assert.equal(saved.media_items[0].mime_type, "video/mp4")
+      assert.equal(saved.media_items[0].size, 1048576)
+
+      const varInput: UpsertVariantExtInput = {
+        variant_id: "var_bambiste_compat",
+        product_id: "prod_bambiste_compat",
+        thumbnail: "https://cdn.example.com/thumb.jpg",
+        images: ["https://cdn.example.com/img1.jpg"],
+      }
+      const savedVar = await service.upsertByVariantId(varInput)
+      assert.equal(savedVar.variant_id, "var_bambiste_compat")
+    })
+
+    it("returns both top-level fields and { extension } envelope on Admin routes and default variants: {} on Store route", async () => {
+      const { container } = createTestContainer()
+
+      const createMockRes = () => {
+        let statusCode = 200
+        let body: any = null
+        const res: any = {
+          status(code: number) {
+            statusCode = code
+            return res
+          },
+          json(payload: any) {
+            body = payload
+            return res
+          },
+          getStatus: () => statusCode,
+          getBody: () => body,
+        }
+        return res
+      }
+
+      // 1. GET before creation -> extension: null + empty defaults
+      const getBeforeRes = createMockRes()
+      await AdminProductExtRoute.GET(
+        {
+          params: { product_id: "prod_route_test" },
+          query: {},
+          body: {},
+          validatedBody: {},
+          scope: container,
+        } as any,
+        getBeforeRes
+      )
+      assert.equal(getBeforeRes.getStatus(), 200)
+      assert.equal(getBeforeRes.getBody().product_id, "prod_route_test")
+      assert.equal(getBeforeRes.getBody().extension, null)
+      assert.deepEqual(getBeforeRes.getBody().videos, [])
+
+      // 2. POST product extension -> returns top-level fields AND extension object
+      const postRes = createMockRes()
+      await AdminProductExtRoute.POST(
+        {
+          params: { product_id: "prod_route_test" },
+          query: {},
+          body: {},
+          validatedBody: {
+            tagline: "Route Test Tagline",
+            videos: [
+              {
+                url: "https://cdn.example.com/route.mp4",
+                name: "Route Clip",
+                mimeType: "video/mp4",
+                size: 2048,
+              },
+            ],
+          },
+          scope: container,
+        } as any,
+        postRes
+      )
+      assert.equal(postRes.getStatus(), 200)
+      assert.equal(postRes.getBody().tagline, "Route Test Tagline")
+      assert.ok(postRes.getBody().extension)
+      assert.equal(postRes.getBody().extension.tagline, "Route Test Tagline")
+      assert.equal(
+        postRes.getBody().extension.media_items[0].name,
+        "Route Clip"
+      )
+
+
+      // 3. Variant POST & GET -> returns top-level fields AND extension object
+      const varPostRes = createMockRes()
+      await AdminVariantExtRoute.POST(
+        {
+          params: {
+            product_id: "prod_route_test",
+            variant_id: "var_route_01",
+          },
+          query: {},
+          body: {},
+          validatedBody: {
+            thumbnail: "https://cdn.example.com/var-thumb.jpg",
+            images: ["https://cdn.example.com/var-1.jpg"],
+          },
+          scope: container,
+        } as any,
+        varPostRes
+      )
+      assert.equal(varPostRes.getStatus(), 200)
+      assert.equal(
+        varPostRes.getBody().thumbnail,
+        "https://cdn.example.com/var-thumb.jpg"
+      )
+      assert.equal(
+        varPostRes.getBody().extension.thumbnail,
+        "https://cdn.example.com/var-thumb.jpg"
+      )
+
+      // 4. Store GET without variant_ids -> variants defaults to {}
+      const storeRes = createMockRes()
+      await StoreProductExtRoute.GET(
+        {
+          params: { product_id: "prod_route_test" },
+          query: {},
+          body: {},
+          validatedBody: {},
+          scope: container,
+        } as any,
+        storeRes
+      )
+      assert.equal(storeRes.getStatus(), 200)
+      assert.deepEqual(storeRes.getBody().variants, {})
+
+      // 5. SDK normalization of { extension } envelope
+      const sdk = createProductExtSdk({
+        baseUrl: "https://api.example.com",
+        fetcher: (async () => ({
+          ok: true,
+          status: 200,
+          json: async () => postRes.getBody(),
+        })) as any,
+      })
+      const sdkExt = await sdk.admin.getProductExtension("prod_route_test")
+      assert.equal(sdkExt.tagline, "Route Test Tagline")
+      assert.equal(sdkExt.extension?.tagline, "Route Test Tagline")
+    })
+  })
+
+  describe("10. Database-Level Filter Pushdown Verification", () => {
+    it("pushes variant_id, feature code/is_active/id, and product_id filters down to MikroORM list methods", async () => {
+      const service = new ProductExtModuleService()
+
+      await service.upsertByVariantId({
+        variant_id: "var_push_1",
+        product_id: "prod_push_1",
+        thumbnail: "https://cdn.example.com/v1.jpg",
+      })
+      await service.upsertByVariantId({
+        variant_id: "var_push_2",
+        product_id: "prod_push_1",
+        thumbnail: "https://cdn.example.com/v2.jpg",
+      })
+
+      const variantFilters: any[] = []
+      const origListVariants = (service as any).listVariantExtensions.bind(
+        service
+      )
+      ;(service as any).listVariantExtensions = async (filter: any) => {
+        variantFilters.push(filter)
+        return origListVariants(filter)
+      }
+
+      const byIds = await service.getByVariantIds(["var_push_1"])
+      assert.equal(byIds.length, 1)
+      assert.deepEqual(variantFilters[0], { variant_id: ["var_push_1"] })
+
+      const featureFilters: any[] = []
+      const origListFeatures = (service as any).listProductFeatures.bind(
+        service
+      )
+      ;(service as any).listProductFeatures = async (filter: any) => {
+        featureFilters.push(filter)
+        return origListFeatures(filter)
+      }
+
+      const createdFeat = await service.createFeature({
+        code: "waterproof",
+        title: "Waterproof",
+        is_active: true,
+      })
+      assert.deepEqual(featureFilters[0], { code: "waterproof" })
+
+      await service.listFeatures({ is_active: true, ids: [createdFeat.id] })
+      assert.deepEqual(featureFilters[featureFilters.length - 1], {
+        is_active: true,
+        id: [createdFeat.id],
+      })
+
+      await service.upsertByProductId({
+        product_id: "prod_push_csv",
+        image_alts: [
+          {
+            image_url: "https://cdn.example.com/csv.jpg",
+            alt: "CSV Alt",
+          },
+        ],
+      })
+
+      const prodFilters: any[] = []
+      const origListProducts = (service as any).listProductExtensions.bind(
+        service
+      )
+      ;(service as any).listProductExtensions = async (filter: any) => {
+        prodFilters.push(filter)
+        return origListProducts(filter)
+      }
+
+      const csv = await service.exportAllImageAltsCsv(["prod_push_csv"])
+      assert.match(csv, /CSV Alt/)
+      assert.deepEqual(prodFilters[0], { product_id: ["prod_push_csv"] })
+    })
+  })
+
+  describe("11. MikroORM Migration (Migration20260514000000)", () => {
+    it("generates idempotent CREATE TABLE, @bambiste upgrade ALTER TABLE, partial unique indexes, and rollback SQL", async () => {
+      const migration = new Migration20260514000000()
+      await migration.up()
+
+      const upQueries: string[] = (migration as any).queries ?? []
+      assert.ok(upQueries.length >= 18)
+
+      const combinedUp = upQueries.join("\n")
+      assert.match(combinedUp, /CREATE TABLE IF NOT EXISTS "product_extension"/)
+      assert.match(combinedUp, /CREATE TABLE IF NOT EXISTS "variant_extension"/)
+      assert.match(
+        combinedUp,
+        /CREATE TABLE IF NOT EXISTS "product_ext_attribute"/
+      )
+      assert.match(
+        combinedUp,
+        /CREATE TABLE IF NOT EXISTS "product_ext_attribute_template"/
+      )
+      assert.match(
+        combinedUp,
+        /CREATE TABLE IF NOT EXISTS "product_ext_attribute_value"/
+      )
+      assert.match(
+        combinedUp,
+        /CREATE TABLE IF NOT EXISTS "product_ext_feature"/
+      )
+      assert.match(
+        combinedUp,
+        /ALTER TABLE "product_extension"[\s\S]*ADD COLUMN IF NOT EXISTS "tagline"/
+      )
+      assert.match(
+        combinedUp,
+        /ALTER TABLE "variant_extension"[\s\S]*ADD COLUMN IF NOT EXISTS "videos"/
+      )
+      assert.match(
+        combinedUp,
+        /CREATE UNIQUE INDEX IF NOT EXISTS "IDX_product_extension_product_id"/
+      )
+      assert.match(combinedUp, /WHERE deleted_at IS NULL/)
+
+      const downMigration = new Migration20260514000000()
+      await downMigration.down()
+      const downQueries: string[] = (downMigration as any).queries ?? []
+      assert.ok(downQueries.length >= 1)
+      assert.match(
+        downQueries.join("\n"),
+        /DROP TABLE IF EXISTS "product_extension" CASCADE/
+      )
+    })
+  })
 })
+
+
 

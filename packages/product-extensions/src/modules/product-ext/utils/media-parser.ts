@@ -66,7 +66,7 @@ export function parseVideoMediaItem(
         fieldName: "video.captions_url",
       })
     : null
-  let mimeType: string | null = rawObj.mime_type ?? null
+  let mimeType: string | null = rawObj.mime_type ?? rawObj.mimeType ?? null
 
   if (validatedUrl.startsWith("/")) {
     provider = "file"
@@ -126,12 +126,17 @@ export function parseVideoMediaItem(
       }
     } else {
       const detectedMime = inferVideoMimeType(parsed.pathname)
-      if (detectedMime) {
+      if (detectedMime || mimeType) {
         provider = rawObj.provider ?? "file"
         mimeType = mimeType ?? detectedMime
       }
     }
   }
+
+  const resolvedTitle = rawObj.title ?? rawObj.name ?? null
+  const resolvedName = rawObj.name ?? rawObj.title ?? null
+  const resolvedSize =
+    typeof rawObj.size === "number" && rawObj.size >= 0 ? rawObj.size : null
 
   return {
     id: rawObj.id?.trim() || `vid_${fallbackPosition + 1}`,
@@ -142,7 +147,10 @@ export function parseVideoMediaItem(
     poster_url: posterUrl,
     captions_url: captionsUrl,
     mime_type: mimeType,
-    title: rawObj.title ?? null,
+    mimeType,
+    name: resolvedName,
+    size: resolvedSize,
+    title: resolvedTitle,
     alt: rawObj.alt ?? null,
     duration_seconds:
       typeof rawObj.duration_seconds === "number" &&

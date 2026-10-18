@@ -9,10 +9,13 @@ export type VideoProviderType =
   | "cloudflare_stream"
   | "external"
 
-export interface VideoMediaItem {
-  id: string
+export interface VideoItem {
   url: string
-  provider: VideoProviderType
+  name?: string
+  mimeType?: string
+  size?: number
+  id?: string
+  provider?: VideoProviderType
   embed_id?: string | null
   embed_url?: string | null
   poster_url?: string | null
@@ -27,7 +30,31 @@ export interface VideoMediaItem {
   muted?: boolean
 }
 
-export type VideoInput = string | Partial<VideoMediaItem> & { url: string }
+export interface VideoMediaItem {
+  id: string
+  url: string
+  provider: VideoProviderType
+  embed_id?: string | null
+  embed_url?: string | null
+  poster_url?: string | null
+  captions_url?: string | null
+  mime_type?: string | null
+  mimeType?: string | null
+  name?: string | null
+  size?: number | null
+  title?: string | null
+  alt?: string | null
+  duration_seconds?: number | null
+  position?: number
+  autoplay?: boolean
+  loop?: boolean
+  muted?: boolean
+}
+
+export type VideoInput =
+  | string
+  | VideoItem
+  | (Partial<VideoMediaItem> & { url: string })
 
 export interface Model3DItem {
   id: string
@@ -555,6 +582,9 @@ export interface StorefrontVariantExtensionSummary {
   swatch_image_url: string | null
 }
 
+export type UpsertProductExtInput = UpsertProductExtensionInput
+export type UpsertVariantExtInput = UpsertVariantExtensionInput
+
 export interface StorefrontProductExtensionResponse {
   product_id: string
   videos: string[]
@@ -570,5 +600,5 @@ export interface StorefrontProductExtensionResponse {
   option_metadata: ProductOptionMetadata[]
   seo_metadata: ProductSeoMetadata | null
   resolved_override: StorefrontPresentationOverride | null
-  variants?: Record<string, StorefrontVariantExtensionSummary>
+  variants: Record<string, StorefrontVariantExtensionSummary>
 }
