@@ -4,6 +4,7 @@ export {
 } from "./tiktok.provider.js"
 export {
   MetaGraphProvider,
+  MetaProvider,
   type MetaGraphProviderConfig,
   type MetaGraphProviderConfig as MetaGraphProviderOptions,
-} from "./meta-graph.provider.js"
+} from "./meta-graph.provider"

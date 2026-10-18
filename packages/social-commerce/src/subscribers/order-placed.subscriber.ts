@@ -1,7 +1,4 @@
-import {
-  SOCIAL_COMMERCE_MODULE,
-  type SocialCommerceService,
-} from "../modules/social-commerce/index.js"
+import { resolveSocialCommerceService } from "../modules/social-commerce/index.js"
 import type { SubscriberArgs, SubscriberConfig } from "./social-events.subscriber.js"
 
 export interface OrderPlacedEventData {
@@ -19,9 +16,7 @@ export default async function handleOrderPlaced({
   event,
   container,
 }: SubscriberArgs<OrderPlacedEventData>): Promise<void> {
-  const socialService = container.resolve<SocialCommerceService>(
-    SOCIAL_COMMERCE_MODULE
-  )
+  const socialService = resolveSocialCommerceService(container)
 
   const data = event?.data
   if (!data) return

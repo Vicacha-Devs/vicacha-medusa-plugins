@@ -1,7 +1,6 @@
 import {
-  SOCIAL_COMMERCE_MODULE,
+  resolveSocialCommerceService,
   type CatalogFeedProductItem,
-  type SocialCommerceService,
 } from "../modules/social-commerce/index.js"
 import type { SubscriberArgs, SubscriberConfig } from "./social-events.subscriber.js"
 
@@ -18,9 +17,7 @@ export default async function handleProductCatalogSync({
   event,
   container,
 }: SubscriberArgs<ProductEventData>): Promise<void> {
-  const socialService = container.resolve<SocialCommerceService>(
-    SOCIAL_COMMERCE_MODULE
-  )
+  const socialService = resolveSocialCommerceService(container)
   const items = event?.data?.items
   if (!Array.isArray(items) || items.length === 0) {
     return
@@ -29,7 +26,7 @@ export default async function handleProductCatalogSync({
   const accounts = await socialService.listAccounts({ status: "active" })
   for (const account of accounts) {
     if (account.platform === "local") continue
-    if (!account.external_catalog_id && !account.external_shop_id) continue
+    if (!account.external_catalog_id && !account.external_shop_id && !account.catalog_id) continue
 
     try {
       await socialService.syncProductsToSocialCatalog(account.id, items)

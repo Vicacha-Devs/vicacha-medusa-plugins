@@ -83,6 +83,11 @@ export function MedusaService(models = {}) {
   }
 }
 
+export const Modules = {
+  REGION: "region",
+  PRODUCT: "product",
+}
+
 export class MedusaError extends Error {
   static Types = {
     DB_ERROR: "database_error",

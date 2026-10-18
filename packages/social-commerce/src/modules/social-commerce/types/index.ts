@@ -70,18 +70,28 @@ export type SocialCommercePluginOptions = SocialCommerceModuleOptions
 
 export interface SocialAccountRecord {
   id: string
+  merchant_id?: string
   platform: SocialPlatform
   platform_user_id: string
+  external_id?: string
   platform_username: string
+  username?: string
   display_name: string | null
   avatar_url: string | null
   access_token: string
   refresh_token: string | null
+  encrypted_access_token?: string | null
+  encrypted_refresh_token?: string | null
   token_expires_at: Date | string | null
+  expires_at?: Date | string | null
   scopes: string[] | null
+  token_scope?: string | null
+  follower_count?: number
   external_catalog_id: string | null
   external_shop_id: string | null
+  catalog_id?: string | null
   status: SocialAccountStatus
+  is_active?: boolean
   last_synced_at: Date | string | null
   metadata: Record<string, unknown> | null
   created_at?: Date | string
@@ -90,7 +100,10 @@ export interface SocialAccountRecord {
 
 export type SocialAccountPublicDTO = Omit<
   SocialAccountRecord,
-  "access_token" | "refresh_token"
+  | "access_token"
+  | "refresh_token"
+  | "encrypted_access_token"
+  | "encrypted_refresh_token"
 >
 
 export interface SocialMediaMetrics {
@@ -100,11 +113,17 @@ export interface SocialMediaMetrics {
   view_count?: number
   reach_count?: number
   saved_count?: number
+  views?: number
+  likes?: number
+  comments?: number
+  shares?: number
 }
 
 export interface SocialProductTagRecord {
   id: string
   social_media_post_id: string
+  social_post_id?: string
+  post_id?: string
   product_id: string
   variant_id: string | null
   timestamp_seconds: number | null
@@ -112,6 +131,10 @@ export interface SocialProductTagRecord {
   position_y: number | null
   label: string | null
   is_featured: boolean
+  display_order?: number
+  video_timestamp?: number | null
+  coordinates?: { x: number; y: number } | null
+  metadata?: Record<string, unknown> | null
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -119,27 +142,41 @@ export interface SocialProductTagRecord {
 export interface SocialMediaPostRecord {
   id: string
   social_account_id: string | null
+  account_id?: string | null
   platform: SocialPlatform
   platform_post_id: string
+  external_id?: string
   media_type: MediaType
+  title?: string | null
   caption: string | null
   media_url: string
   thumbnail_url: string | null
   permalink: string | null
+  embed_link?: string | null
   duration: number | null
+  duration_seconds?: number | null
   view_count: number
   like_count: number
   comment_count: number
   share_count: number
+  views_count?: number
+  likes_count?: number
+  comments_count?: number
+  shares_count?: number
+  synced_at?: Date | string | null
+  metrics?: SocialMediaMetrics | null
   published_at: Date | string | null
   expires_at: Date | string | null
   is_shoppable: boolean
   is_featured: boolean
   sort_order: number
+  display_order?: number
   author_name: string | null
   author_avatar_url: string | null
   cta_text: string | null
   cta_url: string | null
+  link_text?: string | null
+  link_url?: string | null
   status: PostStatus
   metadata: Record<string, unknown> | null
   tagged_products?: SocialProductTagRecord[]
@@ -155,10 +192,17 @@ export interface LiveProductRecord {
   live_price: number | null
   currency_code: string | null
   live_stock: number | null
+  allocated_stock?: number | null
+  special_price?: number | null
+  is_pinned?: boolean
   reserved_quantity: number
+  reserved_stock?: number
   sold_quantity: number
+  sold_stock?: number
+  is_featured?: boolean
   pinned_at: Date | string | null
   sort_order: number
+  display_order?: number
   metadata: Record<string, unknown> | null
   stock_availability?: StockAvailabilityInfo
   created_at?: Date | string
@@ -168,8 +212,10 @@ export interface LiveProductRecord {
 export interface LiveSessionRecord {
   id: string
   social_account_id: string
+  account_id?: string
   platform: SocialPlatform
   platform_live_id: string | null
+  external_id?: string | null
   title: string
   description: string | null
   stream_url: string | null
@@ -180,6 +226,7 @@ export interface LiveSessionRecord {
   ended_at: Date | string | null
   viewer_count: number
   peak_viewer_count: number
+  metrics?: Record<string, number> | null
   metadata: Record<string, unknown> | null
   products?: LiveProductRecord[]
   created_at?: Date | string
@@ -189,13 +236,20 @@ export interface LiveSessionRecord {
 export interface CatalogSyncItemRecord {
   id: string
   social_account_id: string
+  account_id?: string
   platform: SocialPlatform
   product_id: string
+  medusa_product_id?: string
   variant_id: string
+  medusa_variant_id?: string
   external_catalog_id: string
+  catalog_id?: string
   external_product_id: string | null
+  external_item_id?: string | null
   sync_status: CatalogSyncStatus
+  status?: CatalogSyncStatus
   content_hash: string | null
+  checksum?: string | null
   last_synced_at: Date | string | null
   error_message: string | null
   metadata: Record<string, unknown> | null
@@ -215,6 +269,9 @@ export interface TagProductInput {
   position_y?: number | null
   label?: string | null
   is_featured?: boolean
+  video_timestamp?: number | null
+  coordinates?: { x: number; y: number } | null
+  metadata?: Record<string, unknown> | null
 }
 
 export interface CreateLocalStoryInput {
@@ -235,7 +292,9 @@ export interface CreateLocalStoryInput {
 }
 
 export interface CreateLiveSessionInput {
-  social_account_id: string
+  social_account_id?: string
+  account_id?: string
+  external_id?: string | null
   platform?: SocialPlatform
   platform_live_id?: string | null
   title: string
@@ -252,6 +311,8 @@ export interface AttachLiveProductInput {
   live_price?: number | null
   currency_code?: string | null
   live_stock?: number | null
+  special_price?: number | null
+  allocated_stock?: number | null
   sort_order?: number
   is_pinned?: boolean
   metadata?: Record<string, unknown> | null
@@ -394,6 +455,20 @@ export interface ProviderFetchedPost {
   metadata: Record<string, unknown> | null
 }
 
+export interface ProviderLiveSessionInfo {
+  platform_live_id: string
+  title: string
+  status: LiveSessionStatus
+  stream_url?: string | null
+  viewer_count?: number
+  peak_viewer_count?: number
+  started_at?: Date | null
+  ended_at?: Date | null
+  description?: string | null
+  playback_url?: string | null
+  metadata?: Record<string, unknown> | null
+}
+
 export interface SocialPlatformProvider {
   readonly platform: SocialPlatform
   getAuthUrl(options: {
@@ -412,6 +487,7 @@ export interface SocialPlatformProvider {
     refresh_token: string | null
     expires_in: number | null
   }>
+  revokeToken?(accessToken: string): Promise<void>
   fetchMediaPosts(
     accessToken: string,
     options?: {
@@ -429,6 +505,14 @@ export interface SocialPlatformProvider {
       platformUserId?: string
     }
   ): Promise<ProviderFetchedPost[]>
+  getVideo?(
+    accessToken: string,
+    videoId: string
+  ): Promise<ProviderFetchedPost | null>
+  getLiveSession?(
+    accessToken: string,
+    roomId: string
+  ): Promise<ProviderLiveSessionInfo | null>
   syncCatalogBatch?(
     accessToken: string,
     options: {
@@ -436,4 +520,28 @@ export interface SocialPlatformProvider {
       items: CatalogFeedProductItem[]
     }
   ): Promise<CatalogSyncBatchResult>
+}
+
+export interface SyncAccountMediaOptions {
+  includeStories?: boolean
+  limit?: number
+  cursor?: string
+  fetchAllPages?: boolean
+  maxPages?: number
+}
+
+export interface IncomingWebhookResult {
+  received?: boolean
+  platform: SocialPlatform
+  event: string
+  event_type?: string
+  processed?: boolean
+  handled?: boolean
+  action?: string
+  account_id?: string
+  post_id?: string
+  session_id?: string
+  session?: LiveSessionRecord | null
+  post?: SocialMediaPostRecord | null
+  released_reservations?: number
 }

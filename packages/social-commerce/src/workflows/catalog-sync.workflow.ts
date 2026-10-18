@@ -5,30 +5,25 @@ import {
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import {
-  SOCIAL_COMMERCE_MODULE,
+  resolveSocialCommerceService,
   type CatalogFeedProductItem,
-  type SocialCommerceService,
-} from "../modules/social-commerce/index.js"
+} from "../modules/social-commerce/index"
 
 export interface CatalogSyncWorkflowInput {
   account_id: string
-  items: CatalogFeedProductItem[]
   external_catalog_id?: string
+  items: CatalogFeedProductItem[]
 }
 
-export const syncCatalogBatchStep = createStep(
-  "sync-catalog-batch",
+const pushSocialCatalogItemsStep = createStep(
+  "push-social-catalog-items",
   async (input: CatalogSyncWorkflowInput, { container }) => {
-    const socialService = container.resolve<SocialCommerceService>(
-      SOCIAL_COMMERCE_MODULE
-    )
+    const socialService = resolveSocialCommerceService(container)
 
     const result = await socialService.syncProductsToSocialCatalog(
       input.account_id,
       input.items,
-      {
-        externalCatalogId: input.external_catalog_id,
-      }
+      { externalCatalogId: input.external_catalog_id }
     )
 
     return new StepResponse(result)
@@ -38,7 +33,7 @@ export const syncCatalogBatchStep = createStep(
 export const catalogSyncWorkflow = createWorkflow(
   "catalog-sync",
   (input: CatalogSyncWorkflowInput) => {
-    const result = syncCatalogBatchStep(input)
-    return new WorkflowResponse(result)
+    const syncResult = pushSocialCatalogItemsStep(input)
+    return new WorkflowResponse(syncResult)
   }
 )

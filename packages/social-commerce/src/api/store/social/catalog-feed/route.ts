@@ -1,3 +1,4 @@
+import { Modules } from "@medusajs/framework/utils"
 import {
   resolveSocialService,
   sendErrorResponse,
@@ -43,7 +44,7 @@ export async function GET(req: HttpRequest, res: HttpResponse): Promise<void> {
       typeof req.query?.token === "string" ? req.query.token : undefined
     const providedToken = headerToken || bearerToken || queryToken
 
-    socialService.verifyCatalogFeedToken(providedToken)
+    await socialService.verifyCatalogFeedToken(providedToken)
 
     // 2. Parse & validate query parameters
     const format = ((req.query?.format as string) || "xml") as CatalogFeedFormat
@@ -89,7 +90,7 @@ export async function GET(req: HttpRequest, res: HttpResponse): Promise<void> {
     // 3. Optionally resolve region currency from Medusa Region module when country_code or region_id is provided
     if ((!resolvedCurrency || !resolvedRegionId) && (countryCode || regionId)) {
       try {
-        const regionModule = req.scope?.resolve?.("region") as
+        const regionModule = req.scope?.resolve?.(Modules.REGION) as unknown as
           | {
               listRegions?: (
                 filters?: Record<string, unknown>,
@@ -142,7 +143,7 @@ export async function GET(req: HttpRequest, res: HttpResponse): Promise<void> {
     if (Array.isArray(customItems)) {
       feedItems = customItems
     } else if (Array.isArray(customProducts)) {
-      feedItems = socialService.mapMedusaProductsToFeedItems(customProducts, {
+      feedItems = await socialService.mapMedusaProductsToFeedItems(customProducts, {
         currencyCode,
         countryCode,
         regionId: resolvedRegionId,
@@ -150,7 +151,7 @@ export async function GET(req: HttpRequest, res: HttpResponse): Promise<void> {
       })
     } else {
       try {
-        const productModule = req.scope?.resolve?.("product") as
+        const productModule = req.scope?.resolve?.(Modules.PRODUCT) as unknown as
           | {
               listProducts?: (
                 filters?: Record<string, unknown>,
@@ -164,7 +165,7 @@ export async function GET(req: HttpRequest, res: HttpResponse): Promise<void> {
             { relations: ["variants", "images", "options", "categories", "type"] }
           )
           if (Array.isArray(products) && products.length > 0) {
-            feedItems = socialService.mapMedusaProductsToFeedItems(products, {
+            feedItems = await socialService.mapMedusaProductsToFeedItems(products, {
               currencyCode,
               countryCode,
               regionId: resolvedRegionId,
@@ -192,7 +193,7 @@ export async function GET(req: HttpRequest, res: HttpResponse): Promise<void> {
       res.setHeader("X-Frame-Options", "DENY")
       res.setHeader(
         "Cache-Control",
-        socialService.isFeedTokenRequired()
+        (await socialService.isFeedTokenRequired())
           ? "private, no-store"
           : "public, max-age=300"
       )

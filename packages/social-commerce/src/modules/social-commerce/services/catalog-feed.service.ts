@@ -1,5 +1,5 @@
-import { MedusaError } from "../utils/medusa-error.js"
-import { escapeCsvField, escapeXml, sanitizeHttpUrl } from "../utils/security.js"
+import { MedusaError } from "../utils/medusa-error"
+import { escapeCsvField, escapeXml, sanitizeHttpUrl } from "../utils/security"
 import type {
   BeforeCatalogFeedItemHook,
   CatalogFeedFormat,

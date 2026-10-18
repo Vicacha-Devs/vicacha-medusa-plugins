@@ -6,7 +6,7 @@ import type {
   ProviderFetchedPost,
   ProviderOAuthTokenResult,
   SocialPlatformProvider,
-} from "../types/index.js"
+} from "../types/index"
 
 const META_OAUTH_DIALOG_BASE = "https://www.facebook.com"
 const META_GRAPH_API_BASE = "https://graph.facebook.com"
@@ -19,12 +19,15 @@ export interface MetaGraphProviderConfig {
   catalogId?: string
   scopes?: string[]
   fetchImpl?: typeof fetch
+  maxRetries?: number
+  retryDelayMs?: number
 }
 
 /**
  * Unified Meta Graph API Provider supporting both `instagram` (Instagram Professional,
  * Reels, 24h Stories, Instagram Shopping) and `facebook` (Facebook Page, Reels,
- * Live Video, Meta Commerce Catalog `items_batch`).
+ * Live Video, Meta Commerce Catalog `items_batch`), with exponential backoff retry
+ * on HTTP 429/5xx and OAuth token revocation.
  */
 export class MetaGraphProvider implements SocialPlatformProvider {
   readonly platform: "instagram" | "facebook"
@@ -35,6 +38,8 @@ export class MetaGraphProvider implements SocialPlatformProvider {
   private readonly catalogId: string | null
   private readonly defaultScopes: string[]
   private readonly fetchFn: typeof fetch
+  private readonly maxRetries: number
+  private readonly baseRetryDelayMs: number
 
   constructor(
     platformOrOptions:
@@ -62,6 +67,42 @@ export class MetaGraphProvider implements SocialPlatformProvider {
       "business_management",
     ]
     this.fetchFn = config.fetchImpl ?? globalThis.fetch
+    this.maxRetries = config.maxRetries ?? 3
+    this.baseRetryDelayMs = config.retryDelayMs ?? 30
+  }
+
+  private async sleep(ms: number): Promise<void> {
+    if (ms <= 0) return
+    await new Promise((resolve) => setTimeout(resolve, ms))
+  }
+
+  private async fetchWithRetry(
+    url: string,
+    init: RequestInit
+  ): Promise<Response> {
+    let attempt = 0
+    while (true) {
+      const res = await this.fetchFn(url, init)
+      if (
+        (res.status === 429 || res.status >= 500) &&
+        attempt < this.maxRetries
+      ) {
+        const retryAfter = res.headers?.get?.("retry-after")
+        let delayMs =
+          this.baseRetryDelayMs * Math.pow(2, attempt) +
+          Math.floor(Math.random() * 15)
+        if (retryAfter) {
+          const parsedSec = Number(retryAfter)
+          if (Number.isFinite(parsedSec) && parsedSec >= 0) {
+            delayMs = Math.min(parsedSec * 1000, 2000)
+          }
+        }
+        attempt += 1
+        await this.sleep(delayMs)
+        continue
+      }
+      return res
+    }
   }
 
   getAuthUrl(options: {
@@ -105,7 +146,9 @@ export class MetaGraphProvider implements SocialPlatformProvider {
     )
     tokenUrl.searchParams.set("code", options.code)
 
-    const tokenRes = await this.fetchFn(tokenUrl.toString(), { method: "GET" })
+    const tokenRes = await this.fetchWithRetry(tokenUrl.toString(), {
+      method: "GET",
+    })
     if (!tokenRes.ok) {
       throw new MedusaError(
         MedusaError.Types.UNAUTHORIZED,
@@ -136,7 +179,7 @@ export class MetaGraphProvider implements SocialPlatformProvider {
 
     let finalToken = shortToken
     let expiresIn = shortTokenData.expires_in ?? 5184000
-    const longRes = await this.fetchFn(longTokenUrl.toString(), {
+    const longRes = await this.fetchWithRetry(longTokenUrl.toString(), {
       method: "GET",
     })
     if (longRes.ok) {
@@ -162,7 +205,7 @@ export class MetaGraphProvider implements SocialPlatformProvider {
     )
     accountsUrl.searchParams.set("access_token", finalToken)
 
-    const pagesRes = await this.fetchFn(accountsUrl.toString(), {
+    const pagesRes = await this.fetchWithRetry(accountsUrl.toString(), {
       method: "GET",
     })
     if (pagesRes.ok) {
@@ -249,7 +292,7 @@ export class MetaGraphProvider implements SocialPlatformProvider {
     url.searchParams.set("client_secret", this.appSecret)
     url.searchParams.set("fb_exchange_token", longLivedToken)
 
-    const res = await this.fetchFn(url.toString(), { method: "GET" })
+    const res = await this.fetchWithRetry(url.toString(), { method: "GET" })
     if (!res.ok) {
       throw new MedusaError(
         MedusaError.Types.UNAUTHORIZED,
@@ -266,6 +309,23 @@ export class MetaGraphProvider implements SocialPlatformProvider {
       access_token: token,
       refresh_token: token,
       expires_in: typeof json.expires_in === "number" ? json.expires_in : 5184000,
+    }
+  }
+
+  async revokeToken(accessToken: string): Promise<void> {
+    const url = new URL(
+      `${META_GRAPH_API_BASE}/${this.graphVersion}/me/permissions`
+    )
+    url.searchParams.set("access_token", accessToken)
+
+    const res = await this.fetchWithRetry(url.toString(), {
+      method: "DELETE",
+    })
+    if (!res.ok) {
+      throw new MedusaError(
+        MedusaError.Types.UNEXPECTED_STATE,
+        `Meta token revocation failed with status ${res.status}.`
+      )
     }
   }
 
@@ -289,9 +349,12 @@ export class MetaGraphProvider implements SocialPlatformProvider {
       "id,caption,media_type,media_product_type,media_url,thumbnail_url,permalink,timestamp,like_count,comments_count"
     )
     url.searchParams.set("limit", String(options?.limit ?? 25))
+    if (options?.cursor) {
+      url.searchParams.set("after", options.cursor)
+    }
     url.searchParams.set("access_token", accessToken)
 
-    const res = await this.fetchFn(url.toString(), { method: "GET" })
+    const res = await this.fetchWithRetry(url.toString(), { method: "GET" })
     if (!res.ok) {
       throw new MedusaError(
         MedusaError.Types.UNEXPECTED_STATE,
@@ -301,7 +364,7 @@ export class MetaGraphProvider implements SocialPlatformProvider {
 
     const json = (await res.json()) as {
       data?: Array<Record<string, unknown>>
-      paging?: { cursors?: { after?: string } }
+      paging?: { cursors?: { after?: string }; next?: string }
     }
 
     const items = json.data ?? []
@@ -363,7 +426,7 @@ export class MetaGraphProvider implements SocialPlatformProvider {
     )
     url.searchParams.set("access_token", accessToken)
 
-    const res = await this.fetchFn(url.toString(), { method: "GET" })
+    const res = await this.fetchWithRetry(url.toString(), { method: "GET" })
     if (!res.ok) {
       return []
     }
@@ -424,7 +487,7 @@ export class MetaGraphProvider implements SocialPlatformProvider {
       },
     }))
 
-    const res = await this.fetchFn(url, {
+    const res = await this.fetchWithRetry(url, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -458,3 +521,5 @@ export class MetaGraphProvider implements SocialPlatformProvider {
     }
   }
 }
+
+export { MetaGraphProvider as MetaProvider }

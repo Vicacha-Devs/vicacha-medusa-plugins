@@ -117,20 +117,46 @@ export async function POST(req: HttpRequest, res: HttpResponse): Promise<void> {
               : undefined,
         },
       })
-    } else if (eventType === "live.ended" && sessionId) {
+      res.status(200).json({
+        received: true,
+        handled: true,
+        platform,
+        event: eventType,
+        action: "live_session_started",
+      })
+      return
+    }
+
+    if (eventType === "live.ended" && sessionId) {
       await liveEndedWorkflow(req.scope).run({
         input: {
           session_id: sessionId,
         },
       })
+      res.status(200).json({
+        received: true,
+        handled: true,
+        platform,
+        event: eventType,
+        action: "live_session_ended",
+      })
+      return
     }
 
+    const webhookResult = await socialService.handleIncomingWebhook(
+      platform,
+      payload
+    )
+
     res.status(200).json({
+      ...webhookResult,
       received: true,
       platform,
-      event: eventType || "acknowledged",
+      event: eventType || webhookResult.event || "acknowledged",
     })
   } catch (err) {
     sendErrorResponse(res, err)
   }
 }
+
+

@@ -5,34 +5,33 @@ import {
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
 import {
-  SOCIAL_COMMERCE_MODULE,
+  resolveSocialCommerceService,
   type CheckoutHandoffInput,
-  type SocialCommerceService,
-} from "../modules/social-commerce/index.js"
+} from "../modules/social-commerce/index"
 
-export interface CheckoutHandoffWorkflowInput extends CheckoutHandoffInput {
-  storefront_base_url?: string
-}
+const executeCheckoutHandoffStep = createStep(
+  "execute-checkout-handoff",
+  async (input: CheckoutHandoffInput, { container }) => {
+    const socialService = resolveSocialCommerceService(container)
 
-export const buildSocialCheckoutHandoffStep = createStep(
-  "build-social-checkout-handoff",
-  async (input: CheckoutHandoffWorkflowInput, { container }) => {
-    const socialService = container.resolve<SocialCommerceService>(
-      SOCIAL_COMMERCE_MODULE
-    )
-
-    const handoff = await socialService.createCheckoutHandoff(input, {
-      storefrontBaseUrl: input.storefront_base_url,
+    const result = await socialService.createCheckoutHandoff(input)
+    return new StepResponse(result, {
+      reservationId: result.reservation_id,
     })
-
-    return new StepResponse(handoff)
+  },
+  async (compensationData, { container }) => {
+    if (!compensationData?.reservationId) return
+    const socialService = resolveSocialCommerceService(container)
+    await socialService.reservationService.releaseReservation(
+      compensationData.reservationId
+    )
   }
 )
 
 export const checkoutHandoffWorkflow = createWorkflow(
   "checkout-handoff",
-  (input: CheckoutHandoffWorkflowInput) => {
-    const result = buildSocialCheckoutHandoffStep(input)
+  (input: CheckoutHandoffInput) => {
+    const result = executeCheckoutHandoffStep(input)
     return new WorkflowResponse(result)
   }
 )

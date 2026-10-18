@@ -1,6 +1,7 @@
 import { describe, it } from "node:test"
 import assert from "node:assert/strict"
 import {
+  accountConnectedWorkflow,
   adminI18n,
   CatalogFeedService,
   computeHmacSha256Hex,
@@ -13,12 +14,16 @@ import {
   encryptToken,
   escapeCsvField,
   escapeXml,
+  initialAccountSyncStep,
   InventoryReservationService,
   MedusaError,
   MetaGraphProvider,
+  MetaProvider,
   parseWithMedusaError,
   ReserveLiveStockSchema,
+  resolveSocialCommerceService,
   sanitizeHttpUrl,
+  SOCIAL_COMMERCE_LEGACY_MODULE,
   SocialCommerceService,
   SUPPORTED_UI_LOCALES,
   TagProductsOnPostSchema,
@@ -27,10 +32,12 @@ import {
   verifyWebhookHmacSha256,
 } from "../index.js"
 import { POST as connectPost } from "../api/admin/social/connect/route.js"
+import { GET as oauthCallbackGet } from "../api/social/oauth/callback/route.js"
 import { GET as storeStoriesGet } from "../api/store/social/stories/route.js"
 import { GET as storeFeedGet } from "../api/store/social/feed/route.js"
 import { GET as storeCatalogFeedGet } from "../api/store/social/catalog-feed/route.js"
 import { POST as webhookPost } from "../api/webhooks/social/[platform]/route.js"
+import { POST as tiktokWebhookPost } from "../api/webhooks/tiktok/route.js"
 import type { HttpRequest, HttpResponse } from "../api/middlewares.js"
 import { config as socialRouteConfig } from "../admin/routes/social-commerce/page.js"
 import { config as socialWidgetConfig } from "../admin/widgets/product-social-widget.js"
@@ -680,7 +687,7 @@ describe("medusa-plugin-social-commerce", () => {
       const feedService = new CatalogFeedService({
         storefrontUrl: "https://store.example.com",
         brandName: "Medusa Apparel",
-        // defaultCurrency: "EUR",
+        defaultCurrency: "EUR",
       })
 
       const rawMedusaProducts = [
@@ -1157,7 +1164,640 @@ describe("medusa-plugin-social-commerce", () => {
       assert.equal(typeof components.NavigationCard, "function")
     })
   })
+
+  describe("8. @bambiste/medusa-social-commerce Parity & Enhanced Capabilities", () => {
+    it("aligns canonical and @bambiste alias properties across accounts, posts, tags, live sessions, live products, and catalog items, and resolves SocialCommerce legacy module key", async () => {
+      assert.equal(MetaProvider, MetaGraphProvider)
+      assert.equal(SOCIAL_COMMERCE_LEGACY_MODULE, "SocialCommerce")
+
+      const service = new SocialCommerceService(
+        {},
+        { encryption_key: TEST_ENCRYPTION_KEY }
+      )
+      await service.registerProvider(
+        "tiktok",
+        new TikTokProvider({
+          clientKey: "tt_key",
+          clientSecret: "tt_secret",
+          redirectUri: "https://api.example.com/social/oauth/callback",
+          shopId: "shop_99",
+          fetchImpl: createMockFetch(),
+        })
+      )
+
+      // Legacy "SocialCommerce" container resolution fallback
+      const legacyContainer = {
+        resolve<T = unknown>(key: string): T {
+          if (key === "SocialCommerce") return service as unknown as T
+          throw new Error(`Module ${key} not registered`)
+        },
+      }
+      assert.equal(resolveSocialCommerceService(legacyContainer), service)
+
+      const init = await service.buildOAuthConnectUrl({ platform: "tiktok" })
+      const account = await service.exchangeOAuthCallback({
+        code: "tt_code",
+        state: init.state,
+      })
+
+      assert.equal(account.platform_user_id, "tt_open_id_789")
+      assert.equal(account.external_id, "tt_open_id_789")
+      assert.equal(account.platform_username, "medusa_tiktok_shop")
+      assert.equal(account.username, "medusa_tiktok_shop")
+      assert.equal(account.is_active, true)
+      assert.equal("encrypted_access_token" in account, false)
+      assert.equal("encrypted_refresh_token" in account, false)
+
+      const syncRes = await service.syncAccountMedia(account.id)
+      assert.equal(syncRes.synced_count, 1)
+      assert.equal(syncRes.created_count, 1)
+      assert.equal(syncRes.updated_count, 0)
+      const post = syncRes.posts[0]
+      assert.equal(post.account_id, account.id)
+      assert.equal(post.external_id, "tt_vid_001")
+      assert.equal(post.views_count, 15000)
+      assert.equal(post.likes_count, 2300)
+      assert.equal(post.comments_count, 140)
+      assert.equal(post.shares_count, 85)
+      assert.ok(post.synced_at)
+
+      // Tag using @bambiste alias inputs (video_timestamp, coordinates)
+      const tags = await service.tagProductsOnPost(post.id, [
+        {
+          product_id: "prod_alias_1",
+          variant_id: "var_alias_1",
+          video_timestamp: 18,
+          coordinates: { x: 25, y: 75 },
+        },
+      ])
+      assert.equal(tags[0].post_id, post.id)
+      assert.equal(tags[0].timestamp_seconds, 18)
+      assert.equal(tags[0].video_timestamp, 18)
+      assert.equal(tags[0].position_x, 25)
+      assert.equal(tags[0].position_y, 75)
+      assert.deepEqual(tags[0].coordinates, { x: 25, y: 75 })
+
+      // LiveSession & LiveProduct using @bambiste alias inputs
+      const liveSession = await service.scheduleLiveSession({
+        account_id: account.id,
+        external_id: "room_alias_01",
+        title: "Alias Live Drop",
+      })
+      assert.equal(liveSession.account_id, account.id)
+      assert.equal(liveSession.external_id, "room_alias_01")
+      assert.equal(liveSession.platform_live_id, "room_alias_01")
+
+      const liveProds = await service.pinProductsToLiveSession(liveSession.id, [
+        {
+          product_id: "prod_live_alias",
+          variant_id: "var_live_alias",
+          special_price: 49,
+          allocated_stock: 10,
+          is_pinned: true,
+        },
+      ])
+      assert.equal(liveProds[0].live_price, 49)
+      assert.equal(liveProds[0].special_price, 49)
+      assert.equal(liveProds[0].live_stock, 10)
+      assert.equal(liveProds[0].allocated_stock, 10)
+      assert.equal(liveProds[0].is_pinned, true)
+    })
+
+    it("retries provider HTTP calls on 429/5xx, detects TikTok HTTP 200 body errors, revokes tokens on disconnect, and fetches single video & live info", async () => {
+      let videoQueryAttempts = 0
+      let liveInfoAttempts = 0
+      let revokedTokens: string[] = []
+
+      const customFetch: typeof fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = typeof input === "string" ? input : input.toString()
+
+        if (url.includes("/v2/video/query/")) {
+          videoQueryAttempts += 1
+          if (videoQueryAttempts === 1) {
+            return new Response("Too Many Requests", {
+              status: 429,
+              headers: { "Retry-After": "0" },
+            })
+          }
+          return new Response(
+            JSON.stringify({
+              data: {
+                videos: [
+                  {
+                    id: "tt_single_vid_99",
+                    title: "Single Queried Video",
+                    video_description: "Fetched via /v2/video/query/",
+                    cover_image_url: "https://cdn.example.com/v99.jpg",
+                    share_url: "https://www.tiktok.com/@shop/video/tt_single_vid_99",
+                    duration: 19,
+                    create_time: 1729000000,
+                    view_count: 880,
+                    like_count: 110,
+                    comment_count: 9,
+                    share_count: 4,
+                  },
+                ],
+              },
+              error: { code: "ok", message: "" },
+            }),
+            { status: 200, headers: { "Content-Type": "application/json" } }
+          )
+        }
+
+        if (url.includes("/v2/live/info/")) {
+          liveInfoAttempts += 1
+          if (liveInfoAttempts === 1) {
+            return new Response("Service Unavailable", { status: 503 })
+          }
+          return new Response(
+            JSON.stringify({
+              data: {
+                room_id: "room_live_777",
+                title: "TikTok Live Flash Sale",
+                status: "live",
+                viewer_count: 340,
+                peak_viewer_count: 520,
+                stream_url: "https://live.tiktok.com/room_live_777",
+              },
+              error: { code: "ok" },
+            }),
+            { status: 200, headers: { "Content-Type": "application/json" } }
+          )
+        }
+
+        if (url.includes("/v2/oauth/revoke/")) {
+          const bodyStr = String(init?.body ?? "")
+          const params = new URLSearchParams(bodyStr)
+          revokedTokens.push(params.get("token") ?? "")
+          return new Response(JSON.stringify({ data: {}, error: { code: "ok" } }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          })
+        }
+
+        return createMockFetch()(input, init)
+      }) as typeof fetch
+
+      const provider = new TikTokProvider({
+        clientKey: "tt_key",
+        clientSecret: "tt_secret",
+        redirectUri: "https://api.example.com/social/oauth/callback",
+        fetchImpl: customFetch,
+      })
+
+      // 1. Test getVideo with 429 retry
+      const video = await provider.getVideo("tok_test_1", "tt_single_vid_99")
+      assert.equal(videoQueryAttempts, 2)
+      assert.ok(video)
+      assert.equal(video.platform_post_id, "tt_single_vid_99")
+      assert.equal(video.view_count, 880)
+
+      // 2. Test getLiveSession with 503 retry
+      const liveInfo = await provider.getLiveSession("tok_test_1", "room_live_777")
+      assert.equal(liveInfoAttempts, 2)
+      assert.ok(liveInfo)
+      assert.equal(liveInfo.platform_live_id, "room_live_777")
+      assert.equal(liveInfo.viewer_count, 340)
+      assert.equal(liveInfo.peak_viewer_count, 520)
+
+      // 3. Test TikTok HTTP 200 body-level error detection
+      const errorProvider = new TikTokProvider({
+        clientKey: "tt_key",
+        clientSecret: "tt_secret",
+        redirectUri: "https://api.example.com/social/oauth/callback",
+        fetchImpl: (async () =>
+          new Response(
+            JSON.stringify({
+              data: {},
+              error: {
+                code: "access_token_invalid",
+                message: "The access token is invalid or expired.",
+              },
+            }),
+            { status: 200, headers: { "Content-Type": "application/json" } }
+          )) as typeof fetch,
+      })
+      await assert.rejects(
+        () => errorProvider.fetchMediaPosts("bad_tok"),
+        (err: unknown) =>
+          err instanceof MedusaError &&
+          err.message.includes("access_token_invalid")
+      )
+
+      // 4. Test disconnectAccount calling provider.revokeToken
+      const service = new SocialCommerceService(
+        {},
+        { encryption_key: TEST_ENCRYPTION_KEY }
+      )
+      await service.registerProvider("tiktok", provider)
+      const init = await service.buildOAuthConnectUrl({ platform: "tiktok" })
+      const acc = await service.exchangeOAuthCallback({
+        code: "tt_code",
+        state: init.state,
+      })
+
+      await service.disconnectAccount(acc.id)
+      assert.deepEqual(revokedTokens, ["tt_access_token_123"])
+    })
+
+    it("auto-refreshes expiring tokens (< 5 minutes remaining) and follows multi-page cursor pagination in syncAccountMedia", async () => {
+      let refreshCount = 0
+      let videoListCursors: Array<string | null> = []
+
+      const paginatedFetch: typeof fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = typeof input === "string" ? input : input.toString()
+
+        if (url.includes("open.tiktokapis.com/v2/oauth/token")) {
+          const bodyStr = String(init?.body ?? "")
+          if (bodyStr.includes("grant_type=refresh_token")) {
+            refreshCount += 1
+            return new Response(
+              JSON.stringify({
+                data: {
+                  access_token: "tt_refreshed_access_token_999",
+                  refresh_token: "tt_refreshed_refresh_token_999",
+                  open_id: "tt_open_id_789",
+                  scope: "user.info.basic,video.list",
+                  expires_in: 86400,
+                },
+              }),
+              { status: 200, headers: { "Content-Type": "application/json" } }
+            )
+          }
+          // Initial token expires in 120 seconds (< 5 minutes) to trigger auto-refresh
+          return new Response(
+            JSON.stringify({
+              data: {
+                access_token: "tt_short_lived_token",
+                refresh_token: "tt_initial_refresh_token",
+                open_id: "tt_open_id_789",
+                scope: "user.info.basic,video.list",
+                expires_in: 120,
+              },
+            }),
+            { status: 200, headers: { "Content-Type": "application/json" } }
+          )
+        }
+
+        if (url.includes("open.tiktokapis.com/v2/video/list")) {
+          const parsedBody = JSON.parse(String(init?.body ?? "{}")) as {
+            cursor?: number
+          }
+          const cursorVal =
+            parsedBody.cursor !== undefined ? String(parsedBody.cursor) : null
+          videoListCursors.push(cursorVal)
+
+          if (!cursorVal || cursorVal === "0") {
+            return new Response(
+              JSON.stringify({
+                data: {
+                  videos: [
+                    {
+                      id: "tt_page_1_vid",
+                      title: "Page 1 Video",
+                      share_url: "https://www.tiktok.com/@shop/video/1",
+                      create_time: 1728000001,
+                    },
+                  ],
+                  cursor: 200,
+                  has_more: true,
+                },
+              }),
+              { status: 200, headers: { "Content-Type": "application/json" } }
+            )
+          }
+
+          return new Response(
+            JSON.stringify({
+              data: {
+                videos: [
+                  {
+                    id: "tt_page_2_vid",
+                    title: "Page 2 Video",
+                    share_url: "https://www.tiktok.com/@shop/video/2",
+                    create_time: 1728000002,
+                  },
+                ],
+                cursor: 0,
+                has_more: false,
+              },
+            }),
+            { status: 200, headers: { "Content-Type": "application/json" } }
+          )
+        }
+
+        return createMockFetch()(input, init)
+      }) as typeof fetch
+
+      const service = new SocialCommerceService(
+        {},
+        { encryption_key: TEST_ENCRYPTION_KEY }
+      )
+      await service.registerProvider(
+        "tiktok",
+        new TikTokProvider({
+          clientKey: "tt_key",
+          clientSecret: "tt_secret",
+          redirectUri: "https://api.example.com/social/oauth/callback",
+          fetchImpl: paginatedFetch,
+        })
+      )
+
+      const init = await service.buildOAuthConnectUrl({ platform: "tiktok" })
+      const account = await service.exchangeOAuthCallback({
+        code: "tt_code",
+        state: init.state,
+      })
+
+      const syncRes = await service.syncAccountMedia(account.id, {
+        fetchAllPages: true,
+        maxPages: 5,
+      })
+
+      assert.equal(refreshCount, 1)
+      assert.deepEqual(videoListCursors, ["0", "200"])
+      assert.equal(syncRes.synced_posts, 2)
+      assert.equal(syncRes.created_count, 2)
+    })
+
+    it("ingests real TikTok webhook events (user.video.publish and live.room.status_update) and releases reservations when live ends", async () => {
+      const webhookFetch: typeof fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = typeof input === "string" ? input : input.toString()
+
+        if (url.includes("/v2/video/query/")) {
+          return new Response(
+            JSON.stringify({
+              data: {
+                videos: [
+                  {
+                    id: "tt_webhook_vid_01",
+                    title: "Webhook Published Video",
+                    video_description: "Auto-ingested from TikTok webhook",
+                    cover_image_url: "https://cdn.example.com/wh-cover.jpg",
+                    share_url: "https://www.tiktok.com/@shop/video/tt_webhook_vid_01",
+                    duration: 15,
+                    create_time: 1729100000,
+                    view_count: 500,
+                    like_count: 90,
+                    comment_count: 12,
+                    share_count: 6,
+                  },
+                ],
+              },
+              error: { code: "ok" },
+            }),
+            { status: 200, headers: { "Content-Type": "application/json" } }
+          )
+        }
+
+        if (url.includes("/v2/live/info/")) {
+          return new Response(
+            JSON.stringify({
+              data: {
+                room_id: "tt_room_555",
+                title: "Webhook Live Room",
+                status: "live",
+                viewer_count: 410,
+                peak_viewer_count: 600,
+                stream_url: "https://live.tiktok.com/tt_room_555",
+              },
+              error: { code: "ok" },
+            }),
+            { status: 200, headers: { "Content-Type": "application/json" } }
+          )
+        }
+
+        return createMockFetch()(input, init)
+      }) as typeof fetch
+
+      const service = new SocialCommerceService(
+        {},
+        {
+          encryption_key: TEST_ENCRYPTION_KEY,
+          tiktok: {
+            client_key: "tt_key",
+            client_secret: "tt_webhook_secret",
+            webhook_secret: "tt_webhook_secret",
+          },
+        }
+      )
+      await service.registerProvider(
+        "tiktok",
+        new TikTokProvider({
+          clientKey: "tt_key",
+          clientSecret: "tt_webhook_secret",
+          redirectUri: "https://api.example.com/social/oauth/callback",
+          fetchImpl: webhookFetch,
+        })
+      )
+
+      const init = await service.buildOAuthConnectUrl({ platform: "tiktok" })
+      const account = await service.exchangeOAuthCallback({
+        code: "tt_code",
+        state: init.state,
+      })
+
+      // 1. Test user.video.publish via POST /webhooks/tiktok
+      const publishPayload = {
+        event: "user.video.publish",
+        data: {
+          open_id: "tt_open_id_789",
+          video_id: "tt_webhook_vid_01",
+        },
+      }
+      const publishRaw = JSON.stringify(publishPayload)
+      const publishSig = computeHmacSha256Hex(publishRaw, "tt_webhook_secret")
+
+      let webhookRespStatus = 200
+      let webhookRespBody: unknown = null
+      const mockRes: HttpResponse = {
+        status(c: number) {
+          webhookRespStatus = c
+          return mockRes
+        },
+        json(b: unknown) {
+          webhookRespBody = b
+        },
+      }
+
+      await tiktokWebhookPost(
+        {
+          scope: {
+            resolve(k: string) {
+              return k === "social_commerce" ? service : null
+            },
+          },
+          headers: { "x-tiktok-signature": publishSig },
+          rawBody: publishRaw,
+          body: publishPayload,
+        } as unknown as HttpRequest,
+        mockRes
+      )
+
+      assert.equal(webhookRespStatus, 200)
+      assert.equal(
+        (webhookRespBody as { action: string }).action,
+        "video_upserted"
+      )
+      const postsAfterWebhook = await service.listMediaPosts({
+        platform: "tiktok",
+      })
+      assert.equal(postsAfterWebhook.count, 1)
+      assert.equal(
+        postsAfterWebhook.posts[0].platform_post_id,
+        "tt_webhook_vid_01"
+      )
+
+      // 2. Schedule a LiveSession for room tt_room_555 with flash-sale stock
+      const scheduled = await service.scheduleLiveSession({
+        social_account_id: account.id,
+        platform: "tiktok",
+        platform_live_id: "tt_room_555",
+        title: "Scheduled Drop",
+      })
+      await service.pinProductsToLiveSession(scheduled.id, [
+        {
+          product_id: "prod_wh_live",
+          variant_id: "var_wh_live",
+          live_price: 55,
+          live_stock: 4,
+        },
+      ])
+
+      // Trigger live.room.status_update -> status: "live"
+      const liveStartResult = await service.handleIncomingWebhook("tiktok", {
+        event: "live.room.status_update",
+        data: {
+          open_id: "tt_open_id_789",
+          room_id: "tt_room_555",
+          status: "live",
+        },
+      })
+      assert.equal(liveStartResult.handled, true)
+      assert.equal(liveStartResult.action, "live_session_started")
+      assert.equal(liveStartResult.session?.status, "live")
+      assert.equal(liveStartResult.session?.peak_viewer_count, 600)
+
+      // Reserve 2 units during live session
+      await service.reserveLiveProductStock({
+        session_id: scheduled.id,
+        product_id: "prod_wh_live",
+        variant_id: "var_wh_live",
+        cart_id: "cart_wh_01",
+        quantity: 2,
+      })
+
+      // Trigger live.room.status_update -> status: "ended"
+      const liveEndResult = await service.handleIncomingWebhook("tiktok", {
+        event: "live.room.status_update",
+        data: {
+          open_id: "tt_open_id_789",
+          room_id: "tt_room_555",
+          status: "ended",
+        },
+      })
+      assert.equal(liveEndResult.handled, true)
+      assert.equal(liveEndResult.action, "live_session_ended")
+      assert.equal(liveEndResult.session?.status, "ended")
+      assert.equal(liveEndResult.released_reservations, 1)
+    })
+
+    it("renders safe HTML popup postMessage on OAuth callback (?popup=true) and enforces workflow scope validation & rollback compensation", async () => {
+      const service = new SocialCommerceService(
+        {},
+        { encryption_key: TEST_ENCRYPTION_KEY }
+      )
+      await service.registerProvider(
+        "tiktok",
+        new TikTokProvider({
+          clientKey: "tt_key",
+          clientSecret: "tt_secret",
+          redirectUri: "https://api.example.com/social/oauth/callback",
+          fetchImpl: createMockFetch(),
+        })
+      )
+
+      const init = await service.buildOAuthConnectUrl({ platform: "tiktok" })
+
+      let htmlStatus = 200
+      let htmlBody = ""
+      const htmlHeaders: Record<string, string> = {}
+      const popupRes: HttpResponse = {
+        status(code: number) {
+          htmlStatus = code
+          return popupRes
+        },
+        json() {},
+        send(body: string) {
+          htmlBody = body
+        },
+        setHeader(k: string, v: string) {
+          htmlHeaders[k] = v
+        },
+      }
+
+      const scope = {
+        resolve(key: string) {
+          if (key === "social_commerce") return service
+          return null
+        },
+      }
+
+      await oauthCallbackGet(
+        {
+          scope,
+          query: {
+            code: "tt_code",
+            state: init.state,
+            popup: "true",
+          },
+          headers: { accept: "text/html" },
+        } as unknown as HttpRequest,
+        popupRes
+      )
+
+      assert.equal(htmlStatus, 200)
+      assert.ok(htmlHeaders["Content-Type"]?.includes("text/html"))
+      assert.ok(htmlBody.includes("tiktok-oauth-success"))
+      assert.ok(htmlBody.includes("window.opener.postMessage(payload, window.location.origin)"))
+
+      const accounts = await service.listAccounts({ platform: "tiktok" })
+      const connectedAccount = accounts[0]
+      assert.ok(connectedAccount.metadata?.connection_verified_at)
+
+      // Test scope validation failure when a required scope is missing
+      await assert.rejects(
+        () =>
+          accountConnectedWorkflow(scope as never).run({
+            input: {
+              account_id: connectedAccount.id,
+              platform: "tiktok",
+              required_scopes: ["user.info.basic", "live.room.manage"],
+            },
+          }),
+        (err: unknown) =>
+          err instanceof MedusaError &&
+          err.message.includes("missing required OAuth scopes: live.room.manage")
+      )
+
+      // Test compensation function restoring previous metadata
+      await (
+        initialAccountSyncStep as unknown as {
+          compensate?: (data: unknown, ctx: { container: unknown }) => Promise<void>
+        }
+      ).compensate?.(
+        {
+          accountId: connectedAccount.id,
+          previousMetadata: { restored: true },
+        },
+        { container: scope }
+      )
+      const afterCompensate = await service.getAccount(connectedAccount.id)
+      assert.deepEqual(afterCompensate.metadata, { restored: true })
+    })
+  })
 })
+
 
 
 

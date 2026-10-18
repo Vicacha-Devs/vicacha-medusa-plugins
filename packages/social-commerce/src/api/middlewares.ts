@@ -5,7 +5,7 @@ import {
 import {
   MedusaError,
   isMedusaError,
-  SOCIAL_COMMERCE_MODULE,
+  resolveSocialCommerceService,
   type SocialCommerceService,
 } from "../modules/social-commerce/index.js"
 import {
@@ -51,7 +51,7 @@ export function getRequestPayload(req: HttpRequest): Record<string, unknown> {
 }
 
 export function resolveSocialService(req: HttpRequest): SocialCommerceService {
-  return req.scope.resolve<SocialCommerceService>(SOCIAL_COMMERCE_MODULE)
+  return resolveSocialCommerceService(req.scope)
 }
 
 export function sendErrorResponse(res: HttpResponse, err: unknown): void {
@@ -146,5 +146,12 @@ export default defineMiddlewares({
       method: "POST",
       bodyParser: { preserveRawBody: true },
     },
+    {
+      matcher: "/webhooks/tiktok",
+      method: "POST",
+      bodyParser: { preserveRawBody: true },
+    },
   ],
 })
+
+
