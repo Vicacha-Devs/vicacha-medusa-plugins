@@ -18,6 +18,10 @@ export default async function odooProductUpdatedSubscriber({
       (settings.direction === "medusa_to_odoo" ||
         settings.direction === "bidirectional")
     ) {
+      if (event?.name === "product.deleted") {
+        await odooService.archiveProductInOdoo(String(productId), "event")
+        return
+      }
       await odooService.exportProductsToOdoo(container, undefined, "event")
     }
   } catch {
@@ -26,7 +30,7 @@ export default async function odooProductUpdatedSubscriber({
 }
 
 export const config: SubscriberConfig = {
-  event: ["product.created", "product.updated"],
+  event: ["product.created", "product.updated", "product.deleted"],
   context: {
     subscriberId: "odoo-product-updated-subscriber",
   },

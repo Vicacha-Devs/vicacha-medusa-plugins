@@ -64,12 +64,20 @@ export const OdooBarcodeLookupSchema = z.object({
   context: z
     .enum(["pos", "warehouse", "receiving", "stocktake"])
     .optional(),
+  deviceId: z.string().max(128).optional(),
+  sessionId: z.string().max(128).optional(),
+  operatorId: z.string().max(128).optional(),
 })
 
 export const OdooPosTransactionActionSchema = z.object({
   action: z.enum(["enqueue", "replay"]),
   id: z.string().max(256).optional(),
   externalTransactionId: z.string().max(256).optional(),
+  deviceId: z.string().max(128).optional(),
+  sessionId: z.string().max(128).optional(),
+  posLocationId: z.string().max(128).optional(),
+  cartId: z.string().max(128).optional(),
+  paymentMethod: z.string().max(64).optional(),
   customerId: z.string().max(256).optional(),
   customerEmail: z.string().email().max(256).optional(),
   currency: z.string().max(12).optional(),

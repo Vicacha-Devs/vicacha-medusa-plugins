@@ -23,6 +23,9 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     customValue?: unknown
     resolvedBy?: string
   }
-  const conflict = await odooService.resolveConflict(body)
+  const conflict = await odooService.resolveConflict({
+    ...body,
+    scope: req.scope,
+  })
   res.json({ ok: true, conflict })
 }

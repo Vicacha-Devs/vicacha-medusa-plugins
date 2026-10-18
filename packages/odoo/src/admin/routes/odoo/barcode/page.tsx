@@ -11,7 +11,7 @@ import { useOdooDashboard } from "../../../hooks/use-odoo-dashboard"
 
 const OdooBarcodePage = () => {
   const { i18n } = useTranslation()
-  const isRtl = (i18n.resolvedLanguage || i18n.language || "").startsWith("ar")
+  // const isRtl = (i18n.resolvedLanguage || i18n.language || "").startsWith("ar")
 
   const {
     barcodeInput,
@@ -26,7 +26,7 @@ const OdooBarcodePage = () => {
     <LayoutComposer
       widgetsZonePrefix="odoo.barcode"
       preferredLayoutId={CORE_LAYOUT_IDS.TWO_COLUMN}
-      dir={isRtl ? "rtl" : "ltr"}
+      // dir={isRtl ? "rtl" : "ltr"}
       sections={{
         main: (
           <LayoutComposer.Entry id="OdooBarcodeLookupSection">
@@ -47,7 +47,7 @@ const OdooBarcodePage = () => {
                   context: barcodeContext,
                 })
               }
-              barcodeResult={barcodeMutation.data}
+              barcodeResult={barcodeMutation.data ?? null}
             />
           </LayoutComposer.Entry>
         ),

@@ -25,6 +25,7 @@ export class Migration20260412000000 extends Migration {
         "odoo_id" integer not null,
         "odoo_model" text not null default '',
         "sync_direction" text not null default 'bidirectional',
+        "sync_version" integer not null default 1,
         "external_checksum" text null,
         "status" text not null default 'active',
         "last_synced_at" timestamptz null,
@@ -35,6 +36,9 @@ export class Migration20260412000000 extends Migration {
         constraint "mpo_erp_mapping_pkey" primary key ("id")
       );
     `)
+    this.addSql(
+      `ALTER TABLE "mpo_erp_mapping" ADD COLUMN IF NOT EXISTS "sync_version" integer not null default 1;`
+    )
     this.addSql(
       `CREATE INDEX IF NOT EXISTS "IDX_mpo_erp_mapping_entity_medusa" ON "mpo_erp_mapping" ("entity_type", "medusa_id") WHERE deleted_at IS NULL;`
     )
@@ -179,6 +183,9 @@ export class Migration20260412000000 extends Migration {
         "id" text not null,
         "barcode" text not null,
         "context" text not null default 'pos',
+        "device_id" text null,
+        "session_id" text null,
+        "operator_id" text null,
         "variant_id" text null,
         "odoo_product_id" integer null,
         "source" text not null default 'none',
@@ -192,6 +199,15 @@ export class Migration20260412000000 extends Migration {
       );
     `)
     this.addSql(
+      `ALTER TABLE "mpo_barcode_scan_log" ADD COLUMN IF NOT EXISTS "device_id" text null;`
+    )
+    this.addSql(
+      `ALTER TABLE "mpo_barcode_scan_log" ADD COLUMN IF NOT EXISTS "session_id" text null;`
+    )
+    this.addSql(
+      `ALTER TABLE "mpo_barcode_scan_log" ADD COLUMN IF NOT EXISTS "operator_id" text null;`
+    )
+    this.addSql(
       `CREATE INDEX IF NOT EXISTS "IDX_mpo_barcode_scan_code" ON "mpo_barcode_scan_log" ("barcode") WHERE deleted_at IS NULL;`
     )
 
@@ -199,6 +215,11 @@ export class Migration20260412000000 extends Migration {
       create table if not exists "mpo_offline_pos_transaction" (
         "id" text not null,
         "external_transaction_id" text not null,
+        "device_id" text null,
+        "session_id" text null,
+        "pos_location_id" text null,
+        "cart_id" text null,
+        "payment_method" text null,
         "customer_id" text null,
         "customer_email" text null,
         "currency" text not null default 'USD',
@@ -220,6 +241,21 @@ export class Migration20260412000000 extends Migration {
         constraint "mpo_offline_pos_transaction_pkey" primary key ("id")
       );
     `)
+    this.addSql(
+      `ALTER TABLE "mpo_offline_pos_transaction" ADD COLUMN IF NOT EXISTS "device_id" text null;`
+    )
+    this.addSql(
+      `ALTER TABLE "mpo_offline_pos_transaction" ADD COLUMN IF NOT EXISTS "session_id" text null;`
+    )
+    this.addSql(
+      `ALTER TABLE "mpo_offline_pos_transaction" ADD COLUMN IF NOT EXISTS "pos_location_id" text null;`
+    )
+    this.addSql(
+      `ALTER TABLE "mpo_offline_pos_transaction" ADD COLUMN IF NOT EXISTS "cart_id" text null;`
+    )
+    this.addSql(
+      `ALTER TABLE "mpo_offline_pos_transaction" ADD COLUMN IF NOT EXISTS "payment_method" text null;`
+    )
     this.addSql(
       `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_mpo_offline_pos_ext_id" ON "mpo_offline_pos_transaction" ("external_transaction_id") WHERE deleted_at IS NULL;`
     )

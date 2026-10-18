@@ -37,6 +37,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
   if (entity === "customers" || entity === "customer") {
     const result = await odooService.syncCustomers({
+      scope: req.scope,
       directionOverride: body.direction,
       trigger: "manual",
     })
@@ -46,6 +47,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
   if (entity === "reconciliation") {
     const result = await odooService.reconcileInventory({
+      scope: req.scope,
       strategyOverride: body.strategy,
       driftThresholdOverride: body.driftThreshold,
       triggeredBy: "manual",
@@ -66,6 +68,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       "manual"
     )
     const customers = await odooService.syncCustomers({
+      scope: req.scope,
       directionOverride: body.direction,
       trigger: "manual",
     })

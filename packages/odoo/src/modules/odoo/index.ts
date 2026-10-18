@@ -2,7 +2,12 @@ import { Module } from "@medusajs/framework/utils"
 import OdooModuleService from "./service"
 import { ODOO_MODULE, ODOO_SYNC_MODULE } from "./types"
 
-export { ODOO_MODULE, ODOO_SYNC_MODULE, OdooModuleService }
+export {
+  ODOO_MODULE,
+  ODOO_SYNC_MODULE,
+  OdooModuleService,
+  OdooModuleService as OdooSyncService,
+}
 export * from "./types"
 export * from "./client/odoo-client"
 export * from "./utils/security"

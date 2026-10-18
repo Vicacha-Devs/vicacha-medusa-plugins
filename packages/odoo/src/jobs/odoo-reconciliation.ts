@@ -20,6 +20,7 @@ export default async function odooReconciliationJob(
     if (settings.enableScheduledReconciliation === false) return
 
     await odooService.reconcileInventory({
+      scope: container,
       triggeredBy: "scheduled",
     })
   } catch {

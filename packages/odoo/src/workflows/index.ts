@@ -215,6 +215,7 @@ const syncCustomersStep = createStep(
   ) => {
     const odooService = container.resolve(ODOO_MODULE) as OdooModuleService
     const res = await odooService.syncCustomers({
+      scope: container,
       directionOverride: input.direction,
       trigger: input.trigger ?? "workflow",
     })
@@ -242,6 +243,7 @@ const reconcileInventoryStep = createStep(
   ) => {
     const odooService = container.resolve(ODOO_MODULE) as OdooModuleService
     const res: OdooReconciliationResult = await odooService.reconcileInventory({
+      scope: container,
       strategyOverride: input.strategy,
       driftThresholdOverride: input.driftThreshold,
       triggeredBy: input.triggeredBy ?? "workflow",

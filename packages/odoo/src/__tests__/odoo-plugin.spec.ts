@@ -900,4 +900,391 @@ describe("medusa-plugin-odoo — Admin UI Localization (10 Locales Key Parity)",
   })
 })
 
+describe("medusa-plugin-odoo — Auto-Discovery, Lifecycle & POS Enhancements", () => {
+  it("exports OdooSyncService alias alongside OdooModuleService", async () => {
+    const rootMod = await import("../index")
+    const odooSyncMod = await import("../modules/odoo-sync")
+    assert.strictEqual(rootMod.OdooSyncService, OdooModuleService)
+    assert.strictEqual(odooSyncMod.OdooSyncService, OdooModuleService)
+  })
+
+  it("auto-discovers variants in reconcileInventory, auto-queries customers/inventory, resolves POS barcodes via query.graph, applies conflict stock, and handles order cancellation & product archiving", async () => {
+    const odooCalls: Array<{ model: string; method: string; args: any[] }> = []
+
+    const mockFetch: typeof fetch = async (_input, init) => {
+      const body = JSON.parse(String(init?.body || "{}"))
+      const params = body?.params ?? {}
+      if (params.service === "common" && params.method === "authenticate") {
+        return new Response(JSON.stringify({ result: 11 }), { status: 200 })
+      }
+      const [, , , model, method, args] = params.args ?? []
+      if (model && method) {
+        odooCalls.push({ model, method, args })
+      }
+      if (model === "product.product" && method === "search_read") {
+        return new Response(
+          JSON.stringify({
+            result: [
+              {
+                id: 601,
+                name: "Snowboard Pro",
+                product_tmpl_id: [501, "Snowboard Pro"],
+                default_code: "SB-PRO-1",
+                barcode: "4006381333931",
+                lst_price: 499,
+                qty_available: 30,
+                virtual_available: 28,
+                uom_id: [1, "Units"],
+              },
+            ],
+          }),
+          { status: 200 }
+        )
+      }
+      if (model === "stock.quant" && method === "search_read") {
+        return new Response(
+          JSON.stringify({
+            result: [
+              {
+                id: 701,
+                product_id: [601, "Snowboard Pro"],
+                location_id: [8, "WH/Stock"],
+                quantity: 30,
+                reserved_quantity: 2,
+              },
+            ],
+          }),
+          { status: 200 }
+        )
+      }
+      if (model === "res.partner" && method === "search_read") {
+        return new Response(
+          JSON.stringify({
+            result: [
+              {
+                id: 801,
+                name: "Alice Wonder",
+                email: "alice@example.com",
+                phone: "+15550199",
+                customer_rank: 1,
+              },
+            ],
+          }),
+          { status: 200 }
+        )
+      }
+      if (method === "create") {
+        return new Response(JSON.stringify({ result: 950 }), { status: 200 })
+      }
+      if (method === "search_read") {
+        return new Response(JSON.stringify({ result: [] }), { status: 200 })
+      }
+      return new Response(JSON.stringify({ result: true }), { status: 200 })
+    }
+
+    const updatedInventoryLevels: Array<Record<string, unknown>> = []
+    const createdCustomers: Array<Record<string, unknown>> = []
+
+    const mockScope = {
+      resolve: (key: string) => {
+        if (key === "query") {
+          return {
+            graph: async ({ entity, filters }: Record<string, any>) => {
+              if (entity === "product_variant") {
+                if (filters?.barcode && filters.barcode !== "4006381333931") {
+                  return { data: [] }
+                }
+                return {
+                  data: [
+                    {
+                      id: "var_auto_1",
+                      title: "158cm",
+                      sku: "SB-PRO-1",
+                      barcode: "4006381333931",
+                      product_id: "prod_auto_1",
+                      product: {
+                        id: "prod_auto_1",
+                        title: "Snowboard Pro",
+                        thumbnail: "https://example.com/sb.png",
+                      },
+                      prices: [{ amount: 49900 }],
+                      inventory_items: [
+                        {
+                          inventory_item_id: "iitem_1",
+                          inventory: {
+                            id: "iitem_1",
+                            location_levels: [
+                              {
+                                id: "loclvl_1",
+                                location_id: "sloc_1",
+                                stocked_quantity: 12,
+                              },
+                            ],
+                          },
+                        },
+                      ],
+                    },
+                  ],
+                }
+              }
+              if (entity === "inventory_item") {
+                return {
+                  data: [
+                    {
+                      id: "iitem_1",
+                      sku: "SB-PRO-1",
+                      location_levels: [
+                        {
+                          id: "loclvl_1",
+                          location_id: "sloc_1",
+                          stocked_quantity: 18,
+                        },
+                      ],
+                    },
+                  ],
+                }
+              }
+              if (entity === "customer") {
+                return {
+                  data: [
+                    {
+                      id: "cus_med_1",
+                      email: "bob@example.com",
+                      first_name: "Bob",
+                      last_name: "Builder",
+                      phone: "+15550200",
+                      company_name: "BuildIt",
+                      addresses: [
+                        {
+                          address_1: "123 Main St",
+                          city: "Austin",
+                          postal_code: "78701",
+                        },
+                      ],
+                    },
+                  ],
+                }
+              }
+              return { data: [] }
+            },
+          }
+        }
+        if (key === "inventory") {
+          return {
+            updateInventoryLevels: async (levels: Array<Record<string, unknown>>) => {
+              updatedInventoryLevels.push(...levels)
+              return levels
+            },
+            listInventoryItems: async () => [{ id: "iitem_1", sku: "SB-PRO-1" }],
+            listInventoryLevels: async () => [
+              {
+                id: "loclvl_1",
+                inventory_item_id: "iitem_1",
+                location_id: "sloc_1",
+                stocked_quantity: 12,
+              },
+            ],
+          }
+        }
+        if (key === "customer") {
+          return {
+            listCustomers: async () => [],
+            createCustomers: async (data: Record<string, unknown>) => {
+              const row = { id: "cus_created_from_odoo", ...data }
+              createdCustomers.push(row)
+              return row
+            },
+            updateCustomers: async () => ({}),
+          }
+        }
+        return null
+      },
+    }
+
+    const service = new InMemoryOdooService()
+    await service.setCustomFetch(mockFetch)
+    await service.saveConnectionConfig({
+      url: "https://erp.example.com",
+      db: "odoo_prod",
+      username: "admin@example.com",
+      apiKey: "secret_api_key",
+      protocol: "jsonrpc",
+    })
+
+    // 1. Auto-discovered reconcileInventory updates Medusa inventory automatically
+    const recRes = await service.reconcileInventory({
+      scope: mockScope,
+      strategyOverride: "odoo_wins",
+      driftThresholdOverride: 0,
+    })
+    assert.equal(recRes.ok, true)
+    assert.equal(recRes.checked, 1)
+    assert.equal(recRes.drifted, 1)
+    assert.equal(recRes.fixed, 1)
+    assert.equal(updatedInventoryLevels.length, 1)
+    assert.equal(updatedInventoryLevels[0].stocked_quantity, 30)
+
+    // Verify sync_version increments on repeated upsertMapping
+    const mapping1 = await service.upsertMapping({
+      entityType: "variant",
+      medusaId: "var_auto_1",
+      odooId: 601,
+      direction: "bidirectional",
+    })
+    assert.ok(Number(mapping1.sync_version) >= 2)
+
+    // 2. Auto-queried exportInventoryToOdoo
+    const expInvRes = await service.exportInventoryToOdoo(
+      mockScope,
+      undefined,
+      "manual"
+    )
+    assert.equal(expInvRes.ok, true)
+    assert.equal(expInvRes.updated, 1)
+
+    // 3. Auto-queried & auto-upserted syncCustomers (with address fields)
+    const custRes = await service.syncCustomers({
+      scope: mockScope,
+      directionOverride: "bidirectional",
+    })
+    assert.equal(custRes.ok, true)
+    assert.equal(createdCustomers.length, 1)
+    assert.equal(createdCustomers[0].email, "alice@example.com")
+    assert.ok(
+      odooCalls.some(
+        (c) =>
+          c.model === "res.partner" &&
+          (c.method === "create" || c.method === "write") &&
+          JSON.stringify(c.args).includes("123 Main St")
+      )
+    )
+
+    // 4. POS barcode resolution via default Medusa query.graph lookup + device/session fields
+    const posScan = await service.resolveBarcode({
+      barcode: "4006381333931",
+      context: "pos",
+      scope: mockScope,
+      deviceId: "pos-term-01",
+      sessionId: "sess-100",
+      operatorId: "op-7",
+    })
+    assert.equal(posScan.found, true)
+    assert.equal(posScan.source, "medusa_db")
+    assert.equal(posScan.variantId, "var_auto_1")
+    assert.equal(posScan.unitPriceCents, 49900)
+    assert.equal(posScan.deviceId, "pos-term-01")
+    const scanLogs = await service.listBarcodeScanLogs()
+    assert.equal(scanLogs[0].device_id, "pos-term-01")
+    assert.equal(scanLogs[0].session_id, "sess-100")
+    assert.equal(scanLogs[0].operator_id, "op-7")
+
+    // 5. Offline POS enqueue with device/session/location/cart/payment metadata
+    const posTxn = await service.enqueueOfflinePosTransaction({
+      externalTransactionId: "POS-ENH-1",
+      deviceId: "pos-term-01",
+      sessionId: "sess-100",
+      posLocationId: "loc-downtown",
+      cartId: "cart_99",
+      paymentMethod: "card_present",
+      totalCents: 49900,
+      items: [
+        {
+          variantId: "var_auto_1",
+          sku: "SB-PRO-1",
+          quantity: 1,
+          unitPriceCents: 49900,
+        },
+      ],
+    })
+    assert.equal(posTxn.device_id, "pos-term-01")
+    assert.equal(posTxn.pos_location_id, "loc-downtown")
+    assert.equal(posTxn.payment_method, "card_present")
+
+    // 6. Conflict resolution applies winning stock value to Odoo & Medusa
+    const conflictRec = await service.reconcileInventory({
+      scope: mockScope,
+      strategyOverride: "manual_conflict",
+      driftThresholdOverride: 0,
+    })
+    assert.equal(conflictRec.conflicts, 1)
+    const conflicts = await service.listErpConflictResolutions({ status: "open" })
+    await service.resolveConflict({
+      id: conflicts[0].id,
+      resolution: "custom",
+      customValue: 45,
+      scope: mockScope,
+    })
+    assert.equal(
+      updatedInventoryLevels[updatedInventoryLevels.length - 1].stocked_quantity,
+      45
+    )
+
+    // 7. Order cancellation & product archiving lifecycle
+    await service.upsertMapping({
+      entityType: "order",
+      medusaId: "order_cancel_1",
+      odooId: 777,
+      direction: "medusa_to_odoo",
+    })
+    const cancelRes = await service.cancelOrderInOdoo("order_cancel_1")
+    assert.equal(cancelRes.ok, true)
+    assert.equal(cancelRes.odooOrderId, 777)
+    assert.ok(
+      odooCalls.some(
+        (c) => c.model === "sale.order" && c.method === "action_cancel"
+      )
+    )
+
+    await service.upsertMapping({
+      entityType: "product",
+      medusaId: "prod_del_1",
+      odooId: 501,
+      direction: "medusa_to_odoo",
+    })
+    const archiveRes = await service.archiveProductInOdoo("prod_del_1")
+    assert.equal(archiveRes.ok, true)
+    assert.equal(archiveRes.odooProductId, 501)
+    assert.ok(
+      odooCalls.some(
+        (c) =>
+          c.model === "product.template" &&
+          c.method === "write" &&
+          JSON.stringify(c.args).includes('"active":false')
+      )
+    )
+  })
+
+  it("wires order.canceled, product.deleted, customer.updated subscribers, jobs, and route handlers", async () => {
+    const orderSub = await import("../subscribers/order-placed")
+    const productSub = await import("../subscribers/product-updated")
+    const customerSub = await import("../subscribers/customer-updated")
+    const recJob = await import("../jobs/odoo-reconciliation")
+    const syncJob = await import("../jobs/odoo-scheduled-sync")
+    const barcodeRoute = await import("../api/store/odoo/barcode/route")
+    const conflictsRoute = await import("../api/admin/odoo/conflicts/route")
+    const syncEntityRoute = await import("../api/admin/odoo/sync/[entity]/route")
+    const posRoute = await import("../api/admin/odoo/pos-transactions/route")
+    const webhookRoute = await import("../api/hooks/odoo/route")
+
+    assert.deepEqual(orderSub.config.event, ["order.placed", "order.canceled"])
+    assert.deepEqual(productSub.config.event, [
+      "product.created",
+      "product.updated",
+      "product.deleted",
+    ])
+    assert.deepEqual(customerSub.config.event, [
+      "customer.created",
+      "customer.updated",
+    ])
+    assert.equal(typeof recJob.default, "function")
+    assert.equal(typeof syncJob.default, "function")
+    assert.equal(typeof barcodeRoute.POST, "function")
+    assert.equal(typeof conflictsRoute.POST, "function")
+    assert.equal(typeof syncEntityRoute.POST, "function")
+    assert.equal(typeof posRoute.POST, "function")
+    assert.equal(typeof webhookRoute.POST, "function")
+  })
+})
+
+
 

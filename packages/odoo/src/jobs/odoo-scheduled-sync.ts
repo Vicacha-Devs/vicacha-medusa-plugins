@@ -12,7 +12,7 @@ export default async function odooScheduledSyncJob(
 
     await odooService.syncProducts(container, undefined, "scheduled")
     await odooService.syncInventory(container, undefined, "scheduled")
-    await odooService.syncCustomers({ trigger: "scheduled" })
+    await odooService.syncCustomers({ scope: container, trigger: "scheduled" })
   } catch {
     // Logged inside OdooModuleService
   }

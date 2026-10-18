@@ -24,6 +24,11 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     action: "enqueue" | "replay"
     id?: string
     externalTransactionId?: string
+    deviceId?: string
+    sessionId?: string
+    posLocationId?: string
+    cartId?: string
+    paymentMethod?: string
     customerId?: string
     customerEmail?: string
     currency?: string
@@ -55,6 +60,11 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
   const transaction = await odooService.enqueueOfflinePosTransaction({
     externalTransactionId: body.externalTransactionId,
+    deviceId: body.deviceId,
+    sessionId: body.sessionId,
+    posLocationId: body.posLocationId,
+    cartId: body.cartId,
+    paymentMethod: body.paymentMethod,
     customerId: body.customerId,
     customerEmail: body.customerEmail,
     currency: body.currency,

@@ -24,6 +24,8 @@ export default async function odooCustomerUpdatedSubscriber({
         settings.direction === "bidirectional")
     ) {
       await odooService.syncCustomers({
+        scope: container,
+        customerIds: [String(customerId)],
         directionOverride: "medusa_to_odoo",
         trigger: "event",
       })

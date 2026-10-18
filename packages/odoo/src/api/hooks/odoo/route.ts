@@ -21,6 +21,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       rawBody,
       signatureHeader,
       payload,
+      scope: req.scope,
     })
     res.json(result)
   } catch (err) {

@@ -84,6 +84,56 @@ export class OdooModuleService extends MedusaService(OdooModels) {
     this.cachedClientKey_ = ""
   }
 
+  protected resolveMedusaService<T = unknown>(
+    serviceKey: string,
+    scopeOverride?: unknown
+  ): T | null {
+    const scope = (scopeOverride ?? this.container_) as
+      | { resolve?: (k: string) => unknown }
+      | Record<string, unknown>
+      | undefined
+    if (!scope) return null
+    try {
+      if (typeof (scope as { resolve?: unknown }).resolve === "function") {
+        return (scope as { resolve: (k: string) => T }).resolve(serviceKey)
+      }
+      if (serviceKey in (scope as Record<string, unknown>)) {
+        return (scope as Record<string, T>)[serviceKey] ?? null
+      }
+    } catch {
+      return null
+    }
+    return null
+  }
+
+  protected resolveQueryGraph(scopeOverride?: unknown): {
+    graph: (args: {
+      entity: string
+      fields: string[]
+      filters?: Record<string, unknown>
+      pagination?: { take?: number; skip?: number }
+    }) => Promise<{ data: Array<Record<string, unknown>> }>
+  } | null {
+    const query = this.resolveMedusaService<{
+      graph?: (args: {
+        entity: string
+        fields: string[]
+        filters?: Record<string, unknown>
+        pagination?: { take?: number; skip?: number }
+      }) => Promise<{ data: Array<Record<string, unknown>> }>
+    }>(ContainerRegistrationKeys.QUERY, scopeOverride)
+    return query && typeof query.graph === "function"
+      ? (query as {
+          graph: (args: {
+            entity: string
+            fields: string[]
+            filters?: Record<string, unknown>
+            pagination?: { take?: number; skip?: number }
+          }) => Promise<{ data: Array<Record<string, unknown>> }>
+        })
+      : null
+  }
+
   // ─── Key-Value Setting Store ───────────────────────────────────────────────
 
   async getValue<T = unknown>(key: string): Promise<T | null> {
@@ -435,12 +485,18 @@ export class OdooModuleService extends MedusaService(OdooModels) {
     )
 
     if (existing?.[0]) {
+      const currentVersion =
+        typeof (existing[0] as Record<string, unknown>).sync_version ===
+        "number"
+          ? Number((existing[0] as Record<string, unknown>).sync_version)
+          : 1
       return this.updateErpMappings({
         id: existing[0].id,
         odoo_id: params.odooId,
         odoo_model: params.odooModel ?? existing[0].odoo_model ?? "",
         sync_direction:
           params.direction ?? existing[0].sync_direction ?? "bidirectional",
+        sync_version: currentVersion + 1,
         external_checksum:
           params.externalChecksum ?? existing[0].external_checksum ?? null,
         status: "active",
@@ -455,6 +511,7 @@ export class OdooModuleService extends MedusaService(OdooModels) {
       odoo_id: params.odooId,
       odoo_model: params.odooModel ?? "",
       sync_direction: params.direction ?? "bidirectional",
+      sync_version: 1,
       external_checksum: params.externalChecksum ?? null,
       status: "active",
       last_synced_at: new Date(),
@@ -566,6 +623,8 @@ export class OdooModuleService extends MedusaService(OdooModels) {
     resolution: "odoo_wins" | "medusa_wins" | "custom"
     customValue?: unknown
     resolvedBy?: string
+    scope?: { resolve: (key: string) => unknown }
+    applyStock?: boolean
   }) {
     const existing = await this.listErpConflictResolutions(
       { id: params.id },
@@ -584,7 +643,83 @@ export class OdooModuleService extends MedusaService(OdooModels) {
         ? row.odoo_value
         : params.resolution === "medusa_wins"
           ? row.medusa_value
-          : (params.customValue as Record<string, unknown>)
+          : typeof params.customValue === "number"
+            ? { qty: params.customValue }
+            : (params.customValue as Record<string, unknown>)
+
+    const winningQty =
+      typeof resolvedValue === "number"
+        ? resolvedValue
+        : resolvedValue &&
+            typeof resolvedValue === "object" &&
+            "qty" in resolvedValue &&
+            typeof (resolvedValue as { qty?: unknown }).qty === "number"
+          ? Number((resolvedValue as { qty: number }).qty)
+          : null
+
+    if (params.applyStock !== false && winningQty !== null) {
+      if (
+        (params.resolution === "medusa_wins" ||
+          params.resolution === "custom") &&
+        row.odoo_id
+      ) {
+        try {
+          const client = await this.getOdooClient()
+          const recSettings =
+            await this.getSectionSettings<OdooReconciliationSettings>(
+              "reconciliation"
+            )
+          await client.updateStockQuantity(
+            Number(row.odoo_id),
+            recSettings.defaultOdooLocationId ?? 8,
+            winningQty
+          )
+        } catch {
+          // Non-blocking when Odoo is unreachable
+        }
+      }
+
+      if (
+        (params.resolution === "odoo_wins" ||
+          params.resolution === "custom") &&
+        row.medusa_id
+      ) {
+        try {
+          const activeScope =
+            params.scope ??
+            (this.container_ as { resolve?: (k: string) => unknown })
+          const inventoryModule =
+            typeof activeScope?.resolve === "function"
+              ? (activeScope.resolve(Modules.INVENTORY) as
+                  | {
+                      listInventoryLevels?: (
+                        filter: Record<string, unknown>
+                      ) => Promise<Array<{ id: string }>>
+                      updateInventoryLevels?: (
+                        data: Array<Record<string, unknown>>
+                      ) => Promise<unknown>
+                    }
+                  | undefined)
+              : undefined
+
+          if (
+            inventoryModule?.listInventoryLevels &&
+            inventoryModule.updateInventoryLevels
+          ) {
+            const levels = await inventoryModule.listInventoryLevels({
+              inventory_item_id: row.medusa_id,
+            })
+            if (levels?.[0]?.id) {
+              await inventoryModule.updateInventoryLevels([
+                { id: levels[0].id, stocked_quantity: winningQty },
+              ])
+            }
+          }
+        } catch {
+          // Non-blocking when Medusa Inventory module is unavailable
+        }
+      }
+    }
 
     return this.updateErpConflictResolutions({
       id: params.id,
@@ -1157,6 +1292,63 @@ export class OdooModuleService extends MedusaService(OdooModels) {
     return this.importProductsFromOdoo(scope, trigger)
   }
 
+  async archiveProductInOdoo(
+    medusaProductId: string,
+    trigger = "event"
+  ): Promise<{ ok: boolean; odooProductId: number | null; message: string }> {
+    const started = Date.now()
+    const odooId = await this.getOdooId("product", medusaProductId)
+    if (!odooId) {
+      return {
+        ok: true,
+        odooProductId: null,
+        message: `No Odoo mapping found for deleted product ${medusaProductId}.`,
+      }
+    }
+
+    try {
+      const client = await this.getOdooClient()
+      await client.write("product.template", [odooId], { active: false })
+      await this.upsertMapping({
+        entityType: "product",
+        medusaId: medusaProductId,
+        odooId,
+        direction: "medusa_to_odoo",
+        odooModel: "product.template",
+        metadata: { archived: true },
+      })
+      await this.logSync({
+        entityType: "product",
+        direction: "medusa_to_odoo",
+        trigger,
+        status: "success",
+        updated: 1,
+        durationMs: Date.now() - started,
+        message: `Archived Odoo product.template #${odooId} for deleted Medusa product ${medusaProductId}.`,
+      })
+      return {
+        ok: true,
+        odooProductId: odooId,
+        message: `Archived Odoo product.template #${odooId}.`,
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err)
+      await this.recordFailure({
+        entityType: "product",
+        medusaId: medusaProductId,
+        odooId,
+        direction: "medusa_to_odoo",
+        trigger,
+        errorMessage: msg,
+      })
+      return {
+        ok: false,
+        odooProductId: odooId,
+        message: msg,
+      }
+    }
+  }
+
   // ─── Two-Way Inventory Sync & Reconciliation ───────────────────────────────
 
   async importInventoryFromOdoo(
@@ -1239,8 +1431,8 @@ export class OdooModuleService extends MedusaService(OdooModels) {
               fields: ["id", "sku"],
               pagination: { take: 5000 },
             })
-            .catch(() => ({ data: [] as Array<{ id: string; sku?: string | null }> }))
-          items = (data as Array<{ id: string; sku?: string | null }>)
+            .catch(() => ({ data: [] }))
+          items = data
             .filter((i) => Boolean(i.sku))
             .map((i) => ({ inventoryItemId: i.id, sku: String(i.sku) }))
         }
@@ -1388,34 +1580,94 @@ export class OdooModuleService extends MedusaService(OdooModels) {
     const mappings = (settings.locationMappings ?? []).filter(
       (m) => m.medusaLocationId && m.odooWarehouseId
     )
-    if (!mappings.length) {
-      return {
-        ok: true,
-        entity: "inventory",
-        direction: "medusa_to_odoo",
-        created: 0,
-        updated: 0,
-        skipped: 0,
-        failed: 0,
-        durationMs: Date.now() - started,
-        message: "No warehouse location mappings configured.",
-      }
-    }
 
     try {
+      const activeScope =
+        scope ?? (this.container_ as { resolve?: (k: string) => unknown })
+
+      let resolvedLevels = levelsInput ?? []
+      if (!resolvedLevels.length && typeof activeScope?.resolve === "function") {
+        const query = activeScope.resolve(ContainerRegistrationKeys.QUERY) as
+          | {
+              graph: (args: Record<string, unknown>) => Promise<{
+                data: Array<{
+                  id: string
+                  sku?: string | null
+                  location_levels?: Array<{
+                    location_id?: string | null
+                    stocked_quantity?: number | null
+                  }>
+                }>
+              }>
+            }
+          | undefined
+
+        if (query) {
+          const { data } = await query
+            .graph({
+              entity: "inventory_item",
+              fields: [
+                "id",
+                "sku",
+                "location_levels.location_id",
+                "location_levels.stocked_quantity",
+              ],
+              pagination: { take: 5000 },
+            })
+            .catch(() => ({ data: [] }))
+
+          const extracted: Array<{ locationId: string; sku: string; qty: number }> = []
+          for (const item of data) {
+            if (!item.sku) continue
+            for (const ll of item.location_levels ?? []) {
+              if (!ll?.location_id) continue
+              extracted.push({
+                locationId: String(ll.location_id),
+                sku: String(item.sku),
+                qty: Number(ll.stocked_quantity ?? 0),
+              })
+            }
+          }
+          resolvedLevels = extracted
+        }
+      }
+
+      if (!mappings.length && !resolvedLevels.length) {
+        return {
+          ok: true,
+          entity: "inventory",
+          direction: "medusa_to_odoo",
+          created: 0,
+          updated: 0,
+          skipped: 0,
+          failed: 0,
+          durationMs: Date.now() - started,
+          message: "No warehouse location mappings configured.",
+        }
+      }
+
       const client = await this.getOdooClient()
       let updated = 0
       let failed = 0
 
-      for (const map of mappings) {
-        const locationLevels = (levelsInput ?? [])
-          .filter((l) => l.locationId === map.medusaLocationId)
-          .map((l) => ({ sku: l.sku, qty: l.qty }))
+      if (mappings.length > 0) {
+        for (const map of mappings) {
+          const locationLevels = resolvedLevels
+            .filter((l) => l.locationId === map.medusaLocationId)
+            .map((l) => ({ sku: l.sku, qty: l.qty }))
 
-        if (!locationLevels.length) continue
+          if (!locationLevels.length) continue
+          const res = await client.writeWarehouseStockBySkus({
+            levels: locationLevels,
+            warehouseId: map.odooWarehouseId,
+          })
+          updated += res.updated
+          failed += res.failed
+        }
+      } else {
         const res = await client.writeWarehouseStockBySkus({
-          levels: locationLevels,
-          warehouseId: map.odooWarehouseId,
+          levels: resolvedLevels.map((l) => ({ sku: l.sku, qty: l.qty })),
+          warehouseId: 1,
         })
         updated += res.updated
         failed += res.failed
@@ -1478,11 +1730,14 @@ export class OdooModuleService extends MedusaService(OdooModels) {
   }
 
   async reconcileInventory(params?: {
+    scope?: { resolve: (key: string) => unknown }
     variants?: Array<{
       variantId: string
       productId?: string
       sku: string
       locationId?: string
+      inventoryLevelId?: string
+      inventoryItemId?: string
       medusaQty: number
     }>
     strategyOverride?: "odoo_wins" | "medusa_wins" | "manual_conflict"
@@ -1526,13 +1781,142 @@ export class OdooModuleService extends MedusaService(OdooModels) {
 
     try {
       const client = await this.getOdooClient()
-      const variantsToCheck = params?.variants ?? []
+      const activeScope =
+        params?.scope ??
+        (this.container_ as { resolve?: (k: string) => unknown })
+
+      let variantsToCheck = params?.variants ?? []
+
+      if (!variantsToCheck.length && typeof activeScope?.resolve === "function") {
+        const query = activeScope.resolve(ContainerRegistrationKeys.QUERY) as
+          | {
+              graph: (args: Record<string, unknown>) => Promise<{
+                data: Array<Record<string, unknown>>
+              }>
+            }
+          | undefined
+
+        if (query) {
+          const variantFields = [
+            "id",
+            "sku",
+            "barcode",
+            "product_id",
+            "inventory_items.inventory.id",
+            "inventory_items.inventory.sku",
+            "inventory_items.inventory.location_levels.id",
+            "inventory_items.inventory.location_levels.location_id",
+            "inventory_items.inventory.location_levels.stocked_quantity",
+          ]
+          let { data } = await query
+            .graph({
+              entity: "product_variant",
+              fields: variantFields,
+              pagination: { take: 1000 },
+            })
+            .catch(() => ({ data: [] as Array<Record<string, unknown>> }))
+
+          if (!data?.length) {
+            const fallback = await query
+              .graph({
+                entity: "variant",
+                fields: variantFields,
+                pagination: { take: 1000 },
+              })
+              .catch(() => ({ data: [] as Array<Record<string, unknown>> }))
+            data = fallback.data ?? []
+          }
+
+          variantsToCheck = (data ?? [])
+            .map((v) => {
+              const invItems = Array.isArray(v.inventory_items)
+                ? (v.inventory_items as Array<Record<string, unknown>>)
+                : []
+              const firstInv =
+                (invItems[0]?.inventory as Record<string, unknown> | undefined) ??
+                invItems[0]
+              const levels = Array.isArray(firstInv?.location_levels)
+                ? (firstInv.location_levels as Array<Record<string, unknown>>)
+                : []
+              const firstLevel = levels[0]
+              const sku =
+                (typeof v.sku === "string" && v.sku) ||
+                (typeof v.barcode === "string" && v.barcode) ||
+                (typeof firstInv?.sku === "string" && firstInv.sku) ||
+                ""
+
+              return {
+                variantId: String(v.id),
+                productId:
+                  typeof v.product_id === "string" ? v.product_id : undefined,
+                sku,
+                locationId:
+                  typeof firstLevel?.location_id === "string"
+                    ? firstLevel.location_id
+                    : undefined,
+                inventoryLevelId:
+                  typeof firstLevel?.id === "string"
+                    ? firstLevel.id
+                    : undefined,
+                inventoryItemId:
+                  typeof firstInv?.id === "string" ? firstInv.id : undefined,
+                medusaQty: Number(firstLevel?.stocked_quantity ?? 0),
+              }
+            })
+            .filter((item) => Boolean(item.sku))
+        }
+      }
+
+      if (!variantsToCheck.length) {
+        const variantMappings = await this.listErpMappings(
+          { entity_type: "variant" },
+          { take: 1000 }
+        ).catch(() => [])
+        variantsToCheck = variantMappings
+          .map((m) => {
+            const meta = m.metadata as Record<string, unknown> | null | undefined
+            const sku =
+              typeof meta?.sku === "string" && meta.sku
+                ? meta.sku
+                : String(m.medusa_id)
+            return {
+              variantId: String(m.medusa_id),
+              sku,
+              medusaQty:
+                typeof meta?.medusaQty === "number" ? meta.medusaQty : 0,
+            }
+          })
+          .filter((item) => Boolean(item.sku))
+      }
+
+      const inventoryModule =
+        typeof activeScope?.resolve === "function"
+          ? (activeScope.resolve(Modules.INVENTORY) as
+              | {
+                  listInventoryLevels?: (
+                    filter: Record<string, unknown>
+                  ) => Promise<Array<{ id: string }>>
+                  updateInventoryLevels?: (
+                    data: Array<Record<string, unknown>>
+                  ) => Promise<unknown>
+                }
+              | undefined)
+          : undefined
 
       for (const item of variantsToCheck) {
         try {
           result.checked++
           const found = await client.findProductByBarcodeOrSku(item.sku)
           if (!found) continue
+
+          await this.upsertMapping({
+            entityType: "variant",
+            medusaId: item.variantId,
+            odooId: found.id,
+            direction: "bidirectional",
+            odooModel: "product.product",
+            metadata: { sku: item.sku, medusaQty: item.medusaQty },
+          })
 
           const odooQty = found.stockedQty
           const delta = Math.abs(item.medusaQty - odooQty)
@@ -1555,6 +1939,27 @@ export class OdooModuleService extends MedusaService(OdooModels) {
             if (strategy === "odoo_wins") {
               if (params?.onUpdateMedusaStock) {
                 await params.onUpdateMedusaStock(item.variantId, odooQty)
+              } else if (inventoryModule?.updateInventoryLevels) {
+                if (item.inventoryLevelId) {
+                  await inventoryModule.updateInventoryLevels([
+                    { id: item.inventoryLevelId, stocked_quantity: odooQty },
+                  ])
+                } else if (
+                  inventoryModule.listInventoryLevels &&
+                  (item.inventoryItemId || item.variantId)
+                ) {
+                  const existingLevels = await inventoryModule.listInventoryLevels(
+                    {
+                      inventory_item_id: item.inventoryItemId ?? item.variantId,
+                      ...(item.locationId ? { location_id: item.locationId } : {}),
+                    }
+                  )
+                  if (existingLevels?.[0]?.id) {
+                    await inventoryModule.updateInventoryLevels([
+                      { id: existingLevels[0].id, stocked_quantity: odooQty },
+                    ])
+                  }
+                }
               }
               detail.action = "fixed_medusa"
               result.fixed++
@@ -1729,12 +2134,7 @@ export class OdooModuleService extends MedusaService(OdooModels) {
       )
 
       // 2. Resolve each line item SKU to Odoo product.product
-      const orderLines: Array<{
-        product_id: number
-        product_uom_qty: number
-        price_unit: number
-        name: string
-      }> = []
+      const orderLines = []
       for (const item of order.items || []) {
         const sku = (item.variant_sku || "").trim()
         if (!sku) {
@@ -1871,9 +2271,68 @@ export class OdooModuleService extends MedusaService(OdooModels) {
     }
   }
 
+  /**
+   * Cancel a synced sale.order in Odoo when the corresponding Medusa order is cancelled.
+   */
+  async cancelOrderInOdoo(
+    medusaOrderId: string,
+    trigger = "event"
+  ): Promise<{ ok: boolean; odooOrderId: number | null; message: string }> {
+    const started = Date.now()
+    const odooOrderId = await this.getOdooId("order", medusaOrderId)
+    if (!odooOrderId) {
+      return {
+        ok: true,
+        odooOrderId: null,
+        message: `Order ${medusaOrderId} is not mapped in Odoo; skipping cancellation.`,
+      }
+    }
+
+    try {
+      const client = await this.getOdooClient()
+      await client.rpc("sale.order", "action_cancel", [[odooOrderId]])
+
+      const durationMs = Date.now() - started
+      await this.logSync({
+        entityType: "order",
+        direction: "medusa_to_odoo",
+        trigger,
+        status: "success",
+        updated: 1,
+        durationMs,
+        message: `Cancelled Odoo sale.order #${odooOrderId} for Medusa order ${medusaOrderId}`,
+      })
+
+      return {
+        ok: true,
+        odooOrderId,
+        message: `Cancelled Odoo sale.order #${odooOrderId} for Medusa order ${medusaOrderId}`,
+      }
+    } catch (err) {
+      const durationMs = Date.now() - started
+      const msg = err instanceof Error ? err.message : String(err)
+      await this.logSync({
+        entityType: "order",
+        direction: "medusa_to_odoo",
+        trigger,
+        status: "failed",
+        failed: 1,
+        durationMs,
+        message: `Failed to cancel Odoo sale.order #${odooOrderId}: ${msg}`,
+      })
+      return {
+        ok: false,
+        odooOrderId,
+        message: msg,
+      }
+    }
+  }
+
   // ─── Two-Way Customer Sync ─────────────────────────────────────────────────
 
   async syncCustomers(params?: {
+    scope?: unknown
+    customerIds?: string[]
     directionOverride?: OdooSyncDirection
     medusaCustomers?: Array<{
       id: string
@@ -1882,6 +2341,12 @@ export class OdooModuleService extends MedusaService(OdooModels) {
       last_name?: string | null
       phone?: string | null
       company_name?: string | null
+      addresses?: Array<{
+        address_1?: string | null
+        city?: string | null
+        postal_code?: string | null
+        country_code?: string | null
+      }> | null
     }>
     onUpsertMedusaCustomer?: (partner: {
       odooId: number
@@ -1947,6 +2412,68 @@ export class OdooModuleService extends MedusaService(OdooModels) {
                 lastName,
                 phone: typeof p.phone === "string" ? p.phone : null,
               })
+            } else {
+              const customerMod = this.resolveMedusaService<{
+                listCustomers?: (
+                  filters: Record<string, unknown>,
+                  config?: Record<string, unknown>
+                ) => Promise<Array<{ id: string }>>
+                createCustomers?: (
+                  data: Record<string, unknown>
+                ) => Promise<{ id: string } | Array<{ id: string }>>
+                updateCustomers?: (
+                  idOrSelector: unknown,
+                  data?: Record<string, unknown>
+                ) => Promise<unknown>
+              }>(Modules.CUSTOMER, params?.scope)
+
+              if (
+                customerMod?.listCustomers &&
+                customerMod?.createCustomers &&
+                customerMod?.updateCustomers
+              ) {
+                try {
+                  if (existingMedusaId) {
+                    await customerMod.updateCustomers(existingMedusaId, {
+                      first_name: firstName,
+                      last_name: lastName,
+                      phone: typeof p.phone === "string" ? p.phone : undefined,
+                    })
+                    medusaId = existingMedusaId
+                  } else {
+                    const byEmail = await customerMod.listCustomers(
+                      { email },
+                      { take: 1 }
+                    )
+                    if (byEmail?.[0]?.id) {
+                      medusaId = byEmail[0].id
+                      await customerMod.updateCustomers(medusaId, {
+                        first_name: firstName,
+                        last_name: lastName,
+                        phone:
+                          typeof p.phone === "string" ? p.phone : undefined,
+                      })
+                    } else {
+                      const createdCust = await customerMod.createCustomers({
+                        email,
+                        first_name: firstName,
+                        last_name: lastName,
+                        phone:
+                          typeof p.phone === "string" ? p.phone : undefined,
+                        metadata: { odoo_partner_id: p.id },
+                      })
+                      const custObj = Array.isArray(createdCust)
+                        ? createdCust[0]
+                        : createdCust
+                      if (custObj?.id) {
+                        medusaId = custObj.id
+                      }
+                    }
+                  }
+                } catch {
+                  // Fallback to synthetic ID if Medusa customer module unavailable
+                }
+              }
             }
             await this.upsertMapping({
               entityType: "customer",
@@ -1967,7 +2494,38 @@ export class OdooModuleService extends MedusaService(OdooModels) {
         direction === "medusa_to_odoo" ||
         direction === "bidirectional"
       ) {
-        for (const c of params?.medusaCustomers ?? []) {
+        let medusaCustomers = params?.medusaCustomers
+        if (!medusaCustomers) {
+          const query = this.resolveQueryGraph(params?.scope)
+          if (query) {
+            try {
+              const filters: Record<string, unknown> = {}
+              if (params?.customerIds?.length) {
+                filters.id = params.customerIds
+              }
+              const { data: queriedCustomers } = await query.graph({
+                entity: "customer",
+                fields: [
+                  "id",
+                  "email",
+                  "first_name",
+                  "last_name",
+                  "phone",
+                  "company_name",
+                  "addresses.*",
+                ],
+                filters,
+              })
+              medusaCustomers = (queriedCustomers ?? []) as NonNullable<
+                typeof medusaCustomers
+              >
+            } catch {
+              medusaCustomers = []
+            }
+          }
+        }
+
+        for (const c of medusaCustomers ?? []) {
           if (!c.email) {
             skipped++
             continue
@@ -1976,6 +2534,9 @@ export class OdooModuleService extends MedusaService(OdooModels) {
             const existingOdooId = await this.getOdooId("customer", c.id)
             const name =
               [c.first_name, c.last_name].filter(Boolean).join(" ") || c.email
+            const primaryAddr = Array.isArray(c.addresses)
+              ? c.addresses[0]
+              : undefined
             const res = await client.upsertCustomer(
               c.id,
               {
@@ -1983,6 +2544,13 @@ export class OdooModuleService extends MedusaService(OdooModels) {
                 email: c.email.trim().toLowerCase(),
                 ...(c.phone ? { phone: c.phone } : {}),
                 ...(c.company_name ? { company_name: c.company_name } : {}),
+                ...(primaryAddr?.address_1
+                  ? { street: primaryAddr.address_1 }
+                  : {}),
+                ...(primaryAddr?.city ? { city: primaryAddr.city } : {}),
+                ...(primaryAddr?.postal_code
+                  ? { zip: primaryAddr.postal_code }
+                  : {}),
               },
               existingOdooId
             )
@@ -2050,6 +2618,10 @@ export class OdooModuleService extends MedusaService(OdooModels) {
   async resolveBarcode(params: {
     barcode: string
     context?: OdooBarcodeContext
+    scope?: unknown
+    deviceId?: string | null
+    sessionId?: string | null
+    operatorId?: string | null
     medusaCatalogLookup?: (barcode: string) => Promise<{
       variantId: string
       productId: string
@@ -2083,10 +2655,16 @@ export class OdooModuleService extends MedusaService(OdooModels) {
           source: "memory_cache",
           resolution_status: "resolved",
           latency_ms: latencyMs,
+          device_id: params.deviceId ?? null,
+          session_id: params.sessionId ?? null,
+          operator_id: params.operatorId ?? null,
           scan_timestamp: new Date(),
         })
         return {
           ...cached.result,
+          deviceId: params.deviceId ?? undefined,
+          sessionId: params.sessionId ?? undefined,
+          operatorId: params.operatorId ?? undefined,
           source: "memory_cache",
           latencyMs,
           resolvedAt: new Date().toISOString(),
@@ -2094,9 +2672,67 @@ export class OdooModuleService extends MedusaService(OdooModels) {
       }
     }
 
-    // 1. POS context checks Medusa catalog first if available
-    if (context === "pos" && params.medusaCatalogLookup) {
-      const medusaHit = await params.medusaCatalogLookup(barcode)
+    // 1. POS context checks Medusa catalog first (via callback or query.graph)
+    if (context === "pos") {
+      let medusaHit = params.medusaCatalogLookup
+        ? await params.medusaCatalogLookup(barcode)
+        : null
+
+      if (!medusaHit && !params.medusaCatalogLookup) {
+        const query = this.resolveQueryGraph(params.scope)
+        if (query) {
+          try {
+            for (const filterField of ["barcode", "ean", "upc", "sku"]) {
+              const { data: variants } = await query.graph({
+                entity: "product_variant",
+                fields: [
+                  "id",
+                  "title",
+                  "sku",
+                  "barcode",
+                  "product_id",
+                  "product.id",
+                  "product.title",
+                  "product.thumbnail",
+                  "prices.*",
+                ],
+                filters: { [filterField]: barcode },
+              })
+              const v = variants?.[0] as
+                | {
+                    id?: string
+                    title?: string
+                    sku?: string
+                    product_id?: string
+                    product?: {
+                      id?: string
+                      title?: string
+                      thumbnail?: string
+                    }
+                    prices?: Array<{ amount?: number }>
+                  }
+                | undefined
+              if (v?.id) {
+                const rawAmount = v.prices?.[0]?.amount ?? 0
+                medusaHit = {
+                  variantId: v.id,
+                  productId: v.product_id ?? v.product?.id ?? "",
+                  sku: v.sku ?? barcode,
+                  title: v.product?.title
+                    ? `${v.product.title}${v.title ? ` - ${v.title}` : ""}`
+                    : (v.title ?? barcode),
+                  unitPriceCents: Math.round(Number(rawAmount)),
+                  imageUrl: v.product?.thumbnail,
+                }
+                break
+              }
+            }
+          } catch {
+            // Fall through to Odoo lookup
+          }
+        }
+      }
+
       if (medusaHit) {
         const odooProductId = await this.getOdooId(
           "variant",
@@ -2115,6 +2751,9 @@ export class OdooModuleService extends MedusaService(OdooModels) {
           stockedQty: medusaHit.stockedQty,
           availableQty: medusaHit.stockedQty,
           imageUrl: medusaHit.imageUrl,
+          deviceId: params.deviceId ?? undefined,
+          sessionId: params.sessionId ?? undefined,
+          operatorId: params.operatorId ?? undefined,
         }
 
         const ttlSec = posSettings.posCacheTtlSeconds ?? 3600
@@ -2137,6 +2776,9 @@ export class OdooModuleService extends MedusaService(OdooModels) {
           source: "medusa_db",
           resolution_status: "resolved",
           latency_ms: latencyMs,
+          device_id: params.deviceId ?? null,
+          session_id: params.sessionId ?? null,
+          operator_id: params.operatorId ?? null,
           scan_timestamp: new Date(),
         })
 
@@ -2170,6 +2812,9 @@ export class OdooModuleService extends MedusaService(OdooModels) {
           odooUom: odooHit.uomName,
           stockedQty: odooHit.stockedQty,
           availableQty: odooHit.availableQty,
+          deviceId: params.deviceId ?? undefined,
+          sessionId: params.sessionId ?? undefined,
+          operatorId: params.operatorId ?? undefined,
         }
 
         const ttlSec =
@@ -2196,6 +2841,9 @@ export class OdooModuleService extends MedusaService(OdooModels) {
           source,
           resolution_status: "resolved",
           latency_ms: latencyMs,
+          device_id: params.deviceId ?? null,
+          session_id: params.sessionId ?? null,
+          operator_id: params.operatorId ?? null,
           scan_timestamp: new Date(),
         })
 
@@ -2222,6 +2870,9 @@ export class OdooModuleService extends MedusaService(OdooModels) {
       source: "none",
       resolution_status: "not_found",
       latency_ms: latencyMs,
+      device_id: params.deviceId ?? null,
+      session_id: params.sessionId ?? null,
+      operator_id: params.operatorId ?? null,
       scan_timestamp: new Date(),
     })
 
@@ -2229,6 +2880,9 @@ export class OdooModuleService extends MedusaService(OdooModels) {
       found: false,
       barcode,
       context,
+      deviceId: params.deviceId ?? undefined,
+      sessionId: params.sessionId ?? undefined,
+      operatorId: params.operatorId ?? undefined,
       source: "none",
       latencyMs,
       resolvedAt: new Date().toISOString(),
@@ -2281,6 +2935,11 @@ export class OdooModuleService extends MedusaService(OdooModels) {
 
     return this.createOfflinePosTransactions({
       external_transaction_id: input.externalTransactionId,
+      device_id: input.deviceId ?? null,
+      session_id: input.sessionId ?? null,
+      pos_location_id: input.posLocationId ?? null,
+      cart_id: input.cartId ?? null,
+      payment_method: input.paymentMethod ?? null,
       customer_id: input.customerId ?? null,
       customer_email: input.customerEmail ?? null,
       currency: (input.currency ?? "USD").toUpperCase(),
@@ -2401,6 +3060,8 @@ export class OdooModuleService extends MedusaService(OdooModels) {
     rawBody: string | Buffer
     signatureHeader?: string | null
     payload: OdooWebhookPayload
+    scope?: unknown
+    executeSync?: boolean
   }): Promise<OdooWebhookProcessResult> {
     const config = await this.getConnectionConfig()
     const webhookSettings =
@@ -2456,6 +3117,13 @@ export class OdooModuleService extends MedusaService(OdooModels) {
       webhookSettings.autoProcessProductEvents !== false
     ) {
       actionTaken = "queued_product_sync"
+      if (params.executeSync !== false) {
+        try {
+          await this.importProductsFromOdoo({ trigger: "webhook" })
+        } catch {
+          // Best-effort sync during webhook ingestion
+        }
+      }
     } else if (
       evt.startsWith("stock.") &&
       webhookSettings.autoProcessStockEvents !== false
@@ -2464,11 +3132,29 @@ export class OdooModuleService extends MedusaService(OdooModels) {
       if (typeof params.payload.data?.barcode === "string") {
         await this.invalidateBarcodeCache(params.payload.data.barcode)
       }
+      if (params.executeSync !== false) {
+        try {
+          await this.importInventoryFromOdoo({ trigger: "webhook" })
+        } catch {
+          // Best-effort sync during webhook ingestion
+        }
+      }
     } else if (
       evt.startsWith("partner.") &&
       webhookSettings.autoProcessCustomerEvents !== false
     ) {
       actionTaken = "queued_customer_sync"
+      if (params.executeSync !== false) {
+        try {
+          await this.syncCustomers({
+            directionOverride: "odoo_to_medusa",
+            scope: params.scope,
+            trigger: "webhook",
+          })
+        } catch {
+          // Best-effort sync during webhook ingestion
+        }
+      }
     } else if (
       evt.startsWith("order.") &&
       webhookSettings.autoProcessOrderEvents !== false
@@ -2505,3 +3191,4 @@ export class OdooModuleService extends MedusaService(OdooModels) {
 }
 
 export default OdooModuleService
+

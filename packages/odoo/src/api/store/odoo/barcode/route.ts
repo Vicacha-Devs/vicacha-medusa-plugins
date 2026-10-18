@@ -10,11 +10,18 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const body = (req.validatedBody ?? {}) as {
     barcode: string
     context?: OdooBarcodeContext
+    deviceId?: string
+    sessionId?: string
+    operatorId?: string
   }
 
   const result = await odooService.resolveBarcode({
     barcode: body.barcode,
     context: body.context ?? "pos",
+    scope: req.scope,
+    deviceId: body.deviceId,
+    sessionId: body.sessionId,
+    operatorId: body.operatorId,
   })
 
   res.status(result.found ? 200 : 404).json(result)

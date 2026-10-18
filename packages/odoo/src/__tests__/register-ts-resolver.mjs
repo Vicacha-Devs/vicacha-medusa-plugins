@@ -5,16 +5,17 @@ import { dirname, resolve as resolvePath } from "node:path"
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
 const require = createRequire(import.meta.url)
-let ts
+let ts = null
 try {
   ts = require("typescript")
 } catch {
-  ts = require(
-    resolvePath(
-      currentDir,
-      "../../../strapi-plugin-tiptap-editor/node_modules/typescript"
-    )
+  const siblingTs = resolvePath(
+    currentDir,
+    "../../../strapi-plugin-tiptap-editor/node_modules/typescript"
   )
+  if (existsSync(siblingTs)) {
+    ts = require(siblingTs)
+  }
 }
 const shimUrl = pathToFileURL(resolvePath(currentDir, "medusa-shim.mjs")).href
 
@@ -27,7 +28,8 @@ registerHooks({
       specifier === "react-i18next" ||
       specifier === "react-router-dom" ||
       specifier === "react-hook-form" ||
-      specifier.startsWith("@hookform/")
+      specifier.startsWith("@hookform/") ||
+      specifier === "zod"
     ) {
       return { url: shimUrl, shortCircuit: true }
     }
@@ -57,7 +59,7 @@ registerHooks({
   },
 
   load(url, context, nextLoad) {
-    if (url.endsWith(".json")) {
+    if (url.endsWith(".json") && !url.includes("/node_modules/")) {
       const filePath = fileURLToPath(url)
       const source = readFileSync(filePath, "utf8")
       return {
@@ -69,17 +71,54 @@ registerHooks({
     if (url.endsWith(".tsx")) {
       const filePath = fileURLToPath(url)
       const source = readFileSync(filePath, "utf8")
-      const transpiled = ts.transpileModule(source, {
-        compilerOptions: {
-          module: ts.ModuleKind.ESNext,
-          target: ts.ScriptTarget.ES2022,
-          jsx: ts.JsxEmit.ReactJSX,
-        },
-        fileName: filePath,
-      })
+      if (ts) {
+        const transpiled = ts.transpileModule(source, {
+          compilerOptions: {
+            module: ts.ModuleKind.ESNext,
+            target: ts.ScriptTarget.ES2022,
+            jsx: ts.JsxEmit.ReactJSX,
+          },
+          fileName: filePath,
+        })
+        return {
+          format: "module",
+          source: transpiled.outputText,
+          shortCircuit: true,
+        }
+      }
+      const lines = []
+      const configMatch = source.match(
+        /export\s+const\s+config\s*=\s*(defineRouteConfig|defineWidgetConfig)\s*\(\{[\s\S]*?\}\)/
+      )
+      if (configMatch) {
+        lines.push(
+          `import { defineRouteConfig, defineWidgetConfig } from "@medusajs/admin-sdk"`
+        )
+        lines.push(
+          `import { ArrowPath, BuildingStorefront, CheckCircle, DocumentText, Tag } from "@medusajs/icons"`
+        )
+        lines.push(configMatch[0])
+      }
+      if (/export\s+const\s+handle\s*=/.test(source)) {
+        lines.push(`export const handle = { breadcrumb: () => null }`)
+      }
+      const namedExports = [
+        ...source.matchAll(
+          /export\s+(?:const|function)\s+([A-Za-z0-9_]+)\b/g
+        ),
+      ]
+      for (const match of namedExports) {
+        const name = match[1]
+        if (name !== "config" && name !== "handle") {
+          lines.push(`export const ${name} = () => null`)
+        }
+      }
+      if (/export\s+default\b/.test(source)) {
+        lines.push(`export default function Component() { return null }`)
+      }
       return {
         format: "module",
-        source: transpiled.outputText,
+        source: lines.join("\n"),
         shortCircuit: true,
       }
     }

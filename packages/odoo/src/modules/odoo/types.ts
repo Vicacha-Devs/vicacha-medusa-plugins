@@ -285,6 +285,9 @@ export interface OdooBarcodeResolutionResult {
   found: boolean
   barcode: string
   context: OdooBarcodeContext
+  deviceId?: string
+  sessionId?: string
+  operatorId?: string
   variantId?: string
   productId?: string
   sku?: string
@@ -311,6 +314,11 @@ export interface OfflinePosItemInput {
 
 export interface OfflinePosEnqueueInput {
   externalTransactionId: string
+  deviceId?: string
+  sessionId?: string
+  posLocationId?: string
+  cartId?: string
+  paymentMethod?: string
   customerId?: string
   customerEmail?: string
   currency?: string
