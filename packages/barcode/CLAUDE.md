@@ -25,7 +25,8 @@ medusa-plugin-barcode/
     │   ├── index.ts                                    # Module("barcode", { service: BarcodeModuleService })
     │   ├── types.ts                                    # BARCODE_MODULE, DTOs, options, provider & label types
     │   ├── models/index.ts                             # 6 DML models (Product, Cache, Tag, Template, Session, Item)
-    │   ├── service.ts                                  # BarcodeModuleService (alias BarcodeService)
+    │   ├── service.ts                                  # BarcodeModuleService (alias BarcodeService): thin facade over operations/
+    │   ├── operations/                                 # Service logic split by domain (context, data-service, lookup, generation, tags, labels, stock-count, maintenance)
     │   ├── providers/index.ts                          # BaseBarcodeProvider, ProviderRegistry & 10 providers
     │   └── utils/
     │       ├── barcode-parser.ts                       # Right-to-left GS1 Modulo-10, UPC-E, GS1-128 AI, Digital Link
@@ -126,7 +127,7 @@ medusa-plugin-barcode/
 
 ## 3. Strict Medusa v2 & Security Engineering Rules
 1. **`@medusajs/eslint-plugin` Compliance**:
-   - Every public method on `BarcodeModuleService` in `src/modules/barcode/service.ts` **must** be `async` and throw `MedusaError` from `@medusajs/framework/utils`.
+   - Every public method on `BarcodeModuleService` in `src/modules/barcode/service.ts` (and the operations in `src/modules/barcode/operations/*.ts` it delegates to) **must** be `async` and throw `MedusaError` from `@medusajs/framework/utils`.
    - Every `createStep` and `createWorkflow` in `src/workflows/*.ts` **must** have an explicit kebab-case ID matching the step/workflow name (e.g. `"lookup-and-create-product"`).
    - All API Zod schemas **must** live in `src/api/validators.ts` (importing `z` from `@medusajs/framework/zod`) and be bound in `src/api/middlewares.ts`.
    - Files under `src/admin/**` **must never** import `@medusajs/framework/utils` (`@medusajs/admin-no-medusa-utils-import`).
