@@ -1,14 +1,16 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { MedusaError } from "@medusajs/framework/utils"
-import type StoriesModuleService from "../../../../modules/story/service"
 import {
-  STORIES_MODULE,
+  resolveStoriesService,
   type StorySlideDTO,
-} from "../../../../modules/story/types"
-import type { UpdateStorySlideInput } from "../../../validators"
+} from "../../../../modules/story"
+import {
+  UpdateStorySlideSchema,
+  type UpdateStorySlideInput,
+} from "../../../validators"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const svc = req.scope.resolve(STORIES_MODULE) as StoriesModuleService
+  const svc = resolveStoriesService(req.scope)
   const rows = await svc.listStories({ id: req.params.id })
   const raw = rows?.[0]
   if (!raw) {
@@ -22,14 +24,17 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 }
 
 export async function PATCH(req: MedusaRequest, res: MedusaResponse) {
-  const svc = req.scope.resolve(STORIES_MODULE) as StoriesModuleService
-  const body = req.validatedBody as UpdateStorySlideInput
+  const svc = resolveStoriesService(req.scope)
+  const body = (req.validatedBody ??
+    UpdateStorySlideSchema.parse(req.body ?? {})) as UpdateStorySlideInput
   const story = await svc.updateSlide(req.params.id, body)
   res.json({ story })
 }
 
+export const PUT = PATCH
+
 export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
-  const svc = req.scope.resolve(STORIES_MODULE) as StoriesModuleService
+  const svc = resolveStoriesService(req.scope)
   const result = await svc.deleteSlide(req.params.id)
   res.json(result)
 }

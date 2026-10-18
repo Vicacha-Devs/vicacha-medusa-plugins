@@ -1,4 +1,5 @@
 export const STORIES_MODULE = "stories"
+export const LEGACY_STORIES_MODULE = "Story"
 
 export type StoryMediaType = "image" | "video"
 

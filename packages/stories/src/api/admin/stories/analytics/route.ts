@@ -1,9 +1,8 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import type StoriesModuleService from "../../../../modules/story/service"
-import { STORIES_MODULE } from "../../../../modules/story/types"
+import { resolveStoriesService } from "../../../../modules/story"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const svc = req.scope.resolve(STORIES_MODULE) as StoriesModuleService
+  const svc = resolveStoriesService(req.scope)
   const analytics = await svc.getAnalyticsOverview()
   res.json({ analytics })
 }

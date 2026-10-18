@@ -1,13 +1,15 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import type StoriesModuleService from "../../../modules/story/service"
-import { STORIES_MODULE } from "../../../modules/story/types"
+import { resolveStoriesService } from "../../../modules/story"
 import { createStorySlideWorkflow } from "../../../workflows"
-import type { CreateStorySlideInput } from "../../validators"
+import {
+  CreateStorySlideSchema,
+  type CreateStorySlideInput,
+} from "../../validators"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const svc = req.scope.resolve(STORIES_MODULE) as StoriesModuleService
+  const svc = resolveStoriesService(req.scope)
   const productId =
-    typeof req.query.product_id === "string" ? req.query.product_id : undefined
+    typeof req.query?.product_id === "string" ? req.query.product_id : undefined
 
   const state = await svc.listAdminStudioState(
     productId ? { product_id: productId } : undefined
@@ -20,7 +22,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const body = req.validatedBody as CreateStorySlideInput
+  const body = (req.validatedBody ??
+    CreateStorySlideSchema.parse(req.body ?? {})) as CreateStorySlideInput
   const { result } = await createStorySlideWorkflow(req.scope).run({
     input: body,
   })

@@ -4,15 +4,14 @@ import {
   StepResponse,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk"
-import type StoriesModuleService from "../modules/story/service"
 import {
-  STORIES_MODULE,
+  resolveStoriesService,
   type StoryEngagementEventType,
   type StoryMediaType,
   type StoryPlacementZone,
   type StoryRingTheme,
   type StoryStickerType,
-} from "../modules/story/types"
+} from "../modules/story"
 
 const createStoryGroupStep = createStep(
   "create-story-group",
@@ -33,17 +32,13 @@ const createStoryGroupStep = createStep(
     },
     { container }
   ) => {
-    const storiesService = container.resolve(
-      STORIES_MODULE
-    ) as StoriesModuleService
+    const storiesService = resolveStoriesService(container)
     const group = await storiesService.createGroup(input)
     return new StepResponse(group, { groupId: group.id })
   },
   async (compInput, { container }) => {
     if (!compInput?.groupId) return
-    const storiesService = container.resolve(
-      STORIES_MODULE
-    ) as StoriesModuleService
+    const storiesService = resolveStoriesService(container)
     await storiesService.deleteGroup(compInput.groupId)
   }
 )
@@ -112,17 +107,13 @@ const createStorySlideStep = createStep(
     },
     { container }
   ) => {
-    const storiesService = container.resolve(
-      STORIES_MODULE
-    ) as StoriesModuleService
+    const storiesService = resolveStoriesService(container)
     const slide = await storiesService.createSlide(input)
     return new StepResponse(slide, { slideId: slide.id })
   },
   async (compInput, { container }) => {
     if (!compInput?.slideId) return
-    const storiesService = container.resolve(
-      STORIES_MODULE
-    ) as StoriesModuleService
+    const storiesService = resolveStoriesService(container)
     await storiesService.deleteSlide(compInput.slideId)
   }
 )
@@ -185,9 +176,7 @@ const recordStoryEngagementStep = createStep(
     },
     { container }
   ) => {
-    const storiesService = container.resolve(
-      STORIES_MODULE
-    ) as StoriesModuleService
+    const storiesService = resolveStoriesService(container)
     const res = await storiesService.recordEngagementEvent(input)
     return new StepResponse(res)
   }
@@ -211,9 +200,7 @@ export const recordStoryEngagementWorkflow = createWorkflow(
 const expireEphemeralStoriesStep = createStep(
   "expire-ephemeral-stories",
   async (_input: Record<string, never>, { container }) => {
-    const storiesService = container.resolve(
-      STORIES_MODULE
-    ) as StoriesModuleService
+    const storiesService = resolveStoriesService(container)
     const res = await storiesService.expireOutdatedStories()
     return new StepResponse(res)
   }

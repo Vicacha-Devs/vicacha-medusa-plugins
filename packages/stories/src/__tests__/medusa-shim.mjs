@@ -164,38 +164,224 @@ export function createWorkflow(name, composerFn) {
   return wf
 }
 
-const createZodChain = (shape = {}) => {
+export class Migration {
+  constructor() {
+    this.queries = []
+  }
+
+  addSql(sql) {
+    this.queries.push(sql)
+  }
+}
+
+const createZodChain = (constraints = {}) => {
+  const validators = [...(constraints.validators ?? [])]
+  const transforms = [...(constraints.transforms ?? [])]
   const schema = {
-    shape,
-    min: () => schema,
-    max: () => schema,
-    int: () => schema,
+    shape: constraints.shape ?? {},
+    min: (n) =>
+      createZodChain({
+        ...constraints,
+        validators: [
+          ...validators,
+          (v) => {
+            if (typeof v === "string" && v.length < n) {
+              throw new Error(`Min length ${n}`)
+            }
+            if (typeof v === "number" && v < n) {
+              throw new Error(`Min value ${n}`)
+            }
+          },
+        ],
+      }),
+    max: (n) =>
+      createZodChain({
+        ...constraints,
+        validators: [
+          ...validators,
+          (v) => {
+            if (typeof v === "string" && v.length > n) {
+              throw new Error(`Max length ${n}`)
+            }
+            if (typeof v === "number" && v > n) {
+              throw new Error(`Max value ${n}`)
+            }
+            if (Array.isArray(v) && v.length > n) {
+              throw new Error(`Max items ${n}`)
+            }
+          },
+        ],
+      }),
+    int: () =>
+      createZodChain({
+        ...constraints,
+        validators: [
+          ...validators,
+          (v) => {
+            if (typeof v === "number" && !Number.isInteger(v)) {
+              throw new Error("Expected integer")
+            }
+          },
+        ],
+      }),
     positive: () => schema,
     nonnegative: () => schema,
     email: () => schema,
     url: () => schema,
-    optional: () => schema,
-    nullable: () => schema,
-    default: () => schema,
-    partial: () => createZodChain(shape),
-    omit: () => createZodChain(shape),
+    optional: () => createZodChain({ ...constraints, optional: true }),
+    nullable: () => createZodChain({ ...constraints, nullable: true }),
+    default: (defVal) =>
+      createZodChain({ ...constraints, optional: true, defaultValue: defVal }),
+    partial: () => createZodChain({ ...constraints, partial: true }),
+    omit: (keys = {}) => {
+      const nextShape = { ...(constraints.shape ?? {}) }
+      for (const k of Object.keys(keys)) {
+        if (keys[k]) delete nextShape[k]
+      }
+      return createZodChain({ ...constraints, shape: nextShape })
+    },
     passthrough: () => schema,
-    parse: (val) => val,
-    safeParse: (val) => ({ success: true, data: val }),
+    parse: (val) => {
+      const res = schema.safeParse(val)
+      if (!res.success) {
+        throw new Error(res.error.issues.map((i) => i.message).join("; "))
+      }
+      return res.data
+    },
+    safeParse: (rawVal) => {
+      try {
+        let val = rawVal
+        if (val === undefined) {
+          if (constraints.defaultValue !== undefined) {
+            return { success: true, data: constraints.defaultValue }
+          }
+          if (constraints.optional) {
+            return { success: true, data: undefined }
+          }
+          throw new Error("Required")
+        }
+        if (val === null && constraints.nullable) {
+          return { success: true, data: null }
+        }
+        for (const tf of transforms) {
+          val = tf(val)
+        }
+        for (const fn of validators) {
+          fn(val)
+        }
+        if (constraints.shape && typeof val === "object" && val !== null) {
+          const out = { ...val }
+          for (const [k, fieldSchema] of Object.entries(constraints.shape)) {
+            if (constraints.partial && out[k] === undefined) continue
+            const r = fieldSchema.safeParse(out[k])
+            if (!r.success) {
+              return {
+                success: false,
+                error: {
+                  issues: r.error.issues.map((iss) => ({
+                    path: [k, ...(iss.path ?? [])],
+                    message: iss.message,
+                  })),
+                },
+              }
+            }
+            if (r.data !== undefined) {
+              out[k] = r.data
+            }
+          }
+          return { success: true, data: out }
+        }
+        if (constraints.item && Array.isArray(val)) {
+          const arr = []
+          for (let i = 0; i < val.length; i++) {
+            const r = constraints.item.safeParse(val[i])
+            if (!r.success) {
+              return {
+                success: false,
+                error: {
+                  issues: r.error.issues.map((iss) => ({
+                    path: [i, ...(iss.path ?? [])],
+                    message: iss.message,
+                  })),
+                },
+              }
+            }
+            arr.push(r.data)
+          }
+          return { success: true, data: arr }
+        }
+        return { success: true, data: val }
+      } catch (err) {
+        return {
+          success: false,
+          error: {
+            issues: [
+              {
+                path: [],
+                message: err instanceof Error ? err.message : String(err),
+              },
+            ],
+          },
+        }
+      }
+    },
   }
   return schema
 }
 
 export const z = {
-  object: (shape) => createZodChain(shape),
-  string: () => createZodChain(),
-  number: () => createZodChain(),
+  object: (shape) => createZodChain({ shape }),
+  string: () =>
+    createZodChain({
+      validators: [
+        (v) => {
+          if (typeof v !== "string") throw new Error("Expected string")
+        },
+      ],
+    }),
+  number: () =>
+    createZodChain({
+      validators: [
+        (v) => {
+          if (typeof v !== "number" || Number.isNaN(v)) {
+            throw new Error("Expected number")
+          }
+        },
+      ],
+    }),
   boolean: () => createZodChain(),
-  enum: (values) => createZodChain({ values }),
+  enum: (values) =>
+    createZodChain({
+      validators: [
+        (v) => {
+          if (!values.includes(v)) throw new Error("Invalid enum value")
+        },
+      ],
+    }),
   array: (item) => createZodChain({ item }),
   record: (key, val) => createZodChain({ key, val }),
   unknown: () => createZodChain(),
   union: (items) => createZodChain({ items }),
+  coerce: {
+    number: () =>
+      createZodChain({
+        transforms: [
+          (v) => {
+            if (typeof v === "string" && v.trim() === "") {
+              return Number.NaN
+            }
+            return Number(v)
+          },
+        ],
+        validators: [
+          (v) => {
+            if (typeof v !== "number" || Number.isNaN(v)) {
+              throw new Error("Expected number")
+            }
+          },
+        ],
+      }),
+  },
 }
 
 export function defineMiddlewares(config) {

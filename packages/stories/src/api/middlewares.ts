@@ -26,7 +26,7 @@ export default defineMiddlewares({
     },
     {
       matcher: "/admin/stories/:id",
-      method: ["PATCH"],
+      method: ["PATCH", "PUT"],
       middlewares: [validateAndTransformBody(UpdateStorySlideSchema)],
     },
     {

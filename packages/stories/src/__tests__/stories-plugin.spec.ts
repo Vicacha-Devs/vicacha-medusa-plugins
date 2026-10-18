@@ -337,19 +337,29 @@ describe("Admin UI Localization (10 Locales Key Parity)", () => {
   })
 
   it("exports Medusa v2 Admin routes, breadcrumbs, components, and product widget", async () => {
-    const overviewRoute = await import("../admin/routes/stories/page")
-    const canvasRoute = await import("../admin/routes/stories/canvas/page")
-    const ringsRoute = await import("../admin/routes/stories/rings/page")
-    const ringsCreateRoute = await import(
-      "../admin/routes/stories/rings/@create/page"
+    const overviewRoute: any = await import(
+      "../admin/routes/stories/page.js" as string
     )
-    const stickersRoute = await import("../admin/routes/stories/stickers/page")
-    const analyticsRoute = await import(
-      "../admin/routes/stories/analytics/page"
+    const canvasRoute: any = await import(
+      "../admin/routes/stories/canvas/page.js" as string
     )
-    const adminComponents = await import("../admin/components")
-    const productWidget = await import(
-      "../admin/widgets/product-stories-widget"
+    const ringsRoute: any = await import(
+      "../admin/routes/stories/rings/page.js" as string
+    )
+    const ringsCreateRoute: any = await import(
+      "../admin/routes/stories/rings/@create/page.js" as string
+    )
+    const stickersRoute: any = await import(
+      "../admin/routes/stories/stickers/page.js" as string
+    )
+    const analyticsRoute: any = await import(
+      "../admin/routes/stories/analytics/page.js" as string
+    )
+    const adminComponents: any = await import(
+      "../admin/components/index.js" as string
+    )
+    const productWidget: any = await import(
+      "../admin/widgets/product-stories-widget.js" as string
     )
 
     assert.equal(overviewRoute.config.translationNs, "stories")
@@ -373,3 +383,133 @@ describe("Admin UI Localization (10 Locales Key Parity)", () => {
     assert.equal(productWidget.config.zone, "product.details.after")
   })
 })
+
+describe("@bambiste/medusa-stories Compatibility — Migrations, PUT Route, Exports & Fallback", () => {
+  it("runs Migration20260514000000 up() and down() for all 5 tables and @bambiste column upgrades", async () => {
+    const { Migration20260514000000 } = await import(
+      "../modules/story/migrations/Migration20260514000000.js"
+    )
+    const migration = new Migration20260514000000() as unknown as {
+      up: () => Promise<void>
+      down: () => Promise<void>
+      queries: string[]
+    }
+
+    await migration.up()
+    const combinedUpSql = migration.queries.join("\n")
+
+    assert.ok(combinedUpSql.includes('CREATE TABLE IF NOT EXISTS "mps_story_group"'))
+    assert.ok(combinedUpSql.includes('CREATE TABLE IF NOT EXISTS "story"'))
+    assert.ok(combinedUpSql.includes('ALTER TABLE "story"'))
+    assert.ok(combinedUpSql.includes('ADD COLUMN IF NOT EXISTS "group_id"'))
+    assert.ok(combinedUpSql.includes('ADD COLUMN IF NOT EXISTS "caption"'))
+    assert.ok(combinedUpSql.includes('ADD COLUMN IF NOT EXISTS "duration_ms"'))
+    assert.ok(combinedUpSql.includes('ADD COLUMN IF NOT EXISTS "starts_at"'))
+    assert.ok(combinedUpSql.includes('ADD COLUMN IF NOT EXISTS "views_count"'))
+    assert.ok(combinedUpSql.includes('ADD COLUMN IF NOT EXISTS "completions_count"'))
+    assert.ok(combinedUpSql.includes('ADD COLUMN IF NOT EXISTS "taps_count"'))
+    assert.ok(combinedUpSql.includes('ADD COLUMN IF NOT EXISTS "conversions_count"'))
+    assert.ok(combinedUpSql.includes('ADD COLUMN IF NOT EXISTS "metadata"'))
+    assert.ok(combinedUpSql.includes('CREATE TABLE IF NOT EXISTS "mps_story_hotspot"'))
+    assert.ok(combinedUpSql.includes('CREATE TABLE IF NOT EXISTS "mps_story_sticker"'))
+    assert.ok(combinedUpSql.includes('CREATE TABLE IF NOT EXISTS "mps_story_event"'))
+
+    migration.queries.length = 0
+    await migration.down()
+    const combinedDownSql = migration.queries.join("\n")
+    assert.ok(combinedDownSql.includes('DROP TABLE IF EXISTS "mps_story_event"'))
+    assert.ok(combinedDownSql.includes('DROP TABLE IF EXISTS "mps_story_sticker"'))
+    assert.ok(combinedDownSql.includes('DROP TABLE IF EXISTS "mps_story_hotspot"'))
+    assert.ok(combinedDownSql.includes('DROP TABLE IF EXISTS "story"'))
+    assert.ok(combinedDownSql.includes('DROP TABLE IF EXISTS "mps_story_group"'))
+  })
+
+  it("coerces string display_order to integer in CreateStorySlideSchema and UpdateStorySlideSchema", async () => {
+    const { UpdateStorySlideSchema } = await import("../api/validators.js")
+
+    const createdParsed = CreateStorySlideSchema.parse({
+      title: "Coerced Order Slide",
+      media_url: "https://cdn.example.com/slide.jpg",
+      display_order: "7",
+    })
+    assert.equal(createdParsed.display_order, 7)
+
+    const updatedParsed = UpdateStorySlideSchema.parse({
+      display_order: "12",
+    })
+    assert.equal(updatedParsed.display_order, 12)
+  })
+
+  it("exports StoriesService, IStoryService, StoryServiceType, src/modules barrel, and supports PUT /admin/stories/:id with 'Story' fallback", async () => {
+    const rootIndex = await import("../index.js")
+    const modulesBarrel = await import("../modules/index.js")
+    const storyModule = await import("../modules/story/index.js")
+    const adminStoryByIdRoute = await import(
+      "../api/admin/stories/[id]/route.js"
+    )
+    const storeStoriesRoute = await import("../api/store/stories/route.js")
+
+    assert.equal(rootIndex.StoriesService, StoriesModuleService)
+    assert.equal(modulesBarrel.StoriesService, StoriesModuleService)
+    assert.equal(modulesBarrel.STORIES_MODULE, "stories")
+    assert.equal(storyModule.LEGACY_STORIES_MODULE, "Story")
+    assert.equal(adminStoryByIdRoute.PUT, adminStoryByIdRoute.PATCH)
+
+    const idMiddleware = middlewares.routes.find(
+      (r: { matcher: string }) => r.matcher === "/admin/stories/:id"
+    )
+    assert.ok(idMiddleware)
+    assert.deepEqual(idMiddleware?.method, ["PATCH", "PUT"])
+
+    // Verify fallback resolution when module is registered under legacy "Story" key
+    const legacyService: import("../index").IStoryService =
+      new rootIndex.StoriesService({}, {})
+    const slide = await legacyService.createSlide({
+      title: "Initial Title",
+      media_type: "image",
+      media_url: "https://cdn.example.com/story.jpg",
+      display_order: 1,
+    })
+
+    const legacyScope = {
+      resolve(key: string) {
+        if (key === "Story") return legacyService
+        throw new Error(`Could not resolve '${key}'`)
+      },
+    }
+
+    let jsonPayload: any = null
+    const mockRes = {
+      status() {
+        return this
+      },
+      json(data: any) {
+        jsonPayload = data
+        return this
+      },
+    }
+
+    await adminStoryByIdRoute.PUT(
+      {
+        params: { id: slide.id },
+        body: { title: "Updated via PUT", display_order: "9" },
+        scope: legacyScope,
+      } as any,
+      mockRes as any
+    )
+
+    assert.equal(jsonPayload?.story?.title, "Updated via PUT")
+    assert.equal(jsonPayload?.story?.display_order, 9)
+
+    await storeStoriesRoute.GET(
+      {
+        query: {},
+        scope: legacyScope,
+      } as any,
+      mockRes as any
+    )
+    assert.equal(jsonPayload?.stories?.length, 1)
+    assert.equal(jsonPayload?.stories?.[0]?.title, "Updated via PUT")
+  })
+})
+

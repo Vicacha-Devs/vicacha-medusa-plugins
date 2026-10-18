@@ -1,28 +1,27 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import type StoriesModuleService from "../../../modules/story/service"
 import {
-  STORIES_MODULE,
+  resolveStoriesService,
   type StoryPlacementZone,
-} from "../../../modules/story/types"
+} from "../../../modules/story"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const svc = req.scope.resolve(STORIES_MODULE) as StoriesModuleService
+  const svc = resolveStoriesService(req.scope)
   const placement =
-    typeof req.query.placement === "string"
+    typeof req.query?.placement === "string"
       ? (req.query.placement as StoryPlacementZone)
       : undefined
   const targetEntityId =
-    typeof req.query.target_entity_id === "string"
+    typeof req.query?.target_entity_id === "string"
       ? req.query.target_entity_id
       : undefined
   const collectionId =
-    typeof req.query.collection_id === "string"
+    typeof req.query?.collection_id === "string"
       ? req.query.collection_id
       : undefined
   const groupId =
-    typeof req.query.group_id === "string" ? req.query.group_id : undefined
+    typeof req.query?.group_id === "string" ? req.query.group_id : undefined
   const productId =
-    typeof req.query.product_id === "string" ? req.query.product_id : undefined
+    typeof req.query?.product_id === "string" ? req.query.product_id : undefined
 
   const [stories, groups] = await Promise.all([
     svc.listActive({

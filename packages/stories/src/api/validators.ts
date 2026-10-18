@@ -34,7 +34,7 @@ export const CreateStoryGroupSchema = z.object({
   is_pinned: z.boolean().optional(),
   is_ephemeral: z.boolean().optional(),
   is_active: z.boolean().optional(),
-  display_order: z.number().int().min(0).max(10000).optional(),
+  display_order: z.coerce.number().int().min(0).max(10000).optional(),
   metadata: z.record(z.string(), z.unknown()).nullable().optional(),
 })
 
@@ -94,7 +94,7 @@ export const CreateStorySlideSchema = z.object({
   link_url: z.string().max(1024).nullable().optional(),
   link_text: z.string().max(120).nullable().optional(),
   is_active: z.boolean().optional(),
-  display_order: z.number().int().min(0).max(10000).optional(),
+  display_order: z.coerce.number().int().min(0).max(10000).optional(),
   starts_at: z.string().max(64).nullable().optional(),
   expires_at: z.string().max(64).nullable().optional(),
   hotspots: z.array(CreateStoryHotspotSchema).max(20).optional(),
