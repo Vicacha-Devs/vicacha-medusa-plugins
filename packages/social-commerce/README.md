@@ -166,7 +166,7 @@ Medusa v2 Host Application
 | `GET` | `/store/social/stories` | Active non-expired 24h stories (both synced IG/FB stories and local on-site stories). Query: `platform`, `product_id`, `limit`, `offset`. |
 | `GET` | `/store/social/posts/:id` | Retrieve a single social media post with its ordered `SocialProductTag` hotspots. |
 | `GET` | `/store/social/live` | List active (`live`) and `scheduled` live shopping streams with pinned `LiveProduct` inventory & flash-sale pricing. |
-| `GET` | `/store/social/catalog-feed` | Public hosted product feed for Meta Commerce Manager & TikTok Shop scheduled pulls (`?format=xml\|csv\|json`). |
+| `GET` | `/store/social/catalog-feed` | Hosted product feed for Google Merchant Center, Meta Commerce Manager & TikTok Shop scheduled pulls (`?format=xml\|csv\|json&currency_code=EUR&country_code=DE&region_id=...&sales_channel_id=...&token=...`). Emits `<g:gtin>`, `<g:mpn>`, `<g:additional_image_link>`, `<g:color>`, `<g:size>`, `<g:material>`, dynamic `<g:*>` variant option tags, and supports optional `feed_token` protection + `before_feed_item` transform/filter hook. |
 | `GET` / `POST` | `/store/social/checkout-handoff` | Creates a social checkout handoff (`?products=variant_1:1,variant_2:2&platform=tiktok&live_session_id=...&coupon=LIVE10&redirect=true`). |
 
 ### Admin Endpoints (`/admin/social/*`)

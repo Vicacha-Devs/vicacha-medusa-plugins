@@ -97,9 +97,42 @@ registerHooks({
           shortCircuit: true,
         }
       }
+      // Fallback when `typescript` is not installed in node_modules:
+      // Node's built-in `stripTypeScriptTypes` does not parse JSX, so we extract
+      // top-level metadata (`config`, `handle`, named exports, and `default` export).
+      const lines = []
+      const configMatch = source.match(
+        /export\s+const\s+config\s*=\s*(defineRouteConfig|defineWidgetConfig)\s*\(\{[\s\S]*?\}\)/
+      )
+      if (configMatch) {
+        lines.push(
+          `import { defineRouteConfig, defineWidgetConfig } from "@medusajs/admin-sdk"`
+        )
+        lines.push(
+          `import { Channels, Photo, PlaySolid, Sparkles, Tag, Users } from "@medusajs/icons"`
+        )
+        lines.push(configMatch[0])
+      }
+      if (/export\s+const\s+handle\s*=/.test(source)) {
+        lines.push(`export const handle = { breadcrumb: () => null }`)
+      }
+      const namedExports = [
+        ...source.matchAll(
+          /export\s+(?:const|function)\s+([A-Za-z0-9_]+)\b/g
+        ),
+      ]
+      for (const match of namedExports) {
+        const name = match[1]
+        if (name !== "config" && name !== "handle") {
+          lines.push(`export const ${name} = () => null`)
+        }
+      }
+      if (/export\s+default\b/.test(source)) {
+        lines.push(`export default function Component() { return null }`)
+      }
       return {
         format: "module",
-        source: stripTypeScriptTypes(source),
+        source: lines.join("\n"),
         shortCircuit: true,
       }
     }

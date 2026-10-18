@@ -200,10 +200,42 @@ export class SocialCommerceSDKClient {
     })
   }
 
-  getCatalogFeedUrl(format: CatalogFeedFormat = "xml", currencyCode: string = "USD"): string {
+  getCatalogFeedUrl(
+    formatOrOptions:
+      | CatalogFeedFormat
+      | {
+          format?: CatalogFeedFormat
+          currency_code?: string
+          country_code?: string
+          region_id?: string
+          sales_channel_id?: string
+          token?: string
+        } = "xml",
+    currencyCode: string = "USD"
+  ): string {
     const url = new URL(`${this.baseUrl}/store/social/catalog-feed`)
-    url.searchParams.set("format", format)
-    url.searchParams.set("currency_code", currencyCode)
+    if (typeof formatOrOptions === "object" && formatOrOptions !== null) {
+      url.searchParams.set("format", formatOrOptions.format ?? "xml")
+      url.searchParams.set(
+        "currency_code",
+        formatOrOptions.currency_code ?? currencyCode
+      )
+      if (formatOrOptions.country_code) {
+        url.searchParams.set("country_code", formatOrOptions.country_code)
+      }
+      if (formatOrOptions.region_id) {
+        url.searchParams.set("region_id", formatOrOptions.region_id)
+      }
+      if (formatOrOptions.sales_channel_id) {
+        url.searchParams.set("sales_channel_id", formatOrOptions.sales_channel_id)
+      }
+      if (formatOrOptions.token) {
+        url.searchParams.set("token", formatOrOptions.token)
+      }
+    } else {
+      url.searchParams.set("format", formatOrOptions)
+      url.searchParams.set("currency_code", currencyCode)
+    }
     return url.toString()
   }
 

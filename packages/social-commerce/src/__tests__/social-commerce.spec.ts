@@ -675,6 +675,225 @@ describe("medusa-plugin-social-commerce", () => {
       assert.ok(handoff.checkout_url.includes("coupon=TIKTOK15"))
       assert.ok(handoff.checkout_url.includes("utm_source=tiktok"))
     })
+
+    it("emits rich Google/Meta Merchant tags (gtin, mpn, additional_image_link, color, size, material, custom_options) and runs beforeFeedItem hook", async () => {
+      const feedService = new CatalogFeedService({
+        storefrontUrl: "https://store.example.com",
+        brandName: "Medusa Apparel",
+        // defaultCurrency: "EUR",
+      })
+
+      const rawMedusaProducts = [
+        {
+          id: "prod_hoodie",
+          handle: "heavyweight-hoodie",
+          title: "Heavyweight Organic Cotton Hoodie",
+          description: "<p>Ultra-soft 500gsm organic cotton hoodie.</p>",
+          status: "published",
+          thumbnail: "https://cdn.example.com/hoodie-main.jpg",
+          images: [
+            { url: "https://cdn.example.com/hoodie-main.jpg" },
+            { url: "https://cdn.example.com/hoodie-side.jpg" },
+            { url: "https://cdn.example.com/hoodie-back.jpg" },
+          ],
+          categories: [{ name: "Apparel & Accessories > Hoodies" }],
+          options: [
+            { id: "opt_size", title: "Size" },
+            { id: "opt_color", title: "Color" },
+            { id: "opt_fit", title: "Fit" },
+          ],
+          variants: [
+            {
+              id: "var_hoodie_m_blk",
+              title: "M / Obsidian Black",
+              sku: "HD-ORG-M-BLK",
+              ean: "4006381333931",
+              inventory_quantity: 12,
+              manage_inventory: true,
+              calculated_price: {
+                calculated_amount: 79,
+                original_amount: 99,
+                currency_code: "eur",
+              },
+              options: [
+                { option_id: "opt_size", value: "M" },
+                { option_id: "opt_color", value: "Obsidian Black" },
+                { option_id: "opt_fit", value: "Relaxed" },
+              ],
+            },
+            {
+              id: "var_hoodie_skip",
+              title: "S / Discontinued",
+              sku: "HD-SKIP",
+              inventory_quantity: 0,
+              manage_inventory: true,
+              allow_backorder: true,
+              prices: [{ amount: 89, currency_code: "eur" }],
+              options: [{ option_id: "opt_size", value: "S" }],
+            },
+          ],
+        },
+      ]
+
+      const mapped = feedService.mapMedusaProductsToFeedItems(rawMedusaProducts, {
+        currencyCode: "EUR",
+        countryCode: "DE",
+        beforeFeedItem: (item) => {
+          if (item.id === "var_hoodie_skip") return null
+          return {
+            ...item,
+            material: "100% Organic Cotton",
+            gender: "unisex",
+            age_group: "adult",
+          }
+        },
+      })
+
+      assert.equal(mapped.length, 1)
+      assert.equal(mapped[0].id, "var_hoodie_m_blk")
+      assert.equal(mapped[0].gtin, "4006381333931")
+      assert.equal(mapped[0].mpn, "HD-ORG-M-BLK")
+      assert.equal(mapped[0].price, 99)
+      assert.equal(mapped[0].sale_price, 79)
+      assert.equal(mapped[0].size, "M")
+      assert.equal(mapped[0].color, "Obsidian Black")
+      assert.equal(mapped[0].material, "100% Organic Cotton")
+      assert.ok(mapped[0].link.includes("size=M"))
+      assert.ok(mapped[0].link.includes("color=Obsidian+Black"))
+
+      const xml = feedService.generateFeed(mapped, {
+        format: "xml",
+        currencyCode: "EUR",
+        countryCode: "DE",
+      })
+      assert.ok(xml.body.includes("<g:gtin>4006381333931</g:gtin>"))
+      assert.ok(xml.body.includes("<g:mpn>HD-ORG-M-BLK</g:mpn>"))
+      assert.ok(
+        xml.body.includes(
+          "<g:additional_image_link>https://cdn.example.com/hoodie-side.jpg</g:additional_image_link>"
+        )
+      )
+      assert.ok(xml.body.includes("<g:color>Obsidian Black</g:color>"))
+      assert.ok(xml.body.includes("<g:size>M</g:size>"))
+      assert.ok(xml.body.includes("<g:material>100% Organic Cotton</g:material>"))
+      assert.ok(xml.body.includes("<g:fit>Relaxed</g:fit>"))
+      assert.ok(xml.body.includes("<g:price>99.00 EUR</g:price>"))
+      assert.ok(xml.body.includes("<g:sale_price>79.00 EUR</g:sale_price>"))
+
+      const csv = feedService.generateFeed(mapped, { format: "csv" })
+      assert.ok(csv.body.includes("4006381333931"))
+      assert.ok(csv.body.includes("HD-ORG-M-BLK"))
+    })
+
+    it("enforces optional feed_token and resolves country_code / region currency on GET /store/social/catalog-feed", async () => {
+      const protectedService = new SocialCommerceService(
+        {},
+        {
+          encryption_key: TEST_ENCRYPTION_KEY,
+          storefront_url: "https://store.example.com",
+          feed_token: "secret-merchant-token-123",
+        }
+      )
+
+      const mockScope = {
+        resolve(key: string) {
+          if (key === "social_commerce") return protectedService
+          if (key === "region") {
+            return {
+              async listRegions() {
+                return [
+                  {
+                    id: "reg_eu",
+                    currency_code: "eur",
+                    countries: [{ iso_2: "de" }, { iso_2: "dk" }],
+                  },
+                ]
+              },
+            }
+          }
+          if (key === "product") {
+            return {
+              async listProducts() {
+                return [
+                  {
+                    id: "prod_dk_1",
+                    handle: "nordic-lamp",
+                    title: "Nordic Table Lamp",
+                    description: "Minimalist brass table lamp",
+                    status: "published",
+                    thumbnail: "https://cdn.example.com/lamp.jpg",
+                    variants: [
+                      {
+                        id: "var_dk_1",
+                        title: "Brass",
+                        sku: "LAMP-BRASS-01",
+                        prices: [{ amount: 145, currency_code: "eur", region_id: "reg_eu" }],
+                      },
+                    ],
+                  },
+                ]
+              },
+            }
+          }
+          return null
+        },
+      }
+
+      const makeRes = () => {
+        const state: {
+          statusCode: number
+          body: unknown
+          headers: Record<string, string>
+        } = { statusCode: 200, body: null, headers: {} }
+        const res: HttpResponse = {
+          status(code: number) {
+            state.statusCode = code
+            return res
+          },
+          json(payload: unknown) {
+            state.body = payload
+          },
+          send(payload: string) {
+            state.body = payload
+          },
+          setHeader(name: string, value: string) {
+            state.headers[name] = value
+          },
+        }
+        return { res, state }
+      }
+
+      // 1. Missing token -> 401 Unauthorized
+      const { res: unauthRes, state: unauthState } = makeRes()
+      await storeCatalogFeedGet(
+        {
+          scope: mockScope,
+          query: { format: "xml" },
+        } as unknown as HttpRequest,
+        unauthRes
+      )
+      assert.equal(unauthState.statusCode, 401)
+
+      // 2. Valid token + country_code=DE -> 200 OK with EUR currency & mapped Medusa product
+      const { res: okRes, state: okState } = makeRes()
+      await storeCatalogFeedGet(
+        {
+          scope: mockScope,
+          query: {
+            format: "xml",
+            country_code: "DE",
+            token: "secret-merchant-token-123",
+          },
+        } as unknown as HttpRequest,
+        okRes
+      )
+      assert.equal(okState.statusCode, 200)
+      assert.equal(okState.headers["X-Content-Type-Options"], "nosniff")
+      assert.equal(okState.headers["Cache-Control"], "private, no-store")
+      assert.ok(String(okState.body).includes("<g:id>var_dk_1</g:id>"))
+      assert.ok(String(okState.body).includes("<g:price>145.00 EUR</g:price>"))
+      assert.ok(String(okState.body).includes("<g:mpn>LAMP-BRASS-01</g:mpn>"))
+    })
   })
 
   describe("6. API Routes, Webhook Signature Enforcement & Isomorphic SDK/Hooks", () => {

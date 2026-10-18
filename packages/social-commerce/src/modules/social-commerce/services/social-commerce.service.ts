@@ -15,6 +15,7 @@ import {
   encryptToken,
   resolveEncryptionPassphrase,
   sanitizeHttpUrl,
+  verifyFeedTokenConstantTime,
   verifySignedOAuthState,
   verifyWebhookHmacSha256,
 } from "../utils/security.js"
@@ -27,6 +28,7 @@ import {
 import {
   CatalogFeedService,
   type GenerateCatalogFeedOptions,
+  type MapMedusaProductsOptions,
 } from "./catalog-feed.service.js"
 import type {
   AttachLiveProductInput,
@@ -119,6 +121,8 @@ export class SocialCommerceService extends MedusaService({
     this.catalogFeedService = new CatalogFeedService({
       storefrontUrl: options?.storefront_url,
       brandName: options?.default_brand_name,
+      defaultCurrency: options?.default_currency,
+      beforeFeedItem: options?.before_feed_item,
     })
 
     this.initializeDefaultProviders()
@@ -1932,7 +1936,52 @@ export class SocialCommerceService extends MedusaService({
   }
 
   /**
-   * Generates an XML (Meta RSS 2.0 `g:*`), CSV (TikTok Shop), or JSON catalog feed.
+   * Returns true if a secret `feed_token` is configured in module options or environment variables.
+   */
+  isFeedTokenRequired(): boolean {
+    const expected =
+      this.moduleOptions.feed_token ||
+      process.env.SOCIAL_COMMERCE_FEED_TOKEN ||
+      process.env.SC_FEED_TOKEN
+    return Boolean(expected && expected.trim().length > 0)
+  }
+
+  /**
+   * Verifies the provided catalog feed token in constant time if `feed_token` is configured.
+   * Throws `MedusaError(UNAUTHORIZED)` when a required token is missing or invalid.
+   */
+  verifyCatalogFeedToken(providedToken?: string | null): boolean {
+    const expected =
+      this.moduleOptions.feed_token ||
+      process.env.SOCIAL_COMMERCE_FEED_TOKEN ||
+      process.env.SC_FEED_TOKEN
+
+    if (!expected || !expected.trim()) {
+      return true
+    }
+
+    if (!verifyFeedTokenConstantTime(expected, providedToken)) {
+      throw new MedusaError(
+        MedusaError.Types.UNAUTHORIZED,
+        "Invalid or missing catalog feed token."
+      )
+    }
+
+    return true
+  }
+
+  /**
+   * Maps raw Medusa v2 product & variant records into `CatalogFeedProductItem[]`.
+   */
+  mapMedusaProductsToFeedItems(
+    products: Array<Record<string, unknown>>,
+    options?: MapMedusaProductsOptions
+  ): CatalogFeedProductItem[] {
+    return this.catalogFeedService.mapMedusaProductsToFeedItems(products, options)
+  }
+
+  /**
+   * Generates an XML (Meta/Google RSS 2.0 `g:*`), CSV (TikTok Shop), or JSON catalog feed.
    */
   async renderCatalogFeed(
     items: CatalogFeedProductItem[],

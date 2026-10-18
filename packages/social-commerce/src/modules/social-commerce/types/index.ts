@@ -13,6 +13,20 @@ export type CatalogSyncStatus = "synced" | "pending" | "failed"
 export type CatalogFeedFormat = "xml" | "csv" | "json" | "meta_xml" | "tiktok_csv"
 export type ReservationStatus = "held" | "confirmed" | "released" | "expired"
 
+export interface CatalogFeedItemContext {
+  currency_code: string
+  country_code?: string
+  region_id?: string
+  sales_channel_id?: string
+  raw_product?: Record<string, unknown>
+  raw_variant?: Record<string, unknown>
+}
+
+export type BeforeCatalogFeedItemHook = (
+  item: CatalogFeedProductItem,
+  context: CatalogFeedItemContext
+) => CatalogFeedProductItem | null | undefined | false
+
 export interface SocialCommerceModuleOptions {
   /**
    * 64-character hex string (32 bytes) or passphrase for AES-256-GCM token encryption at rest.
@@ -22,6 +36,15 @@ export interface SocialCommerceModuleOptions {
   storefront_url?: string
   default_brand_name?: string
   default_currency?: string
+  /**
+   * Optional secret token to protect `GET /store/social/catalog-feed` via `x-feed-token` header or `?token=` query param.
+   */
+  feed_token?: string
+  /**
+   * Optional hook invoked for each catalog feed item before rendering.
+   * Return a modified item, or return `null` / `false` to exclude the variant from the feed.
+   */
+  before_feed_item?: BeforeCatalogFeedItemHook
   reservation_ttl_seconds?: number
   lock_ttl_seconds?: number
   redis_url?: string
@@ -270,14 +293,24 @@ export interface CatalogFeedProductItem {
   description: string
   link: string
   image_link: string
+  additional_image_links?: string[]
   price: number
   sale_price?: number | null
   currency_code: string
-  availability?: "in stock" | "out of stock" | "preorder"
+  availability?: "in stock" | "out of stock" | "preorder" | "backorder"
   condition?: "new" | "refurbished" | "used"
   brand?: string
   inventory_quantity?: number
   google_product_category?: string
+  product_type?: string
+  gtin?: string
+  mpn?: string
+  color?: string
+  size?: string
+  material?: string
+  gender?: "male" | "female" | "unisex"
+  age_group?: "newborn" | "infant" | "toddler" | "kids" | "adult"
+  custom_options?: Record<string, string>
 }
 
 export type CatalogProductInput = CatalogFeedProductItem

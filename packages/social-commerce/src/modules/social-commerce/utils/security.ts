@@ -306,6 +306,33 @@ export function verifyWebhookHmacSha256(
 }
 
 /**
+ * Constant-time token verification for arbitrary strings/UUIDs (e.g., catalog feed access tokens).
+ * Hashes both values with SHA-256 before `crypto.timingSafeEqual` to avoid leaking token length.
+ */
+export function verifyFeedTokenConstantTime(
+  expectedToken: string | null | undefined,
+  providedToken: string | null | undefined
+): boolean {
+  if (!expectedToken || !providedToken) {
+    return false
+  }
+  const cleanExpected = expectedToken.trim()
+  const cleanProvided = providedToken.trim()
+  if (!cleanExpected || !cleanProvided) {
+    return false
+  }
+  const expectedDigest = crypto
+    .createHash("sha256")
+    .update(cleanExpected, "utf8")
+    .digest()
+  const providedDigest = crypto
+    .createHash("sha256")
+    .update(cleanProvided, "utf8")
+    .digest()
+  return crypto.timingSafeEqual(expectedDigest, providedDigest)
+}
+
+/**
  * Escapes untrusted strings for safe inclusion in XML/RSS/HTML output.
  */
 export function escapeXml(unsafe: string | number | null | undefined): string {
