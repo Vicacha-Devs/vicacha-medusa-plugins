@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import {
   Button,
   Container,
@@ -9,6 +9,7 @@ import {
   Text,
   toast,
 } from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
 import { dianClient } from "../../../sdk"
 
 export interface DianSettingsTaxAutomationSectionProps {
@@ -19,6 +20,7 @@ export interface DianSettingsTaxAutomationSectionProps {
 export const DianSettingsTaxAutomationSection: React.FC<
   DianSettingsTaxAutomationSectionProps
 > = ({ config, onSaved }) => {
+  const { t, i18n } = useTranslation()
   const [autoPaymentCaptured, setAutoPaymentCaptured] = useState(true)
   const [autoOrderPlaced, setAutoOrderPlaced] = useState(false)
   const [autoRefundCreditNote, setAutoRefundCreditNote] = useState(true)
@@ -55,25 +57,21 @@ export const DianSettingsTaxAutomationSection: React.FC<
         reteiva_rate: Number(reteivaRate),
         reteica_rate_per_thousand: Number(reteicaRate),
       })
-      toast.success("Reglas de automatización y retenciones DIAN actualizadas")
+      toast.success(t("dian.settings.toastAutomationSaved"))
       onSaved()
     } catch (err: any) {
-      toast.error(err?.message || "Error al guardar reglas DIAN")
+      toast.error(err?.message || t("dian.settings.toastAutomationError"))
     } finally {
       setSaving(false)
     }
   }
 
   return (
-    <Container className="divide-y p-0">
+    <Container className="divide-y p-0" dir={i18n.dir()}>
       <div className="px-6 py-4">
-        <Heading level="h2">
-          Automatización de Emisión, Contingencia (Tipo 03) y Retenciones
-        </Heading>
+        <Heading level="h2">{t("dian.settings.automationTitle")}</Heading>
         <Text size="small" className="text-ui-fg-subtle">
-          Configura disparadores automáticos, modo contingencia ante caídas del
-          WS DIAN y tarifas informativas de ReteFuente (06), ReteIVA (05) y
-          ReteICA (07).
+          {t("dian.settings.automationSubtitle")}
         </Text>
       </div>
 
@@ -82,10 +80,10 @@ export const DianSettingsTaxAutomationSection: React.FC<
           <div className="flex items-center justify-between rounded-lg border p-3">
             <div>
               <Text weight="plus" size="small">
-                Emitir Factura (01) al capturar pago
+                {t("dian.settings.autoPaymentCapturedTitle")}
               </Text>
               <Text size="xsmall" className="text-ui-fg-subtle">
-                Evento: order.payment_captured
+                {t("dian.settings.autoPaymentCapturedDesc")}
               </Text>
             </div>
             <Switch
@@ -97,10 +95,10 @@ export const DianSettingsTaxAutomationSection: React.FC<
           <div className="flex items-center justify-between rounded-lg border p-3">
             <div>
               <Text weight="plus" size="small">
-                Emitir Factura (01) al crear orden
+                {t("dian.settings.autoOrderPlacedTitle")}
               </Text>
               <Text size="xsmall" className="text-ui-fg-subtle">
-                Evento: order.placed
+                {t("dian.settings.autoOrderPlacedDesc")}
               </Text>
             </div>
             <Switch
@@ -112,10 +110,10 @@ export const DianSettingsTaxAutomationSection: React.FC<
           <div className="flex items-center justify-between rounded-lg border p-3">
             <div>
               <Text weight="plus" size="small">
-                Emitir Nota Crédito (91) en reembolsos
+                {t("dian.settings.autoRefundTitle")}
               </Text>
               <Text size="xsmall" className="text-ui-fg-subtle">
-                Evento: order.refund_created
+                {t("dian.settings.autoRefundDesc")}
               </Text>
             </div>
             <Switch
@@ -127,10 +125,10 @@ export const DianSettingsTaxAutomationSection: React.FC<
           <div className="flex items-center justify-between rounded-lg border p-3">
             <div>
               <Text weight="plus" size="small">
-                Modo Contingencia Automático (Tipo 03)
+                {t("dian.settings.contingencyTitle")}
               </Text>
               <Text size="xsmall" className="text-ui-fg-subtle">
-                Encola para retransmisión si DIAN WS responde 5xx o timeout
+                {t("dian.settings.contingencyDesc")}
               </Text>
             </div>
             <Switch
@@ -142,14 +140,14 @@ export const DianSettingsTaxAutomationSection: React.FC<
 
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-4">
           <div className="flex items-center justify-between rounded-lg border p-3">
-            <Label>Calcular Retenciones B2B</Label>
+            <Label>{t("dian.settings.withholdingsLabel")}</Label>
             <Switch
               checked={enableWithholdings}
               onCheckedChange={setEnableWithholdings}
             />
           </div>
           <div>
-            <Label>ReteFuente Compras (%)</Label>
+            <Label>{t("dian.settings.retefuenteLabel")}</Label>
             <Input
               type="number"
               step="0.01"
@@ -158,7 +156,7 @@ export const DianSettingsTaxAutomationSection: React.FC<
             />
           </div>
           <div>
-            <Label>ReteIVA (% sobre IVA)</Label>
+            <Label>{t("dian.settings.reteivaLabel")}</Label>
             <Input
               type="number"
               step="0.01"
@@ -167,7 +165,7 @@ export const DianSettingsTaxAutomationSection: React.FC<
             />
           </div>
           <div>
-            <Label>ReteICA (Por mil ‰)</Label>
+            <Label>{t("dian.settings.reteicaLabel")}</Label>
             <Input
               type="number"
               step="0.01"
@@ -179,7 +177,7 @@ export const DianSettingsTaxAutomationSection: React.FC<
 
         <div className="mt-4 flex justify-end">
           <Button type="submit" isLoading={saving}>
-            Guardar Reglas y Retenciones
+            {t("dian.settings.saveAutomationBtn")}
           </Button>
         </div>
       </form>

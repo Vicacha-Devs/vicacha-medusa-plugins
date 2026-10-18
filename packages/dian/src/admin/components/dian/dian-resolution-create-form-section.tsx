@@ -1,4 +1,3 @@
-import React, { useState } from "react"
 import {
   Button,
   Container,
@@ -8,6 +7,7 @@ import {
   Select,
   toast,
 } from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
 import { dianClient } from "../../../sdk"
 
 export interface DianResolutionCreateFormSectionProps {
@@ -17,6 +17,7 @@ export interface DianResolutionCreateFormSectionProps {
 export const DianResolutionCreateFormSection: React.FC<
   DianResolutionCreateFormSectionProps
 > = ({ onSaved }) => {
+  const { t, i18n } = useTranslation()
   const [prefix, setPrefix] = useState("FE")
   const [resolutionNumber, setResolutionNumber] = useState("18760000001")
   const [documentType, setDocumentType] = useState("01")
@@ -43,41 +44,41 @@ export const DianResolutionCreateFormSection: React.FC<
         technical_key: technicalKey || null,
         is_active: true,
       })
-      toast.success("Resolución DIAN 1876 guardada")
+      toast.success(t("dian.resolutions.toastSaved"))
       onSaved()
     } catch (err: any) {
-      toast.error(err?.message || "Error al guardar resolución")
+      toast.error(err?.message || t("dian.resolutions.toastError"))
     } finally {
       setSaving(false)
     }
   }
 
   return (
-    <Container className="p-6">
+    <Container className="p-6" dir={i18n.dir()}>
       <Heading level="h2" className="mb-4">
-        Agregar Nueva Resolución 1876
+        {t("dian.resolutions.formTitle")}
       </Heading>
       <form
         onSubmit={(e) => void handleCreate(e)}
         className="grid grid-cols-1 gap-4 md:grid-cols-3"
       >
         <div>
-          <Label>Tipo de Documento</Label>
+          <Label>{t("dian.resolutions.docTypeLabel")}</Label>
           <Select value={documentType} onValueChange={setDocumentType}>
             <Select.Trigger>
               <Select.Value />
             </Select.Trigger>
             <Select.Content>
-              <Select.Item value="01">01 - Factura Electrónica</Select.Item>
-              <Select.Item value="20">20 - POS Electrónico</Select.Item>
-              <Select.Item value="91">91 - Nota Crédito</Select.Item>
-              <Select.Item value="92">92 - Nota Débito</Select.Item>
-              <Select.Item value="03">03 - Contingencia</Select.Item>
+              <Select.Item value="01">{t("dian.documents.type01")}</Select.Item>
+              <Select.Item value="20">{t("dian.documents.type20")}</Select.Item>
+              <Select.Item value="91">{t("dian.documents.type91")}</Select.Item>
+              <Select.Item value="92">{t("dian.documents.type92")}</Select.Item>
+              <Select.Item value="03">{t("dian.documents.type03")}</Select.Item>
             </Select.Content>
           </Select>
         </div>
         <div>
-          <Label>Prefijo</Label>
+          <Label>{t("dian.resolutions.prefixLabel")}</Label>
           <Input
             value={prefix}
             onChange={(e) => setPrefix(e.target.value)}
@@ -85,7 +86,7 @@ export const DianResolutionCreateFormSection: React.FC<
           />
         </div>
         <div>
-          <Label>Número Resolución 1876</Label>
+          <Label>{t("dian.resolutions.resolutionNumberLabel")}</Label>
           <Input
             value={resolutionNumber}
             onChange={(e) => setResolutionNumber(e.target.value)}
@@ -93,7 +94,7 @@ export const DianResolutionCreateFormSection: React.FC<
           />
         </div>
         <div>
-          <Label>Rango Desde</Label>
+          <Label>{t("dian.resolutions.fromNumberLabel")}</Label>
           <Input
             type="number"
             value={fromNumber}
@@ -102,7 +103,7 @@ export const DianResolutionCreateFormSection: React.FC<
           />
         </div>
         <div>
-          <Label>Rango Hasta</Label>
+          <Label>{t("dian.resolutions.toNumberLabel")}</Label>
           <Input
             type="number"
             value={toNumber}
@@ -111,7 +112,7 @@ export const DianResolutionCreateFormSection: React.FC<
           />
         </div>
         <div>
-          <Label>Clave Técnica DIAN (CUFE)</Label>
+          <Label>{t("dian.resolutions.technicalKeyLabel")}</Label>
           <Input
             value={technicalKey}
             onChange={(e) => setTechnicalKey(e.target.value)}
@@ -119,7 +120,7 @@ export const DianResolutionCreateFormSection: React.FC<
           />
         </div>
         <div>
-          <Label>Vigencia Desde</Label>
+          <Label>{t("dian.resolutions.validFromLabel")}</Label>
           <Input
             type="date"
             value={validFrom}
@@ -128,7 +129,7 @@ export const DianResolutionCreateFormSection: React.FC<
           />
         </div>
         <div>
-          <Label>Vigencia Hasta</Label>
+          <Label>{t("dian.resolutions.validToLabel")}</Label>
           <Input
             type="date"
             value={validTo}
@@ -138,7 +139,7 @@ export const DianResolutionCreateFormSection: React.FC<
         </div>
         <div className="flex items-end">
           <Button type="submit" isLoading={saving}>
-            Guardar Resolución
+            {t("dian.resolutions.saveBtn")}
           </Button>
         </div>
       </form>

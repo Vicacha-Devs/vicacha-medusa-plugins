@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import {
   Button,
   Container,
@@ -9,6 +9,7 @@ import {
   Text,
   toast,
 } from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
 import { dianClient } from "../../../sdk"
 
 export interface DianSettingsEmisorSectionProps {
@@ -20,6 +21,7 @@ export interface DianSettingsEmisorSectionProps {
 export const DianSettingsEmisorSection: React.FC<
   DianSettingsEmisorSectionProps
 > = ({ config, municipalities, onSaved }) => {
+  const { t, i18n } = useTranslation()
   const [form, setForm] = useState({
     seller_nit: "",
     registration_name: "",
@@ -52,22 +54,21 @@ export const DianSettingsEmisorSection: React.FC<
     setSaving(true)
     try {
       await dianClient.updateConfig(form)
-      toast.success("Datos fiscales del Emisor DIAN actualizados")
+      toast.success(t("dian.settings.toastEmisorSaved"))
       onSaved()
     } catch (err: any) {
-      toast.error(err?.message || "Error al guardar datos del Emisor")
+      toast.error(err?.message || t("dian.settings.toastEmisorError"))
     } finally {
       setSaving(false)
     }
   }
 
   return (
-    <Container className="divide-y p-0">
+    <Container className="divide-y p-0" dir={i18n.dir()}>
       <div className="px-6 py-4">
-        <Heading level="h1">Datos Fiscales del Emisor (OFE)</Heading>
+        <Heading level="h1">{t("dian.settings.emisorTitle")}</Heading>
         <Text size="small" className="text-ui-fg-subtle">
-          Identificación tributaria (NIT y DV Módulo 11), Razón Social,
-          ubicación DANE DIVIPOLA y datos de contacto del Obligado a Facturar.
+          {t("dian.settings.emisorSubtitle")}
         </Text>
       </div>
 
@@ -76,7 +77,9 @@ export const DianSettingsEmisorSection: React.FC<
         className="grid grid-cols-1 gap-4 px-6 py-4 md:grid-cols-3"
       >
         <div>
-          <Label>NIT Emisor (DV calculado: {config?.seller_dv || "-"})</Label>
+          <Label>
+            {t("dian.settings.nitLabel", { dv: config?.seller_dv || "-" })}
+          </Label>
           <Input
             value={form.seller_nit}
             onChange={(e) => updateField("seller_nit", e.target.value)}
@@ -84,7 +87,7 @@ export const DianSettingsEmisorSection: React.FC<
           />
         </div>
         <div>
-          <Label>Razón Social</Label>
+          <Label>{t("dian.settings.registrationNameLabel")}</Label>
           <Input
             value={form.registration_name}
             onChange={(e) => updateField("registration_name", e.target.value)}
@@ -92,14 +95,14 @@ export const DianSettingsEmisorSection: React.FC<
           />
         </div>
         <div>
-          <Label>Nombre Comercial</Label>
+          <Label>{t("dian.settings.tradeNameLabel")}</Label>
           <Input
             value={form.trade_name}
             onChange={(e) => updateField("trade_name", e.target.value)}
           />
         </div>
         <div>
-          <Label>Municipio DANE (DIVIPOLA)</Label>
+          <Label>{t("dian.settings.municipalityLabel")}</Label>
           <Select
             value={form.municipality_code}
             onValueChange={(v) => updateField("municipality_code", v)}
@@ -117,7 +120,7 @@ export const DianSettingsEmisorSection: React.FC<
           </Select>
         </div>
         <div>
-          <Label>Correo Electrónico Emisor</Label>
+          <Label>{t("dian.settings.emailLabel")}</Label>
           <Input
             type="email"
             value={form.email}
@@ -126,7 +129,7 @@ export const DianSettingsEmisorSection: React.FC<
           />
         </div>
         <div>
-          <Label>Teléfono Emisor</Label>
+          <Label>{t("dian.settings.phoneLabel")}</Label>
           <Input
             value={form.phone}
             onChange={(e) => updateField("phone", e.target.value)}
@@ -134,7 +137,7 @@ export const DianSettingsEmisorSection: React.FC<
           />
         </div>
         <div className="md:col-span-2">
-          <Label>Dirección Física</Label>
+          <Label>{t("dian.settings.addressLabel")}</Label>
           <Input
             value={form.address_line}
             onChange={(e) => updateField("address_line", e.target.value)}
@@ -142,7 +145,7 @@ export const DianSettingsEmisorSection: React.FC<
         </div>
         <div className="flex items-end justify-end">
           <Button type="submit" isLoading={saving}>
-            Guardar Emisor
+            {t("dian.settings.saveEmisorBtn")}
           </Button>
         </div>
       </form>

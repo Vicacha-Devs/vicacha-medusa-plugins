@@ -1,5 +1,5 @@
-import React from "react"
 import { Badge, Container, Heading, Table, Text } from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
 
 export interface DianFiscalProfilesTableSectionProps {
   profiles: Array<Record<string, any>>
@@ -8,16 +8,14 @@ export interface DianFiscalProfilesTableSectionProps {
 export const DianFiscalProfilesTableSection: React.FC<
   DianFiscalProfilesTableSectionProps
 > = ({ profiles }) => {
+  const { t, i18n } = useTranslation()
+
   return (
-    <Container className="divide-y p-0">
+    <Container className="divide-y p-0" dir={i18n.dir()}>
       <div className="px-6 py-4">
-        <Heading level="h1">
-          Perfiles Fiscales de Clientes y Empresas B2B (Adquirentes)
-        </Heading>
+        <Heading level="h1">{t("dian.fiscalProfiles.tableTitle")}</Heading>
         <Text size="small" className="text-ui-fg-subtle">
-          Todo comprador que solicite Factura Electrónica debe ser cliente
-          registrado con email y teléfono. Clientes Jurídicos (NIT) requieren
-          @vicacha-devs/medusa-plugin-b2b.
+          {t("dian.fiscalProfiles.tableSubtitle")}
         </Text>
       </div>
 
@@ -25,11 +23,21 @@ export const DianFiscalProfilesTableSection: React.FC<
         <Table>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell>Cliente / Razón Social</Table.HeaderCell>
-              <Table.HeaderCell>Tipo Persona</Table.HeaderCell>
-              <Table.HeaderCell>Identificación (NIT / Doc)</Table.HeaderCell>
-              <Table.HeaderCell>Email & Teléfono</Table.HeaderCell>
-              <Table.HeaderCell>Municipio DANE</Table.HeaderCell>
+              <Table.HeaderCell>
+                {t("dian.fiscalProfiles.colCustomer")}
+              </Table.HeaderCell>
+              <Table.HeaderCell>
+                {t("dian.fiscalProfiles.colPersonType")}
+              </Table.HeaderCell>
+              <Table.HeaderCell>
+                {t("dian.fiscalProfiles.colIdentification")}
+              </Table.HeaderCell>
+              <Table.HeaderCell>
+                {t("dian.fiscalProfiles.colContact")}
+              </Table.HeaderCell>
+              <Table.HeaderCell>
+                {t("dian.fiscalProfiles.colMunicipality")}
+              </Table.HeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -41,8 +49,8 @@ export const DianFiscalProfilesTableSection: React.FC<
                 <Table.Cell>
                   <Badge color={p.organization_type === "1" ? "blue" : "green"}>
                     {p.organization_type === "1"
-                      ? "1 - Persona Jurídica (B2B)"
-                      : "2 - Persona Natural"}
+                      ? t("dian.fiscalProfiles.orgLegalB2B")
+                      : t("dian.fiscalProfiles.orgNatural")}
                   </Badge>
                 </Table.Cell>
                 <Table.Cell>

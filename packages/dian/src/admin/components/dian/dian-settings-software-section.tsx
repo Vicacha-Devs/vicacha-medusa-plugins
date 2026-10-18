@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import {
   Button,
   Container,
@@ -9,6 +9,7 @@ import {
   Text,
   toast,
 } from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
 import { dianClient } from "../../../sdk"
 
 export interface DianSettingsSoftwareSectionProps {
@@ -19,6 +20,7 @@ export interface DianSettingsSoftwareSectionProps {
 export const DianSettingsSoftwareSection: React.FC<
   DianSettingsSoftwareSectionProps
 > = ({ config, onSaved }) => {
+  const { t, i18n } = useTranslation()
   const [form, setForm] = useState({
     environment: "2",
     provider: "native_soap",
@@ -50,24 +52,21 @@ export const DianSettingsSoftwareSection: React.FC<
         ...form,
         test_set_id: form.test_set_id || null,
       })
-      toast.success("Configuración de Software y Proveedor DIAN actualizada")
+      toast.success(t("dian.settings.toastSoftwareSaved"))
       onSaved()
     } catch (err: any) {
-      toast.error(err?.message || "Error al guardar Software DIAN")
+      toast.error(err?.message || t("dian.settings.toastSoftwareError"))
     } finally {
       setSaving(false)
     }
   }
 
   return (
-    <Container className="divide-y p-0">
+    <Container className="divide-y p-0" dir={i18n.dir()}>
       <div className="px-6 py-4">
-        <Heading level="h2">
-          Ambiente, Software Propio / Proveedor Tecnológico y Habilitación
-        </Heading>
+        <Heading level="h2">{t("dian.settings.softwareTitle")}</Heading>
         <Text size="small" className="text-ui-fg-subtle">
-          Configura SoftwareID, SoftwarePIN (para SoftwareSecurityCode y CUDE) y
-          TestSetId para el Set de Pruebas de Habilitación DIAN.
+          {t("dian.settings.softwareSubtitle")}
         </Text>
       </div>
 
@@ -76,7 +75,7 @@ export const DianSettingsSoftwareSection: React.FC<
         className="grid grid-cols-1 gap-4 px-6 py-4 md:grid-cols-3"
       >
         <div>
-          <Label>Ambiente DIAN</Label>
+          <Label>{t("dian.settings.environmentLabel")}</Label>
           <Select
             value={form.environment}
             onValueChange={(v) => updateField("environment", v)}
@@ -85,14 +84,14 @@ export const DianSettingsSoftwareSection: React.FC<
               <Select.Value />
             </Select.Trigger>
             <Select.Content>
-              <Select.Item value="2">2 - Habilitación / Pruebas</Select.Item>
-              <Select.Item value="1">1 - Producción Oficial</Select.Item>
+              <Select.Item value="2">{t("dian.settings.env2Option")}</Select.Item>
+              <Select.Item value="1">{t("dian.settings.env1Option")}</Select.Item>
             </Select.Content>
           </Select>
         </div>
 
         <div>
-          <Label>Motor / Proveedor Tecnológico</Label>
+          <Label>{t("dian.settings.providerLabel")}</Label>
           <Select
             value={form.provider}
             onValueChange={(v) => updateField("provider", v)}
@@ -102,18 +101,26 @@ export const DianSettingsSoftwareSection: React.FC<
             </Select.Trigger>
             <Select.Content>
               <Select.Item value="native_soap">
-                Software Propio (DIAN SOAP Directo)
+                {t("dian.settings.providerNativeOption")}
               </Select.Item>
-              <Select.Item value="siigo">Siigo Nube API</Select.Item>
-              <Select.Item value="alegra">Alegra Colombia API</Select.Item>
-              <Select.Item value="dataico">Dataico API</Select.Item>
-              <Select.Item value="facturatech">FacturaTech</Select.Item>
+              <Select.Item value="siigo">
+                {t("dian.settings.providerSiigoOption")}
+              </Select.Item>
+              <Select.Item value="alegra">
+                {t("dian.settings.providerAlegraOption")}
+              </Select.Item>
+              <Select.Item value="dataico">
+                {t("dian.settings.providerDataicoOption")}
+              </Select.Item>
+              <Select.Item value="facturatech">
+                {t("dian.settings.providerFacturatechOption")}
+              </Select.Item>
             </Select.Content>
           </Select>
         </div>
 
         <div>
-          <Label>TestSetId (Habilitación)</Label>
+          <Label>{t("dian.settings.testSetIdLabel")}</Label>
           <Input
             value={form.test_set_id}
             onChange={(e) => updateField("test_set_id", e.target.value)}
@@ -121,7 +128,7 @@ export const DianSettingsSoftwareSection: React.FC<
         </div>
 
         <div>
-          <Label>Software ID DIAN</Label>
+          <Label>{t("dian.settings.softwareIdLabel")}</Label>
           <Input
             value={form.software_id}
             onChange={(e) => updateField("software_id", e.target.value)}
@@ -129,7 +136,7 @@ export const DianSettingsSoftwareSection: React.FC<
         </div>
 
         <div>
-          <Label>Software PIN (5 dígitos)</Label>
+          <Label>{t("dian.settings.softwarePinLabel")}</Label>
           <Input
             type="password"
             value={form.software_pin}
@@ -139,7 +146,7 @@ export const DianSettingsSoftwareSection: React.FC<
 
         <div className="flex items-end justify-end">
           <Button type="submit" isLoading={saving}>
-            Guardar Software DIAN
+            {t("dian.settings.saveSoftwareBtn")}
           </Button>
         </div>
       </form>

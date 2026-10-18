@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react"
 import { defineRouteConfig } from "@medusajs/admin-sdk"
 import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared"
 import { LayoutComposer } from "@medusajs/dashboard/components"
+import { useTranslation } from "react-i18next"
 import { dianClient } from "../../../../sdk"
 import { DianFiscalProfilesSection } from "../../../components"
 
@@ -39,12 +40,18 @@ const DianFiscalProfilesPage: React.FC = () => {
   )
 }
 
+const Breadcrumb = () => {
+  const { t } = useTranslation()
+  return t("dian.nav.fiscalProfiles")
+}
+
 export const config = defineRouteConfig({
-  label: "Perfiles Fiscales / B2B",
+  label: "dian.nav.fiscalProfiles",
+  translationNs: "dian",
 })
 
 export const handle = {
-  breadcrumb: () => "Perfiles Fiscales / B2B",
+  breadcrumb: () => <Breadcrumb />,
 }
 
 export default DianFiscalProfilesPage

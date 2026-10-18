@@ -2,6 +2,7 @@ import React from "react"
 import { defineRouteConfig } from "@medusajs/admin-sdk"
 import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared"
 import { LayoutComposer } from "@medusajs/dashboard/components"
+import { useTranslation } from "react-i18next"
 import { useDianConfig } from "../../../../hooks"
 import {
   DianSettingsEmisorSection,
@@ -45,12 +46,18 @@ const DianSettingsPage: React.FC = () => {
   )
 }
 
+const Breadcrumb = () => {
+  const { t } = useTranslation()
+  return t("dian.nav.settingsBreadcrumb")
+}
+
 export const config = defineRouteConfig({
-  label: "DIAN Colombia",
+  label: "dian.nav.settings",
+  translationNs: "dian",
 })
 
 export const handle = {
-  breadcrumb: () => "Configuración DIAN",
+  breadcrumb: () => <Breadcrumb />,
 }
 
 export default DianSettingsPage

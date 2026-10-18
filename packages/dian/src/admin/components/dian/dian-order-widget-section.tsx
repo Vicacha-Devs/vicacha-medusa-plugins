@@ -1,5 +1,5 @@
-import React, { useState } from "react"
 import { Badge, Button, Container, Heading, Text, toast } from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
 import { useDianDocuments } from "../../../hooks"
 import { dianClient } from "../../../sdk"
 import type { DianDocumentType } from "../../../types"
@@ -11,6 +11,7 @@ export interface DianOrderWidgetSectionProps {
 export const DianOrderWidgetSection: React.FC<DianOrderWidgetSectionProps> = ({
   orderId,
 }) => {
+  const { t, i18n } = useTranslation()
   const { documents, loading, refresh } = useDianDocuments({
     order_id: orderId,
   })
@@ -24,24 +25,25 @@ export const DianOrderWidgetSection: React.FC<DianOrderWidgetSectionProps> = ({
         document_type: docType,
       })
       toast.success(
-        `Documento DIAN ${res.document?.document_number || docType} emitido correctamente`
+        t("dian.orderWidget.toastEmitted", {
+          number: res.document?.document_number || docType,
+        })
       )
       void refresh()
     } catch (err: any) {
-      toast.error(err?.message || "Error al emitir documento electrónico DIAN")
+      toast.error(err?.message || t("dian.orderWidget.toastError"))
     } finally {
       setEmitting(false)
     }
   }
 
   return (
-    <Container className="divide-y p-0">
+    <Container className="divide-y p-0" dir={i18n.dir()}>
       <div className="flex flex-col gap-3 px-6 py-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <Heading level="h2">Facturación Electrónica DIAN (Colombia)</Heading>
+          <Heading level="h2">{t("dian.orderWidget.title")}</Heading>
           <Text size="small" className="text-ui-fg-subtle">
-            Emite Factura Electrónica (01), POS Electrónico (20) o Nota Crédito
-            (91) con PDF generado por @vicacha-devs/medusa-plugin-documents.
+            {t("dian.orderWidget.subtitle")}
           </Text>
         </div>
 
@@ -52,7 +54,7 @@ export const DianOrderWidgetSection: React.FC<DianOrderWidgetSectionProps> = ({
             isLoading={emitting}
             onClick={() => void handleEmit("01")}
           >
-            Emitir Factura (01)
+            {t("dian.orderWidget.emitInvoiceBtn")}
           </Button>
           <Button
             size="small"
@@ -60,7 +62,7 @@ export const DianOrderWidgetSection: React.FC<DianOrderWidgetSectionProps> = ({
             isLoading={emitting}
             onClick={() => void handleEmit("20")}
           >
-            Emitir POS (20)
+            {t("dian.orderWidget.emitPosBtn")}
           </Button>
           <Button
             size="small"
@@ -68,7 +70,7 @@ export const DianOrderWidgetSection: React.FC<DianOrderWidgetSectionProps> = ({
             isLoading={emitting}
             onClick={() => void handleEmit("91")}
           >
-            Emitir Nota Crédito (91)
+            {t("dian.orderWidget.emitCreditNoteBtn")}
           </Button>
         </div>
       </div>
@@ -76,11 +78,11 @@ export const DianOrderWidgetSection: React.FC<DianOrderWidgetSectionProps> = ({
       <div className="px-6 py-4">
         {loading ? (
           <Text size="small" className="text-ui-fg-subtle">
-            Consultando documentos DIAN de la orden...
+            {t("dian.orderWidget.loading")}
           </Text>
         ) : documents.length === 0 ? (
           <Text size="small" className="text-ui-fg-subtle">
-            Aún no se han emitido documentos electrónicos DIAN para esta orden.
+            {t("dian.orderWidget.empty")}
           </Text>
         ) : (
           <div className="flex flex-col gap-3">
@@ -103,7 +105,11 @@ export const DianOrderWidgetSection: React.FC<DianOrderWidgetSectionProps> = ({
                     >
                       {doc.status}
                     </Badge>
-                    <Badge color="blue">Tipo {doc.document_type}</Badge>
+                    <Badge color="blue">
+                      {t("dian.orderWidget.typeBadge", {
+                        type: doc.document_type,
+                      })}
+                    </Badge>
                   </div>
                   <Text size="xsmall" className="text-ui-fg-subtle font-mono">
                     {doc.cufe_cude_algorithm}: {doc.cufe_cude}
@@ -117,7 +123,7 @@ export const DianOrderWidgetSection: React.FC<DianOrderWidgetSectionProps> = ({
                       target="_blank"
                       rel="noreferrer"
                     >
-                      PDF Representación Gráfica
+                      {t("dian.orderWidget.pdfBtn")}
                     </a>
                   </Button>
                   <Button variant="secondary" size="small" asChild>
@@ -126,7 +132,7 @@ export const DianOrderWidgetSection: React.FC<DianOrderWidgetSectionProps> = ({
                       target="_blank"
                       rel="noreferrer"
                     >
-                      XML UBL 2.1
+                      {t("dian.orderWidget.xmlBtn")}
                     </a>
                   </Button>
                   <Button variant="secondary" size="small" asChild>
@@ -135,7 +141,7 @@ export const DianOrderWidgetSection: React.FC<DianOrderWidgetSectionProps> = ({
                       target="_blank"
                       rel="noreferrer"
                     >
-                      AttachedDocument (.zip)
+                      {t("dian.orderWidget.zipBtn")}
                     </a>
                   </Button>
                 </div>

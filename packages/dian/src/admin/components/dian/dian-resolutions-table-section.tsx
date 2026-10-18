@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import {
   Badge,
   Button,
@@ -8,6 +8,7 @@ import {
   Text,
   toast,
 } from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
 import { dianClient } from "../../../sdk"
 
 export interface DianResolutionsTableSectionProps {
@@ -19,29 +20,29 @@ export interface DianResolutionsTableSectionProps {
 export const DianResolutionsTableSection: React.FC<
   DianResolutionsTableSectionProps
 > = ({ resolutions, loading, onRefresh }) => {
+  const { t, i18n } = useTranslation()
   const [syncing, setSyncing] = useState(false)
 
   const handleSyncFromDian = async () => {
     setSyncing(true)
     try {
       await dianClient.syncResolutionsFromDian()
-      toast.success("Rangos de numeración sincronizados desde DIAN SOAP")
+      toast.success(t("dian.resolutions.toastSynced"))
       onRefresh()
     } catch (err: any) {
-      toast.error(err?.message || "Error al sincronizar desde DIAN")
+      toast.error(err?.message || t("dian.resolutions.toastSyncError"))
     } finally {
       setSyncing(false)
     }
   }
 
   return (
-    <Container className="divide-y p-0">
+    <Container className="divide-y p-0" dir={i18n.dir()}>
       <div className="flex items-center justify-between px-6 py-4">
         <div>
-          <Heading level="h1">Resoluciones de Numeración DIAN (1876)</Heading>
+          <Heading level="h1">{t("dian.resolutions.tableTitle")}</Heading>
           <Text size="small" className="text-ui-fg-subtle">
-            Prefijos, rangos consecutivos, vigencia y Clave Técnica por tipo de
-            documento (01 Factura, 20 POS, 91 NC, 92 ND).
+            {t("dian.resolutions.tableSubtitle")}
           </Text>
         </div>
         <Button
@@ -50,23 +51,23 @@ export const DianResolutionsTableSection: React.FC<
           isLoading={syncing}
           onClick={() => void handleSyncFromDian()}
         >
-          Sincronizar GetNumberingRange DIAN
+          {t("dian.resolutions.syncBtn")}
         </Button>
       </div>
 
       <div className="px-6 py-4">
         {loading ? (
-          <Text size="small">Cargando resoluciones...</Text>
+          <Text size="small">{t("dian.resolutions.loading")}</Text>
         ) : (
           <Table>
             <Table.Header>
               <Table.Row>
-                <Table.HeaderCell>Prefijo</Table.HeaderCell>
-                <Table.HeaderCell>Resolución 1876</Table.HeaderCell>
-                <Table.HeaderCell>Tipo</Table.HeaderCell>
-                <Table.HeaderCell>Rango (Actual)</Table.HeaderCell>
-                <Table.HeaderCell>Vigencia</Table.HeaderCell>
-                <Table.HeaderCell>Estado</Table.HeaderCell>
+                <Table.HeaderCell>{t("dian.resolutions.colPrefix")}</Table.HeaderCell>
+                <Table.HeaderCell>{t("dian.resolutions.colResolution")}</Table.HeaderCell>
+                <Table.HeaderCell>{t("dian.resolutions.colType")}</Table.HeaderCell>
+                <Table.HeaderCell>{t("dian.resolutions.colRange")}</Table.HeaderCell>
+                <Table.HeaderCell>{t("dian.resolutions.colValidity")}</Table.HeaderCell>
+                <Table.HeaderCell>{t("dian.resolutions.colStatus")}</Table.HeaderCell>
               </Table.Row>
             </Table.Header>
             <Table.Body>
@@ -76,15 +77,17 @@ export const DianResolutionsTableSection: React.FC<
                   <Table.Cell>{r.resolution_number}</Table.Cell>
                   <Table.Cell>{r.document_type}</Table.Cell>
                   <Table.Cell>
-                    {r.from_number} - {r.to_number} (Actual:{" "}
+                    {r.from_number} - {r.to_number} ({t("dian.resolutions.currentLabel")}{" "}
                     <strong>{r.current_number}</strong>)
                   </Table.Cell>
                   <Table.Cell>
-                    {r.valid_from} a {r.valid_to}
+                    {r.valid_from} {t("dian.resolutions.toConnector")} {r.valid_to}
                   </Table.Cell>
                   <Table.Cell>
                     <Badge color={r.is_active ? "green" : "grey"}>
-                      {r.is_active ? "Activa" : "Inactiva"}
+                      {r.is_active
+                        ? t("dian.resolutions.statusActive")
+                        : t("dian.resolutions.statusInactive")}
                     </Badge>
                   </Table.Cell>
                 </Table.Row>

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import {
   Button,
   Container,
@@ -8,6 +8,7 @@ import {
   Select,
   toast,
 } from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
 import { dianClient } from "../../../sdk"
 
 export interface DianFiscalProfileFormSectionProps {
@@ -17,6 +18,7 @@ export interface DianFiscalProfileFormSectionProps {
 export const DianFiscalProfileFormSection: React.FC<
   DianFiscalProfileFormSectionProps
 > = ({ onSaved }) => {
+  const { t, i18n } = useTranslation()
   const [customerId, setCustomerId] = useState("")
   const [companyId, setCompanyId] = useState("")
   const [organizationType, setOrganizationType] = useState("2")
@@ -33,15 +35,11 @@ export const DianFiscalProfileFormSection: React.FC<
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email.trim() || !phone.trim()) {
-      toast.error(
-        "El cliente debe tener correo electrónico y teléfono registrados para Facturación Electrónica DIAN."
-      )
+      toast.error(t("dian.fiscalProfiles.errEmailPhoneRequired"))
       return
     }
     if (isLegalEntity && !companyId.trim()) {
-      toast.error(
-        "Para Persona Jurídica (1) se requiere una Empresa vinculada en @vicacha-devs/medusa-plugin-b2b (company_id)."
-      )
+      toast.error(t("dian.fiscalProfiles.errCompanyIdRequired"))
       return
     }
 
@@ -59,26 +57,26 @@ export const DianFiscalProfileFormSection: React.FC<
         phone: phone.trim(),
         municipality_code: municipalityCode,
       })
-      toast.success("Perfil fiscal DIAN del cliente guardado")
+      toast.success(t("dian.fiscalProfiles.toastSaved"))
       onSaved()
     } catch (err: any) {
-      toast.error(err?.message || "Error al guardar perfil fiscal")
+      toast.error(err?.message || t("dian.fiscalProfiles.toastError"))
     } finally {
       setSaving(false)
     }
   }
 
   return (
-    <Container className="p-6">
+    <Container className="p-6" dir={i18n.dir()}>
       <Heading level="h2" className="mb-4">
-        Registrar / Actualizar Perfil Fiscal DIAN de Cliente
+        {t("dian.fiscalProfiles.formTitle")}
       </Heading>
       <form
         onSubmit={(e) => void handleSave(e)}
         className="grid grid-cols-1 gap-4 md:grid-cols-3"
       >
         <div>
-          <Label>ID Cliente Medusa (customer_id) *</Label>
+          <Label>{t("dian.fiscalProfiles.customerIdLabel")}</Label>
           <Input
             value={customerId}
             onChange={(e) => setCustomerId(e.target.value)}
@@ -87,22 +85,24 @@ export const DianFiscalProfileFormSection: React.FC<
           />
         </div>
         <div>
-          <Label>Tipo de Organización *</Label>
+          <Label>{t("dian.fiscalProfiles.organizationTypeLabel")}</Label>
           <Select value={organizationType} onValueChange={setOrganizationType}>
             <Select.Trigger>
               <Select.Value />
             </Select.Trigger>
             <Select.Content>
-              <Select.Item value="2">2 - Persona Natural (Cliente)</Select.Item>
+              <Select.Item value="2">
+                {t("dian.fiscalProfiles.orgNaturalOption")}
+              </Select.Item>
               <Select.Item value="1">
-                1 - Persona Jurídica (Requiere B2B Company)
+                {t("dian.fiscalProfiles.orgLegalOption")}
               </Select.Item>
             </Select.Content>
           </Select>
         </div>
         {isLegalEntity ? (
           <div>
-            <Label>ID Empresa B2B (@vicacha-devs/medusa-plugin-b2b) *</Label>
+            <Label>{t("dian.fiscalProfiles.companyIdLabel")}</Label>
             <Input
               value={companyId}
               onChange={(e) => setCompanyId(e.target.value)}
@@ -112,7 +112,7 @@ export const DianFiscalProfileFormSection: React.FC<
           </div>
         ) : (
           <div>
-            <Label>Tipo de Documento</Label>
+            <Label>{t("dian.fiscalProfiles.docTypeLabel")}</Label>
             <Select
               value={identificationType}
               onValueChange={setIdentificationType}
@@ -121,16 +121,24 @@ export const DianFiscalProfileFormSection: React.FC<
                 <Select.Value />
               </Select.Trigger>
               <Select.Content>
-                <Select.Item value="13">13 - Cédula de Ciudadanía</Select.Item>
-                <Select.Item value="22">22 - Cédula de Extranjería</Select.Item>
-                <Select.Item value="31">31 - NIT (Módulo 11)</Select.Item>
-                <Select.Item value="41">41 - Pasaporte</Select.Item>
+                <Select.Item value="13">
+                  {t("dian.fiscalProfiles.doc13")}
+                </Select.Item>
+                <Select.Item value="22">
+                  {t("dian.fiscalProfiles.doc22")}
+                </Select.Item>
+                <Select.Item value="31">
+                  {t("dian.fiscalProfiles.doc31")}
+                </Select.Item>
+                <Select.Item value="41">
+                  {t("dian.fiscalProfiles.doc41")}
+                </Select.Item>
               </Select.Content>
             </Select>
           </div>
         )}
         <div>
-          <Label>Número de Identificación / NIT (sin DV) *</Label>
+          <Label>{t("dian.fiscalProfiles.idNumberLabel")}</Label>
           <Input
             value={identificationNumber}
             onChange={(e) => setIdentificationNumber(e.target.value)}
@@ -138,7 +146,7 @@ export const DianFiscalProfileFormSection: React.FC<
           />
         </div>
         <div>
-          <Label>Nombre Completo o Razón Social *</Label>
+          <Label>{t("dian.fiscalProfiles.registrationNameLabel")}</Label>
           <Input
             value={registrationName}
             onChange={(e) => setRegistrationName(e.target.value)}
@@ -146,7 +154,7 @@ export const DianFiscalProfileFormSection: React.FC<
           />
         </div>
         <div>
-          <Label>Código Municipio DANE</Label>
+          <Label>{t("dian.fiscalProfiles.municipalityCodeLabel")}</Label>
           <Input
             value={municipalityCode}
             onChange={(e) => setMunicipalityCode(e.target.value)}
@@ -154,7 +162,7 @@ export const DianFiscalProfileFormSection: React.FC<
           />
         </div>
         <div>
-          <Label>Correo Electrónico (Obligatorio DIAN) *</Label>
+          <Label>{t("dian.fiscalProfiles.emailLabel")}</Label>
           <Input
             type="email"
             value={email}
@@ -163,7 +171,7 @@ export const DianFiscalProfileFormSection: React.FC<
           />
         </div>
         <div>
-          <Label>Teléfono de Contacto (Obligatorio DIAN) *</Label>
+          <Label>{t("dian.fiscalProfiles.phoneLabel")}</Label>
           <Input
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
@@ -172,7 +180,7 @@ export const DianFiscalProfileFormSection: React.FC<
         </div>
         <div className="flex items-end">
           <Button type="submit" isLoading={saving}>
-            Guardar Perfil Fiscal
+            {t("dian.fiscalProfiles.saveBtn")}
           </Button>
         </div>
       </form>

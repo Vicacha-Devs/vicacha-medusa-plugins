@@ -31,3 +31,15 @@ export const CORE_LAYOUT_IDS = {
   SINGLE_COLUMN: "single_column",
   TWO_COLUMN: "two_column",
 }
+
+export function useTranslation() {
+  return {
+    t: (key) => key,
+    i18n: {
+      language: "en",
+      changeLanguage: async () => undefined,
+      dir: () => "ltr",
+    },
+  }
+}
+

@@ -2,6 +2,7 @@ import { describe, it } from "node:test"
 import assert from "node:assert/strict"
 import { readdirSync, readFileSync, statSync } from "node:fs"
 import { join } from "node:path"
+import adminI18n, { SUPPORTED_UI_LOCALES } from "../admin/i18n"
 
 function collectFiles(dir: string): string[] {
   const results: string[] = []
@@ -14,6 +15,19 @@ function collectFiles(dir: string): string[] {
     }
   }
   return results
+}
+
+function flattenKeys(obj: Record<string, any>, prefix = ""): string[] {
+  const keys: string[] = []
+  for (const [k, v] of Object.entries(obj)) {
+    const next = prefix ? `${prefix}.${k}` : k
+    if (v && typeof v === "object" && !Array.isArray(v)) {
+      keys.push(...flattenKeys(v, next))
+    } else {
+      keys.push(next)
+    }
+  }
+  return keys.sort()
 }
 
 describe("medusa-plugin-dian Admin UI Architecture & Decoupling", () => {
@@ -35,7 +49,7 @@ describe("medusa-plugin-dian Admin UI Architecture & Decoupling", () => {
     }
   })
 
-  it("uses LayoutComposer and defineRouteConfig in all Admin route pages", () => {
+  it("uses LayoutComposer, defineRouteConfig, translationNs, and useTranslation in all Admin route pages", () => {
     const routePages = adminFiles.filter((f) => f.endsWith("page.tsx"))
     assert.equal(routePages.length, 4)
 
@@ -48,6 +62,14 @@ describe("medusa-plugin-dian Admin UI Architecture & Decoupling", () => {
       assert.ok(
         content.includes("defineRouteConfig"),
         `Route ${page} must export defineRouteConfig`
+      )
+      assert.ok(
+        content.includes('translationNs: "dian"'),
+        `Route ${page} must specify translationNs: "dian"`
+      )
+      assert.ok(
+        content.includes("useTranslation"),
+        `Route ${page} must use useTranslation`
       )
     }
   })
@@ -70,4 +92,52 @@ describe("medusa-plugin-dian Admin UI Architecture & Decoupling", () => {
       }
     }
   })
+
+  it("ships all 10 UI locales (ar, de, en, es, fr, it, nl, pl, pt, tr) with 100% key parity", () => {
+    const expectedCodes = ["en", "es", "fr", "de", "it", "pt", "nl", "pl", "tr", "ar"]
+    assert.deepEqual(
+      SUPPORTED_UI_LOCALES.map((l) => l.code),
+      expectedCodes
+    )
+
+    const enBundle = adminI18n.en.translation as Record<string, any>
+    const baselineKeys = flattenKeys(enBundle)
+    assert.ok(
+      baselineKeys.length >= 120,
+      `Expected at least 120 translation keys in en.json, found ${baselineKeys.length}`
+    )
+
+    for (const code of expectedCodes) {
+      const entry = (adminI18n as Record<string, any>)[code]
+      assert.ok(entry, `Missing locale entry for ${code}`)
+      assert.ok(entry.translation, `Missing translation namespace for ${code}`)
+      assert.ok(entry.dian, `Missing dian namespace for ${code}`)
+
+      const localeKeys = flattenKeys(entry.translation)
+      assert.deepEqual(
+        localeKeys,
+        baselineKeys,
+        `Key mismatch between en.json and ${code}.json`
+      )
+    }
+  })
+
+  it("uses useTranslation across all Admin DIAN UI section components", () => {
+    const sectionFiles = adminFiles.filter(
+      (f) =>
+        f.includes(join("components", "dian", "dian-")) &&
+        !f.endsWith("dian-fiscal-profiles-section.tsx") &&
+        !f.endsWith("dian-resolutions-section.tsx")
+    )
+    assert.equal(sectionFiles.length, 10)
+
+    for (const file of sectionFiles) {
+      const content = readFileSync(file, "utf8")
+      assert.ok(
+        content.includes("useTranslation"),
+        `Component ${file} must use useTranslation()`
+      )
+    }
+  })
 })
+

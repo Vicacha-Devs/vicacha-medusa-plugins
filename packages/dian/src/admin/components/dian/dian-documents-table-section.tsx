@@ -1,4 +1,3 @@
-import React from "react"
 import {
   Badge,
   Button,
@@ -8,6 +7,7 @@ import {
   Table,
   Text,
 } from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
 
 export interface DianDocumentsTableSectionProps {
   documents: Array<Record<string, any>>
@@ -17,15 +17,6 @@ export interface DianDocumentsTableSectionProps {
   statusFilter: string
   setStatusFilter: (val: string) => void
   onRefresh: () => void
-}
-
-const DOC_TYPE_LABELS: Record<string, string> = {
-  "01": "01 - Factura Electrónica",
-  "02": "02 - Factura Exportación",
-  "03": "03 - Contingencia Facturador",
-  "20": "20 - POS Electrónico",
-  "91": "91 - Nota Crédito",
-  "92": "92 - Nota Débito",
 }
 
 export const DianDocumentsTableSection: React.FC<
@@ -39,14 +30,24 @@ export const DianDocumentsTableSection: React.FC<
   setStatusFilter,
   onRefresh,
 }) => {
+  const { t, i18n } = useTranslation()
+
+  const docTypeLabels: Record<string, string> = {
+    "01": t("dian.documents.type01"),
+    "02": t("dian.documents.type02"),
+    "03": t("dian.documents.type03"),
+    "20": t("dian.documents.type20"),
+    "91": t("dian.documents.type91"),
+    "92": t("dian.documents.type92"),
+  }
+
   return (
-    <Container className="divide-y p-0">
+    <Container className="divide-y p-0" dir={i18n.dir()}>
       <div className="flex flex-col gap-3 px-6 py-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <Heading level="h2">Documentos Electrónicos Emitidos</Heading>
+          <Heading level="h2">{t("dian.documents.title")}</Heading>
           <Text size="small" className="text-ui-fg-subtle">
-            Descarga la Representación Gráfica PDF (@vicacha-devs/medusa-plugin-documents),
-            XML UBL 2.1 firmado o el contenedor oficial AttachedDocument (.zip).
+            {t("dian.documents.subtitle")}
           </Text>
         </div>
 
@@ -54,38 +55,34 @@ export const DianDocumentsTableSection: React.FC<
           <div className="w-48">
             <Select value={typeFilter} onValueChange={setTypeFilter} size="small">
               <Select.Trigger>
-                <Select.Value placeholder="Tipo de documento" />
+                <Select.Value placeholder={t("dian.documents.typePlaceholder")} />
               </Select.Trigger>
               <Select.Content>
-                <Select.Item value="all">Todos los tipos</Select.Item>
-                <Select.Item value="01">01 - Factura Electrónica</Select.Item>
-                <Select.Item value="20">20 - POS Electrónico</Select.Item>
-                <Select.Item value="91">91 - Nota Crédito</Select.Item>
-                <Select.Item value="92">92 - Nota Débito</Select.Item>
+                <Select.Item value="all">{t("dian.documents.allTypes")}</Select.Item>
+                <Select.Item value="01">{t("dian.documents.type01")}</Select.Item>
+                <Select.Item value="20">{t("dian.documents.type20")}</Select.Item>
+                <Select.Item value="91">{t("dian.documents.type91")}</Select.Item>
+                <Select.Item value="92">{t("dian.documents.type92")}</Select.Item>
               </Select.Content>
             </Select>
           </div>
 
           <div className="w-40">
-            <Select
-              value={statusFilter}
-              onValueChange={setStatusFilter}
-              size="small"
-            >
+            <Select value={statusFilter} onValueChange={setStatusFilter} size="small">
               <Select.Trigger>
-                <Select.Value placeholder="Estado DIAN" />
+                <Select.Value placeholder={t("dian.documents.statusPlaceholder")} />
               </Select.Trigger>
               <Select.Content>
-                <Select.Item value="all">Todos los estados</Select.Item>
-                <Select.Item value="validated">Validado DIAN</Select.Item>
-                <Select.Item value="contingency">Contingencia</Select.Item>
-                <Select.Item value="rejected">Rechazado</Select.Item>
+                <Select.Item value="all">{t("dian.documents.allStatuses")}</Select.Item>
+                <Select.Item value="validated">{t("dian.documents.statusValidated")}</Select.Item>
+                <Select.Item value="contingency">{t("dian.documents.statusContingency")}</Select.Item>
+                <Select.Item value="rejected">{t("dian.documents.statusRejected")}</Select.Item>
               </Select.Content>
             </Select>
           </div>
 
           <Button variant="secondary" size="small" onClick={onRefresh}>
-            Actualizar
+            {t("dian.documents.refresh")}
           </Button>
         </div>
       </div>
@@ -93,23 +90,23 @@ export const DianDocumentsTableSection: React.FC<
       <div className="px-6 py-4">
         {loading ? (
           <Text size="small" className="text-ui-fg-subtle">
-            Cargando documentos electrónicos DIAN...
+            {t("dian.documents.loading")}
           </Text>
         ) : documents.length === 0 ? (
           <Text size="small" className="text-ui-fg-subtle">
-            No se encontraron documentos electrónicos con los filtros actuales.
+            {t("dian.documents.empty")}
           </Text>
         ) : (
           <Table>
             <Table.Header>
               <Table.Row>
-                <Table.HeaderCell>Número</Table.HeaderCell>
-                <Table.HeaderCell>Tipo</Table.HeaderCell>
-                <Table.HeaderCell>Adquirente (Cliente / B2B)</Table.HeaderCell>
-                <Table.HeaderCell>CUFE / CUDE</Table.HeaderCell>
-                <Table.HeaderCell>Total</Table.HeaderCell>
-                <Table.HeaderCell>Estado</Table.HeaderCell>
-                <Table.HeaderCell>Descargas</Table.HeaderCell>
+                <Table.HeaderCell>{t("dian.documents.colNumber")}</Table.HeaderCell>
+                <Table.HeaderCell>{t("dian.documents.colType")}</Table.HeaderCell>
+                <Table.HeaderCell>{t("dian.documents.colBuyer")}</Table.HeaderCell>
+                <Table.HeaderCell>{t("dian.documents.colCufe")}</Table.HeaderCell>
+                <Table.HeaderCell>{t("dian.documents.colTotal")}</Table.HeaderCell>
+                <Table.HeaderCell>{t("dian.documents.colStatus")}</Table.HeaderCell>
+                <Table.HeaderCell>{t("dian.documents.colDownloads")}</Table.HeaderCell>
               </Table.Row>
             </Table.Header>
             <Table.Body>
@@ -117,21 +114,17 @@ export const DianDocumentsTableSection: React.FC<
                 const buyer = (doc.buyer_snapshot || {}) as Record<string, any>
                 return (
                   <Table.Row key={doc.id}>
-                    <Table.Cell className="font-medium">
-                      {doc.document_number}
-                    </Table.Cell>
-                    <Table.Cell>
-                      {DOC_TYPE_LABELS[doc.document_type] || doc.document_type}
-                    </Table.Cell>
+                    <Table.Cell className="font-medium">{doc.document_number}</Table.Cell>
+                    <Table.Cell>{docTypeLabels[doc.document_type] || doc.document_type}</Table.Cell>
                     <Table.Cell>
                       <div className="flex flex-col">
                         <span className="font-medium">
-                          {buyer.registration_name || "Consumidor Final"}
+                          {buyer.registration_name || t("dian.documents.finalConsumer")}
                         </span>
                         <span className="text-ui-fg-subtle text-xs">
                           {buyer.identification_number || "222222222222"}
                           {buyer.dv ? `-${buyer.dv}` : ""}
-                          {buyer.is_b2b_legal_client ? " • B2B Jurídica" : ""}
+                          {buyer.is_b2b_legal_client ? ` • ${t("dian.documents.b2bLegalTag")}` : ""}
                         </span>
                       </div>
                     </Table.Cell>
@@ -160,30 +153,18 @@ export const DianDocumentsTableSection: React.FC<
                     <Table.Cell>
                       <div className="flex items-center gap-1">
                         <Button variant="secondary" size="small" asChild>
-                          <a
-                            href={`/admin/dian/documents/${doc.id}/download?format=pdf`}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            PDF
+                          <a href={`/admin/dian/documents/${doc.id}/download?format=pdf`} target="_blank" rel="noreferrer">
+                            {t("dian.documents.pdfBtn")}
                           </a>
                         </Button>
                         <Button variant="secondary" size="small" asChild>
-                          <a
-                            href={`/admin/dian/documents/${doc.id}/download?format=xml`}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            XML
+                          <a href={`/admin/dian/documents/${doc.id}/download?format=xml`} target="_blank" rel="noreferrer">
+                            {t("dian.documents.xmlBtn")}
                           </a>
                         </Button>
                         <Button variant="secondary" size="small" asChild>
-                          <a
-                            href={`/admin/dian/documents/${doc.id}/download?format=zip`}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            ZIP DIAN
+                          <a href={`/admin/dian/documents/${doc.id}/download?format=zip`} target="_blank" rel="noreferrer">
+                            {t("dian.documents.zipBtn")}
                           </a>
                         </Button>
                       </div>

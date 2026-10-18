@@ -3,6 +3,7 @@ import { defineRouteConfig } from "@medusajs/admin-sdk"
 import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared"
 import { LayoutComposer } from "@medusajs/dashboard/components"
 import { DocumentText } from "@medusajs/icons"
+import { useTranslation } from "react-i18next"
 import {
   useDianConfig,
   useDianDocuments,
@@ -56,13 +57,19 @@ const DianMainPage: React.FC = () => {
   )
 }
 
+const Breadcrumb = () => {
+  const { t } = useTranslation()
+  return t("dian.nav.label")
+}
+
 export const config = defineRouteConfig({
-  label: "Facturación DIAN",
+  label: "dian.nav.label",
   icon: DocumentText,
+  translationNs: "dian",
 })
 
 export const handle = {
-  breadcrumb: () => "Facturación DIAN",
+  breadcrumb: () => <Breadcrumb />,
 }
 
 export default DianMainPage
