@@ -8,7 +8,12 @@ import type {
   ProviderLookupOutcome,
 } from "../types"
 import { parseBarcode } from "../utils/barcode-parser"
-import { mergeNormalizedProducts, normalizeStringArray } from "../utils/normalize-product"
+import {
+  mergeNormalizedProducts,
+  normalizeStringArray,
+  parseDimensionMm,
+  parseWeightGrams,
+} from "../utils/normalize-product"
 import { validateExternalImageUrl } from "../utils/security"
 
 const DEFAULT_USER_AGENT = "MedusaPluginBarcode/1.0 (+https://medusajs.com)"
@@ -17,12 +22,14 @@ export abstract class BaseBarcodeProvider {
   abstract readonly name: string
   readonly priority: number
   readonly timeout: number
+  readonly retries: number
   protected readonly apiKey?: string
   protected readonly baseUrl?: string
 
   constructor(config: ProviderConfig = {}) {
     this.priority = config.priority ?? 50
     this.timeout = config.timeout ?? 5000
+    this.retries = config.retries ?? 1
     this.apiKey = config.apiKey
     this.baseUrl = config.baseUrl
   }
@@ -40,30 +47,44 @@ export abstract class BaseBarcodeProvider {
     url: string,
     init: RequestInit = {}
   ): Promise<T | null> {
-    const controller = new AbortController()
-    const timer = setTimeout(() => controller.abort(), this.timeout)
-    try {
-      const headers = new Headers(init.headers || {})
-      if (!headers.has("User-Agent")) {
-        headers.set("User-Agent", DEFAULT_USER_AGENT)
-      }
-      if (!headers.has("Accept")) {
-        headers.set("Accept", "application/json")
-      }
-      const response = await fetch(url, {
-        ...init,
-        headers,
-        signal: controller.signal,
-      })
-      if (!response.ok) {
+    const maxAttempts = Math.max(0, this.retries)
+    for (let attempt = 0; attempt <= maxAttempts; attempt++) {
+      const controller = new AbortController()
+      const timer = setTimeout(() => controller.abort(), this.timeout)
+      try {
+        const headers = new Headers(init.headers || {})
+        if (!headers.has("User-Agent")) {
+          headers.set("User-Agent", DEFAULT_USER_AGENT)
+        }
+        if (!headers.has("Accept")) {
+          headers.set("Accept", "application/json")
+        }
+        const response = await fetch(url, {
+          ...init,
+          headers,
+          signal: controller.signal,
+        })
+        if (!response.ok) {
+          const isRetryable =
+            response.status === 429 || response.status >= 500
+          if (isRetryable && attempt < maxAttempts) {
+            await new Promise((r) => setTimeout(r, 50 * 2 ** attempt))
+            continue
+          }
+          return null
+        }
+        return (await response.json()) as T
+      } catch {
+        if (attempt < maxAttempts) {
+          await new Promise((r) => setTimeout(r, 50 * 2 ** attempt))
+          continue
+        }
         return null
+      } finally {
+        clearTimeout(timer)
       }
-      return (await response.json()) as T
-    } catch {
-      return null
-    } finally {
-      clearTimeout(timer)
     }
+    return null
   }
 }
 
@@ -72,12 +93,25 @@ export abstract class BaseBarcodeProvider {
  */
 abstract class BaseOpenFactsProvider extends BaseBarcodeProvider {
   protected abstract readonly defaultDomain: string
+  protected readonly country?: string
+
+  constructor(config: ProviderConfig = {}) {
+    super(config)
+    this.country = config.country?.trim() || undefined
+  }
 
   async lookup(
     barcode: string,
     _format: BarcodeSymbology
   ): Promise<NormalizedBarcodeProduct | null> {
-    const host = this.baseUrl || this.defaultDomain
+    const resolvedDomain =
+      this.country && !this.baseUrl
+        ? this.defaultDomain.replace(
+            /^https:\/\/world\./i,
+            `https://${encodeURIComponent(this.country.toLowerCase())}.`
+          )
+        : this.defaultDomain
+    const host = this.baseUrl || resolvedDomain
     const url = `${host.replace(/\/$/, "")}/api/v2/product/${encodeURIComponent(
       barcode
     )}.json`
@@ -116,6 +150,14 @@ abstract class BaseOpenFactsProvider extends BaseBarcodeProvider {
             .filter(Boolean)
         : normalizeStringArray(p.categories_tags)
 
+    const labels =
+      typeof p.labels === "string"
+        ? p.labels
+            .split(",")
+            .map((l) => l.trim())
+            .filter(Boolean)
+        : normalizeStringArray(p.labels_tags)
+
     let weightGrams: number | null = null
     if (typeof p.product_quantity === "number" && Number.isFinite(p.product_quantity)) {
       weightGrams = p.product_quantity
@@ -124,6 +166,9 @@ abstract class BaseOpenFactsProvider extends BaseBarcodeProvider {
       if (Number.isFinite(parsed)) {
         weightGrams = parsed
       }
+    }
+    if (weightGrams === null) {
+      weightGrams = parseWeightGrams(p.quantity)
     }
 
     const brands =
@@ -141,9 +186,10 @@ abstract class BaseOpenFactsProvider extends BaseBarcodeProvider {
       brand: brands,
       manufacturer: (p.manufacturing_places as string) || null,
       categories,
+      labels,
       images,
       weight: weightGrams,
-      weight_unit: weightGrams ? "g" : null,
+      weight_unit: weightGrams !== null ? "g" : null,
       dimensions: null,
       quantity_label: (p.quantity as string) || null,
       ingredients: (p.ingredients_text as string) || null,
@@ -478,6 +524,9 @@ export class UpcItemDbProvider extends BaseBarcodeProvider {
         ? item.lowest_recorded_price
         : null
 
+    const weightGrams = parseWeightGrams(item.weight || item.size)
+    const parsedDims = parseDimensionMm(item.dimension)
+
     return {
       barcode,
       barcode_type: format,
@@ -488,8 +537,11 @@ export class UpcItemDbProvider extends BaseBarcodeProvider {
       manufacturer: typeof item.brand === "string" ? item.brand.trim() : null,
       categories,
       images,
-      weight: null,
-      weight_unit: null,
+      weight: weightGrams,
+      weight_unit: weightGrams !== null ? "g" : null,
+      length: parsedDims.length,
+      width: parsedDims.width,
+      height: parsedDims.height,
       dimensions:
         typeof item.dimension === "string" ? item.dimension : null,
       quantity_label: typeof item.size === "string" ? item.size : null,
@@ -605,6 +657,9 @@ export class BarcodeLookupProvider extends BaseBarcodeProvider {
       Boolean(validateExternalImageUrl(img))
     )
 
+    const weightGrams = parseWeightGrams(item.weight || item.size)
+    const parsedDims = parseDimensionMm(item.size || item.dimension)
+
     return {
       barcode,
       barcode_type: format,
@@ -622,8 +677,11 @@ export class BarcodeLookupProvider extends BaseBarcodeProvider {
               .filter(Boolean)
           : [],
       images,
-      weight: null,
-      weight_unit: null,
+      weight: weightGrams,
+      weight_unit: weightGrams !== null ? "g" : null,
+      length: parsedDims.length,
+      width: parsedDims.width,
+      height: parsedDims.height,
       dimensions: typeof item.size === "string" ? item.size : null,
       quantity_label: typeof item.size === "string" ? item.size : null,
       ingredients:

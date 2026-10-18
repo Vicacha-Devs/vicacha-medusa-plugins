@@ -1,5 +1,9 @@
 export const BARCODE_MODULE = "barcode"
 
+export const BARCODE_EVENTS = {
+  PRODUCT_CREATED: "barcode.product.created",
+} as const
+
 export const BARCODE_TYPES = {
   EAN13: "ean13",
   EAN8: "ean8",
@@ -97,6 +101,10 @@ export interface NormalizedBarcodeProduct {
   weight: number | null
   weight_unit: "g" | "kg" | "oz" | "lb" | null
   dimensions: string | null
+  length?: number | null
+  width?: number | null
+  height?: number | null
+  labels?: string[]
   quantity_label: string | null
   ingredients: string | null
   nutrition: Record<string, unknown> | null
@@ -118,9 +126,13 @@ export interface ProviderConfig {
   enabled?: boolean
   priority?: number
   timeout?: number
+  retries?: number
+  country?: string
   apiKey?: string
   baseUrl?: string
 }
+
+export type BarcodeProviderConfig = ProviderConfig
 
 export interface BarcodeModuleOptions {
   cacheEnabled?: boolean
@@ -226,6 +238,30 @@ export interface LabelPrintOutput {
   items: LabelPrintItem[]
 }
 
+export interface VariantPriceInput {
+  currency_code: string
+  amount: number
+}
+
+export interface LookupAndCreateProductInput {
+  barcode: string
+  status?: "draft" | "published"
+  publishImmediately?: boolean
+  strategy?: EnrichmentStrategy
+  skipCache?: boolean
+  skipExistingCheck?: boolean
+  downloadImages?: boolean
+  overrideTitle?: string
+  overrideDescription?: string
+  overridePrice?: number
+  currencyCode?: string
+  prices?: VariantPriceInput[]
+  salesChannelIds?: string[]
+  categoryIds?: string[]
+  collectionId?: string
+  skuPrefix?: string
+}
+
 export interface CreateProductPayload {
   title: string
   subtitle?: string | null
@@ -235,7 +271,13 @@ export interface CreateProductPayload {
   thumbnail?: string | null
   images: Array<{ url: string }>
   weight?: number | null
+  length?: number | null
+  width?: number | null
+  height?: number | null
   origin_country?: string | null
+  collection_id?: string | null
+  categories?: Array<{ id: string }>
+  sales_channels?: Array<{ id: string }>
   options: Array<{ title: string; values: string[] }>
   variants: Array<{
     title: string
@@ -243,9 +285,14 @@ export interface CreateProductPayload {
     barcode: string
     ean: string | null
     upc: string | null
+    weight?: number | null
+    length?: number | null
+    width?: number | null
+    height?: number | null
     manage_inventory: boolean
     options: Record<string, string>
     prices: Array<{ amount: number; currency_code: string }>
   }>
   metadata: Record<string, unknown>
 }
+

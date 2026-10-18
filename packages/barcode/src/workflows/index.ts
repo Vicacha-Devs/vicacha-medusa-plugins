@@ -9,13 +9,19 @@ import {
 import { downloadProductImageBuffer } from "../modules/barcode/providers"
 import type { BarcodeModuleService } from "../modules/barcode/service"
 import {
+  BARCODE_EVENTS,
   BARCODE_MODULE,
   type BarcodeScanAction,
   type BarcodeSymbology,
   type EnrichmentStrategy,
+  type LookupAndCreateProductInput,
   type NormalizedBarcodeProduct,
+  type VariantPriceInput,
 } from "../modules/barcode/types"
+import { parseBarcode } from "../modules/barcode/utils/barcode-parser"
 import { mapToMedusaCreateProduct } from "../modules/barcode/utils/normalize-product"
+
+export type { LookupAndCreateProductInput }
 
 type AnyService = Record<string, (...args: unknown[]) => Promise<unknown>>
 
@@ -36,19 +42,6 @@ function tryResolveService(
   return null
 }
 
-export interface LookupAndCreateProductInput {
-  barcode: string
-  status?: "draft" | "published"
-  strategy?: EnrichmentStrategy
-  skipCache?: boolean
-  downloadImages?: boolean
-  overrideTitle?: string
-  overrideDescription?: string
-  overridePrice?: number
-  currencyCode?: string
-  skuPrefix?: string
-}
-
 const lookupAndCreateProductStep = createStep(
   "lookup-and-create-product",
   async (input: LookupAndCreateProductInput, { container }) => {
@@ -56,6 +49,66 @@ const lookupAndCreateProductStep = createStep(
       BARCODE_MODULE
     ) as BarcodeModuleService
     const moduleOptions = await barcodeService.getModuleOptions()
+    const productService = tryResolveService(container, [
+      Modules.PRODUCT,
+      "product",
+    ])
+
+    // Self-healing existing product check
+    if (input.skipExistingCheck !== true) {
+      const existingMapping = await barcodeService.findBarcodeProduct(
+        input.barcode
+      )
+      if (existingMapping) {
+        if (productService && typeof productService.listProducts === "function") {
+          const existingProducts = (await productService.listProducts({
+            id: [existingMapping.product_id],
+          })) as Array<Record<string, unknown>>
+          const foundExisting = Array.isArray(existingProducts)
+            ? existingProducts.find(
+                (p) => p.id === existingMapping.product_id
+              ) ?? existingProducts[0]
+            : null
+          if (foundExisting) {
+            const parsed = await barcodeService.parseAndValidateBarcode(
+              input.barcode
+            )
+            const cachedProduct =
+              (existingMapping.product_data as unknown as NormalizedBarcodeProduct) ||
+              null
+            return new StepResponse(
+              {
+                created: false,
+                existing: true,
+                product: foundExisting,
+                product_id: existingMapping.product_id,
+                variant_id: existingMapping.variant_id ?? null,
+                product_payload: null,
+                barcode_product: existingMapping,
+                lookup: {
+                  barcode: existingMapping.barcode,
+                  parsed,
+                  found: Boolean(cachedProduct),
+                  cached: true,
+                  strategy:
+                    input.strategy ||
+                    moduleOptions.enrichmentStrategy ||
+                    "first-hit",
+                  product: cachedProduct,
+                  outcomes: [],
+                },
+              },
+              {
+                barcodeProductId: null,
+                createdProductId: null,
+              }
+            )
+          }
+          // Product was deleted in Medusa — self-heal stale BarcodeProduct link
+          await barcodeService.removeBarcodeProduct(input.barcode)
+        }
+      }
+    }
 
     const lookupResult = await barcodeService.lookupBarcode(input.barcode, {
       skipCache: input.skipCache,
@@ -127,26 +180,28 @@ const lookupAndCreateProductStep = createStep(
 
     const createPayload = mapToMedusaCreateProduct(normalized, {
       status: input.status || moduleOptions.defaultProductStatus || "draft",
+      publishImmediately: input.publishImmediately,
       skuPrefix: input.skuPrefix || "GTIN",
       overrideTitle: input.overrideTitle,
       overrideDescription: input.overrideDescription,
       overridePrice: input.overridePrice,
       currencyCode: input.currencyCode,
+      prices: input.prices,
+      salesChannelIds: input.salesChannelIds,
+      categoryIds: input.categoryIds,
+      collectionId: input.collectionId,
     })
 
     let createdProductId = `prod_${lookupResult.barcode}`
     let createdVariantId: string | null = `variant_${lookupResult.barcode}`
+    let createdProductObj: Record<string, unknown> | null = null
     let createdInProductModule = false
-
-    const productService = tryResolveService(container, [
-      Modules.PRODUCT,
-      "product",
-    ])
 
     if (productService && typeof productService.createProducts === "function") {
       const created = await productService.createProducts([createPayload])
       const firstProduct = Array.isArray(created) ? created[0] : created
       if (firstProduct && typeof firstProduct === "object" && "id" in firstProduct) {
+        createdProductObj = firstProduct as Record<string, unknown>
         createdProductId = String((firstProduct as { id: string }).id)
         const variants = (
           firstProduct as { variants?: Array<{ id?: string }> }
@@ -165,8 +220,31 @@ const lookupAndCreateProductStep = createStep(
       status: "created",
     })
 
+    const eventBus = tryResolveService(container, [
+      Modules.EVENT_BUS,
+      "event_bus",
+    ])
+    if (eventBus && typeof eventBus.emit === "function") {
+      try {
+        await eventBus.emit({
+          name: BARCODE_EVENTS.PRODUCT_CREATED,
+          data: {
+            barcode: lookupResult.barcode,
+            product_id: createdProductId,
+            variant_id: createdVariantId,
+            provider: normalized.provider,
+          },
+        })
+      } catch {
+        // Non-fatal if event bus fails
+      }
+    }
+
     return new StepResponse(
       {
+        created: true,
+        existing: false,
+        product: createdProductObj,
         lookup: lookupResult,
         product_id: createdProductId,
         variant_id: createdVariantId,
@@ -211,8 +289,13 @@ export const lookupAndCreateProductWorkflow = createWorkflow(
 export interface BatchBarcodeImportInput {
   barcodes: string[]
   status?: "draft" | "published"
+  publishImmediately?: boolean
   strategy?: EnrichmentStrategy
   createMissingAsDraft?: boolean
+  prices?: VariantPriceInput[]
+  salesChannelIds?: string[]
+  categoryIds?: string[]
+  collectionId?: string | null
 }
 
 const batchBarcodeImportStep = createStep(
@@ -224,6 +307,10 @@ const batchBarcodeImportStep = createStep(
     const productService = tryResolveService(container, [
       Modules.PRODUCT,
       "product",
+    ])
+    const eventBus = tryResolveService(container, [
+      Modules.EVENT_BUS,
+      "event_bus",
     ])
 
     const imported: Array<{
@@ -282,6 +369,11 @@ const batchBarcodeImportStep = createStep(
 
         const createPayload = mapToMedusaCreateProduct(normalized, {
           status: input.status || "draft",
+          publishImmediately: input.publishImmediately,
+          prices: input.prices,
+          salesChannelIds: input.salesChannelIds,
+          categoryIds: input.categoryIds,
+          collectionId: input.collectionId,
         })
 
         let productId = `prod_${lookup.barcode}`
@@ -311,6 +403,22 @@ const batchBarcodeImportStep = createStep(
           status: "created",
         })
         createdBarcodeProductIds.push(link.id)
+
+        if (eventBus && typeof eventBus.emit === "function") {
+          try {
+            await eventBus.emit({
+              name: BARCODE_EVENTS.PRODUCT_CREATED,
+              data: {
+                barcode: lookup.barcode,
+                product_id: productId,
+                variant_id: variantId,
+                provider: normalized.provider,
+              },
+            })
+          } catch {
+            // Non-fatal
+          }
+        }
 
         imported.push({
           barcode: lookup.barcode,
@@ -377,6 +485,7 @@ export const batchBarcodeImportWorkflow = createWorkflow(
 
 export interface BulkGenerateVariantBarcodesInput {
   variant_ids?: string[]
+  product_ids?: string[]
   prefix?: string
   overwrite?: boolean
 }
@@ -420,15 +529,36 @@ const bulkGenerateVariantBarcodesStep = createStep(
       productService &&
       typeof productService.listProductVariants === "function"
     ) {
-      const filter =
-        input.variant_ids && input.variant_ids.length > 0
-          ? { id: input.variant_ids }
-          : {}
+      const filter: Record<string, unknown> = {}
+      if (input.variant_ids && input.variant_ids.length > 0) {
+        filter.id = input.variant_ids
+      }
+      if (input.product_ids && input.product_ids.length > 0) {
+        filter.product_id = input.product_ids
+      }
       const rows = (await productService.listProductVariants(filter, {
         take: 250,
       })) as typeof targetVariants
       if (Array.isArray(rows)) {
-        targetVariants.push(...rows)
+        const filteredRows = rows.filter((r) => {
+          if (
+            input.variant_ids &&
+            input.variant_ids.length > 0 &&
+            !input.variant_ids.includes(r.id)
+          ) {
+            return false
+          }
+          if (
+            input.product_ids &&
+            input.product_ids.length > 0 &&
+            r.product_id &&
+            !input.product_ids.includes(r.product_id)
+          ) {
+            return false
+          }
+          return true
+        })
+        targetVariants.push(...filteredRows)
       }
     } else if (input.variant_ids && input.variant_ids.length > 0) {
       for (const vid of input.variant_ids) {
@@ -439,6 +569,28 @@ const bulkGenerateVariantBarcodesStep = createStep(
     let seq = 1
     for (const variant of targetVariants) {
       if (variant.barcode && !input.overwrite) {
+        // Ensure a BarcodeTag exists even when variant already has an assigned barcode
+        const existingTags = await barcodeService.listBarcodeTags(
+          { code: variant.barcode },
+          { take: 1 }
+        )
+        if (!existingTags[0]) {
+          const parsedExisting = parseBarcode(variant.barcode)
+          const tag = await barcodeService.createOrUpdateBarcodeTag({
+            code: variant.barcode,
+            target_type: "variant",
+            target_id: variant.id,
+            product_id: variant.product_id ?? null,
+            variant_id: variant.id,
+            label: variant.title ?? variant.id,
+            symbology:
+              parsedExisting.type === "unknown"
+                ? "code128"
+                : parsedExisting.type,
+            scan_action: "view",
+          })
+          createdTagIds.push(tag.id)
+        }
         continue
       }
 

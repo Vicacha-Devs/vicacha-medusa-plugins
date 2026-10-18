@@ -16,14 +16,21 @@ export default async function productBarcodeSubscriber({
       return
     }
 
-    const variantId = event.data?.variant_id || event.data?.id
-    if (!variantId) {
+    const isProductEvent =
+      event.name === "product.created" && !event.data?.variant_id
+    const targetId = isProductEvent
+      ? event.data?.id
+      : event.data?.variant_id || event.data?.id
+
+    if (!targetId) {
       return
     }
 
     await bulkGenerateVariantBarcodesWorkflow(container).run({
       input: {
-        variant_ids: [variantId],
+        ...(isProductEvent
+          ? { product_ids: [targetId] }
+          : { variant_ids: [targetId] }),
         prefix: options.internalBarcodePrefix || "200",
         overwrite: false,
       },

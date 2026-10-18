@@ -2,60 +2,48 @@
   "name": "@vicacha-devs/medusa-plugin-barcode",
   "version": "0.0.1",
   "description": "Unified 4-in-1 Barcode, GS1, Dynamic QR, Multi-Provider GTIN Lookup, Thermal/Sheet Label Printing (HTML/SVG & ZPL II), Anti-Counterfeit Verification & Warehouse Stock-Take Scanner plugin for Medusa v2.",
-  "author": "Medusa Barcode Contributors",
+  "author": "Vicacha Devs",
   "license": "MIT",
   "files": [
-    ".medusa/server"
+    ".medusa/server",
+    "src",
+    "README.md",
+    "LICENSE",
+    "tsconfig.json"
   ],
   "exports": {
+    "./package.json": "./package.json",
     ".": {
-      "types": "./.medusa/server/src/index.d.ts",
       "import": "./.medusa/server/src/index.js",
       "require": "./.medusa/server/src/index.js",
       "default": "./.medusa/server/src/index.js"
     },
-    "./package.json": "./package.json",
     "./admin": {
       "import": "./.medusa/server/src/admin/index.mjs",
       "require": "./.medusa/server/src/admin/index.js",
       "default": "./.medusa/server/src/admin/index.js"
     },
     "./ui": {
-      "types": "./.medusa/server/src/ui/index.d.ts",
-      "import": "./.medusa/server/src/ui/index.js",
-      "require": "./.medusa/server/src/ui/index.js",
+      "import": "./src/ui/index.tsx",
       "default": "./.medusa/server/src/ui/index.js"
     },
     "./hooks": {
-      "types": "./.medusa/server/src/hooks/index.d.ts",
-      "import": "./.medusa/server/src/hooks/index.js",
-      "require": "./.medusa/server/src/hooks/index.js",
+      "import": "./src/hooks/index.ts",
       "default": "./.medusa/server/src/hooks/index.js"
     },
     "./sdk": {
-      "types": "./.medusa/server/src/sdk/index.d.ts",
-      "import": "./.medusa/server/src/sdk/index.js",
-      "require": "./.medusa/server/src/sdk/index.js",
+      "import": "./src/sdk/index.ts",
       "default": "./.medusa/server/src/sdk/index.js"
     },
-    "./workflows": {
-      "types": "./.medusa/server/src/workflows/index.d.ts",
-      "import": "./.medusa/server/src/workflows/index.js",
-      "require": "./.medusa/server/src/workflows/index.js",
-      "default": "./.medusa/server/src/workflows/index.js"
+    "./types": {
+      "import": "./src/types/index.ts",
+      "default": "./.medusa/server/src/types/index.js"
     },
-    "./modules/*": {
-      "types": "./.medusa/server/src/modules/*/index.d.ts",
-      "default": "./.medusa/server/src/modules/*/index.js"
-    },
-    "./.medusa/server/src/modules/*": {
-      "types": "./.medusa/server/src/modules/*/index.d.ts",
-      "default": "./.medusa/server/src/modules/*/index.js"
-    },
-    "./*": {
-      "types": "./.medusa/server/src/*.d.ts",
-      "default": "./.medusa/server/src/*.js"
-    }
+    "./workflows": "./.medusa/server/src/workflows/index.js",
+    "./.medusa/server/src/modules/*": "./.medusa/server/src/modules/*/index.js",
+    "./modules/*": "./.medusa/server/src/modules/*/index.js",
+    "./providers/*": "./.medusa/server/src/providers/*/index.js",
+    "./*": "./.medusa/server/src/*.js"
   },
   "keywords": [
     "medusa",
@@ -136,5 +124,6 @@
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
-  }
+  },
+  "packageManager": "pnpm@11.20.0"
 }

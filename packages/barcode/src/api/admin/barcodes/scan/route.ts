@@ -10,7 +10,10 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   ) as BarcodeModuleService
   const body = req.validatedBody as QuickScanAdjustBody
 
-  const resolved = await barcodeService.resolveBarcodeScan(body.barcode)
+  const resolved = await barcodeService.resolveBarcodeScan(body.barcode, {
+    scope: req.scope,
+    hydrateVariant: true,
+  })
   const action = body.action || "lookup"
   const quantityDelta =
     action === "increment"

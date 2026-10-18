@@ -31,6 +31,18 @@ export const Modules = {
   PRODUCT: "product",
   FILE: "file",
   INVENTORY: "inventory",
+  EVENT_BUS: "event_bus",
+}
+
+export class Migration {
+  constructor() {
+    this.queries = []
+  }
+  addSql(sql) {
+    this.queries.push(sql)
+  }
+  async up() {}
+  async down() {}
 }
 
 export function MedusaService(models = {}) {

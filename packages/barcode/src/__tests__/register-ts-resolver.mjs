@@ -61,7 +61,7 @@ registerHooks({
   },
 
   load(url, context, nextLoad) {
-    if (url.endsWith(".json")) {
+    if (url.endsWith(".json") && !url.includes("/node_modules/")) {
       const filePath = fileURLToPath(url)
       const source = readFileSync(filePath, "utf8")
       return {
@@ -84,6 +84,51 @@ registerHooks({
       return {
         format: "module",
         source: transpiled.outputText,
+        shortCircuit: true,
+      }
+    }
+    if (url.endsWith(".tsx")) {
+      const filePath = fileURLToPath(url)
+      const source = readFileSync(filePath, "utf8")
+      const lines = []
+      const reExports = [
+        ...source.matchAll(/^export\s+\*\s+from\s+["'][^"']+["']/gm),
+      ]
+      for (const reExp of reExports) {
+        lines.push(reExp[0])
+      }
+      const configMatch = source.match(
+        /export\s+const\s+config\s*=\s*(defineRouteConfig|defineWidgetConfig)\s*\(\{[\s\S]*?\}\)/
+      )
+      if (configMatch) {
+        lines.push(
+          `import { defineRouteConfig, defineWidgetConfig } from "@medusajs/admin-sdk"`
+        )
+        lines.push(
+          `import { Buildings, BuildingStorefront, CheckCircle, DocumentText, MagnifyingGlass, Tag } from "@medusajs/icons"`
+        )
+        lines.push(configMatch[0])
+      }
+      if (/export\s+const\s+handle\s*=/.test(source)) {
+        lines.push(`export const handle = { breadcrumb: () => null }`)
+      }
+      const namedExports = [
+        ...source.matchAll(
+          /export\s+(?:const|function)\s+([A-Za-z0-9_]+)\b/g
+        ),
+      ]
+      for (const match of namedExports) {
+        const name = match[1]
+        if (name !== "config" && name !== "handle") {
+          lines.push(`export const ${name} = () => null`)
+        }
+      }
+      if (/export\s+default\b/.test(source)) {
+        lines.push(`export default function Component() { return null }`)
+      }
+      return {
+        format: "module",
+        source: lines.join("\n"),
         shortCircuit: true,
       }
     }

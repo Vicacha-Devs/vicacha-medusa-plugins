@@ -32,28 +32,45 @@ export const LookupBarcodeBodySchema = z.object({
   providers: z.array(z.string().min(1).max(64)).max(10).optional(),
 })
 
+export const VariantPriceInputSchema = z.object({
+  amount: z.number().min(0),
+  currency_code: z.string().min(1).max(8),
+})
+
 export const CreateFromBarcodeBodySchema = z.object({
   barcode: z.string().min(1).max(128),
   status: z.enum(["draft", "published"]).optional(),
+  publishImmediately: z.boolean().optional(),
   strategy: EnrichmentStrategySchema.optional(),
   skipCache: z.boolean().optional(),
+  skipExistingCheck: z.boolean().optional(),
   downloadImages: z.boolean().optional(),
   overrideTitle: z.string().max(256).optional(),
   overrideDescription: z.string().max(4000).optional(),
   overridePrice: z.number().min(0).optional(),
   currencyCode: z.string().max(8).optional(),
   skuPrefix: z.string().max(32).optional(),
+  prices: z.array(VariantPriceInputSchema).max(50).optional(),
+  salesChannelIds: z.array(z.string().min(1).max(128)).max(50).optional(),
+  categoryIds: z.array(z.string().min(1).max(128)).max(50).optional(),
+  collectionId: z.string().max(128).nullable().optional(),
 })
 
 export const BatchBarcodeImportBodySchema = z.object({
   barcodes: z.array(z.string().min(1).max(128)).min(1).max(100),
   status: z.enum(["draft", "published"]).optional(),
+  publishImmediately: z.boolean().optional(),
   strategy: EnrichmentStrategySchema.optional(),
   createMissingAsDraft: z.boolean().optional(),
+  prices: z.array(VariantPriceInputSchema).max(50).optional(),
+  salesChannelIds: z.array(z.string().min(1).max(128)).max(50).optional(),
+  categoryIds: z.array(z.string().min(1).max(128)).max(50).optional(),
+  collectionId: z.string().max(128).nullable().optional(),
 })
 
 export const BulkGenerateBarcodesBodySchema = z.object({
   variant_ids: z.array(z.string().min(1).max(128)).max(250).optional(),
+  product_ids: z.array(z.string().min(1).max(128)).max(250).optional(),
   prefix: z.string().regex(/^2\d{2}$/).optional(),
   overwrite: z.boolean().optional(),
 })

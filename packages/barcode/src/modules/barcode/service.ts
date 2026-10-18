@@ -1,4 +1,4 @@
-import { MedusaError, MedusaService } from "@medusajs/framework/utils"
+import { MedusaError, MedusaService, Modules } from "@medusajs/framework/utils"
 
 import {
   BarcodeCache,
@@ -203,6 +203,36 @@ export class BarcodeModuleService extends MedusaService(BarcodeModels) {
     }
 
     return result
+  }
+
+  /**
+   * Finds an existing `BarcodeProduct` mapping for a normalized barcode.
+   */
+  async findBarcodeProduct(rawBarcode: string) {
+    const parsed = await this.parseAndValidateBarcode(rawBarcode)
+    const rows = await this.listBarcodeProducts(
+      { barcode: parsed.normalized },
+      { take: 1 }
+    )
+    return rows[0] || null
+  }
+
+  /**
+   * Removes `BarcodeProduct` mapping(s) for a normalized barcode.
+   */
+  async removeBarcodeProduct(
+    rawBarcode: string
+  ): Promise<{ deleted_count: number }> {
+    const parsed = await this.parseAndValidateBarcode(rawBarcode)
+    const rows = await this.listBarcodeProducts(
+      { barcode: parsed.normalized },
+      { take: 50 }
+    )
+    const ids = rows.map((r) => r.id)
+    if (ids.length > 0) {
+      await this.deleteBarcodeProducts(ids)
+    }
+    return { deleted_count: ids.length }
   }
 
   /**
@@ -417,10 +447,17 @@ export class BarcodeModuleService extends MedusaService(BarcodeModels) {
   }
 
   /**
-   * Resolves a storefront or admin scan against `BarcodeTag` and `BarcodeProduct`,
-   * incrementing scan analytics when a tag is matched.
+   * Resolves a storefront or admin scan against `BarcodeTag`, `BarcodeProduct`,
+   * and optionally Medusa's `ProductVariant` table (`barcode` / `ean` / `upc`),
+   * incrementing scan analytics when a tag is matched and optionally hydrating the variant and product.
    */
-  async resolveBarcodeScan(codeOrBarcode: string) {
+  async resolveBarcodeScan(
+    codeOrBarcode: string,
+    options?: {
+      scope?: { resolve: (key: string) => unknown }
+      hydrateVariant?: boolean
+    }
+  ) {
     const clean = String(codeOrBarcode || "").trim()
     if (!clean) {
       throw new MedusaError(
@@ -448,14 +485,180 @@ export class BarcodeModuleService extends MedusaService(BarcodeModels) {
     )
     const barcodeProduct = barcodeProducts[0] || null
 
+    let resolvedProductId: string | null =
+      tag?.product_id || barcodeProduct?.product_id || null
+    let resolvedVariantId: string | null =
+      tag?.variant_id || barcodeProduct?.variant_id || null
+    let hydratedVariant: Record<string, unknown> | null = null
+    let hydratedProduct: Record<string, unknown> | null = null
+
+    type ProductModuleLike = {
+      listProductVariants?: (
+        filter: Record<string, unknown>,
+        config?: Record<string, unknown>
+      ) => Promise<Array<Record<string, unknown>>>
+      listProducts?: (
+        filter: Record<string, unknown>,
+        config?: Record<string, unknown>
+      ) => Promise<Array<Record<string, unknown>>>
+    }
+
+    let productService: ProductModuleLike | null = null
+    if (options?.scope && typeof options.scope.resolve === "function") {
+      for (const key of [Modules.PRODUCT, "product"]) {
+        try {
+          const svc = options.scope.resolve(key)
+          if (svc && typeof svc === "object") {
+            productService = svc as ProductModuleLike
+            break
+          }
+        } catch {
+          // ignore if Product module is not registered in scope
+        }
+      }
+    }
+
+    // Fallback: if neither BarcodeTag nor BarcodeProduct matched, query ProductVariant by barcode/ean/upc
+    if (
+      !tag &&
+      !barcodeProduct &&
+      productService &&
+      typeof productService.listProductVariants === "function"
+    ) {
+      const candidateCodes = Array.from(new Set([parsed.normalized, clean]))
+      const candidateFields = ["barcode", "ean", "upc"] as const
+
+      outer: for (const codeCandidate of candidateCodes) {
+        for (const field of candidateFields) {
+          try {
+            const variants = await productService.listProductVariants(
+              { [field]: codeCandidate },
+              { take: 10 }
+            )
+            if (Array.isArray(variants) && variants.length > 0) {
+              const matched = variants.find(
+                (v) =>
+                  v.barcode === parsed.normalized ||
+                  v.barcode === clean ||
+                  v.ean === parsed.normalized ||
+                  v.ean === clean ||
+                  v.upc === parsed.normalized ||
+                  v.upc === clean ||
+                  (variants.length === 1 &&
+                    v.barcode === undefined &&
+                    v.ean === undefined &&
+                    v.upc === undefined)
+              )
+              if (matched) {
+                hydratedVariant = matched
+                if (matched.id) {
+                  resolvedVariantId = String(matched.id)
+                }
+                if (matched.product_id) {
+                  resolvedProductId = String(matched.product_id)
+                }
+                break outer
+              }
+            }
+          } catch {
+            // continue trying next field
+          }
+        }
+      }
+    }
+
+    // Hydrate variant and product if requested (default true when scope is passed)
+    if (productService && options?.hydrateVariant !== false) {
+      if (
+        !hydratedVariant &&
+        resolvedVariantId &&
+        typeof productService.listProductVariants === "function"
+      ) {
+        try {
+          const variants = await productService.listProductVariants(
+            { id: [resolvedVariantId] },
+            { take: 10 }
+          )
+          if (Array.isArray(variants) && variants.length > 0) {
+            hydratedVariant =
+              variants.find((v) => v.id === resolvedVariantId) ||
+              variants[0] ||
+              null
+            if (
+              hydratedVariant &&
+              !resolvedProductId &&
+              hydratedVariant.product_id
+            ) {
+              resolvedProductId = String(hydratedVariant.product_id)
+            }
+          }
+        } catch {
+          // non-fatal hydration error
+        }
+      }
+
+      if (
+        !hydratedProduct &&
+        resolvedProductId &&
+        typeof productService.listProducts === "function"
+      ) {
+        try {
+          const products = await productService.listProducts(
+            { id: [resolvedProductId] },
+            { take: 10 }
+          )
+          if (Array.isArray(products) && products.length > 0) {
+            hydratedProduct =
+              products.find((p) => p.id === resolvedProductId) ||
+              products[0] ||
+              null
+            if (
+              hydratedProduct &&
+              !hydratedVariant &&
+              Array.isArray(hydratedProduct.variants)
+            ) {
+              const productVariants = hydratedProduct.variants as Array<
+                Record<string, unknown>
+              >
+              const matchedVar =
+                (resolvedVariantId
+                  ? productVariants.find((v) => v.id === resolvedVariantId)
+                  : undefined) ||
+                productVariants.find(
+                  (v) =>
+                    v.barcode === parsed.normalized ||
+                    v.barcode === clean ||
+                    v.ean === parsed.normalized ||
+                    v.upc === parsed.normalized
+                ) ||
+                productVariants[0] ||
+                null
+              if (matchedVar) {
+                hydratedVariant = matchedVar
+                if (!resolvedVariantId && matchedVar.id) {
+                  resolvedVariantId = String(matchedVar.id)
+                }
+              }
+            }
+          }
+        } catch {
+          // non-fatal hydration error
+        }
+      }
+    }
+
     return {
       code: clean,
       parsed,
-      found: Boolean(tag || barcodeProduct),
+      found: Boolean(
+        tag || barcodeProduct || hydratedVariant || hydratedProduct
+      ),
       action: (tag?.scan_action as BarcodeScanAction) || "view",
       target_url: tag?.target_url || null,
-      product_id: tag?.product_id || barcodeProduct?.product_id || null,
-      variant_id: tag?.variant_id || barcodeProduct?.variant_id || null,
+      product_id: resolvedProductId,
+      variant_id: resolvedVariantId,
+      variant: hydratedVariant,
+      product: hydratedProduct,
       tag,
       barcode_product: barcodeProduct,
     }

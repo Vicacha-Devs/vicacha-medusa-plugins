@@ -15,7 +15,10 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       ? (req.query.symbology as BarcodeSymbology)
       : undefined
 
-  const resolved = await barcodeService.resolveBarcodeScan(code)
+  const resolved = await barcodeService.resolveBarcodeScan(code, {
+    scope: req.scope,
+    hydrateVariant: true,
+  })
 
   if (formatParam === "svg") {
     const svg =
