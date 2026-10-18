@@ -34,7 +34,9 @@ medusa-plugin-barcode/
     │       ├── label-printer.ts                        # 7 thermal/A4 presets, HTML+SVG & Zebra ZPL II generator
     │       └── security.ts                             # HMAC-SHA256 signer/verifier, SSRF guard & escapeHtml
     ├── workflows/
-    │   └── index.ts                                    # 6 Medusa v2 workflows with compensation/rollback
+    │   ├── index.ts                                    # Re-exports all 6 workflows
+    │   ├── helpers.ts                                  # Shared tryResolveService
+    │   └── *.ts                                        # One file per workflow, with compensation/rollback
     ├── subscribers/
     │   └── product-created.ts                          # Auto-assigns GS1 EAN-13 on product/variant creation
     ├── jobs/
@@ -125,7 +127,7 @@ medusa-plugin-barcode/
 ## 3. Strict Medusa v2 & Security Engineering Rules
 1. **`@medusajs/eslint-plugin` Compliance**:
    - Every public method on `BarcodeModuleService` in `src/modules/barcode/service.ts` **must** be `async` and throw `MedusaError` from `@medusajs/framework/utils`.
-   - Every `createStep` and `createWorkflow` in `src/workflows/index.ts` **must** have an explicit kebab-case ID matching the step/workflow name (e.g. `"lookup-and-create-product"`).
+   - Every `createStep` and `createWorkflow` in `src/workflows/*.ts` **must** have an explicit kebab-case ID matching the step/workflow name (e.g. `"lookup-and-create-product"`).
    - All API Zod schemas **must** live in `src/api/validators.ts` (importing `z` from `@medusajs/framework/zod`) and be bound in `src/api/middlewares.ts`.
    - Files under `src/admin/**` **must never** import `@medusajs/framework/utils` (`@medusajs/admin-no-medusa-utils-import`).
    - Admin routes (`src/admin/routes/**`) and widgets (`src/admin/widgets/**`) **must** remain thin entrypoints delegating state to `src/admin/hooks/**` and presentation to `src/admin/components/**` (< 170 lines per component file).

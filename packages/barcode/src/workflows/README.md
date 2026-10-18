@@ -4,7 +4,14 @@ Medusa v2 workflows that implement `medusa-plugin-barcode` catalog enrichment, b
 
 ```sh
 workflows/
-└── index.ts          exports all 6 Medusa v2 workflows and their input types
+├── index.ts                          re-exports every workflow and input type
+├── helpers.ts                        shared tryResolveService
+├── lookup-and-create-product.ts
+├── batch-barcode-import.ts
+├── bulk-generate-variant-barcodes.ts
+├── generate-barcode-tag.ts
+├── scan-inventory-count.ts
+└── apply-inventory-count.ts
 ```
 
 ---
